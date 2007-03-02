@@ -1,0 +1,180 @@
+This did not find a place in libHX, but is always useful.
+
+ARBITRARY ROOT
+    The k'th root of n to the p'th power is the same as
+    n to the (p/k)'th power.
+
+GEOMETRY MATH
+    sin(a)  = y / r;
+    cos(a)  = x / r;
+    tan(a)  = y / x; [also: sin(a) / cos(a)]
+    sec(a)  = 1 / cos(a);
+    csc(a)  = 1 / sin(a);
+    cot(a)  = x / y; [also: cos(a) / sin(a)]
+
+    asin(z) = -i * ln(iz + sqrt(1 - z**2));
+    acos(z) = -i * ln(z + sqrt(z**2 - 1));
+    atan(z) = i / 2 * ln((i + z) / (i - z));
+    asec(z) = acos(1 / z);
+    acsc(z) = asin(1 / z);
+    acot(z) = atan(1 / z);
+
+TEMPERATURES
+    K = 273.16 + C;
+    F = C * (9 / 5) + 32;
+    R = 0.8 * C;
+
+IMPERIAL MEASURES
+    Linear measures
+        Inch       2.54 cm
+        Foot      12    inches                  <  30.48  cm>
+        Yard       3    feet                    <  91.44  cm>
+        Furlong  220    yards                   < 201.168 m>
+        Mile    1760    yards (8 furlong)       <1690.344 m>
+
+    Surveyor's measures
+        Link    7.92 inches                     <20.1168 cm>
+        Rod    25    links                      < 5.0292 m>
+        Chain  22    yards                      <20.1168 m>
+
+    Square measures
+        Square inch    6.4516 Square cm
+        Square foot  144      Square inch
+        Square yard    9      Square foot
+        Square rod    30.25   Square yard
+        Square acre 4840      Square yard
+        Square mile  640      Square acre
+
+    Cubic measures
+        Cubic inch     16.387064 cubic cm
+        Cubic foot   1728        cubic inch
+        Cubic yard     27        cubic foot
+        Register ton  100        cubic foot
+
+    Measures of capacity, Liquid
+        Gill   0.142 liters
+        Pint   4     gills                       <0.568 l>
+        Quart  2     pints  <8 gills>            <1.136 l>
+        Gallon 4     quarts <32 gills> <8 pints> <4.544 l>
+
+    Measures of capacity, US Liquid
+        Gill   0.118 liters
+        Pint   4     gills                       <0.472 l>
+        Quart  2     pints                       <0.944 l>
+        Gallon 4     quarts                      <3.776 l>
+
+    Measures of capacity, Dry
+        Peck    2 gallons
+        Bushel  4 pecks
+        Quarter 8 bushels
+
+    Measures of capacity, US Dry
+        Pint   0.55 liters
+        Quart  2    pints
+        Peck   8    quarts
+        Bushel 4    pecks
+
+    Weights
+        Grain            0.0648 grams
+        Drachm          27.34   grains  <  1.77  g>
+        Ounce           16      drachms < 28.34  g>
+        Pound           16      ounces  <453.53  g>
+        Stone           14      pounds  <  6.349 kg>
+        Quarter         28      pounds  < 12.69  kg>
+        Hundredweight  122      pounds  < 55.33  kg>
+        Ton           2240      pounds (20 hundredweight) <1015 kg>
+
+TRIANGLE
+    Area = Width * Height;
+    Area = sqrt(3) * a ** 2 / 4; (3x60 deg triangle)
+    Height = sqrt(3) * a / 2; (3x60 deg triangle)
+
+RECTANGLE
+    Area = Width * Height;
+    Circumference = 2 * (a + b);
+    Diagonale = sqrt(a ** 2 + b ** 2);
+
+SQUARE
+    Area = SideLength ** 2;
+    Circumference = 4 * a;
+    Diagonale = sqrt(2) * a;
+
+PARALLELOGRAM
+    Area = Width * Height;
+
+TRAPEZ
+    Area = (NorthSideLength + SouthSideLength) * Height / 2;
+
+CIRCLE
+    Area = PI * Radius ** 2;
+    Circumference = 2 * PI * Radius;
+    Arch = 2 * PI * Radius * Alpha / 360;
+    String = 2 * Radius * sin(Alpha); // DE: "Sehne"
+    Height = 2 * Radius * sin(Alpha / 4) ** 2;
+    Ring Area = PI * (OuterRadius ** 2 - InnerRadius ** 2);
+    Segment = Arch * Radius - String * (Radius - Height) / 2;
+    Sector = PI * Radius ** 2 * Alpha / 360;
+    Ellipse = PI * a * b;
+
+ARBITRARY SHAPED AREAS/POLYGONS
+    Number of diagonales = (n * (n - 3)) / 2;
+
+    Number of splits in a worst-case-shaped area (an area with as many concave
+    angles as possible; no sides may overlap.):
+      Sides 4, 5 => 1
+      Sides 6, 7 => 2
+      Sides 8+   => floor(Sides / 2)
+
+REGULAR, N-SIDED POLYGONS
+    Regular here means all angles are the same.
+    Area = SideLength * ToSideHalfRadius * Sides / 2;
+
+QUADER
+    Volume = a * b * c;
+    Surface = 2 * a * b + 2 * a * c + 2 * b * c;
+    Cover = 2 * a * b + 2 * a * c;
+    Mesh = 2 * (a + b + c)
+
+CUBE
+    Volume = a ** 3;
+    Surface = 6 * a ** 2;
+    Cover = 4 * a ** 2;
+    Diagonale = sqrt(3) * a;
+    Mesh = 6 * a
+
+PRISM
+    Volume = GroundShape * Height;
+
+PYRAMID
+    Volume = GroundShape * Height / 3;
+    Blunted pyramid volume = (G1 + G2 + sqrt(G1 + G2)) * Height / 3;
+
+CONE
+    Volume = PI * Radius ** 2 * Height / 3;
+    Blunted cone volume = PI * Height * (bigRadius ** 2 +
+      bigRadius * smallRadius + smallRadius ** 2) / 3;
+    Surface = PI * Radius * s + PI * Radius ** 2;
+    Cover = PI * Radius * s;
+
+SPHERE
+    Volume = (4 / 3) * PI * r ** 3;
+    Segment = (1 / 3) * PI * Height ** 2 * (3 * Radius - Height);
+    Segment Cover = 2 * PI * Radius * Height;
+    Sector = (2 / 3) * PI * Radius ** 2 * Height;
+    Surface = 4 * PI * Radius ** 2;
+    Zone = PI * (3 * bigRadius ** 2 + 3 * smallRadius ** 2 +
+      3 * Height ** 2) * Height / 6;
+    Hollow sphere volume = (4 / 3) * PI *
+      (TotalRadius ** 3 - hollowRadius ** 3);
+    Ellipsoid = (4 / 3) * PI * a * b * c;
+    Mesh = x * 2 * PI * Radius; x e |N; x >= 2;
+
+CYLINDER
+    Volume = PI * Radius ** 2 * Height;
+    Hollow cylinder volume = PI * Height * (bigRadius ** 2 - smallRadius ** 2);
+    Cylindric ring = 2 * PI ** 2 * fullRadius * innerRadius;
+    Mesh = 2 * PI * Radius + 2 * Height
+
+TETRAEDER
+    Volume = sqrt(2) * SideLength ** 3 / 12;
+    Surface = 4 * sqrt(3 * SideLength ** 4 / 16);

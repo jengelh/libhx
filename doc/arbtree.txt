@@ -1,0 +1,192 @@
+===============================================================================
+arbtree - A+B/RB-trees                                               2005-04-17
+
+
+DESCRPITION
+
+    Associative-style binary red-black trees. What makes them different
+    from normal RB trees: they can also store value pairs.
+
+
+SYNOPSIS
+
+    #include <libHX.h>
+
+    struct HXbtree {
+        ...
+        unsigned long opts, itemcount;
+        void *uptr; // your private data
+        ...
+    };
+
+    struct HXbtree_node {
+        ...
+        void *key, data;
+        ...
+    };
+
+    struct HXbtree *HXbtree_init(unsigned long opts, ...);
+
+    struct HXbtree_node *HXbtree_add(struct HXbtree *B, void *PTR);
+    struct HXbtree_node *HXbtree_add(struct HXbtree *B,
+       const char *KEY, void *PTR);
+
+    struct HXbtree_node *HXbtree_find(struct HXbtree *B, void *PTR);
+    struct HXbtree_node *HXbtree_find(struct HXbtree *B, const char *KEY);
+
+    void *HXbtree_get(struct HXbtree *B, void *PTR);
+    void *HXbtree_get(struct HXbtree *B, const char *KEY);
+
+    void *HXbtree_del(struct HXbtree *B, void *PTR);
+    void *HXbtree_del(struct HXbtree *B, const char *KEY);
+
+    int HXbtree_free(struct HXbtree *B);
+
+    void *HXbtrav_init(struct HXbtree *B, void *START);
+    void *HXbtrav_init(struct HXbtree *B, const char *START);
+    struct HXbtree_node *HXbtraverse(void *TRAVP);
+    void HXbtrav_free(void *TRAVP);
+
+
+HXbtree_init()
+
+    HXbtree_init() initializes a new binary tree. The bitfield OPTS can
+    contain these options:
+
+        HXBT_MAP
+
+            This changes the B-tree to behave like an associative array
+            (key => value pairs). You might know these as "hashes" from
+            Perl. If no HXBT_CMPFN, HXBT_SCMP or HXBT_ICMP is specified,
+            this B-tree will implicitly use strcmp() as the comparison
+            function for keys.
+
+        HXBT_CKEY
+
+            Duplicate the key used for HXbtree_add() before inserting it
+            into the tree. (Just putting it in would be called "linking".)
+            This option does nothing if HXBT_MAP mode is not enabled.
+
+        HXBT_CDATA
+
+            Duplicate the data string used for HXbtree_add() before
+            inserting it into the tree. This is only useful when ptr is a
+            string.
+
+        HXBT_CMPFN
+
+            You can pass a pointer to an int (*)(const void *, const void
+            *) function to compare the keys in the B-tree when sorting,
+            searching and traversing. HXBT_CMPFN takes precedence over
+            HXBT_SCMP, HXBT_ICMP and HXBT_MAP in regard to the comparison
+            function.
+
+        HXBT_SCMP
+
+            Explicitly use strcmp() as a comparison function. It is an
+            abbreviation for:
+
+                HXbtree_init(HXBT_CMPFN, strcmp);
+
+            into:
+
+                HXbtree_init(HXBT_SCMP);
+
+            Overidden by HXBT_CMPFN, overrides HXBT_ICMP and HXBT_MAP
+            w.r.t. to the comparison function.
+
+        HXBT_ICMP
+
+            Use a numerical comparison for the keys, i.e. compare their
+            pointer values. This is useful if you plan on using numbers as
+            keys, which need to be coerced into a void *. HXBT_ICMP is
+            overridden by HXBT_CMPFN and HXBT_SCMP, but will override
+            HXBT_MAP w.r.t. to the comparison function.
+
+        HXBT_NCID
+
+            Instruct the HXbtrav traverser code to not copy the key as an
+            aid to refind a node. This is needed for any tree that you
+            wish to traverse and 1. is a non-HXBT_MAP tree, or 2. is a
+            HXBT_MAP tree that does not use strings as keys.
+
+
+HXbtree_add()
+
+    HXbtree_add() adds an object PTR to the binary tree pointed to by B,
+    and returns a pointer to the newly malloc()'ed struct HXbtree_node if
+    the insertion was successful. You can access the read-only key by
+    using node->key and your object by using node->ptr.
+
+    If HXBT_MAP is active, you may only edit node->data and your data
+    behind it. If HXBT_MAP is not on, you may only edit your data behind. 
+    If you need to change the key (in non-HXBT_MAP-mode, key==data),
+    remove the B-tree node first and re-add it. On error, NULL is returned
+    and errno is set appropriately.
+
+
+HXbtree_find()
+
+    Finds PTR/KEY in the binary tree and returns a pointer to the struct
+    HXbtree_node containing it. If it is not found, NULL is returned.
+
+
+HXbtree_get()
+
+    Same as HXbtree_find() but returns node->data instead. For
+    non-associative arrays, this means it will simply return PTR you gave.
+
+
+HXbtree_del()
+
+    Delete PTR/KEY from the binary tree pointed to by B. On success,
+    node->ptr is returned. Please note that the return value is only
+    meaningful if HXBT_CDATA is not set for this tree, since ->ptr that
+    was copied upon insertion is now removed. If the object is not found,
+    NULL is returned. On error, NULL is also returned and errno is set.
+
+
+HXbtree_free()
+
+    Destroys the tree. Deallocates all memory it uses. Returns 1 on
+    success, or 0 or -errno on error.
+
+
+HXbtrav_init()
+
+    Initializes a B-tree traverser. It takes the binary tree B to be
+    traversed, and an optional START key, at which traversal should begin. 
+    If START is NULL, traversal starts at the left-most node.
+
+    If the node whose key is START is not found, traversal also starts at
+    the left-most node.
+
+
+HXbtraverse()
+
+    Returns the next inorder element. You can modify the B-tree during
+    traversal -- the traversing algorithm will try to re-find the node
+    last visited.
+
+    The node, at which traversal will continue after an object has been
+    deleted, which otherwise would have been returned by the next call to
+    HXbtrav(), is the next inorder node. See the example too.
+
+
+HXbtrav_free()
+
+    Frees all storage associated with a traverser.
+
+
+Notes
+
+    The maximum number of elements a HXbtree can hold is (2**32)-1. Its
+    maximum tree depth is set to 36, which sould suffice if the tree
+    becomes a bit unbalanced. (That is, functions operating on the B-tree
+    requiring a path or such, can hold at most 36 nodes.) libHX/arbtree.c
+    code never checks the tree height against BT_MAXDEP (36), so if you
+    happen to greatly exceed the maximum height (36), bad things will
+    happen. But until you get there, you will ran out of memory before.
+
+
+===============================================================================

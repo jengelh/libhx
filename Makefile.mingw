@@ -1,0 +1,22 @@
+# -*- Makefile -*-
+
+include Mkbase.0
+include Mkbase.1
+OBJS += ux-file.o ux-mmap.o
+
+.PHONY: all clean distclean
+
+all: libHX.${SO_VER}.dll libHX.a
+
+libHX.${SO_VER}.dll: ${OBJS}
+	${VECHO_LD}
+	${Q}${LD} ${LDFLAGS} ${SOFLAGS} -Wl,-soname,$@ -o $@ $^ ${LDLIBS};
+
+libHX.a: ${OBJS}
+	${VECHO_AR}
+	${Q}${AR} crs $@ $^;
+
+clean:
+	rm -f libHX.${SO_VER}.dll *.o;
+
+include Mkbase.2

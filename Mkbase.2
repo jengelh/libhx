@@ -1,0 +1,46 @@
+# -*- Makefile -*-
+
+.PHONY: test install uninstall clean distclean
+
+test: $(patsubst %.c,%,$(wildcard t/*.c))
+
+%.o: %.c
+	${VECHO_CC}
+	${Q}${CC} ${CFLAGS} ${SOCFLAGS} ${DEPFLAGS} -c -o $@ $<;
+
+t/%: t/%.c
+	${VECHO_CC}
+	${Q}${CC} ${CFLAGS} ${DEPFLAGS} ${LDFLAGS} -L$$PWD -Wl,-rpath,$$PWD \
+		-o $@ $< -lHX -lm;
+
+#
+#	INSTALL
+#
+ifeq (${INSTALL_MODE},unix)
+install: libHX.so.${SO_VER} libHX.a
+	install -dm0755 ${DESTDIR}${INCLUDEDIR};
+	install -dm0755 ${DESTDIR}${LIBDIR};
+	install -pm0644 libHX.h ${DESTDIR}${INCLUDEDIR}/;
+	install -pm0755 libHX.so.${SO_VER} ${DESTDIR}${LIBDIR}/;
+	ln -fs libHX.so.${SO_VER} ${DESTDIR}${LIBDIR}/libHX.so;
+	${STRIP} ${DESTDIR}/libHX.so;
+
+uninstall:
+	rm -f ${DESTDIR}${INCLUDEDIR}/libHX.h \
+		${DESTDIR}${LIBDIR}/libHX.so{,.${SO_VER}};
+
+endif
+
+#
+#	CLEAN
+#
+tclean:
+	rm -f $(patsubst %.c,%,$(wildcard t/*.c));
+
+clean: tclean
+	rm -f *.a *.dll *.o *.so libHX.so.${SO_VER};
+
+distclean: clean tclean
+	rm -f .*.d;
+
+-include .*.d

@@ -1,0 +1,85 @@
+===============================================================================
+dir - Unified directory access                                       2005-11-12
+
+
+DESCRIPTION
+
+    The HXdir interface provides unique Linux-style access to directory
+    functions on Linux, BSD, Win32 and DOS.
+
+SYNOPSIS
+
+    #include <libHX.h>
+
+    void *HXdir_open(const char *dir);
+    char *HXdir_read(void *handle);
+    void HXdir_close(void *handle);
+
+    enum {
+        HXF_UID  = 1 << 0,
+        HXF_GID  = 1 << 1,
+        HXF_KEEP = 1 << 2,
+    };
+
+    int HX_copy_file(const char *SRC, const char *DEST,
+      unsigned long OPTS, ...);
+    int HX_copy_dir(const char *SRC, const char *DEST,
+      unsigned long OPTS, ...);
+    long HX_get_umask(void);
+    int HX_mkdir(const char *DIR, unsigned long OPTS);
+    int HX_rrmdir(const char *DIR);
+
+
+    The functions stated above behave as the Linux opendir(), readdir()
+    and closedir(), hiding ugly techniques of DOS and M$ Windows.
+
+
+HXdir_open()
+
+    The HXdir_open() function returns a pointer to a private area or NULL
+    upon failure. errno is preserved from the underlying system calls.
+
+
+HXdir_read()
+
+    The HXdir_read() function traverses the entries in a directory,
+    unsorted, or yet, as they appear in the file list chain. It returns a
+    pointer to a static char field, containing the file name. When you
+    want to use that name over multiple HXdir_read() calls, you have to
+    copy it somewhere else before. ("The data returned by HXdir_read() is
+    overwritten by subsequent calls to HXdir_read() for the same directory
+    handle.") On end-of-directory, NULL is returned and errno is set to 0.
+    Upon error, errno is non-zero.
+
+
+HXdir_close()
+
+    The HXdir_close() function closes the directory stream associated with
+    the pointer passed. Returns nothing, but errno may get set by the
+    system calls.
+
+
+HX_copy_dir()
+
+
+HX_copy_file()
+
+
+HX_mkdir()
+
+    HX_mkdir() attemps to create a directory named dir, including the
+    creation of all its parents, if they do not exist yet. Details see
+    mkdir(2). On success, 1 is returned. On error, 0 or -errno is returned
+    and errno is set, if the error was due to a system call.
+
+
+HX_rrmdir()
+
+    HX_rrmdir() attempts to delete a directory, recursively, that is, this
+    function is the doing the same as `rm -Rf`. It unlinks all files in
+    any sub-directories, and rmdir()s empty directories. On success, 1 is
+    returned. On error, 0 or -errno is returned and errno is set, if the
+    error was due to a system call.
+
+
+===============================================================================

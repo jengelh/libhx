@@ -1,0 +1,128 @@
+===============================================================================
+deque - Double-ended queue/stack                                     2005-11-03
+
+
+DESCRIPTION
+
+    The HXdeque_*() functions provide an interface to non-circular doubly-linked
+    lists. They serve a handful of purposes all at once:
+
+      * linked lists
+      * stacks (LIFO)
+      * queues (FIFO)
+
+
+SYNOPSIS
+
+    #include <libHX.h>
+
+    struct HXdeque {
+        ...;
+        struct HXdeque_node *first, *last;
+        unsigned long flags, itemcount;
+        void *ptr; // your private data
+        ...;
+    };
+
+    struct HXdeque_node {
+        ...;
+        struct HXdeque_node *Next, *Prev;
+        void *ptr;
+        ...;
+    };
+
+    struct HXdeque *HXdeque_init(unsigned long FLAGS);
+
+    struct HXdeque_node *HXdeque_push(struct HXdeque *STACK, void *PTR);
+    void *HXdeque_pop(struct HXdeque *STACK);
+    struct HXdeque_node *HXdeque_unshift(struct HXdeque *STACK, void *PTR);
+    void *HXdeque_shift(struct HXdeque *STACK);
+
+    struct HXdeque_node *HXdeque_dup(struct HXdeque *STACK);
+    struct HXdeque_node *HXdeque_rdup(struct HXdeque *STACK);
+
+    int HXdeque_up(struct HXdeque_node *OBJ);
+    int HXdeque_down(struct HXdeque_node *OBJ);
+
+    struct HXdeque_node *HXdeque_find(struct HXdeque *STACK, void *PTR);
+    void *HXdeque_del(struct HXdeque *STACK, void *PTR);
+    int HXdeque_free(struct HXdeque *STACK);
+
+
+HXdeque_init()
+
+    Initializes a new linked list and returns a pointer to the structure.
+
+
+HXdeque_push()
+
+    Adds ptr to the end of the list.
+
+
+HXdeque_pop()
+
+    Removes the last item from the list ("the top of the stack") and
+    returns it.
+
+
+HXdeque_unshift()
+
+    Adds ptr to the beginning of the list.
+
+
+HXdeque_shift()
+
+    Removes the first item from the list and returns it.
+
+
+HXdeque_dup()
+
+    Duplicates the object on top of the stack in that it pops it off and pushes
+    it twice. (Though the code really "reads" the topmost item and pushes that
+    once.)
+
+
+HXdeque_rdup()
+
+    The same as HXdeque_dup(), with the exception that the operation is
+    performed at the bottom of the stack (start of list).
+
+
+HXdeque_up()
+
+    Moves the node specified by obj one to the right (in terms of linked
+    lists), or one up (stacks). Returns 1 if it was successfully moved, or 0 if
+    it already was at the end.
+
+
+HXdeque_down()
+
+    Moves the node specified by obj one to the left, or, respectively, one
+    down. Returns 1 for success, or 0 if it already was at the beginning of
+    the list.
+
+
+HXdeque_find()
+
+    Searches for the node which contains ptr, and does so by beginning at the
+    start of the list.
+
+
+HXdeque_rfind()
+
+    Searches for the node which contains ptr, and does so by beginning at the
+    end of the list and making its way through to the beginning using the .Prev
+    field.
+
+
+HXdeque_del()
+
+    Deletes the node specified by obj.
+
+
+HXdeque_free()
+
+    Destroys the linked list/stack.
+
+
+===============================================================================

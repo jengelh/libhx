@@ -1,0 +1,40 @@
+===============================================================================
+rand - unified random number interface                               2005-04-17
+
+
+DESCRIPTION
+
+    The purpose of HX_rand is to transparently use /dev/urandom if possible.
+    (And otherwise fallback to libc rand()).
+
+
+SYNOPSIS
+
+    #include <libHX.h>
+
+    void *HX_rand_init(void);
+    int HX_rand(void);
+    unsigned int HX_irand(unsigned int LO, unsigned int HI);
+
+
+HX_rand_init()
+
+    Initializes the random number generator.
+
+
+HX_rand()
+
+    Retrieve the next random number, which is between [including] 0 and
+    [not including] 2**(sizeof(int)*8-1). This is different than libc's
+    rand() which returns a number between 0 and the RAND_MAX macro. I do
+    not know what rand() defines for RAND_MAX in a 64-bit environment for
+    example, but HX_rand() will generate a number >= 0 and <
+    0x8000_0000_0000_0000 on 64-bit.
+
+
+HX_irand()
+
+    Provided for the ease of use. Returns a number n in lo <= n < hi.
+
+
+===============================================================================
