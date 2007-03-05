@@ -20,7 +20,7 @@ ifeq (${INSTALL_MODE},unix)
 install: libHX.so.${SO_VER} libHX.a
 	install -dm0755 ${DESTDIR}${INCLUDEDIR};
 	install -dm0755 ${DESTDIR}${LIBDIR};
-	install -pm0644 libHX.h ${DESTDIR}${INCLUDEDIR}/;
+	install -pm0644 src/libHX.h ${DESTDIR}${INCLUDEDIR}/;
 	install -pm0755 libHX.so.${SO_VER} ${DESTDIR}${LIBDIR}/;
 	ln -fs libHX.so.${SO_VER} ${DESTDIR}${LIBDIR}/libHX.so;
 	${STRIP} ${DESTDIR}/libHX.so;
@@ -38,9 +38,9 @@ tclean:
 	rm -f $(patsubst %.c,%,$(wildcard t/*.c));
 
 clean: tclean
-	rm -f *.a *.dll *.o *.so libHX.so.${SO_VER};
+	rm -f *.a *.dll src/*.o *.so libHX.so.${SO_VER};
 
 distclean: clean tclean
-	rm -f .*.d;
+	rm -f src/.*.d;
 
--include .*.d
+-include src/.*.d

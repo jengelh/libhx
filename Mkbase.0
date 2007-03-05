@@ -45,4 +45,6 @@ ifeq (${PROF},1)
 endif
 
 SO_VER := 0.10
-OBJS   := arbtree.o deque.o dir.o format.o hmc.o opt.o other.o rand.o string.o
+OBJS   := $(addprefix src/,\
+          arbtree.o deque.o dir.o format.o hmc.o opt.o other.o \
+          rand.o string.o)
