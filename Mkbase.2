@@ -35,12 +35,12 @@ endif
 #	CLEAN
 #
 tclean:
-	rm -f $(patsubst %.c,%,$(wildcard t/*.c));
+	rm -f $(patsubst %.c,%,$(wildcard t/*.c)) t/*.o;
 
 clean: tclean
 	rm -f *.a *.dll src/*.o *.so libHX.so.${SO_VER};
 
 distclean: clean tclean
-	rm -f src/.*.d;
+	rm -f src/.*.d t/.*.d;
 
--include src/.*.d
+-include src/.*.d t/.*.d
