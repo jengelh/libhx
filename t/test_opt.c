@@ -1,9 +1,10 @@
-#include "../libHX.h"
+#include <stdio.h>
+#include <libHX.h>
 
 static void cbf(const struct HXoptcb *cbi)
 {
-    printf("%s was called... with \"%s\"/'%c'\n", __FUNCTION__,
-     cbi->tln, cbi->tsh);
+	printf("%s was called... with \"%s\"/'%c'\n", __FUNCTION__,
+	       cbi->tln, cbi->tsh);
 }
 
 static int v = 0, mask = 0;
@@ -47,11 +48,11 @@ static struct HXoption table[] = {
 
 int main(int argc, const char **argv)
 {
-    printf("Return value of HX_getopt: %d\n",
-           HX_getopt(table, &argc, &argv, HXOPT_USAGEONERR));
-    printf("Either-or is: %s\n", eitheror[dst]);
-    printf("values: D=%lf I=%d L=%ld S=%s\n", kdbl, kint, klong, kstr);
-    printf("Verbosity level: %d\n", v);
-    printf("Mask: 0x%08X\n", mask);
-    return 0;
+	printf("Return value of HX_getopt: %d\n",
+	       HX_getopt(table, &argc, &argv, HXOPT_USAGEONERR));
+	printf("Either-or is: %s\n", eitheror[dst]);
+	printf("values: D=%lf I=%d L=%ld S=%s\n", kdbl, kint, klong, kstr);
+	printf("Verbosity level: %d\n", v);
+	printf("Mask: 0x%08X\n", mask);
+	return 0;
 }

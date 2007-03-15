@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../libHX.h"
+#include <libHX.h>
 
 static int tree_height(struct HXbtree_node *);
 static void walk_tree(struct HXbtree_node *, char *, size_t);

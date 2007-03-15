@@ -1,5 +1,6 @@
 #include <sys/types.h>
-#include "../libHX.h"
+#include <stdio.h>
+#include <libHX.h>
 
 int main(void)
 {
