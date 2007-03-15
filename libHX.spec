@@ -32,7 +32,7 @@ A library for:
 %install
 b="%buildroot";
 rm -Rf "$b";
-make install;
+make install DESTDIR="$b";
 
 %post
 %run_ldconfig
