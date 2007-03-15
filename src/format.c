@@ -97,5 +97,3 @@ EXPORT_SYMBOL int HXformat_fprintf(struct HXbtree *table, FILE *filp,
 {
 }
 */
-
-//=============================================================================

@@ -33,7 +33,6 @@ struct memcont {
 	char data[1];
 };
 
-//-----------------------------------------------------------------------------
 EXPORT_SYMBOL hmc_t *hmc_dup(const void *vp)
 {
 	struct memcont *dst, *src = containerof(vp, struct memcont, data);
@@ -160,7 +159,7 @@ EXPORT_SYMBOL hmc_t *hmc_strins(hmc_t **vp, long pos, const char *s)
 }
 
 EXPORT_SYMBOL hmc_t *hmc_memins(hmc_t **vp, long pos, const void *ptr,
-  long len)
+    long len)
 {
 	struct memcont *ctx = containerof(*vp, struct memcont, data);
 	long nl = ctx->length + len;
@@ -201,5 +200,3 @@ EXPORT_SYMBOL void hmc_free(hmc_t *vp)
 	free(ctx);
 	return;
 }
-
-//=============================================================================
