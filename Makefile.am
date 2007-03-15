@@ -1,0 +1,3 @@
+AUTOMAKE_OPTIONS = foreign
+SUBDIRS = src t
+AM_CFLAGS = @AM_CFLAGS@

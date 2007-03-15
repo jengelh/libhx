@@ -1,6 +1,6 @@
 
 Name:           libHX
-Version:        1.9.4
+Version:        1.10
 Release:        jen0
 Group:          System/Libraries
 URL:            http://jengelh.hopto.org/f/%name/
@@ -27,14 +27,12 @@ A library for:
 %setup
 
 %build
-./Mk EXT_CFLAGS="$RPM_OPT_FLAGS" DEBUG=0;
+%configure
 
 %install
 b="%buildroot";
 rm -Rf "$b";
-./Mk ROOT="$b" PREFIX="/usr" LIBDIR="%_libdir" install;
-install -dm0755 "$b/%_docdir";
-cp -av doc "$b/%_docdir/%name";
+make install;
 
 %post
 %run_ldconfig
@@ -47,8 +45,7 @@ rm -Rf "%buildroot";
 
 %files
 %defattr(-,root,root)
-%_libdir/libHX.so.0.10
-%_libdir/libHX.so
+%_libdir/libHX.so*
 %_includedir/libHX.h
 %docdir %_docdir/%name
 %_docdir/%name
