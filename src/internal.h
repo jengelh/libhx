@@ -18,11 +18,13 @@
 #	include "uxcompat.h"
 #	define snprintf _snprintf
 #endif
-#if defined(__GNUC__) && __GNUC__ >= 4
+
+#ifdef HAVE_VISIBILITY_HIDDEN
 #	define EXPORT_SYMBOL __attribute__((visibility("default")))
 #else
 #	define EXPORT_SYMBOL
 #endif
+
 #ifndef O_BINARY
 #	define O_BINARY 0
 #endif
