@@ -140,21 +140,21 @@ EXPORT_SYMBOL int HXformat_aprintf(struct HXbtree *table, hmc_t **resultp,
 			hmc_memcat(&out, last, current - last);
 		if(*current == '\0')
 			break;
-		if(*(current+1) != '{' /* } */) {
+		if(*(current+1) != '(' /* ) */) {
 			hmc_strcat(&out, "%");
 			last = current + 2;
 			continue;
 		}
 
-		current += 2; /* skip % and opening brace */
+		current += 2; /* skip % and opening parenthesis */
 		if(HXformat_read_modifiers(table, &current, dq) < 0)
 			goto out;
 
 		key = HXformat_read_key(&current);
 		if((entry = HXbtree_get(table, key)) == NULL) {
-			hmc_strcat(&out, "%{");
+			hmc_strcat(&out, "%(");
 			hmc_strcat(&out, key);
-			hmc_strcat(&out, "}");
+			hmc_strcat(&out, ")");
 		} else {
 			HXformat_transform(&out, dq, entry);
 		}
@@ -164,7 +164,7 @@ EXPORT_SYMBOL int HXformat_aprintf(struct HXbtree *table, hmc_t **resultp,
 				hmc_free(mod->arg);
 
 		hmc_free(key);
-		last = current + 1; /* closing brace */
+		last = current + 1; /* closing parenthesis */
 	}
 
 	HXdeque_free(dq);
@@ -221,10 +221,10 @@ static const char *HXformat_read_modifier_arg(struct HXbtree *table,
     const char *data, struct modifier *m)
 {
 	const char *quote = strchr(data, '\"');
-	const char *brace = strchr(data, /* { */ '}');
+	const char *brace = strchr(data, /* ( */ ')');
 
 	if(quote == NULL || (brace != NULL && quote > brace)) {
-		fprintf(stderr, "%s: Malformed %%{} specifier\n", __func__);
+		fprintf(stderr, "%s: Malformed %%() specifier\n", __func__);
 		return data;
 	}
 
@@ -282,7 +282,7 @@ static hmc_t *HXformat_read_key(const char **pptr)
 	hmc_t *ret = NULL;
 
 	while(idx < len && idx < MAX_KEY_SIZE && ptr[idx] != '\0' &&
-	  strchr(/* { */ "\t\n\v }", ptr[idx]) == NULL)
+	  strchr(/* ( */ "\t\n\v )", ptr[idx]) == NULL)
 		++idx;
 
 	hmc_memasg(&ret, ptr, idx);
