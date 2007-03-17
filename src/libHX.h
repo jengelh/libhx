@@ -185,7 +185,7 @@ void hmc_free(hmc_t *);
 enum {
 	/* .type */
 	HXTYPE_NONE = 0,
-	HXTYPE_VAL,
+	HXTYPE_IVAL,
 	HXTYPE_SVAL,
 	HXTYPE_BOOL,  /* read bool string and put it into (int *)x */
 	HXTYPE_BYTE,  /* read *one byte* and put it into (char *)x */

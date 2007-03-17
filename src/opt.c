@@ -600,7 +600,7 @@ static void do_assign(struct HXoptcb *cbi)
             CALL_CB;
             break;
         }
-        case HXTYPE_VAL:
+        case HXTYPE_IVAL:
             *static_cast(int *, opt->ptr) = cbi->l = opt->val;
             CALL_CB;
             break;
@@ -789,7 +789,7 @@ static inline char *shell_unescape(char *o)
 static inline unsigned int takes_void(unsigned int t)
 {
     t &= HXOPT_TYPEMASK;
-    return t == HXTYPE_NONE || t == HXTYPE_VAL || t == HXTYPE_SVAL;
+    return t == HXTYPE_NONE || t == HXTYPE_IVAL || t == HXTYPE_SVAL;
 }
 
 //=============================================================================
