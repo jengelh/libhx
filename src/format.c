@@ -366,14 +366,14 @@ static void HXformat_transform(hmc_t **out, struct HXdeque *dq,
 static void HXformat_xfrm_after(hmc_t **x, const char *arg)
 {
 	if(**x != '\0')
-		hmc_strpcat(x, arg);
+		hmc_strcat(x, arg);
 	return;
 }
 
 static void HXformat_xfrm_before(hmc_t **x, const char *arg)
 {
 	if(**x != '\0')
-		hmc_strcat(x, arg);
+		hmc_strpcat(x, arg);
 	return;
 }
 
