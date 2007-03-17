@@ -18,9 +18,7 @@
 
 /* Functions */
 static inline unsigned int min_uint(unsigned int, unsigned int);
-static char *replace_xt(char *, size_t, const struct HXoption *);
 
-//-----------------------------------------------------------------------------
 EXPORT_SYMBOL char *HX_basename(const char *s)
 {
 	char *p;
@@ -290,42 +288,7 @@ EXPORT_SYMBOL char *HX_strupper(char *expr)
 	return orig;
 }
 
-//-----------------------------------------------------------------------------
 static inline unsigned int min_uint(unsigned int a, unsigned int b)
 {
 	return (a < b) ? a : b;
 }
-
-static char *replace_xt(char *buf, size_t s, const struct HXoption *mt)
-{
-#define NTYPE(constant, fmt, type) \
-	case (constant): \
-		snprintf(buf, s, (fmt), *(type *)mt->ptr); \
-		break;
-	switch(mt->type) {
-		case HXTYPE_BOOL:
-			snprintf(buf, s, "%s", !!*(int *)mt->ptr ? "yes" : "no");
-			break;
-		NTYPE(HXTYPE_UCHAR,  "%u",   unsigned char);
-		NTYPE(HXTYPE_CHAR,   "%d",   char);
-		NTYPE(HXTYPE_USHORT, "%u",   unsigned short);
-		NTYPE(HXTYPE_SHORT,  "%d",   short);
-		NTYPE(HXTYPE_UINT,   "%u",   unsigned int);
-		NTYPE(HXTYPE_INT,    "%d",   int);
-		NTYPE(HXTYPE_ULONG,  "%lu",  unsigned long);
-		NTYPE(HXTYPE_LONG,   "%ld",  long);
-#ifndef _MSC_VER
-		NTYPE(HXTYPE_ULLONG, "%llu", unsigned long long);
-		NTYPE(HXTYPE_LLONG,  "%lld", long long);
-#endif
-		NTYPE(HXTYPE_FLOAT,  "%f",   float);
-		NTYPE(HXTYPE_DOUBLE, "%f",   double);
-		default:
-			fprintf(stderr, "libHX-strrep: illegal ->type %d\n", mt->type);
-			break;
-	}
-	return buf;
-#undef NTYPE
-}
-
-//=============================================================================
