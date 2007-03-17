@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec autoreconf -i;
+exec autoreconf -fi;
