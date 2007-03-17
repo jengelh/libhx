@@ -185,11 +185,16 @@ void hmc_free(hmc_t *);
 enum {
 	/* .type */
 	HXTYPE_NONE = 0,
+	/* for opt: set specific integer value */
 	HXTYPE_IVAL,
+	/* for opt: set specific string value */
 	HXTYPE_SVAL,
-	HXTYPE_BOOL,  /* read bool string and put it into (int *)x */
-	HXTYPE_BYTE,  /* read *one byte* and put it into (char *)x */
-	HXTYPE_UCHAR, /* read *int* */
+	/* accept a string "yes", "no", "true", "false" and put into *(int*) */
+	HXTYPE_BOOL,
+	/* read _one byte_ and put it into *(char *) */
+	HXTYPE_BYTE,
+	/* read an integer/float (sscanf %d/%o/%x/%f) */
+	HXTYPE_UCHAR,
 	HXTYPE_CHAR,
 	HXTYPE_USHORT,
 	HXTYPE_SHORT,
@@ -201,17 +206,25 @@ enum {
 	HXTYPE_LLONG,
 	HXTYPE_FLOAT,
 	HXTYPE_DOUBLE,
-	HXTYPE_STRING, /* (const char *) */
+	/* read string and put into *(const char **) */
+	HXTYPE_STRING,
 	HXTYPE_STRP, /* (const char **) */
 	HXTYPE_STRDQ,
 
 	/* .type extra flags */
+	/* argument is optional */
 	HXOPT_OPTIONAL = 1 << 6,
+	/* increase pointed variable */
 	HXOPT_INC      = 1 << 7,
+	/* decrease pointed variable */
 	HXOPT_DEC      = 1 << 8,
+	/* negate input first */
 	HXOPT_NOT      = 1 << 9,
+	/* or pointed variable with input */
 	HXOPT_OR       = 1 << 10,
+	/* and pointed variable with input */
 	HXOPT_AND      = 1 << 11,
+	/* xor pointed variable with input */
 	HXOPT_XOR      = 1 << 12,
 
 	HXOPT_LOPMASK2 = HXOPT_OR | HXOPT_AND | HXOPT_XOR,
