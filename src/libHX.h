@@ -150,16 +150,6 @@ static inline void *HX_dlopen(const char *s)
 #endif
 
 /*
- *	FORMAT.C
- */
-struct HXoption;
-extern struct HXbtree *HXformat_init(struct HXoption *);
-extern void HXformat_free(struct HXbtree *);
-extern int HXformat_addk(struct HXbtree *, const char *, const char *);
-extern int HXformat_addp(struct HXbtree *, const char *, unsigned int,
-	const void *);
-
-/*
  *	HMC.C
  */
 typedef char hmc_t;
@@ -178,6 +168,18 @@ hmc_t *hmc_strins(hmc_t **, long, const char *);
 hmc_t *hmc_memins(hmc_t **, long, const void *, long);
 hmc_t *hmc_memdel(hmc_t *, long, long);
 void hmc_free(hmc_t *);
+
+/*
+ *	FORMAT.C
+ */
+struct HXoption;
+extern struct HXbtree *HXformat_init(struct HXoption *);
+extern void HXformat_free(struct HXbtree *);
+extern int HXformat_add(struct HXbtree *, const char *, const void *,
+    unsigned int);
+extern int HXformat_aprintf(struct HXbtree *, hmc_t **, const char *);
+extern int HXformat_sprintf(struct HXbtree *, char *, size_t, const char *);
+extern int HXformat_fprintf(struct HXbtree *, FILE *, const char *);
 
 /*
  *	OPT.C
@@ -226,6 +228,7 @@ enum {
 	HXOPT_AND      = 1 << 11,
 	/* xor pointed variable with input */
 	HXOPT_XOR      = 1 << 12,
+	HXFORMAT_IMMED = 1 << 13,
 
 	HXOPT_LOPMASK2 = HXOPT_OR | HXOPT_AND | HXOPT_XOR,
 	HXOPT_LOPMASK  = HXOPT_LOPMASK2 | HXOPT_NOT,
@@ -328,9 +331,6 @@ extern char *HX_strlower(char *);
 extern size_t HX_strltrim(char *);
 extern char *HX_strmid(const char *, long, long);
 extern size_t HX_strrcspn(const char *, const char *);
-extern hmc_t *HX_strrep(const char *, const struct HXoption *);
-extern char *HX_strrep5(const char *, const struct HXoption *, char *, size_t);
-extern void HX_fstrrep(FILE *, const char *, const struct HXoption *);
 extern char *HX_strrev(char *);
 extern size_t HX_strrtrim(char *);
 extern char *HX_strsep(char **, const char *);

@@ -1,0 +1,26 @@
+===============================================================================
+format - Placeholder transformation                                  2007-03-17
+
+
+DESCRIPTION
+
+    The HXformat interface allows one to expand previously defined
+    %{}-style variables.
+
+SYNOPSIS
+
+    #include <libHX.h>
+
+    struct HXbtree *HXformat_init(void);
+    void HXformat_free(struct HXbtree *VTAB);
+
+    int HXformat_add(struct HXbtree *VTAB, const char *KEY, const void *PTR,
+        unsigned int PTR_TYPE);
+
+    int HXformat_aprintf(struct HXbtree *VTAB, hmc_t **RES, const char *FMT);
+    int HXformat_sprintf(struct HXbtree *VTAB, char *DEST, size_t SIZE,
+        const char *FMT);
+    int HXformat_fprintf(struct HXbtree *VTAB, FILE *FILP, const char *FMT);
+
+
+===============================================================================

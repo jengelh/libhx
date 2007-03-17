@@ -1,5 +1,5 @@
 ===============================================================================
-string - String and memory manipulation functions                    2006-02-25
+string - String and memory manipulation functions                    2007-03-17
 
 
 SYNOPSIS
@@ -17,9 +17,6 @@ SYNOPSIS
     size_t HX_strltrim(char *S);
     char *HX_strmid(const char *EXPR, long OFFSET, long LENGTH);
     char *HX_strncpy(char *DEST, const char *SRC, size_t LENGTH);
-    char *HX_strrep(char *DEST, size_t SIZE, const char *SRC,
-        struct HX_repmap *MAP);
-    void HX_fstrrep(FILE *FP, cosnt char *SRC, struct HX_repmap *MAP);
     char *HX_strrev(char *S);
     size_t HX_strrtrim(char *S);
     char *HX_strsep(char **SP, const char *D);
