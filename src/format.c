@@ -34,6 +34,7 @@ struct modifier {
 };
 
 /* Functions */
+static inline char *HX_strchr0(const char *, char);
 static const char *HXformat_read_modifier_arg(struct HXbtree *, const char *,
 	struct modifier *);
 static int HXformat_read_one_modifier(struct HXbtree *, const char **,
@@ -60,7 +61,7 @@ static const struct modifier_info modifier_list[] = {
 };
 
 //-----------------------------------------------------------------------------
-EXPORT_SYMBOL struct HXbtree *HXformat_init(struct HXoption *kvtab)
+EXPORT_SYMBOL struct HXbtree *HXformat_init(void)
 {
 	struct HXbtree *table;
 	table = HXbtree_init(HXBT_MAP | HXBT_CKEY | HXBT_SCMP | HXBT_CID);
@@ -71,14 +72,15 @@ EXPORT_SYMBOL struct HXbtree *HXformat_init(struct HXoption *kvtab)
 
 EXPORT_SYMBOL void HXformat_free(struct HXbtree *table)
 {
+	const struct HXbtree_node *node;
 	struct fmt_entry *entry;
-	const struct HXbtree_node *nd;
 	void *trav = HXbtrav_init(table);
 
-	while((nd = HXbtraverse(trav)) != NULL) {
-		entry = nd->data;
+	while((node = HXbtraverse(trav)) != NULL) {
+		entry = node->data;
 		if(entry->type == (HXTYPE_STRING | HXFORMAT_IMMED))
 			free(static_cast(void *, entry->ptr));
+		free(entry);
 	}
 
 	HXbtrav_free(trav);
@@ -133,9 +135,11 @@ EXPORT_SYMBOL int HXformat_aprintf(struct HXbtree *table, hmc_t **resultp,
 	if((dq = HXdeque_init()) == NULL)
 		return -errno;
 
-	while((current = strchr(last, '%')) != NULL) {
+	while((current = HX_strchr0(last, '%')) != NULL) {
 		if(current - last > 0)
 			hmc_memcat(&out, last, current - last);
+		if(*current == '\0')
+			break;
 		if(*(current+1) != '{' /* } */) {
 			hmc_strcat(&out, "%");
 			last = current + 2;
@@ -205,6 +209,14 @@ EXPORT_SYMBOL int HXformat_sprintf(struct HXbtree *table, char *dest,
 }
 
 //-----------------------------------------------------------------------------
+static inline char *HX_strchr0(const char *s, char c)
+{
+	char *ret = strchr(s, c);
+	if(ret != NULL)
+		return ret;
+	return const_cast(char *, &s[strlen(s)]);
+}
+
 static const char *HXformat_read_modifier_arg(struct HXbtree *table,
     const char *data, struct modifier *m)
 {

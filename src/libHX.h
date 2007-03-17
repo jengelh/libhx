@@ -173,7 +173,7 @@ void hmc_free(hmc_t *);
  *	FORMAT.C
  */
 struct HXoption;
-extern struct HXbtree *HXformat_init(struct HXoption *);
+extern struct HXbtree *HXformat_init(void);
 extern void HXformat_free(struct HXbtree *);
 extern int HXformat_add(struct HXbtree *, const char *, const void *,
     unsigned int);
