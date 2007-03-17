@@ -11,6 +11,8 @@
 #ifndef LIBHX_INTERNAL_H
 #define LIBHX_INTERNAL_H 1
 
+#include "config.h"
+
 #ifdef __MINGW32__
 #	include "uxcompat.h"
 #endif
