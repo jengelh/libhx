@@ -432,18 +432,6 @@ HXdeque_get(struct HXdeque *dq, void *ptr)
 	return reinterpret_cast<Object>(HXdeque_get(dq, ptr));
 }
 
-template<class Object> static inline Object
-HXdeque_rget(struct HXdeque *dq, void *ptr)
-{
-	return reinterpret_cast<Object>(HXdeque_rget(dq, ptr));
-}
-
-template<class Object> static inline Object
-HXdeque_sget(struct HXdeque *dq, void *ptr)
-{
-	return reinterpret_cast<Object>(HXdeque_sget(dq, ptr));
-}
-
 template<class Object> static inline
 Object HXdeque_del(struct HXdeque_node *nd)
 {
