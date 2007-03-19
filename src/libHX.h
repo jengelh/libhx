@@ -9,7 +9,7 @@
 	see the file named "LICENSE.LGPL2".
 */
 #ifndef _LIBHX_H
-#define _LIBHX_H 20070227
+#define _LIBHX_H 20070319
 
 #ifdef __unix__
 #	ifndef __cplusplus
@@ -136,7 +136,10 @@ extern int HX_rrmdir(const char *);
  */
 #ifdef _WIN32
 #	define HX_dlopen    LoadLibrary
-#	define HX_dlsym     GetProcAddress
+static inline void *HX_dlsym(void *handle, const char *symbol)
+{
+	return GetProcAddress(handle, symbol);
+}
 #	define HX_dlclose   FreeLibrary
 #	define HX_dlerror() "[Error unavailable on WIN32]"
 #else
@@ -144,7 +147,10 @@ static inline void *HX_dlopen(const char *s)
 {
 	return dlopen(s, RTLD_NOW);
 }
-#	define HX_dlsym    dlsym
+static inline void *HX_dlsym(void *handle, const char *symbol)
+{
+	return dlsym(handle, symbol);
+}
 #	define HX_dlclose  dlclose
 #	define HX_dlerror  dlerror
 #endif
@@ -398,50 +404,56 @@ static inline int HX_zveclen(const char **args)
 
 extern "C++" {
 
-template<class Object> static inline Object
+template<typename type> static inline type
 HX_memdup(const void *data, size_t n)
 {
-	return reinterpret_cast<Object>(HX_memdup(data, n));
+	return reinterpret_cast<type>(HX_memdup(data, n));
 }
 
-template<class Object> static inline Object
-HXbtree_get(struct HXbtree *bt, void *ptr)
+template<typename type> static inline type
+HXbtree_get(struct HXbtree *bt, const void *ptr)
 {
-	return reinterpret_cast<Object>(HXbtree_get(bt, ptr));
+	return reinterpret_cast<type>(HXbtree_get(bt, ptr));
 }
 
-template<class Object> static inline Object
-HXbtree_del(struct HXbtree *bt, void *ptr)
+template<typename type> static inline type
+HXbtree_del(struct HXbtree *bt, const void *ptr)
 {
-	return reinterpret_cast<Object>(HXbtree_del(bt, ptr));
+	return reinterpret_cast<type>(HXbtree_del(bt, ptr));
 }
 
-template<class Object> static inline Object HXdeque_pop(struct HXdeque *dq)
+template<typename type> static inline type HXdeque_pop(struct HXdeque *dq)
 {
-	return reinterpret_cast<Object>(HXdeque_pop(dq));
+	return reinterpret_cast<type>(HXdeque_pop(dq));
 }
 
-template<class Object> static inline Object HXdeque_shift(struct HXdeque *dq)
+template<typename type> static inline type HXdeque_shift(struct HXdeque *dq)
 {
-	return reinterpret_cast<Object>(HXdeque_shift(dq));
+	return reinterpret_cast<type>(HXdeque_shift(dq));
 }
 
-template<class Object> static inline Object
-HXdeque_get(struct HXdeque *dq, void *ptr)
+template<typename type> static inline type
+HXdeque_get(struct HXdeque *dq, const void *ptr)
 {
-	return reinterpret_cast<Object>(HXdeque_get(dq, ptr));
+	return reinterpret_cast<type>(HXdeque_get(dq, ptr));
 }
 
-template<class Object> static inline
-Object HXdeque_del(struct HXdeque_node *nd)
+template<typename type> static inline type
+HXdeque_del(struct HXdeque_node *nd)
 {
-	return reinterpret_cast<Object>(HXdeque_del(nd));
+	return reinterpret_cast<type>(HXdeque_del(nd));
 }
 
-template<class Object> static inline
-Object *HXdeque_to_vec(struct HXdeque *dq, long *n)
+template<typename type> static inline type *
+HXdeque_to_vec(struct HXdeque *dq, long *n)
 {
-	return reinterpret_cast<Object *>(HXdeque_to_vec(dq, n));
+	return reinterpret_cast<type *>(HXdeque_to_vec(dq, n));
+}
+
+template<typename type> static inline type
+HX_dlsym(void *handle, const char *symbol)
+{
+	return reinterpret_cast<type>(HX_dlsym(handle, symbol));
 }
 
 } /* extern "C++" */
