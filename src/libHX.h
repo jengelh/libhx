@@ -9,7 +9,7 @@
 	see the file named "LICENSE.LGPL2".
 */
 #ifndef _LIBHX_H
-#define _LIBHX_H 20070319
+#define _LIBHX_H 20070320
 
 #ifdef __unix__
 #	ifndef __cplusplus
@@ -178,7 +178,7 @@ enum {
 	/* .type */
 	HXTYPE_NONE = 0,
 	/* for opt: set specific integer value */
-	HXTYPE_IVAL,
+	HXTYPE_VAL,
 	/* for opt: set specific string value */
 	HXTYPE_SVAL,
 	/* accept a string "yes", "no", "true", "false" and put into *(int*) */
