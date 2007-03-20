@@ -134,26 +134,10 @@ extern int HX_rrmdir(const char *);
 /*
  *	DL.C
  */
-#ifdef _WIN32
-#	define HX_dlopen    LoadLibrary
-static inline void *HX_dlsym(void *handle, const char *symbol)
-{
-	return GetProcAddress(handle, symbol);
-}
-#	define HX_dlclose   FreeLibrary
-#	define HX_dlerror() "[Error unavailable on WIN32]"
-#else
-static inline void *HX_dlopen(const char *s)
-{
-	return dlopen(s, RTLD_NOW);
-}
-static inline void *HX_dlsym(void *handle, const char *symbol)
-{
-	return dlsym(handle, symbol);
-}
-#	define HX_dlclose  dlclose
-#	define HX_dlerror  dlerror
-#endif
+extern void *HX_dlopen(const char *);
+extern void *HX_dlsym(void *, const char *);
+extern void HX_dlclose(void *);
+extern const char *HX_dlerror(void);
 
 /*
  *	HMC.C
