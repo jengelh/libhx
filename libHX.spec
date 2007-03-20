@@ -1,6 +1,6 @@
 
 Name:           libHX
-Version:        1.10
+Version:        1.10.0
 Release:        jen0
 Group:          System/Libraries
 URL:            http://jengelh.hopto.org/f/%name/
@@ -33,6 +33,9 @@ A library for:
 b="%buildroot";
 rm -Rf "$b";
 make install DESTDIR="$b";
+rm -f "$b/%_libdir/libHX.la";
+mkdir -p "$b/%_docdir";
+cp -a doc "$b/%_docdir/%name";
 
 %post
 %run_ldconfig
