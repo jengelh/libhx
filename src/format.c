@@ -309,7 +309,9 @@ static void HXformat_transform(hmc_t **out, struct HXdeque *dq,
 		case HXTYPE_STRING | HXFORMAT_IMMED:
 			hmc_strasg(&wp, entry->ptr);
 			break;
-
+		case HXTYPE_STRP:
+			hmc_strasg(&wp, *static_cast(const char **, entry->ptr));
+			break;
 		case HXTYPE_BOOL:
 			hmc_strasg(&wp, tf[!!*static_cast(const int *,
 			           entry->ptr)]);
