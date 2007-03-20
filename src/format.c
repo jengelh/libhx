@@ -35,12 +35,9 @@ struct modifier {
 
 /* Functions */
 static inline char *HX_strchr0(const char *, char);
-static const char *HXformat_read_modifier_arg(struct HXbtree *, const char *,
-	struct modifier *);
-static int HXformat_read_one_modifier(struct HXbtree *, const char **,
-	struct HXdeque *);
-static int HXformat_read_modifiers(struct HXbtree *, const char **,
-	struct HXdeque *);
+static const char *HXformat_read_modifier_arg(const char *, struct modifier *);
+static int HXformat_read_one_modifier(const char **, struct HXdeque *);
+static int HXformat_read_modifiers(const char **, struct HXdeque *);
 static hmc_t *HXformat_read_key(const char **);
 static void HXformat_transform(hmc_t **, struct HXdeque *,
 	const struct fmt_entry *);
@@ -121,8 +118,8 @@ EXPORT_SYMBOL int HXformat_add(struct HXbtree *table, const char *key,
 	return 1;
 }
 
-EXPORT_SYMBOL int HXformat_aprintf(struct HXbtree *table, hmc_t **resultp,
-    const char *fmt)
+EXPORT_SYMBOL int HXformat_aprintf(const struct HXbtree *table,
+    hmc_t **resultp, const char *fmt)
 {
 	hmc_t *key, *out = hmc_sinit("");
 	const struct fmt_entry *entry;
@@ -147,7 +144,7 @@ EXPORT_SYMBOL int HXformat_aprintf(struct HXbtree *table, hmc_t **resultp,
 		}
 
 		current += 2; /* skip % and opening parenthesis */
-		if(HXformat_read_modifiers(table, &current, dq) < 0)
+		if(HXformat_read_modifiers(&current, dq) < 0)
 			goto out;
 
 		key = HXformat_read_key(&current);
@@ -178,7 +175,7 @@ EXPORT_SYMBOL int HXformat_aprintf(struct HXbtree *table, hmc_t **resultp,
 	return ret;
 }
 
-EXPORT_SYMBOL int HXformat_fprintf(struct HXbtree *table, FILE *filp,
+EXPORT_SYMBOL int HXformat_fprintf(const struct HXbtree *table, FILE *filp,
     const char *fmt)
 {
 	hmc_t *str;
@@ -192,7 +189,7 @@ EXPORT_SYMBOL int HXformat_fprintf(struct HXbtree *table, FILE *filp,
 	return ret;
 }
 
-EXPORT_SYMBOL int HXformat_sprintf(struct HXbtree *table, char *dest,
+EXPORT_SYMBOL int HXformat_sprintf(const struct HXbtree *table, char *dest,
     size_t size, const char *fmt)
 {
 	hmc_t *str;
@@ -217,8 +214,8 @@ static inline char *HX_strchr0(const char *s, char c)
 	return const_cast(char *, &s[strlen(s)]);
 }
 
-static const char *HXformat_read_modifier_arg(struct HXbtree *table,
-    const char *data, struct modifier *m)
+static const char *HXformat_read_modifier_arg(const char *data,
+    struct modifier *m)
 {
 	const char *quote = strchr(data, '\"');
 	const char *brace = strchr(data, /* ( */ ')');
@@ -233,8 +230,8 @@ static const char *HXformat_read_modifier_arg(struct HXbtree *table,
 	return quote + 1;
 }
 
-static int HXformat_read_one_modifier(struct HXbtree *table,
-    const char **pcurrent, struct HXdeque *dq)
+static int HXformat_read_one_modifier(const char **pcurrent,
+    struct HXdeque *dq)
 {
 	const struct modifier_info *mod_ptr = modifier_list;
 	const char *curr = *pcurrent;
@@ -249,7 +246,7 @@ static int HXformat_read_one_modifier(struct HXbtree *table,
 		curr += mod_ptr->length;
 		mnew.transform = mod_ptr->transform;
 		if(mod_ptr->has_arg)
-			curr = HXformat_read_modifier_arg(table, curr, &mnew);
+			curr = HXformat_read_modifier_arg(curr, &mnew);
 		else
 			mnew.arg = NULL;
 
@@ -266,11 +263,10 @@ static int HXformat_read_one_modifier(struct HXbtree *table,
 	return 0;
 }
 
-static int HXformat_read_modifiers(struct HXbtree *table, const char **current,
-    struct HXdeque *dq)
+static int HXformat_read_modifiers(const char **current, struct HXdeque *dq)
 {
 	int ret;
-	while((ret = HXformat_read_one_modifier(table, current, dq)) > 0)
+	while((ret = HXformat_read_one_modifier(current, dq)) > 0)
 		/* noop */;
 	return ret;
 }

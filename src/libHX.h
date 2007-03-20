@@ -167,9 +167,9 @@ extern struct HXbtree *HXformat_init(void);
 extern void HXformat_free(struct HXbtree *);
 extern int HXformat_add(struct HXbtree *, const char *, const void *,
     unsigned int);
-extern int HXformat_aprintf(struct HXbtree *, hmc_t **, const char *);
-extern int HXformat_sprintf(struct HXbtree *, char *, size_t, const char *);
-extern int HXformat_fprintf(struct HXbtree *, FILE *, const char *);
+extern int HXformat_aprintf(const struct HXbtree *, hmc_t **, const char *);
+extern int HXformat_sprintf(const struct HXbtree *, char *, size_t, const char *);
+extern int HXformat_fprintf(const struct HXbtree *, FILE *, const char *);
 
 /*
  *	OPT.C
