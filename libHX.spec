@@ -8,6 +8,7 @@ Summary:        General-purpose library
 License:        LGPL2
 Source:         http://jengelh.hopto.org/f/%name/%name-%version.tar.bz2
 BuildRoot:      %_tmppath/%name-%version-build
+BuildRequires:	gcc-c++ perl
 
 %description
 A library for:
@@ -28,12 +29,15 @@ A library for:
 
 %build
 %configure
+make %{?jobs:-j%jobs};
+perl -i -pe 's/^shouldnotlink=yes/shouldnotlink=no/;' \
+	src/%name.la src/.libs/%name.lai;
 
 %install
 b="%buildroot";
 rm -Rf "$b";
+mkdir "$b";
 make install DESTDIR="$b";
-rm -f "$b/%_libdir/libHX.la";
 mkdir -p "$b/%_docdir";
 cp -a doc "$b/%_docdir/%name";
 
@@ -43,13 +47,10 @@ cp -a doc "$b/%_docdir/%name";
 %postun
 %run_ldconfig
 
-%clean
-rm -Rf "%buildroot";
-
 %files
 %defattr(-,root,root)
-%_libdir/libHX.so*
-%_includedir/libHX.h
+%_libdir/%{name}*
+%_includedir/%{name}*
 %docdir %_docdir/%name
 %_docdir/%name
 
