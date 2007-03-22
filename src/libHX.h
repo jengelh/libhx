@@ -11,18 +11,13 @@
 #ifndef _LIBHX_H
 #define _LIBHX_H 20070320
 
-#ifdef __unix__
-#	ifndef __cplusplus
-#		include <stdarg.h>
-#	else
-#		include <cstdarg>
-#	endif
-#endif
 #ifndef __cplusplus
+#	include <stdarg.h>
 #	include <stdio.h>
 #	include <stdlib.h>
 #	include <string.h>
 #else
+#	include <cstdarg>
 #	include <cstdio>
 #	include <cstdlib>
 #	include <cstring>
