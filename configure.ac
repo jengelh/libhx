@@ -10,9 +10,11 @@ AM_PROG_LIBTOOL
 
 m4_sinclude(m4lib/gcc4_visibility.m4)
 AC_HAVE_HEADERS(alloca.h)
-AM_CFLAGS="-D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
+AC_HAVE_LIBRARY([-ldl], [AC_LDLIBS="-ldl"])
+AC_CFLAGS="-D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
 	-D_REENTRANT -Wall -Waggregate-return -Wmissing-declarations \
 	-Wmissing-prototypes -Wredundant-decls -Wshadow -Wstrict-prototypes \
 	-Winline -pipe"
-AC_SUBST(AM_CFLAGS)
+AC_SUBST(AC_CFLAGS)
+AC_SUBST(AC_LDLIBS)
 AC_OUTPUT(Makefile src/Makefile t/Makefile)
