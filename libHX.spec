@@ -28,6 +28,7 @@ A library for:
 %setup
 
 %build
+./autogen.sh;
 %configure
 make %{?jobs:-j%jobs};
 perl -i -pe 's/^shouldnotlink=yes/shouldnotlink=no/;' \
