@@ -156,7 +156,7 @@ EXPORT_SYMBOL int HX_copy_dir(const char *src, const char *dest,
 {
 	void *dt = HXdir_open(src);
 	long uid = -1, gid = -1;
-	char *fn;
+	const char *fn;
 
 	if(dt == NULL)
 		return 0;
@@ -246,8 +246,8 @@ EXPORT_SYMBOL int HX_mkdir(const char *idir)
 EXPORT_SYMBOL int HX_rrmdir(const char *dir)
 {
 	struct HXdir *ptr;
+	const char *trav;
 	hmc_t *fn = NULL;
-	char *trav;
 	int ret = 0;
 
 	if((ptr = HXdir_open(dir)) == NULL)
