@@ -9,7 +9,7 @@
 	see the file named "LICENSE.LGPL2".
 */
 #ifndef _LIBHX_H
-#define _LIBHX_H 20070320
+#define _LIBHX_H 20070330
 
 #ifndef __cplusplus
 #	include <stdarg.h>
