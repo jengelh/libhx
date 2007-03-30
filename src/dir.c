@@ -16,6 +16,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,7 +35,11 @@ struct HXdir {
 	unsigned long n;
 #else
 	DIR *ptr;
-	struct dirent dentry;
+	union {
+		struct dirent dentry;
+		char extender[NAME_MAX + sizeof(struct dirent) - 
+			sizeof(static_cast(struct dirent *, NULL)->d_name)];
+	};
 #endif
 };
 
