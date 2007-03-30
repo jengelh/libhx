@@ -37,7 +37,7 @@ struct HXdir {
 	DIR *ptr;
 	union {
 		struct dirent dentry;
-		char extender[NAME_MAX + sizeof(struct dirent) - 
+		char extender[_POSIX_PATH_MAX + sizeof(struct dirent) - 
 			sizeof(static_cast(struct dirent *, NULL)->d_name)];
 	};
 #endif
