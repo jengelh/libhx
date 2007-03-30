@@ -69,7 +69,7 @@ EXPORT_SYMBOL void *HXdir_open(const char *s)
 	return NULL;
 }
 
-EXPORT_SYMBOL char *HXdir_read(void *dv)
+EXPORT_SYMBOL const char *HXdir_read(void *dv)
 {
 	struct HXdir *d = dv;
 	if(d == NULL)

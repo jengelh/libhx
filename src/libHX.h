@@ -119,7 +119,7 @@ enum {
 };
 
 extern void *HXdir_open(const char *);
-extern char *HXdir_read(void *);
+extern const char *HXdir_read(void *);
 extern void HXdir_close(void *);
 extern int HX_copy_dir(const char *, const char *, unsigned long, ...);
 extern int HX_copy_file(const char *, const char *, unsigned long, ...);
