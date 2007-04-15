@@ -60,8 +60,8 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned long opts, ...)
 		return NULL;
 
 	memset(btree, 0, sizeof(struct HXbtree));
-	btree->opts      = opts;
-	btree->itemcount = 0;
+	btree->opts  = opts;
+	btree->items = 0;
 
 	/*
 	 * This should not be zero, otherwise the traverser functions will not
@@ -69,7 +69,7 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned long opts, ...)
 	 * equal btree->transact because that would mean the traverser is in
 	 * sync with the tree.
 	 */
-	btree->transact = 1;
+	btree->tid = 1;
 
 	if(opts & HXBT_CMPFN)     btree->cmpfn = va_arg(argp, void *);
 	else if(opts & HXBT_SCMP) btree->cmpfn = static_cast(void *, strcmp);
@@ -150,7 +150,7 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 	node->s[P_LEFT] = node->s[P_RIGHT] = NULL;
 	node->color = NODE_RED;
 	path[depth - 1]->s[dir[depth - 1]] = node;
-	++btree->itemcount;
+	++btree->items;
 
 	/* New node, push data into it */
 	if(btree->opts & HXBT_MAP) {
@@ -171,7 +171,7 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 		 * Read: the tree height is >= 2. Thus we need to rebalance if
 		 * the new node's parent is also red.
 		 */
-		++btree->transact;
+		++btree->tid;
 		btree_amov(path, dir, depth);
 	}
 
@@ -233,8 +233,8 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 	itemptr = node->data;
 
 	/* Removal of the node from the tree */
-	--btree->itemcount;
-	++btree->transact;
+	--btree->items;
+	++btree->tid;
 
 	path[depth] = node;
 	if(node->s[P_RIGHT] == NULL)
@@ -294,7 +294,7 @@ EXPORT_SYMBOL void *HXbtrav_init(const struct HXbtree *btree)
 EXPORT_SYMBOL struct HXbtree_node *HXbtraverse(void *in)
 {
 	struct HXbtrav *travp = in;
-	if(travp->tid != travp->tree->transact || travp->current == NULL)
+	if(travp->tid != travp->tree->tid || travp->current == NULL)
 		/*
 		 * Every HXbtree operation that significantly changes the
 		 * B-tree, increments @transact so we can decide here to
@@ -426,7 +426,7 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 		btrav_checkpoint(trav, trav->current);
 	}
 
-	trav->tid = btree->transact;
+	trav->tid = btree->tid;
 	if(go_next)
 		return btrav_next(trav);
 	else

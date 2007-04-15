@@ -72,9 +72,9 @@ static void test_3(void)
 static void test_4(void)
 {
 	double min, max;
-	min = log(btree->itemcount + 1) / log(2);
-	max = 2 * log(btree->itemcount + 1) / log(2);
-	printf("Test #4: Height check (item count: %lu)\n", btree->itemcount);
+	min = log(btree->items + 1) / log(2);
+	max = 2 * log(btree->items + 1) / log(2);
+	printf("Test #4: Height check (item count: %lu)\n", btree->items);
 	printf("\t" "Minimum height: %f\n", min);
 	printf("\t" "Average height: %f\n",
 	       log((pow(2, min) + pow(2, max)) / 2) / log(2));
@@ -163,7 +163,7 @@ static void test_8(void)
 	}
 
 	HXbtrav_free(travp);
-	printf("\t" "Elements: %lu (should be 0)\n", btree->itemcount);
+	printf("\t" "Elements: %lu (should be 0)\n", btree->items);
 	printf("\t" "Root: %p (should be NIL/NULL/0)\n", btree->root);
 	return;
 }
@@ -191,12 +191,12 @@ static void test_10(void)
 		hg = tree_height(btree->root);
 
 		printf("\t" "IN=%6d  MIN=%2f  HG=%2d  MAX=%2f\n",
-		       i, log(btree->itemcount + 1) / log(2), hg,
-		       2 * log(btree->itemcount + 1));
+		       i, log(btree->items + 1) / log(2), hg,
+		       2 * log(btree->items + 1));
 	}
 
-	printf("\t" "Objects in the tree: %lu\n", btree->itemcount);
-	if(btree->itemcount != i - 1)
+	printf("\t" "Objects in the tree: %lu\n", btree->items);
+	if(btree->items != i - 1)
 		printf("...failed\n");
 	return;
 }
@@ -255,7 +255,7 @@ static void test_12(void)
 		if((n & 0xFFFFF) != 0)
 			continue;
 		hg = tree_height(btree->root);
-		printf("\t%lu objects, height %d\n", btree->itemcount, hg);
+		printf("\t%lu objects, height %d\n", btree->items, hg);
 		if(hg == 64)
 			break;
 	}

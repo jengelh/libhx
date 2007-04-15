@@ -9,7 +9,7 @@
 	see the file named "LICENSE.LGPL2".
 */
 #ifndef _LIBHX_H
-#define _LIBHX_H 20070330
+#define _LIBHX_H 20070415
 
 #ifndef __cplusplus
 #	include <stdarg.h>
@@ -65,8 +65,8 @@ struct HXbtree_node {
 
 struct HXbtree {
 	struct HXbtree_node *root;
-	unsigned long opts, itemcount;
-	unsigned int transact;
+	unsigned long opts, items;
+	unsigned int tid;
 	int (*cmpfn)(const void *, const void *);
 	void *uptr;
 };
@@ -92,7 +92,7 @@ struct HXdeque_node {
 
 struct HXdeque {
 	struct HXdeque_node *first, *last;
-	unsigned long itemcount;
+	unsigned long items;
 	void *ptr;
 };
 

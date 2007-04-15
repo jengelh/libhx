@@ -44,7 +44,7 @@ EXPORT_SYMBOL struct HXdeque_node *HXdeque_push(struct HXdeque *dq,
 		dq->last = nd;
 	}
 
-	++dq->itemcount;
+	++dq->items;
 	return nd;
 }
 
@@ -72,7 +72,7 @@ EXPORT_SYMBOL struct HXdeque_node *HXdeque_unshift(struct HXdeque *dq,
 
 	dq->first->prev = nd;
 	dq->first = nd;
-	++dq->itemcount;
+	++dq->items;
 	return nd;
 }
 
@@ -95,7 +95,7 @@ EXPORT_SYMBOL void *HXdeque_del(struct HXdeque_node *node)
 {
 	void *ret = node->ptr;
 	HXdeque_drop(node->parent, node);
-	--node->parent->itemcount;
+	--node->parent->items;
 	free(node);
 	return ret;
 }
@@ -148,7 +148,7 @@ EXPORT_SYMBOL void **HXdeque_to_vec(struct HXdeque *dq, long *num)
 {
 	struct HXdeque_node *trav;
 	void **ret, **p;
-	if((ret = malloc((dq->itemcount + 1) * sizeof(void *))) == NULL)
+	if((ret = malloc((dq->items + 1) * sizeof(void *))) == NULL)
 		return NULL;
 
 	p = ret;
@@ -157,7 +157,7 @@ EXPORT_SYMBOL void **HXdeque_to_vec(struct HXdeque *dq, long *num)
 	*p = NULL;
 
 	if(num != NULL)
-		*num = dq->itemcount;
+		*num = dq->items;
 	return ret;
 }
 
