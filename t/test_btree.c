@@ -214,29 +214,6 @@ static void test_9(void)
 
 static void test_10(void)
 {
-	int i;
-	printf("Test #10: Worst case fill-up with tree height check\n");
-	btree = HXbtree_init(0);
-
-	for(i = 1; i <= 65536; ++i) {
-		int hg;
-
-		HXbtree_add(btree, (void *)i);
-		hg = tree_height(btree->root);
-
-		printf("\t" "IN=%6d  MIN=%2f  HG=%2d  MAX=%2f\n",
-		       i, log(btree->items + 1) / log(2), hg,
-		       2 * log(btree->items + 1));
-	}
-
-	printf("\t" "Objects in the tree: %lu\n", btree->items);
-	if(btree->items != i - 1)
-		printf("...failed\n");
-	return;
-}
-
-static void test_11(void)
-{
 	/*
 	                8
 	          .----' `----.
@@ -250,7 +227,7 @@ static void test_11(void)
 		18, 22, 26, 30, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25,
 		27, 29, 31, 0};
 	const long *t = targets;
-	printf("Test #11: Creating ordered tree with 15 elements (hg 4)\n"
+	printf("Test #10: Creating ordered tree with 15 elements (hg 4)\n"
 	       "\tand testing right-end walking\n");
 	btree = HXbtree_init(HXBT_ICMP);
 
@@ -276,12 +253,12 @@ static void test_11(void)
 	return;
 }
 
-static void test_12(void)
+static void test_11(void)
 {
 	unsigned long n;
 	int hg;
 
-	printf("Test #12: Tree height expansion check\n");
+	printf("Test #11: Tree height expansion check\n");
 	btree = HXbtree_init(HXBT_ICMP);
 
 	timer_start();
@@ -299,12 +276,12 @@ static void test_12(void)
 	return;
 }
 
-static void test_13(void)
+static void test_12(void)
 {
 	unsigned long n;
 	int i;
 
-	printf("Test #13: Lookup speed\n");
+	printf("Test #12: Lookup speed\n");
 	for(i = 0; i < 5; ++i) {
 		timer_start();
 		for(n = btree->items; n >= 1; --n)
@@ -319,7 +296,8 @@ int main(void)
 {
 	setvbuf(stdout, NULL, _IOLBF, 0);
 	setvbuf(stderr, NULL, _IOLBF, 0);
-	test_1();
+
+	test_1(); /* allocates */
 	test_2();
 	test_3();
 	test_4();
@@ -328,13 +306,12 @@ int main(void)
 	test_7();
 	test_8();
 	test_9();
-	//test_10();
+	test_10();
 	HXbtree_free(btree);
 	printf("Freeing tree: With a memory debugger, check the leaks now.\n");
+
 	test_11();
-	HXbtree_free(btree);
 	test_12();
-	test_13();
 	HXbtree_free(btree);
 	return EXIT_SUCCESS;
 }
