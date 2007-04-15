@@ -15,8 +15,8 @@
 #include "libHX.h"
 
 enum {
-	P_LEFT        = 0,
-	P_RIGHT,
+	S_LEFT        = 0,
+	S_RIGHT,
 	NODE_RED      = 0,
 	NODE_BLACK,
 	HXBT_FLAGS_OK = HXBT_MAP | HXBT_CKEY | HXBT_CDATA | HXBT_CMPFN |
@@ -55,7 +55,7 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned long opts, ...)
 	va_start(argp, opts);
 
 	BUILD_BUG_ON(offsetof(struct HXbtree, root) +
-	             offsetof(struct HXbtree_node, s[0]) !=
+	             offsetof(struct HXbtree_node, sub[0]) !=
 	             offsetof(struct HXbtree, root));
 
 	if(opts & ~HXBT_FLAGS_OK)
@@ -116,8 +116,8 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 	node = btree->root;
 
 	while(node != NULL) {
-		int way = btree->cmpfn(key, node->key);
-		if(way == 0) {
+		int res = btree->cmpfn(key, node->key);
+		if(res == 0) {
 			if(!(btree->opts & HXBT_MAP)) {
 				errno = EEXIST;
 				return NULL;
@@ -137,10 +137,10 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 			return node;
 		}
 
-		way          = way > 0;
+		res          = res > 0;
 		path[depth]  = node;
-		dir[depth++] = way;
-		node         = node->s[way];
+		dir[depth++] = res;
+		node         = node->sub[res];
 	}
 
 	if((node = malloc(sizeof(struct HXbtree_node))) == NULL)
@@ -151,9 +151,9 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 	 * (each simple path has the same number of black nodes), it is colored
 	 * red so that below we only need to check for rule 1 violations.
 	 */
-	node->s[P_LEFT] = node->s[P_RIGHT] = NULL;
+	node->sub[S_LEFT] = node->sub[S_RIGHT] = NULL;
 	node->color = NODE_RED;
-	path[depth - 1]->s[dir[depth - 1]] = node;
+	path[depth - 1]->sub[dir[depth - 1]] = node;
 	++btree->items;
 
 	/* New node, push data into it */
@@ -187,12 +187,12 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_find(const struct HXbtree *btree,
     const void *key)
 {
 	struct HXbtree_node *node = btree->root;
-	int way;
+	int res;
 
 	while(node != NULL) {
-		if((way = btree->cmpfn(key, node->key)) == 0)
+		if((res = btree->cmpfn(key, node->key)) == 0)
 			return node;
-		node = node->s[way > 0];
+		node = node->sub[res > 0];
 	}
 
 	return NULL;
@@ -221,13 +221,13 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 	node         = btree->root;
 
 	while(node != NULL) {
-		int way = btree->cmpfn(key, node->key);
-		if(way == 0)
+		int res = btree->cmpfn(key, node->key);
+		if(res == 0)
 			break;
-		way          = way > 0;
+		res          = res > 0;
 		path[depth]  = node;
-		dir[depth++] = way;
-		node         = node->s[way];
+		dir[depth++] = res;
+		node         = node->sub[res];
 	}
 
 	if(node == NULL) {
@@ -241,12 +241,12 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 	++btree->tid;
 
 	path[depth] = node;
-	if(node->s[P_RIGHT] == NULL)
+	if(node->sub[S_RIGHT] == NULL)
 		/*
 		 * Case 1: P (@node) has no right child, in which case it can
 		 * simply be replaced by its left subtree.
 		 */
-		path[depth - 1]->s[dir[depth - 1]] = node->s[P_LEFT];
+		path[depth - 1]->sub[dir[depth - 1]] = node->sub[S_LEFT];
 	else
 		/* Cases 2 and 3; Updates @node (through @path[depth]). */
 		depth = btree_del(path, dir, depth);
@@ -331,26 +331,26 @@ static void btrav_checkpoint(struct HXbtrav *travp,
 
 static struct HXbtree_node *btrav_next(struct HXbtrav *trav)
 {
-	if(trav->current->s[P_RIGHT] != NULL) {
+	if(trav->current->sub[S_RIGHT] != NULL) {
 		/* Got a right child */
 		struct HXbtree_node *node;
-		trav->dir[trav->depth++] = P_RIGHT;
-		node = trav->current->s[P_RIGHT];
+		trav->dir[trav->depth++] = S_RIGHT;
+		node = trav->current->sub[S_RIGHT];
 
 		/* Which might have left childs (our inorder successors!) */
 		while(node != NULL) {
 			trav->path[trav->depth] = node;
-			node = node->s[P_LEFT];
-			trav->dir[trav->depth++] = P_LEFT;
+			node = node->sub[S_LEFT];
+			trav->dir[trav->depth++] = S_LEFT;
 		}
 		trav->current = trav->path[--trav->depth];
 	} else if(trav->depth == 0) {
 		/* No right child, no more parents */
 		return trav->current = NULL;
-	} else if(trav->dir[trav->depth - 1] == P_LEFT) {
+	} else if(trav->dir[trav->depth - 1] == S_LEFT) {
 		/* We are the left child of the parent, move on to parent */
 		trav->current = trav->path[--trav->depth];
-	} else if(trav->dir[trav->depth - 1] == P_RIGHT) {
+	} else if(trav->dir[trav->depth - 1] == S_RIGHT) {
 		/*
 		 * There is no right child, and we are the right child of the
 		 * parent, so move on to the next inorder node (a distant
@@ -361,7 +361,7 @@ static struct HXbtree_node *btrav_next(struct HXbtrav *trav)
 			if(trav->depth == 0)
 				/* No more parents */
 				return trav->current = NULL;
-			if(trav->dir[trav->depth - 1] != P_RIGHT)
+			if(trav->dir[trav->depth - 1] != S_RIGHT)
 				break;
 			--trav->depth;
 		}
@@ -390,24 +390,24 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 		/* Walk down the tree to the smallest element */
 		while(node != NULL) {
 			trav->path[trav->depth] = node;
-			node = node->s[P_LEFT];
-			trav->dir[trav->depth++] = P_LEFT;
+			node = node->sub[S_LEFT];
+			trav->dir[trav->depth++] = S_LEFT;
 		}
 	} else {
 		/* Search for the specific node to rebegin traversal at */
-		int found = 0, way;
+		int found = 0, res;
 
 		while(node != NULL) {
 			trav->path[trav->depth] = node;
-			way = btree->cmpfn(trav->checkpoint, node->key);
-			if(way == 0) {
+			res = btree->cmpfn(trav->checkpoint, node->key);
+			if(res == 0) {
 				++trav->depth;
 				++found;
 				break;
 			}
-			way = way > 0;
-			trav->dir[trav->depth++] = way;
-			node = node->s[way];
+			res = res > 0;
+			trav->dir[trav->depth++] = res;
+			node = node->sub[res];
 		}
 
 		if(found) {
@@ -449,7 +449,7 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 	 */
 	while(depth >= 3 && path[depth - 1]->color == NODE_RED) {
 		unsigned char LR = dir[depth - 2];
-		y = path[depth - 2]->s[!LR];
+		y = path[depth - 2]->sub[!LR];
 
 		if(y != NULL && y->color == NODE_RED) {
 			/*
@@ -473,10 +473,10 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 			 * rotate is done at @x to transform it into a case 2.
 			 */
 			x = path[depth - 1];
-			y = x->s[!LR];
-			x->s[!LR] = y->s[LR];
-			y->s[LR]  = x;
-			path[depth - 2]->s[LR] = y;
+			y = x->sub[!LR];
+			x->sub[!LR] = y->sub[LR];
+			y->sub[LR]  = x;
+			path[depth - 2]->sub[LR] = y;
 		}
 
 		/*
@@ -486,9 +486,9 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 		 * from @x) root color. (@x is the root before, @y after the
 		 * rotate.) */
 		x = path[depth - 2];
-		x->s[LR]  = y->s[!LR];
-		y->s[!LR] = x;
-		path[depth - 3]->s[dir[depth - 3]] = y;
+		x->sub[LR]  = y->sub[!LR];
+		y->sub[!LR] = x;
+		path[depth - 3]->sub[dir[depth - 3]] = y;
 		x->color   = NODE_RED;
 		y->color   = NODE_BLACK;
 		break;
@@ -500,10 +500,10 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 static size_t btree_del(struct HXbtree_node **path, unsigned char *dir,
     size_t depth)
 {
-	struct HXbtree_node *s, *p = path[depth], *r = p->s[P_RIGHT];
+	struct HXbtree_node *s, *p = path[depth], *r = p->sub[S_RIGHT];
 	unsigned char cl;
 
-	if(r->s[P_LEFT] != NULL) {
+	if(r->sub[S_LEFT] != NULL) {
 		/*
 		 * Case 2A: @p's right child @r has a left child. Search for
 		 * the inordner node @s and move it to @p's position.
@@ -512,18 +512,18 @@ static size_t btree_del(struct HXbtree_node **path, unsigned char *dir,
 
 		while(1) {
 			path[depth]  = r;
-			dir[depth++] = P_LEFT;
-			if((s = r->s[P_LEFT])->s[P_LEFT] == NULL)
+			dir[depth++] = S_LEFT;
+			if((s = r->sub[S_LEFT])->sub[S_LEFT] == NULL)
 				break;
 			r = s;
 		}
 
 		path[spos] = s;
-		dir[spos]  = P_RIGHT;
-		path[spos - 1]->s[dir[spos - 1]] = s;
-		s->s[P_LEFT]  = p->s[P_LEFT];
-		r->s[P_LEFT]  = s->s[P_RIGHT];
-		s->s[P_RIGHT] = p->s[P_RIGHT];
+		dir[spos]  = S_RIGHT;
+		path[spos - 1]->sub[dir[spos - 1]] = s;
+		s->sub[S_LEFT]  = p->sub[S_LEFT];
+		r->sub[S_LEFT]  = s->sub[S_RIGHT];
+		s->sub[S_RIGHT] = p->sub[S_RIGHT];
 
 		/*
 		 * The only purpose of keeping the old color (afterwards in
@@ -541,13 +541,13 @@ static size_t btree_del(struct HXbtree_node **path, unsigned char *dir,
 	 * right subtree is pulled up and placed where @p was. @r will get @p's
 	 * left subtree.
 	 */
-	r->s[P_LEFT] = p->s[P_LEFT];
+	r->sub[S_LEFT] = p->sub[S_LEFT];
 	cl = r->color;
 	r->color = p->color;
 	p->color = cl;
-	path[depth - 1]->s[dir[depth - 1]] = r;
+	path[depth - 1]->sub[dir[depth - 1]] = r;
 	path[depth]  = r;
-	dir[depth++] = P_RIGHT;
+	dir[depth++] = S_RIGHT;
 	return depth;
 }
 
@@ -558,7 +558,7 @@ static void btree_dmov(struct HXbtree_node **path, unsigned char *dir,
 
 	while(1) {
 		unsigned char LR = dir[depth - 1];
-		x = path[depth - 1]->s[LR];
+		x = path[depth - 1]->sub[LR];
 
 		if(x != NULL && x->color == NODE_RED) {
 			/* Case 1: */
@@ -570,7 +570,7 @@ static void btree_dmov(struct HXbtree_node **path, unsigned char *dir,
 			break;
 
 		/* @w is the sibling of @x (the current node). */
-		w = path[depth - 1]->s[!LR];
+		w = path[depth - 1]->sub[!LR];
 		if(w->color == NODE_RED) {
 			/*
 			 * Extra case: @w is of color red. In order to collapse
@@ -579,41 +579,41 @@ static void btree_dmov(struct HXbtree_node **path, unsigned char *dir,
 			 */
 			w->color = NODE_BLACK;
 			path[depth - 1]->color = NODE_RED;
-			path[depth - 1]->s[!LR] = w->s[LR];
-			w->s[LR] = path[depth - 1];
-			path[depth - 2]->s[dir[depth - 2]] = w;
+			path[depth - 1]->sub[!LR] = w->sub[LR];
+			w->sub[LR] = path[depth - 1];
+			path[depth - 2]->sub[dir[depth - 2]] = w;
 			path[depth] = path[depth - 1];
 			dir[depth]  = LR;
 			path[depth - 1] = w;
-			w = path[++depth - 1]->s[!LR];
+			w = path[++depth - 1]->sub[!LR];
 			/* 2A, 3AA, 3B */
 		}
 
-		if((w->s[LR] == NULL || w->s[LR]->color == NODE_BLACK) &&
-		  (w->s[!LR] == NULL || w->s[!LR]->color == NODE_BLACK)) {
+		if((w->sub[LR] == NULL || w->sub[LR]->color == NODE_BLACK) &&
+		  (w->sub[!LR] == NULL || w->sub[!LR]->color == NODE_BLACK)) {
 			/* Case 2: @w has no red children. */
 			w->color = NODE_RED;
 			--depth;
 			continue;
 		}
 
-		if(w->s[!LR] == NULL || w->s[!LR]->color == NODE_BLACK) {
+		if(w->sub[!LR] == NULL || w->sub[!LR]->color == NODE_BLACK) {
 			/* Case 3A: @w's LR child is red */
-			struct HXbtree_node *y = w->s[LR];
+			struct HXbtree_node *y = w->sub[LR];
 			y->color = NODE_BLACK;
 			w->color = NODE_RED;
-			w->s[LR] = y->s[!LR];
-			y->s[!LR] = w;
-			w = path[depth - 1]->s[!LR] = y;
+			w->sub[LR] = y->sub[!LR];
+			y->sub[!LR] = w;
+			w = path[depth - 1]->sub[!LR] = y;
 		}
 
 		/* Case 3: @w's !LR child is red */
 		w->color = path[depth - 1]->color;
 		path[depth - 1]->color = NODE_BLACK;
-		w->s[!LR]->color = NODE_BLACK;
-		path[depth - 1]->s[!LR] = w->s[LR];
-		w->s[LR] = path[depth - 1];
-		path[depth - 2]->s[dir[depth - 2]] = w;
+		w->sub[!LR]->color = NODE_BLACK;
+		path[depth - 1]->sub[!LR] = w->sub[LR];
+		w->sub[LR] = path[depth - 1];
+		path[depth - 2]->sub[dir[depth - 2]] = w;
 		break;
 	}
 	return;
@@ -628,10 +628,10 @@ static void btree_free_dive(const struct HXbtree *btree,
 	 * deletion with HXbtree_del(). Since this functions is meant to free
 	 * it all, it does not need to care about rebalancing.
 	 */
-	if(node->s[P_LEFT] != NULL)
-		btree_free_dive(btree, node->s[P_LEFT]);
-	if(node->s[P_RIGHT] != NULL)
-		btree_free_dive(btree, node->s[P_RIGHT]);
+	if(node->sub[S_LEFT] != NULL)
+		btree_free_dive(btree, node->sub[S_LEFT]);
+	if(node->sub[S_RIGHT] != NULL)
+		btree_free_dive(btree, node->sub[S_RIGHT]);
 
 	if(btree->opts & HXBT_MAP) {
 		if(btree->opts & HXBT_CKEY)

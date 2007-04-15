@@ -343,27 +343,27 @@ int main(void)
 static int tree_height(struct HXbtree_node *node)
 {
 	int a = 1, b = 1;
-	if(node->s[0] != NULL)
-		a += tree_height(node->s[0]);
-	if(node->s[1] != NULL)
-		b += tree_height(node->s[1]);
+	if(node->sub[0] != NULL)
+		a += tree_height(node->sub[0]);
+	if(node->sub[1] != NULL)
+		b += tree_height(node->sub[1]);
 	return (a > b) ? a : b;
 }
 
 static void walk_tree(struct HXbtree_node *node, char *buf, size_t s)
 {
-	int hc = node->s[0] != NULL || node->s[1] != NULL;
+	int hc = node->sub[0] != NULL || node->sub[1] != NULL;
 	HX_strlcat(buf, node->key, s);
 
 	if(node->color == 1)
 		HX_strlcat(buf, "%b", s);
 	if(hc)
 		HX_strlcat(buf, "(" /* ) */, s);
-	if(node->s[0] != NULL)
-		walk_tree(node->s[0], buf, s);
-	if(node->s[1] != NULL) {
+	if(node->sub[0] != NULL)
+		walk_tree(node->sub[0], buf, s);
+	if(node->sub[1] != NULL) {
 		HX_strlcat(buf, ",", s);
-		walk_tree(node->s[1], buf, s);
+		walk_tree(node->sub[1], buf, s);
 	}
 	if(hc)
 		HX_strlcat(buf, /* ( */ ")", s);
@@ -372,7 +372,7 @@ static void walk_tree(struct HXbtree_node *node, char *buf, size_t s)
 
 static long walk_tree_i(struct HXbtree_node *node, char *buf, size_t s)
 {
-	int hc = node->s[0] != NULL || node->s[1] != NULL;
+	int hc = node->sub[0] != NULL || node->sub[1] != NULL;
 	char num[32];
 	int spc = 0;
 
@@ -386,11 +386,11 @@ static long walk_tree_i(struct HXbtree_node *node, char *buf, size_t s)
 		HX_strlcat(buf, "(" /* ) */, s);
 		++spc;
 	}
-	if(node->s[0] != NULL)
-		spc += walk_tree_i(node->s[0], buf, s);
-	if(node->s[1] != NULL) {
+	if(node->sub[0] != NULL)
+		spc += walk_tree_i(node->sub[0], buf, s);
+	if(node->sub[1] != NULL) {
 		HX_strlcat(buf, ",", s);
-		spc += 1 + walk_tree_i(node->s[1], buf, s);
+		spc += 1 + walk_tree_i(node->sub[1], buf, s);
 	}
 	if(hc) {
 		HX_strlcat(buf, /* ( */ ")", s);

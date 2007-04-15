@@ -58,7 +58,7 @@ enum {
 };
 
 struct HXbtree_node {
-	struct HXbtree_node *s[2];
+	struct HXbtree_node *sub[2];
 	void *key, *data;
 	unsigned char color;
 };
