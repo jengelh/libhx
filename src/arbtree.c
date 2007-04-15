@@ -54,6 +54,10 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned long opts, ...)
 	va_list argp;
 	va_start(argp, opts);
 
+	BUILD_BUG_ON(offsetof(struct HXbtree, root) +
+	             offsetof(struct HXbtree_node, s[0]) !=
+	             offsetof(struct HXbtree, root));
+
 	if(opts & ~HXBT_FLAGS_OK)
 		fprintf(stderr, "libHX-btree warning: unknown flags passed!\n");
 	if((btree = malloc(sizeof(struct HXbtree))) == NULL)

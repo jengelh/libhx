@@ -64,11 +64,11 @@ struct HXbtree_node {
 };
 
 struct HXbtree {
-	struct HXbtree_node *root;
-	unsigned long opts, items;
-	unsigned int tid;
 	int (*cmpfn)(const void *, const void *);
 	void *uptr;
+	struct HXbtree_node *root;
+	unsigned long items, opts;
+	unsigned int tid;
 };
 
 extern struct HXbtree *HXbtree_init(unsigned long, ...);
@@ -85,15 +85,17 @@ extern void HXbtrav_free(void *);
  *	DEQUE.C
  */
 struct HXdeque_node {
-	struct HXdeque_node *next, *prev;
-	struct HXdeque *parent;
+	struct HXdeque_node *next;
 	void *ptr;
+	struct HXdeque *parent;
+	struct HXdeque_node *prev;
 };
 
 struct HXdeque {
-	struct HXdeque_node *first, *last;
-	unsigned long items;
+	struct HXdeque_node *first;
 	void *ptr;
+	unsigned long items;
+	struct HXdeque_node *last;
 };
 
 extern struct HXdeque *HXdeque_init(void);

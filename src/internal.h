@@ -37,4 +37,15 @@
 #define static_cast(type, expr)      ((type)(expr))
 #define reinterpret_cast(type, expr) ((type)(expr))
 
+#ifndef offsetof
+#	define offsetof(type, member) \
+		reinterpret_cast(long, &(static_cast(type *, NULL)->member))
+#endif
+#ifndef containerof
+#	define containerof(var, type, member) reinterpret_cast(type *, \
+		reinterpret_cast(const char *, var) - offsetof(type, member))
+#endif
+
+#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2 * !!(condition)]))
+
 #endif /* LIBHX_INTERNAL_H */

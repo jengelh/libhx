@@ -1,3 +1,4 @@
+#include <sys/time.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -11,8 +12,41 @@ static long walk_tree_i(struct HXbtree_node *, char *, size_t);
 
 static const char *const Color[] = {"RED", "BLACK"};
 static struct HXbtree *btree;
+static struct timeval tv_start;
 
 //-----------------------------------------------------------------------------
+static inline void timer_start(void)
+{
+	gettimeofday(&tv_start, NULL);
+	printf("Timer started at %ld.%06ld\n",
+	       tv_start.tv_sec, tv_start.tv_usec);
+	return;
+}
+
+static inline void timer_end(void)
+{
+	struct timeval tv_end, delta;
+	unsigned long sec;
+	long acc;
+
+	gettimeofday(&tv_end, NULL);
+	printf("Timer ended at: %ld.%06ld\n",
+	       tv_end.tv_sec, tv_start.tv_usec);
+
+	sec = tv_end.tv_sec  - tv_start.tv_sec;
+	acc = tv_end.tv_usec - tv_start.tv_usec;
+	if(acc < 0) {
+		delta.tv_sec  = sec - 1;
+		delta.tv_usec = 1000000 + acc;
+	} else {
+		delta.tv_sec  = sec;
+		delta.tv_usec = acc;
+	}
+
+	printf("Timer difference: %ld.%06ld\n", delta.tv_sec, delta.tv_usec);
+	return;
+}
+
 static void test_1(void)
 {
 	/*
@@ -244,21 +278,40 @@ static void test_11(void)
 
 static void test_12(void)
 {
-	uint32_t n;
+	unsigned long n;
 	int hg;
 
 	printf("Test #12: Tree height expansion check\n");
 	btree = HXbtree_init(HXBT_ICMP);
 
+	timer_start();
 	for(n = 1; n != 0; ++n) {
-		HXbtree_add(btree, (const void *)(long)n);
+		HXbtree_add(btree, (const void *)n);
 		if((n & 0xFFFFF) != 0)
 			continue;
 		hg = tree_height(btree->root);
 		printf("\t%lu objects, height %d\n", btree->items, hg);
-		if(hg == 64)
+		if(hg == 47)
 			break;
 	}
+	timer_end();
+
+	return;
+}
+
+static void test_13(void)
+{
+	unsigned long n;
+	int i;
+
+	printf("Test #13: Lookup speed\n");
+	for(i = 0; i < 5; ++i) {
+		timer_start();
+		for(n = btree->items; n >= 1; --n)
+			HXbtree_find(btree, (const void *)n);
+		timer_end();
+	}
+
 	return;
 }
 
@@ -281,6 +334,7 @@ int main(void)
 	test_11();
 	HXbtree_free(btree);
 	test_12();
+	test_13();
 	HXbtree_free(btree);
 	return EXIT_SUCCESS;
 }

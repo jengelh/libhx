@@ -13,15 +13,6 @@
 #include <string.h>
 #include "libHX.h"
 
-#ifndef offsetof
-#	define offsetof(type, member) \
-		reinterpret_cast(long, &(static_cast(type *, NULL)->member))
-#endif
-#ifndef containerof
-#	define containerof(var, type, member) reinterpret_cast(type *, \
-		reinterpret_cast(const char *, var) - offsetof(type, member))
-#endif
-
 #define HMC_IDENT 0x200571AF
 #define CHECK_IDENT(c) \
 	if((c)->id != HMC_IDENT) \
