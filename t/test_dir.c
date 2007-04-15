@@ -4,7 +4,7 @@
 int main(void)
 {
 	void *d = HXdir_open("/tmp");
-	char *n;
+	const char *n;
 
 	printf("Available files in /tmp:\n");
 	while((n = HXdir_read(d)) != NULL)
