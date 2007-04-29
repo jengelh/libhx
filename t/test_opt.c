@@ -4,7 +4,7 @@
 static void cbf(const struct HXoptcb *cbi)
 {
 	printf("%s was called... with \"%s\"/'%c'\n", __FUNCTION__,
-	       cbi->tln, cbi->tsh);
+	       cbi->current->ln, cbi->current->sh);
 }
 
 static int v = 0, mask = 0;

@@ -135,9 +135,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
                 break;
             }
 
-            cbi.tln = key;
-            cbi.tsh = 0;
-
             if(takes_void(cbi.current->type)) {
                 cbi.s = NULL;
             } else if(cbi.current->type & HXOPT_OPTIONAL) {
@@ -187,8 +184,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
                 break;
             }
 
-            cbi.tln = key;
-            cbi.tsh = 0;
             cbi.s   = value;
             do_assign(&cbi);
 
@@ -217,9 +212,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
                 ret = E_SHORT_UNKNOWN;
                 break;
             }
-
-            cbi.tln = NULL;
-            cbi.tsh = *shstr;
 
             if(takes_void(cbi.current->type)) {
                 // -A
@@ -535,7 +527,6 @@ EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
         if((cbi.current = lookup_long(table, key)) == NULL)
             continue;
 
-        cbi.tln = key;
         cbi.s   = val;
         do_assign(&cbi);
 

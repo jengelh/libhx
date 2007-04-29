@@ -22,20 +22,18 @@ enum {
 	HXBT_FLAGS_OK = HXBT_MAP | HXBT_CKEY | HXBT_CDATA | HXBT_CMPFN |
 	                HXBT_ICMP | HXBT_SCMP | HXBT_CID,
 
-	/* This allows up to roughly 32 million objects */
+	/* Allow for a worst-case tree with max. 16 million objects */
 	BT_MAXDEP     = 48,
 };
 
 struct HXbtrav {
 	const struct HXbtree *tree;
-	/* saved tree transaction count */
-	unsigned int tid;
-	/* last visited node */
-	struct HXbtree_node *current;
+	struct HXbtree_node *current; /* last visited node */
 	char *checkpoint;
-
-	struct HXbtree_node *path[BT_MAXDEP];
-	unsigned char dir[BT_MAXDEP], depth;
+	struct HXbtree_node *path[BT_MAXDEP]; /* stored path */
+	unsigned char dir[BT_MAXDEP];
+	unsigned int tid; /* last seen btree transaction */
+	unsigned char depth;
 };
 
 static void btrav_checkpoint(struct HXbtrav *, const struct HXbtree_node *);

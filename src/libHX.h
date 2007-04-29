@@ -9,7 +9,7 @@
 	see the file named "LICENSE.LGPL2".
 */
 #ifndef _LIBHX_H
-#define _LIBHX_H 20070415
+#define _LIBHX_H 20070429
 
 #ifndef __cplusplus
 #	include <stdarg.h>
@@ -67,8 +67,8 @@ struct HXbtree {
 	int (*cmpfn)(const void *, const void *);
 	void *uptr;
 	struct HXbtree_node *root;
-	unsigned long items, opts;
-	unsigned int tid;
+	unsigned int items, tid;
+	unsigned char opts;
 };
 
 extern struct HXbtree *HXbtree_init(unsigned long, ...);
@@ -163,7 +163,7 @@ struct HXoption;
 extern struct HXbtree *HXformat_init(void);
 extern void HXformat_free(struct HXbtree *);
 extern int HXformat_add(struct HXbtree *, const char *, const void *,
-    unsigned int);
+	unsigned int);
 extern int HXformat_aprintf(const struct HXbtree *, hmc_t **, const char *);
 extern int HXformat_sprintf(const struct HXbtree *, char *, size_t, const char *);
 extern int HXformat_fprintf(const struct HXbtree *, FILE *, const char *);
@@ -241,10 +241,10 @@ struct HXoptcb {
 	const char *arg0;
 	const struct HXoption *table, *current;
 	const char *s;
-	double d;
-	long l;
-	const char *tln;
-	char tsh;
+	union {
+		double d;
+		long l;
+	};
 };
 
 struct HXoption {

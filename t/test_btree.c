@@ -90,7 +90,7 @@ static void test_3(void)
 	HXbtree_add(btree, "e", NULL);
 	walk_tree(btree->root, buf, sizeof(buf));
 	if(strcmp(buf, "d%b(b%b(a,c),g(f%b(e),h%b))") != 0)
-	    printf("...failed\n");
+		printf("...failed\n");
 
 	/*      d
 	      /   \
@@ -108,7 +108,7 @@ static void test_4(void)
 	double min, max;
 	min = log(btree->items + 1) / log(2);
 	max = 2 * log(btree->items + 1) / log(2);
-	printf("Test #4: Height check (item count: %lu)\n", btree->items);
+	printf("Test #4: Height check (item count: %u)\n", btree->items);
 	printf("\t" "Minimum height: %f\n", min);
 	printf("\t" "Average height: %f\n",
 	       log((pow(2, min) + pow(2, max)) / 2) / log(2));
@@ -125,8 +125,8 @@ static void test_5(void)
 	printf("Test #5: Standard traverse\n");
 	travp = HXbtrav_init(btree);
 	while((node = HXbtraverse(travp)) != NULL)
-	    printf("\t" "key: %s (%s)\n", (const char *)node->key,
-	           Color[node->color]);
+		printf("\t" "key: %s (%s)\n", (const char *)node->key,
+		       Color[node->color]);
 	HXbtrav_free(travp);
 	return;
 }
@@ -197,7 +197,7 @@ static void test_8(void)
 	}
 
 	HXbtrav_free(travp);
-	printf("\t" "Elements: %lu (should be 0)\n", btree->items);
+	printf("\t" "Elements: %u (should be 0)\n", btree->items);
 	printf("\t" "Root: %p (should be NIL/NULL/0)\n", btree->root);
 	return;
 }
@@ -267,7 +267,7 @@ static void test_11(void)
 		if((n & 0xFFFFF) != 0)
 			continue;
 		hg = tree_height(btree->root);
-		printf("\t%lu objects, height %d\n", btree->items, hg);
+		printf("\t%u objects, height %d\n", btree->items, hg);
 		if(hg == 47)
 			break;
 	}
@@ -278,7 +278,7 @@ static void test_11(void)
 
 static void test_12(void)
 {
-	unsigned long n;
+	unsigned int n;
 	int i;
 
 	printf("Test #12: Lookup speed\n");

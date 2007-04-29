@@ -24,6 +24,7 @@ struct memcont {
 	char data[1];
 };
 
+//-----------------------------------------------------------------------------
 EXPORT_SYMBOL hmc_t *hmc_dup(const void *vp)
 {
 	struct memcont *dst, *src = containerof(vp, struct memcont, data);
