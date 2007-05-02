@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 
-noinst_PROGRAMS    = btseq test_btree test_dir test_format test_hpp \
-                     test_multiline test_opt test_str test_strncat test_strsep
+noinst_PROGRAMS    = test_btree test_dir test_format test_hpp test_multiline \
+                     test_opt test_str test_strncat test_strsep
 AM_CFLAGS          = $(AC_CFLAGS) -I$(top_srcdir)/src
 AM_CXXFLAGS        = -Wall -pipe -I$(top_srcdir)/src
 AM_LDFLAGS         = ../src/libHX.la
