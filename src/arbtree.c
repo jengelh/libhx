@@ -392,11 +392,13 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 			trav->dir[trav->depth++] = S_LEFT;
 		}
 	} else {
-		/* Search for the specific node to rebegin traversal at */
-		int found = 0, res;
+		/* Search for the specific node to rebegin traversal at. */
+		const struct HXbtree_node *newpath[BT_MAXDEP];
+		unsigned char newdir[BT_MAXDEP];
+		int found = 0, newdepth = 0, res;
 
 		while(node != NULL) {
-			trav->path[trav->depth] = node;
+			newpath[newdepth] = trav->path[trav->depth] = node;
 			res = btree->cmpfn(trav->checkpoint, node->key);
 			if(res == 0) {
 				++trav->depth;
@@ -405,6 +407,27 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 			}
 			res = res > 0;
 			trav->dir[trav->depth++] = res;
+
+			/*
+			 * This (working) code gets 1st place in being totally
+			 * cryptic without comments, so here goes:
+			 *
+			 * Right turns do not need to be saved, because we do
+			 * not need to stop at that particular node again but
+			 * can go directly to the next in-order successor,
+			 * which must be a parent somewhere upwards where we
+			 * did a left turn. If we only ever did right turns,
+			 * we would be at the last node already.
+			 *
+			 * Imagine a 32-element perfect binary tree numbered
+			 * from 1..32, and walk to 21 (directions: RLRL).
+			 * The nodes stored are 24 and 22. btrav_next will
+			 * go to 22, do 23, then jump _directly_ back to 24,
+			 * omitting the redundant check at 20.
+			 */
+			if (res == S_LEFT)
+				newdir[newdepth++] = S_LEFT;
+
 			node = node->sub[res];
 		}
 
@@ -415,11 +438,21 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 			 * (Code needs to come after @current assignment.)
 			 */
 			go_next = 1;
+		} else {
+			/*
+			 * If the node travp->current is actually deleted (@res
+			 * will never be 0 above), traversal re-begins at the
+			 * next inorder node, which happens to be the last node
+			 * we turned left at.
+			 */
+			memcpy(trav->path, newpath, sizeof(trav->path));
+			memcpy(trav->dir, newdir, sizeof(trav->dir));
+			trav->depth = newdepth;
 		}
 	}
 
 	if(trav->depth == 0) {
-		/* no elements */
+		/* no more elements */
 		trav->current = NULL;
 	} else {
 		trav->current = trav->path[--trav->depth];
