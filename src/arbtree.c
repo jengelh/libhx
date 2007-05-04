@@ -473,7 +473,7 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 	 * even if not referenced in the code) is red, so the parent may not
 	 * be.
 	 */
-	while(depth >= 3 && path[depth - 1]->color == NODE_RED) {
+	do {
 		unsigned char LR = dir[depth - 2];
 		y = path[depth - 2]->sub[!LR];
 
@@ -519,7 +519,7 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 		y->color   = NODE_BLACK;
 		++*tid;
 		break;
-	}
+	} while(depth >= 3 && path[depth - 1]->color == NODE_RED);
 
 	return;
 }
