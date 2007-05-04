@@ -39,7 +39,8 @@ struct HXbtrav {
 static void btrav_checkpoint(struct HXbtrav *, const struct HXbtree_node *);
 static struct HXbtree_node *btrav_next(struct HXbtrav *);
 static struct HXbtree_node *btrav_rewalk(struct HXbtrav *);
-static void btree_amov(struct HXbtree_node **, const unsigned char *, size_t);
+static void btree_amov(struct HXbtree_node **, const unsigned char *, size_t,
+	unsigned int *);
 static size_t btree_del(struct HXbtree_node **, unsigned char *, size_t);
 static void btree_dmov(struct HXbtree_node **, unsigned char *, size_t);
 static void btree_free_dive(const struct HXbtree *, struct HXbtree_node *);
@@ -168,14 +169,8 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 			node->key = node->data = const_cast(void *, key);
 	}
 
-	if(depth >= 3 && path[depth - 1]->color == NODE_RED) {
-		/*
-		 * Read: the tree height is >= 2. Thus we need to rebalance if
-		 * the new node's parent is also red.
-		 */
-		++btree->tid;
-		btree_amov(path, dir, depth);
-	}
+	if(depth >= 3 && path[depth - 1]->color == NODE_RED)
+		btree_amov(path, dir, depth, &btree->tid);
 
 	btree->root->color = NODE_BLACK;
 	return node;
@@ -469,7 +464,7 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 }
 
 static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
-    size_t depth)
+    size_t depth, unsigned int *tid)
 {
 	struct HXbtree_node *x, *y;
 
@@ -522,6 +517,7 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 		path[depth - 3]->sub[dir[depth - 3]] = y;
 		x->color   = NODE_RED;
 		y->color   = NODE_BLACK;
+		++*tid;
 		break;
 	}
 
