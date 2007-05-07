@@ -21,16 +21,15 @@ static inline unsigned int min_uint(unsigned int, unsigned int);
 
 EXPORT_SYMBOL char *HX_basename(const char *s)
 {
-	char *p;
+	const char *p;
 	if((p = strrchr(s, '/')) != NULL)
-		return p + 1;
-	return (char *)s;
+		return const_cast(char *, p + 1);
+	return const_cast(char *, s);
 }
 
 EXPORT_SYMBOL char *HX_chomp(char *s)
 {
-	size_t len = strlen(s);
-	char *p = s + len - 1;
+	char *p = s + strlen(s) - 1;
 	while(p >= s) {
 		if(*p != '\n' && *p != '\r')
 			break;
@@ -46,7 +45,7 @@ EXPORT_SYMBOL char *HX_dirname(const char *s)
 		return HX_strdup(".");
 
 	dir = HX_strdup(s);
-	*(strrchr(dir, '/')) = '\0';
+	*strrchr(dir, '/') = '\0';
 	return dir;
 }
 
@@ -54,22 +53,21 @@ EXPORT_SYMBOL hmc_t *HX_getl(hmc_t **ptr, FILE *fp)
 {
 	/* Read a whole line, using a HMC string as dynamic buffer. */
 	char temp[MAXLNLEN];
-	int ln = 0;
+
+	if (fgets(temp, sizeof(temp), fp) == NULL)
+		return NULL;
 
 	if(*ptr == NULL)
 		*ptr = hmc_sinit("");
 	else
 		hmc_trunc(ptr, 0);
 
-	while(fgets(temp, sizeof(temp), fp) != NULL) {
-		++ln;
+	do {
 		hmc_strcat(ptr, temp);
 		if(strchr(temp, '\n') != NULL)
 			break;
-	}
+	} while (fgets(temp, sizeof(temp), fp) != NULL);
 
-	if(ln == 0)
-		return NULL;
 	return *ptr;
 }
 

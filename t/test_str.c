@@ -15,7 +15,7 @@ int main(void)
 	printf("%.*s\n", w, str);
 
 	char *tx = NULL;
-	FILE *fp = fopen("string.c", "r");
+	FILE *fp = fopen("longline.txt", "r");
 	while(HX_getl(&tx, fp) != NULL)
 		printf("%s", tx);
 
