@@ -111,7 +111,7 @@ EXPORT_SYMBOL void HXdir_close(void *dv)
 }
 
 EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
-    unsigned long opts, ...)
+    unsigned int opts, ...)
 {
 	char buf[MAXLNLEN];
 	int dd, eax = 0, sd, l;
@@ -152,7 +152,7 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 }
 
 EXPORT_SYMBOL int HX_copy_dir(const char *src, const char *dest,
-    unsigned long opts, ...)
+    unsigned int opts, ...)
 {
 	void *dt = HXdir_open(src);
 	long uid = -1, gid = -1;

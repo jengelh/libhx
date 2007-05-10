@@ -47,7 +47,7 @@ static void btree_free_dive(const struct HXbtree *, struct HXbtree_node *);
 static int value_cmp(const void *, const void *);
 
 //-----------------------------------------------------------------------------
-EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned long opts, ...)
+EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int opts, ...)
 {
 	struct HXbtree *btree;
 	va_list argp;

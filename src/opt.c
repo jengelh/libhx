@@ -112,7 +112,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
     int ret = E_SUCCESS;
     struct HXoptcb cbi;
     char *key = NULL;
-    long argk;
+    unsigned int argk;
 
     memset(&cbi, 0, sizeof(cbi));
     cbi.arg0  = **argv;
@@ -542,7 +542,7 @@ EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
 }
 
 EXPORT_SYMBOL int HX_shconfig_pv(const char **path, const char *file,
-  const struct HXoption *table, unsigned long flags)
+  const struct HXoption *table, unsigned int flags)
 {
     char buf[MAXFNLEN];
     int rv = 0;

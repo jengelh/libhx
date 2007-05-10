@@ -9,7 +9,7 @@
 	see the file named "LICENSE.LGPL2".
 */
 #ifndef _LIBHX_H
-#define _LIBHX_H 20070429
+#define _LIBHX_H 20070510
 
 #ifndef __cplusplus
 #	include <stdarg.h>
@@ -71,7 +71,7 @@ struct HXbtree {
 	unsigned char opts;
 };
 
-extern struct HXbtree *HXbtree_init(unsigned long, ...);
+extern struct HXbtree *HXbtree_init(unsigned int, ...);
 extern struct HXbtree_node *HXbtree_add(struct HXbtree *, const void *, ...);
 extern struct HXbtree_node *HXbtree_find(const struct HXbtree *, const void *);
 extern void *HXbtree_get(const struct HXbtree *, const void *);
@@ -94,8 +94,8 @@ struct HXdeque_node {
 struct HXdeque {
 	struct HXdeque_node *first;
 	void *ptr;
-	unsigned long items;
 	struct HXdeque_node *last;
+	unsigned int items;
 };
 
 extern struct HXdeque *HXdeque_init(void);
@@ -109,7 +109,7 @@ extern void *HXdeque_get(struct HXdeque *, const void *);
 extern void *HXdeque_del(struct HXdeque_node *);
 extern void HXdeque_free(struct HXdeque *);
 extern void HXdeque_genocide(struct HXdeque *);
-extern void **HXdeque_to_vec(struct HXdeque *, long *);
+extern void **HXdeque_to_vec(struct HXdeque *, unsigned int *);
 
 /*
  *	DIR.C
@@ -123,8 +123,8 @@ enum {
 extern void *HXdir_open(const char *);
 extern const char *HXdir_read(void *);
 extern void HXdir_close(void *);
-extern int HX_copy_dir(const char *, const char *, unsigned long, ...);
-extern int HX_copy_file(const char *, const char *, unsigned long, ...);
+extern int HX_copy_dir(const char *, const char *, unsigned int, ...);
+extern int HX_copy_file(const char *, const char *, unsigned int, ...);
 extern int HX_mkdir(const char *);
 extern int HX_rrmdir(const char *);
 
@@ -142,18 +142,18 @@ extern const char *HX_dlerror(void);
 typedef char hmc_t;
 hmc_t *hmc_dup(const void *);
 hmc_t *hmc_sinit(const char *);
-hmc_t *hmc_minit(const void *, long);
+hmc_t *hmc_minit(const void *, size_t);
 hmc_t *hmc_strasg(hmc_t **, const char *);
-hmc_t *hmc_memasg(hmc_t **, const void *, long);
-long hmc_length(hmc_t *);
-hmc_t *hmc_trunc(hmc_t **, long);
+hmc_t *hmc_memasg(hmc_t **, const void *, size_t);
+size_t hmc_length(hmc_t *);
+hmc_t *hmc_trunc(hmc_t **, size_t);
 hmc_t *hmc_strcat(hmc_t **, const char *);
-hmc_t *hmc_memcat(hmc_t **, const void *, long);
+hmc_t *hmc_memcat(hmc_t **, const void *, size_t);
 hmc_t *hmc_strpcat(hmc_t **, const char *);
-hmc_t *hmc_mempcat(hmc_t **, const void *, long);
-hmc_t *hmc_strins(hmc_t **, long, const char *);
-hmc_t *hmc_memins(hmc_t **, long, const void *, long);
-hmc_t *hmc_memdel(hmc_t *, long, long);
+hmc_t *hmc_mempcat(hmc_t **, const void *, size_t);
+hmc_t *hmc_strins(hmc_t **, size_t, const char *);
+hmc_t *hmc_memins(hmc_t **, size_t, const void *, size_t);
+hmc_t *hmc_memdel(hmc_t *, size_t, size_t);
 void hmc_free(hmc_t *);
 
 /*
@@ -265,7 +265,7 @@ extern void HX_getopt_usage(const struct HXoptcb *, FILE *);
 extern void HX_getopt_usage_cb(const struct HXoptcb *);
 extern int HX_shconfig(const char *, const struct HXoption *);
 extern int HX_shconfig_pv(const char **, const char *,
-	const struct HXoption *, unsigned long);
+	const struct HXoption *, unsigned int);
 extern void HX_shconfig_free(const struct HXoption *);
 
 #ifndef __cplusplus
@@ -294,8 +294,8 @@ enum {
 
 extern int HX_ffs(unsigned long);
 extern void HX_zvecfree(char **);
-extern int HX_fsystem(unsigned long, const char *, const char *, ...);
-extern int HX_vfsystem(unsigned long, const char *, const char *, va_list);
+extern int HX_fsystem(unsigned int, const char *, const char *, ...);
+extern int HX_vfsystem(unsigned int, const char *, const char *, va_list);
 
 /*
  *	RAND.C
@@ -426,7 +426,7 @@ HXdeque_del(struct HXdeque_node *nd)
 }
 
 template<typename type> static inline type *
-HXdeque_to_vec(struct HXdeque *dq, long *n)
+HXdeque_to_vec(struct HXdeque *dq, unsigned int *n)
 {
 	return reinterpret_cast<type *>(HXdeque_to_vec(dq, n));
 }

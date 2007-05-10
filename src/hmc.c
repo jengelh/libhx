@@ -8,6 +8,7 @@
 	Foundation; however ONLY version 2 of the License. For details,
 	see the file named "LICENSE.LGPL2".
 */
+#include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,8 +20,14 @@
 		fprintf(stderr, "libHX-hmc error: not a hmc object!\n");
 
 struct memcont {
-	long alloc, length;
+	size_t alloc, length;
 	unsigned int id;
+	/*
+	 * Not using data[0] on purpose. With data[1], we may end up enlarging
+	 * this struct due to padding, but at least we can always make sure
+	 * (with appropriate code) that @data is '\0' terminated, even if it
+	 * is a binary blob.
+	 */
 	char data[1];
 };
 
@@ -39,7 +46,7 @@ EXPORT_SYMBOL hmc_t *hmc_sinit(const char *s)
 	return hmc_memasg(&t, s, strlen(s));
 }
 
-EXPORT_SYMBOL hmc_t *hmc_minit(const void *ptr, long len)
+EXPORT_SYMBOL hmc_t *hmc_minit(const void *ptr, size_t len)
 {
 	char *t = NULL;
 	return hmc_memasg(&t, ptr, len);
@@ -55,7 +62,7 @@ EXPORT_SYMBOL hmc_t *hmc_strasg(hmc_t **vp, const char *s)
 	return hmc_memasg(vp, s, strlen(s));
 }
 
-EXPORT_SYMBOL hmc_t *hmc_memasg(hmc_t **vp, const void *ptr, long len)
+EXPORT_SYMBOL hmc_t *hmc_memasg(hmc_t **vp, const void *ptr, size_t len)
 {
 	struct memcont *ctx;
 	if(*vp != NULL) {
@@ -82,14 +89,14 @@ EXPORT_SYMBOL hmc_t *hmc_memasg(hmc_t **vp, const void *ptr, long len)
 	return *vp = ctx->data;
 }
 
-EXPORT_SYMBOL long hmc_length(hmc_t *vp)
+EXPORT_SYMBOL size_t hmc_length(hmc_t *vp)
 {
 	struct memcont *ctx = containerof(vp, struct memcont, data);
 	CHECK_IDENT(ctx);
 	return ctx->length;
 }
 
-EXPORT_SYMBOL hmc_t *hmc_trunc(hmc_t **vp, long len)
+EXPORT_SYMBOL hmc_t *hmc_trunc(hmc_t **vp, size_t len)
 {
 	struct memcont *ctx = containerof(*vp, struct memcont, data);
 	CHECK_IDENT(ctx);
@@ -110,10 +117,10 @@ EXPORT_SYMBOL hmc_t *hmc_strcat(hmc_t **vp, const char *s)
 	return hmc_memcat(vp, s, strlen(s));
 }
 
-EXPORT_SYMBOL hmc_t *hmc_memcat(hmc_t **vp, const void *ptr, long len)
+EXPORT_SYMBOL hmc_t *hmc_memcat(hmc_t **vp, const void *ptr, size_t len)
 {
 	struct memcont *ctx = containerof(*vp, struct memcont, data);
-	long nl = ctx->length + len;
+	size_t nl = ctx->length + len;
 
 	CHECK_IDENT(ctx);
 	if(nl > ctx->alloc) {
@@ -137,24 +144,29 @@ EXPORT_SYMBOL hmc_t *hmc_strpcat(hmc_t **vp, const char *s)
 	return hmc_memins(vp, 0, s, strlen(s));
 }
 
-EXPORT_SYMBOL hmc_t *hmc_mempcat(hmc_t **vp, const void *ptr, long len)
+EXPORT_SYMBOL hmc_t *hmc_mempcat(hmc_t **vp, const void *ptr, size_t len)
 {
 	/* Prepend memory @ptr (of length @len) to @*vp */
 	return hmc_memins(vp, 0, ptr, len);
 }
 
-EXPORT_SYMBOL hmc_t *hmc_strins(hmc_t **vp, long pos, const char *s)
+EXPORT_SYMBOL hmc_t *hmc_strins(hmc_t **vp, size_t pos, const char *s)
 {
 	if(s == NULL)
 		return *vp;
 	return hmc_memins(vp, pos, s, strlen(s));
 }
 
-EXPORT_SYMBOL hmc_t *hmc_memins(hmc_t **vp, long pos, const void *ptr,
-    long len)
+/*
+ * We naturally do not support negative positions like some
+ * scripting languages do, hence @pos is unsigned.
+ */
+
+EXPORT_SYMBOL hmc_t *hmc_memins(hmc_t **vp, size_t pos, const void *ptr,
+    size_t len)
 {
 	struct memcont *ctx = containerof(*vp, struct memcont, data);
-	long nl = ctx->length + len;
+	size_t nl = ctx->length + len;
 
 	CHECK_IDENT(ctx);
 	if(ctx->alloc < nl) {
@@ -171,10 +183,14 @@ EXPORT_SYMBOL hmc_t *hmc_memins(hmc_t **vp, long pos, const void *ptr,
 	return *vp = ctx->data;
 }
 
-EXPORT_SYMBOL hmc_t *hmc_memdel(hmc_t *vp, long pos, long len)
+EXPORT_SYMBOL hmc_t *hmc_memdel(hmc_t *vp, size_t pos, size_t len)
 {
 	struct memcont *ctx = containerof(vp, struct memcont, data);
 	CHECK_IDENT(ctx);
+
+	if (pos + len > ctx->length)
+		len = ctx->length - pos;
+
 	memmove(&ctx->data[pos], &ctx->data[pos + len],
 	        ctx->length - pos - len);
 	ctx->length -= len;

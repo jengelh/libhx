@@ -22,7 +22,7 @@
 #endif
 #include "libHX.h"
 
-static int run_program(const char *, const char **, unsigned long);
+static int run_program(const char *, const char **, unsigned int);
 #ifdef _WIN32
 static int win32_system(const char **);
 #endif
@@ -39,7 +39,7 @@ EXPORT_SYMBOL void HX_zvecfree(char **args)
     return;
 }
 
-EXPORT_SYMBOL int HX_fsystem(unsigned long opts, const char *prog,
+EXPORT_SYMBOL int HX_fsystem(unsigned int opts, const char *prog,
  const char *arg0, ...)
 {
     int r;
@@ -50,13 +50,13 @@ EXPORT_SYMBOL int HX_fsystem(unsigned long opts, const char *prog,
     return r;
 }
 
-EXPORT_SYMBOL int HX_vfsystem(unsigned long opts, const char *prog,
+EXPORT_SYMBOL int HX_vfsystem(unsigned int opts, const char *prog,
  const char *arg0, va_list ap)
 {
 #define MAX_ARGS 255
     const char *dst_argv[MAX_ARGS+1];
     const char **src_argv = NULL, *ptr;
-    unsigned short count = 0;
+    unsigned int count = 0;
 
     if((opts & (HX_FSYSTEM_ARGV | HX_FSYSTEM_ARGV1)) ==
      (HX_FSYSTEM_ARGV | HX_FSYSTEM_ARGV1)) {
@@ -100,7 +100,7 @@ EXPORT_SYMBOL int HX_vfsystem(unsigned long opts, const char *prog,
 }
 
 //-----------------------------------------------------------------------------
-static int run_program(const char *prog, const char **argv, unsigned long opts)
+static int run_program(const char *prog, const char **argv, unsigned int opts)
 {
 #ifdef _WIN32
     int ret = win32_system(argv);

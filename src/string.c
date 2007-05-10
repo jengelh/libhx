@@ -184,6 +184,7 @@ EXPORT_SYMBOL size_t HX_strltrim(char *expr)
 	return diff;
 }
 
+/* supports negative offsets like scripting languages */
 EXPORT_SYMBOL char *HX_strmid(const char *expr, long offset, long length)
 {
 	char *buffer;
