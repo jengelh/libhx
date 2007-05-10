@@ -292,7 +292,6 @@ enum {
 	HX_FSYSTEM_ARGV1 = 1 << 2,
 };
 
-extern int HX_ffs(unsigned long);
 extern void HX_zvecfree(char **);
 extern int HX_fsystem(unsigned int, const char *, const char *, ...);
 extern int HX_vfsystem(unsigned int, const char *, const char *, va_list);
