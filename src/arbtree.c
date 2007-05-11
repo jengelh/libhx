@@ -39,10 +39,11 @@ struct HXbtrav {
 static void btrav_checkpoint(struct HXbtrav *, const struct HXbtree_node *);
 static struct HXbtree_node *btrav_next(struct HXbtrav *);
 static struct HXbtree_node *btrav_rewalk(struct HXbtrav *);
-static void btree_amov(struct HXbtree_node **, const unsigned char *, size_t,
-	unsigned int *);
-static size_t btree_del(struct HXbtree_node **, unsigned char *, size_t);
-static void btree_dmov(struct HXbtree_node **, unsigned char *, size_t);
+static void btree_amov(struct HXbtree_node **, const unsigned char *,
+	unsigned int, unsigned int *);
+static unsigned int btree_del(struct HXbtree_node **, unsigned char *,
+	unsigned int);
+static void btree_dmov(struct HXbtree_node **, unsigned char *, unsigned int);
 static void btree_free_dive(const struct HXbtree *, struct HXbtree_node *);
 static int value_cmp(const void *, const void *);
 
@@ -464,7 +465,7 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 }
 
 static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
-    size_t depth, unsigned int *tid)
+    unsigned int depth, unsigned int *tid)
 {
 	struct HXbtree_node *x, *y;
 
@@ -524,8 +525,8 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 	return;
 }
 
-static size_t btree_del(struct HXbtree_node **path, unsigned char *dir,
-    size_t depth)
+static unsigned int btree_del(struct HXbtree_node **path, unsigned char *dir,
+    unsigned int depth)
 {
 	struct HXbtree_node *s, *p = path[depth], *r = p->sub[S_RIGHT];
 	unsigned char cl;
@@ -535,7 +536,7 @@ static size_t btree_del(struct HXbtree_node **path, unsigned char *dir,
 		 * Case 2A: @p's right child @r has a left child. Search for
 		 * the inordner node @s and move it to @p's position.
 		 */
-		size_t spos = depth++;
+		unsigned int spos = depth++;
 
 		while(1) {
 			path[depth]  = r;
@@ -579,7 +580,7 @@ static size_t btree_del(struct HXbtree_node **path, unsigned char *dir,
 }
 
 static void btree_dmov(struct HXbtree_node **path, unsigned char *dir,
-    size_t depth)
+    unsigned int depth)
 {
 	struct HXbtree_node *w, *x;
 
