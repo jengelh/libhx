@@ -53,7 +53,7 @@ Not supported:
 #define NTYPE_U(con, tpx) NTYPE((con), tpx, strtoul)
 #define NTYPE(con, tpx, func) \
     case (con): { \
-        tpx *p, v = (func)(cbi->s, NULL, 0); \
+        tpx *p, v = (func)(cbi->data, NULL, 0); \
         if((p = opt->ptr) != NULL) { \
             if(opt->type & HXOPT_NOT) v = ~v; \
             switch(opt->type & HXOPT_LOPMASK2) { \
@@ -67,7 +67,7 @@ Not supported:
                     break; \
             } \
         } \
-        cbi->l = v; \
+        cbi->data_long = v; \
         CALL_CB; \
         break; \
     }
@@ -135,26 +135,29 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
                 break;
             }
 
+            cbi.match_ln = key;
+            cbi.match_sh = '\0';
+
             if(takes_void(cbi.current->type)) {
-                cbi.s = NULL;
+                cbi.data = NULL;
             } else if(cbi.current->type & HXOPT_OPTIONAL) {
                 // Rule: take arg if next thing is not-null, not-option
                 if(cur == NULL || *cur != '-' ||
                  (cur[0] == '-' && cur[1] == '\0')) {
                     // --file -, --file bla
-                    cbi.s = cur;
-                    cur   = *opt++;
+                    cbi.data = cur;
+                    cur      = *opt++;
                 } else {
                     // --file --another, --file -- endofoptions
-                    cbi.s = NULL;
+                    cbi.data = NULL;
                 }
             } else {
                 if(cur == NULL) {
                     ret = E_LONG_MISSING;
                     break;
                 }
-                cbi.s = cur;
-                cur   = *++opt;
+                cbi.data = cur;
+                cur      = *++opt;
             }
 
             do_assign(&cbi);
@@ -184,7 +187,9 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
                 break;
             }
 
-            cbi.s   = value;
+            cbi.match_ln = key;
+            cbi.match_sh = '\0';
+            cbi.data     = value;
             do_assign(&cbi);
 
             free(key);
@@ -213,9 +218,12 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
                 break;
             }
 
+            cbi.match_ln = NULL;
+            cbi.match_sh = *shstr;
+
             if(takes_void(cbi.current->type)) {
                 // -A
-                cbi.s = NULL;
+                cbi.data = NULL;
                 do_assign(&cbi);
                 ++shstr;
                 continue;
@@ -224,7 +232,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
             cur = *++opt;
             if(*(shstr + 1) != '\0') {
                 // -Avalue
-                cbi.s = shstr + 1;
+                cbi.data = shstr + 1;
                 do_assign(&cbi);
                 state = S_NORMAL;
                 continue;
@@ -234,11 +242,11 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
                 if(cur == NULL || *cur != '-' ||
                  (cur[0] == '-' && cur[1] == '\0')) {
                     // --file -, --file bla
-                    cbi.s = cur;
-                    cur   = *++opt;
+                    cbi.data = cur;
+                    cur      = *++opt;
                 } else {
                     // --file --another, --file -- endofoptions
-                    cbi.s = NULL;
+                    cbi.data = NULL;
                 }
             } else {
                 // -A value
@@ -246,8 +254,8 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
                     ret = E_SHORT_MISSING;
                     break;
                 }
-                cbi.s = cur;
-                cur   = *++opt;
+                cbi.data = cur;
+                cur      = *++opt;
             }
 
             do_assign(&cbi);
@@ -371,7 +379,7 @@ EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
 
     // Find maximum indent
     travp = cbi->table;
-    while(travp->ln != NULL || travp->sh != 0) {
+    while(travp->ln != NULL || travp->sh != '\0') {
         size_t tl;
         opt_to_text(travp, tmp, sizeof(tmp), W_EQUAL);
         if((tl = strlen(tmp)) > tw)
@@ -381,7 +389,7 @@ EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
 
     // Print table
     travp = cbi->table;
-    while(travp->ln != NULL || travp->sh != 0) {
+    while(travp->ln != NULL || travp->sh != '\0') {
         opt_to_text(travp, tmp, sizeof(tmp), W_NONE);
         wd = fprintf(fp, "  %-*s    ", static_cast(int, tw), tmp);
         if(travp->help == NULL)
@@ -416,8 +424,8 @@ EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
         wd = 6;
     }
     travp = cbi->table;
-    while(travp->ln != NULL || travp->sh != 0) {
-        if(!(travp->ln == NULL && travp->sh != 0 && takes_void(travp->type))) {
+    while(travp->ln != NULL || travp->sh != '\0') {
+        if(!(travp->ln == NULL && travp->sh != '\0' && takes_void(travp->type))) {
             ++travp;
             continue;
         }
@@ -443,8 +451,8 @@ EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 
     // Any other args
     travp = cbi->table;
-    while(travp->ln != NULL || travp->sh != 0) {
-        if(travp->ln == NULL && travp->sh != 0 && takes_void(travp->type)) {
+    while(travp->ln != NULL || travp->sh != '\0') {
+        if(travp->ln == NULL && travp->sh != '\0' && takes_void(travp->type)) {
             ++travp;
             continue;
         }
@@ -493,7 +501,7 @@ SHCONF_ONE
 
 EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
 {
-    struct HXoptcb cbi = {.table = table};
+    struct HXoptcb cbi = {.table = table, .match_sh = '\0'};
     char *reparse = NULL;
     hmc_t *ln = NULL;
     FILE *fp;
@@ -527,7 +535,8 @@ EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
         if((cbi.current = lookup_long(table, key)) == NULL)
             continue;
 
-        cbi.s   = val;
+        cbi.match_ln = key;
+        cbi.data     = val;
         do_assign(&cbi);
 
         if(reparse != NULL) {
@@ -587,29 +596,29 @@ static void do_assign(struct HXoptcb *cbi)
                 else if(opt->type & HXOPT_DEC) --*p;
                 else                           *p = 1;
             }
-            cbi->l = 1;
+            cbi->data_long = 1;
             CALL_CB;
             break;
         }
         case HXTYPE_VAL:
-            *static_cast(int *, opt->ptr) = cbi->l = opt->val;
+            *static_cast(int *, opt->ptr) = cbi->data_long = opt->val;
             CALL_CB;
             break;
         case HXTYPE_SVAL:
-            *reinterpret_cast(const char **, opt->ptr) = cbi->s = opt->sval;
+            *reinterpret_cast(const char **, opt->ptr) = cbi->data = opt->sval;
             CALL_CB;
             break;
         case HXTYPE_BOOL: {
             int *p = opt->ptr;
             if((p = opt->ptr) != NULL)
-                *p = strcasecmp(cbi->s, "yes") == 0 ||
-                     strcasecmp(cbi->s, "on") == 0 ||
-                     strcasecmp(cbi->s, "true") == 0 ||
-                     strcmp(cbi->s, "1");
+                *p = strcasecmp(cbi->data, "yes") == 0 ||
+                     strcasecmp(cbi->data, "on") == 0 ||
+                     strcasecmp(cbi->data, "true") == 0 ||
+                     strcmp(cbi->data, "1");
             break;
         }
         case HXTYPE_BYTE:
-            *static_cast(unsigned char *, opt->ptr) = *cbi->s;
+            *static_cast(unsigned char *, opt->ptr) = *cbi->data;
             CALL_CB;
             break;
 
@@ -626,24 +635,24 @@ static void do_assign(struct HXoptcb *cbi)
         NTYPE(HXTYPE_LLONG,    long long, strtoll);
 #endif
         case HXTYPE_FLOAT:
-            cbi->d = strtod(cbi->s, NULL);
+            cbi->data_dbl = strtod(cbi->data, NULL);
             if(opt->ptr != NULL)
-                *static_cast(float *, opt->ptr) = cbi->d;
+                *static_cast(float *, opt->ptr) = cbi->data_dbl;
             CALL_CB;
             break;
         case HXTYPE_DOUBLE:
-            cbi->d = strtod(cbi->s, NULL);
+            cbi->data_dbl = strtod(cbi->data, NULL);
             if(opt->ptr != NULL)
-                *static_cast(double *, opt->ptr) = cbi->d;
+                *static_cast(double *, opt->ptr) = cbi->data_dbl;
             CALL_CB;
             break;
         case HXTYPE_STRING:
             if(opt->ptr != NULL)
-                *static_cast(char **, opt->ptr) = HX_strdup(cbi->s);
+                *static_cast(char **, opt->ptr) = HX_strdup(cbi->data);
             CALL_CB;
             break;
         case HXTYPE_STRDQ:
-            HXdeque_push(opt->ptr, HX_strdup(cbi->s));
+            HXdeque_push(opt->ptr, HX_strdup(cbi->data));
             CALL_CB;
             break;
         default:
@@ -699,7 +708,7 @@ static void opt_to_text(const struct HXoption *opt, char *buf, size_t len,
         if(!takes_void(opt->type))
             i += snprintf(buf + i, len - i, " %s", htyp);
     } else {
-        if(opt->sh == 0) {
+        if(opt->sh == '\0') {
             if(takes_void(opt->type))
                 i += snprintf(buf + i, len - i, "--%s", opt->ln);
             else

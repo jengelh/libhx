@@ -9,7 +9,7 @@
 	see the file named "LICENSE.LGPL2".
 */
 #ifndef _LIBHX_H
-#define _LIBHX_H 20070510
+#define _LIBHX_H 20070512
 
 #ifndef __cplusplus
 #	include <stdarg.h>
@@ -240,11 +240,13 @@ struct HXoption;
 struct HXoptcb {
 	const char *arg0;
 	const struct HXoption *table, *current;
-	const char *s;
+	const char *data;
 	union {
-		double d;
-		long l;
+		double data_dbl;
+		long data_long;
 	};
+	const char *match_ln;
+	char match_sh;
 };
 
 struct HXoption {
