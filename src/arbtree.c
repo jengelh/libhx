@@ -236,13 +236,16 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 
 	path[depth] = node;
 	if(node->sub[S_RIGHT] == NULL)
-		/*
-		 * Case 1: P (@node) has no right child, in which case it can
-		 * simply be replaced by its left subtree.
-		 */
-		path[depth - 1]->sub[dir[depth - 1]] = node->sub[S_LEFT];
+		/* Simple case: No right subtree, replace by left subtree. */
+		path[depth-1]->sub[dir[depth-1]] = node->sub[S_LEFT];
+	else if(node->sub[S_LEFT] == NULL)
+		/* Simple case: No left subtree, replace by right subtree. */
+		path[depth-1]->sub[dir[depth-1]] = node->sub[S_RIGHT];
 	else
-		/* Cases 2 and 3; Updates @node (through @path[depth]). */
+		/*
+		 * Find minimum/maximum element in right/left subtree and
+		 * do appropriate deletion while updating @path and @depth.
+		 */
 		depth = btree_del(path, dir, depth);
 
 	/*

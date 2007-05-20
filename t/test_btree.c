@@ -8,6 +8,11 @@
 
 #define Z_32 sizeof("4294967296")
 
+enum {
+	NODE_RED = 0,
+	NODE_BLACK,
+};
+
 static struct HXbtree *generate_perfect_tree(unsigned int, unsigned int);
 static void height_check(const struct HXbtree *);
 static int sbc_strcmp(const char *, const char *);
@@ -194,6 +199,31 @@ static void test_4(void)
 	return;
 }
 
+static void test_5(void)
+{
+	/*
+	 *         8
+	 *       /   \
+	 *     4      12
+	 *    / \    /  \
+	 *   2   6 10    14
+	 */
+	char buf[80];
+
+	printf("Test 5: Checking deletion logic\n");
+	btree = generate_perfect_tree(3, 2);
+	walk_tree(btree->root, buf, sizeof(buf));
+	printf("\t%s\n", buf);
+	HXbtree_del(btree, HX_rand() % 2 ? "2" : "6");
+	walk_tree(btree->root, buf, sizeof(buf));
+	printf("\t%s\n", buf);
+	HXbtree_del(btree, "4");
+	walk_tree(btree->root, buf, sizeof(buf));
+	printf("\t%s\n", buf);
+	HXbtree_free(btree);
+	return;
+}
+
 int main(void)
 {
 	setvbuf(stdout, NULL, _IOLBF, 0);
@@ -202,7 +232,8 @@ int main(void)
 	test_1();
 	test_2();
 	test_3();
-	test_4();
+	test_5();
+	//test_4();
 	return EXIT_SUCCESS;
 }
 
