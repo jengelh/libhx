@@ -344,10 +344,10 @@ static struct HXbtree_node *btrav_next(struct HXbtrav *trav)
 	} else if(trav->depth == 0) {
 		/* No right child, no more parents */
 		return trav->current = NULL;
-	} else if(trav->dir[trav->depth - 1] == S_LEFT) {
+	} else if(trav->dir[trav->depth-1] == S_LEFT) {
 		/* We are the left child of the parent, move on to parent */
 		trav->current = trav->path[--trav->depth];
-	} else if(trav->dir[trav->depth - 1] == S_RIGHT) {
+	} else if(trav->dir[trav->depth-1] == S_RIGHT) {
 		/*
 		 * There is no right child, and we are the right child of the
 		 * parent, so move on to the next inorder node (a distant
@@ -358,7 +358,7 @@ static struct HXbtree_node *btrav_next(struct HXbtrav *trav)
 			if(trav->depth == 0)
 				/* No more parents */
 				return trav->current = NULL;
-			if(trav->dir[trav->depth - 1] != S_RIGHT)
+			if(trav->dir[trav->depth-1] != S_RIGHT)
 				break;
 			--trav->depth;
 		}
