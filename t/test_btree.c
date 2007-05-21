@@ -12,6 +12,7 @@ enum {
 	Z_32 = sizeof("4294967296"),
 };
 
+static struct HXbtree *generate_fixed_tree(unsigned int, ...);
 static struct HXbtree *generate_perfect_tree(unsigned int, unsigned int);
 static void height_check(const struct HXbtree *);
 static int sbc_strcmp(const char *, const char *);
@@ -223,6 +224,61 @@ static void test_5(void)
 	return;
 }
 
+static unsigned int test_6b(const struct HXbtree_node *node,
+    unsigned int black_height, unsigned int counted_height)
+{
+	unsigned int ret = 1;
+
+	if (node->color == NODE_BLACK)
+		++counted_height;
+
+	if (node->sub[0] == NULL && node->sub[1] == NULL &&
+	    black_height != counted_height)
+		/* Black height violated */
+		return 0;
+
+	if (node->sub[0] != NULL)
+		ret &= test_6b(node->sub[0], black_height, counted_height);
+	if (node->sub[1] != NULL)
+		ret &= test_6b(node->sub[1], black_height, counted_height);
+
+	return ret;
+}
+
+static void test_6(void)
+{
+	const struct HXbtree_node *node;
+	unsigned int black_height = 0;
+	char buf[80];
+
+	printf("Test 6A: AMOV rebalancing\n");
+	btree = generate_fixed_tree(7, 3, 9, 1, 0);
+	/* Fixup colors for testcase (eww) */
+	HXbtree_find(btree, "3")->color = NODE_RED;
+	HXbtree_find(btree, "1")->color = NODE_BLACK;
+	walk_tree(btree->root, buf, sizeof(buf));
+	printf("\t" "Pre : %s\n", buf);
+
+	/* Add a red node and trigger AMOV case 4 */
+	HXbtree_add(btree, "5");
+	walk_tree(btree->root, buf, sizeof(buf));
+	printf("\t" "Post: %s\n", buf);
+
+	printf("Test 6B: Black height\n");
+	node = btree->root;
+	while (node != NULL) {
+		if (node->color == NODE_BLACK)
+			++black_height;
+		node = node->sub[0];
+	}
+	printf("\t" "Height to left-most node: %u\n", black_height);
+	if (!test_6b(btree->root, black_height, 0))
+		printf("\t" "...failed\n");
+
+	HXbtree_free(btree);
+	return;
+}
+
 int main(void)
 {
 	setvbuf(stdout, NULL, _IOLBF, 0);
@@ -232,11 +288,32 @@ int main(void)
 	test_2(); /* deallocates */
 	test_3();
 	test_5();
+	test_6();
 	//test_4();
 	return EXIT_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
+static struct HXbtree *generate_fixed_tree(unsigned int f, ...)
+{
+	struct HXbtree *b;
+	char buf[Z_32];
+	va_list argp;
+
+	b = HXbtree_init(HXBT_CDATA | HXBT_CID | HXBT_CMPFN, strtolcmp);
+	if (b == NULL)
+		abort();
+
+	va_start(argp, f);
+	while (f != 0) {
+		snprintf(buf, sizeof(buf), "%u", f);
+		HXbtree_add(b, buf);
+		f = va_arg(argp, unsigned int);
+	}
+	va_end(argp);
+	return b;
+}
+
 static struct HXbtree *generate_perfect_tree(unsigned int height,
     unsigned int mult)
 {

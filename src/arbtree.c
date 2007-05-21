@@ -111,6 +111,12 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 	data = va_arg(argp, const void *);
 	va_end(argp);
 
+	/*
+	 * Since our struct HXbtree_node runs without a ->parent pointer,
+	 * the path "upwards" from @node needs to be recorded somehow,
+	 * here with @path. Another array, @dir is used to speedup direction
+	 * decisions. (WP's "n->parent == grandparent(n)->left" is just slow.)
+	 */
 	path[depth]  = reinterpret_cast(struct HXbtree_node *, &btree->root);
 	dir[depth++] = 0;
 	node = btree->root;
@@ -153,7 +159,7 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 	 */
 	node->sub[S_LEFT] = node->sub[S_RIGHT] = NULL;
 	node->color = NODE_RED;
-	path[depth - 1]->sub[dir[depth - 1]] = node;
+	path[depth-1]->sub[dir[depth-1]] = node;
 	++btree->items;
 
 	/* New node, push data into it */
@@ -170,7 +176,13 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 			node->key = node->data = const_cast(void *, key);
 	}
 
-	if(depth >= 3 && path[depth - 1]->color == NODE_RED)
+	/*
+	 * WP: [[Red-black_tree]] says:
+	 * Case 1: @node is root node - just color it black (see below).
+	 * Case 2: @parent is black - no action needed (skip).
+	 * No rebalance needed for a 2-node tree.
+	 */
+	if (depth >= 3 && path[depth-1]->color == NODE_RED)
 		btree_amov(path, dir, depth, &btree->tid);
 
 	btree->root->color = NODE_BLACK;
@@ -470,60 +482,65 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
     unsigned int depth, unsigned int *tid)
 {
-	struct HXbtree_node *x, *y;
+	struct HXbtree_node *uncle, *parent, *grandp, *newnode;
 
 	/*
-	 * The newly inserted node (or the last rebalanced node) (called Q,
-	 * even if not referenced in the code) is red, so the parent may not
-	 * be.
+	 * The newly inserted node (or the last rebalanced node) at
+	 * @path[depth-1] is red, so the parent must not be.
+	 *
+	 * Use an iterative approach to not waste time with recursive function
+	 * calls. The @LR variable is used to handle the symmetric case without
+	 * code duplication.
 	 */
 	do {
-		unsigned char LR = dir[depth - 2];
-		y = path[depth - 2]->sub[!LR];
+		unsigned int LR = dir[depth-2];
+		grandp = path[depth-2];
+		parent = path[depth-1];
+		uncle  = grandp->sub[!LR];
 
-		if(y != NULL && y->color == NODE_RED) {
+		if(uncle != NULL && uncle->color == NODE_RED) {
 			/*
-			 * Case 1: @q's uncle @y (@Q->parent->sibling or
-			 * @q->parent->parent->child[N] is red. In this case,
-			 * only colors have to be swapped to keep the black
-			 * height.
+			 * Case 3 (WP): Only colors have to be swapped to keep
+			 * the black height. But rebalance needs to continue.
 			 */
-			path[depth - 1]->color = y->color = NODE_BLACK;
-			path[depth - 2]->color = NODE_RED;
-			depth -= 2;
+			parent->color = NODE_BLACK;
+			uncle->color  = NODE_BLACK;
+			grandp->color = NODE_RED;
+			depth        -= 2;
 			continue;
 		}
 
-		if(dir[depth - 1] == LR) {
-			/* Preparation for a pure case 2: @y is @q's parent */
-			y = path[depth - 1];
+
+		/*
+		 * Case 4 (WP): New node is the right child of its parent, and
+		 * the parent is the left child of the grandparent. A left
+		 * rotate is done at the parent to transform it into a case 5.
+		 */
+		if(dir[depth-1] != LR) {
+			newnode          = parent->sub[!LR];
+			parent->sub[!LR] = newnode->sub[LR];
+			newnode->sub[LR] = parent;
+			grandp->sub[LR]  = newnode;
+			/* relabel */
+			parent  = grandp->sub[LR];
+			newnode = parent->sub[LR];
 		} else {
-			/*
-			 * Case 3: @q is the !LR child of its parent. A right
-			 * rotate is done at @x to transform it into a case 2.
-			 */
-			x = path[depth - 1];
-			y = x->sub[!LR];
-			x->sub[!LR] = y->sub[LR];
-			y->sub[LR]  = x;
-			path[depth - 2]->sub[LR] = y;
+			newnode = path[depth];
 		}
 
 		/*
-		 * Case 2: @q is the LR child of its parent. @x is @q's
-		 * grandparent. A right rotation at @y is performed, since it
-		 * does not change the black height nor the subtree's (seen
-		 * from @x) root color. (@x is the root before, @y after the
-		 * rotate.) */
-		x = path[depth - 2];
-		x->sub[LR]  = y->sub[!LR];
-		y->sub[!LR] = x;
-		path[depth - 3]->sub[dir[depth - 3]] = y;
-		x->color   = NODE_RED;
-		y->color   = NODE_BLACK;
+		 * Case 5: New node is the @LR child of its parent which is
+		 * the @LR child of the grandparent. A right rotation on
+		 * @grandp is performed.
+		 */
+		grandp->sub[LR]  = parent->sub[!LR];
+		parent->sub[!LR] = grandp;
+		path[depth-3]->sub[dir[depth-3]] = parent;
+		grandp->color    = NODE_RED;
+		parent->color    = NODE_BLACK;
 		++*tid;
 		break;
-	} while(depth >= 3 && path[depth - 1]->color == NODE_RED);
+	} while(depth >= 3 && path[depth-1]->color == NODE_RED);
 
 	return;
 }
