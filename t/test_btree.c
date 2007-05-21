@@ -6,11 +6,10 @@
 #include <string.h>
 #include <libHX.h>
 
-#define Z_32 sizeof("4294967296")
-
 enum {
 	NODE_RED = 0,
 	NODE_BLACK,
+	Z_32 = sizeof("4294967296"),
 };
 
 static struct HXbtree *generate_perfect_tree(unsigned int, unsigned int);
@@ -44,14 +43,14 @@ static void test_1(void)
 	if(sbc_strcmp(buf, "8%b(4%b(2,6),12%b(10,14))") != 0)
 		printf("\t" "...failed\n");
 
-	/*       8
-	      /     \
-	    4         12
-	   / \       /  \
-	  2   6    10    14
-	          /
-	         9
-	*/
+	/*        8
+	 *      /     \
+	 *    4         12
+	 *   / \       /  \
+	 *  2   6    10    14
+	 *          /
+	 *         9
+	 */
 	printf("Test 1D: Node insertion and test for positions/colors\n");
 	HXbtree_add(btree, "9");
 	walk_tree(btree->root, buf, sizeof(buf));
@@ -74,12 +73,12 @@ static void test_1(void)
 	if(sbc_strcmp(buf, "9%b(4%b(2,6),12(10%b,14%b))") != 0)
 		printf("\t" "...failed\n");
 
-	/*       9       (8 replaced by its in-order successor 9)
-	      /    \
-	    4        12
-	   / \      /  \
-	  2   6   10    14
-	*/
+	/*        9       (8 replaced by its in-order successor 9)
+	 *      /    \
+	 *    4        12
+	 *   / \      /  \
+	 *  2   6   10    14
+	 */
 	return;
 }
 
@@ -106,12 +105,12 @@ static void test_2(void)
 	}
 
 	HXbtrav_free(trav);
-	/*       9
-	      /    \
-	    6        12
-	   /        /
-	  2       10
-	*/
+	/*        9
+	 *      /    \
+	 *    6        12
+	 *   /        /
+	 *  2       10
+	 */
 
 	printf("Test 2B: Traverse with B-tree destruction\n");
 	trav = HXbtrav_init(btree);
@@ -229,8 +228,8 @@ int main(void)
 	setvbuf(stdout, NULL, _IOLBF, 0);
 	setvbuf(stderr, NULL, _IOLBF, 0);
 
-	test_1();
-	test_2();
+	test_1(); /* allocates */
+	test_2(); /* deallocates */
 	test_3();
 	test_5();
 	//test_4();
