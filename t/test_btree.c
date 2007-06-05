@@ -210,7 +210,7 @@ static void test_5(void)
 	 */
 	char buf[80];
 
-	printf("Test 5: Checking deletion logic\n");
+	printf("Test 5: Checking simple deletion (replace) logic\n");
 	btree = generate_perfect_tree(3, 2);
 	walk_tree(btree->root, buf, sizeof(buf));
 	printf("\t%s\n", buf);

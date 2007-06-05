@@ -273,12 +273,16 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 		if(btree->opts & HXBT_CDATA)
 			free(node->data);
 	} else if(btree->opts & HXBT_CDATA) {
-		/* remember, node->key == node->data, so only one free() */
+		/* remember, @node->key == @node->data, so only one free() */
 		free(node->key);
 	}
 
 	free(node);
 	errno = 0;
+	/*
+	 * In case %HXBT_CDATA was specified, the @itemptr value will be
+	 * useless in most cases as it points to freed memory.
+	 */
 	return itemptr;
 }
 
@@ -548,54 +552,55 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 static unsigned int btree_del(struct HXbtree_node **path, unsigned char *dir,
     unsigned int depth)
 {
-	struct HXbtree_node *s, *p = path[depth], *r = p->sub[S_RIGHT];
-	unsigned char cl;
+	/* Both subtrees exist */
+	struct HXbtree_node *io_node, *io_parent, *orig_node = path[depth];
+	unsigned char color;
+	unsigned int spos;
 
-	if(r->sub[S_LEFT] != NULL) {
-		/*
-		 * Case 2A: @p's right child @r has a left child. Search for
-		 * the inordner node @s and move it to @p's position.
-		 */
-		unsigned int spos = depth++;
+	io_node    = orig_node->sub[S_RIGHT];
+	dir[depth] = S_RIGHT;
 
-		while(1) {
-			path[depth]  = r;
-			dir[depth++] = S_LEFT;
-			if((s = r->sub[S_LEFT])->sub[S_LEFT] == NULL)
-				break;
-			r = s;
-		}
+	if (io_node->sub[S_LEFT] == NULL) {
+		/* Right subtree node is direct inorder */
+		io_node->sub[S_LEFT] = orig_node->sub[S_LEFT];
+		color                = io_node->color;
+		io_node->color       = orig_node->color;
+		orig_node->color     = color;
 
-		path[spos] = s;
-		dir[spos]  = S_RIGHT;
-		path[spos - 1]->sub[dir[spos - 1]] = s;
-		s->sub[S_LEFT]  = p->sub[S_LEFT];
-		r->sub[S_LEFT]  = s->sub[S_RIGHT];
-		s->sub[S_RIGHT] = p->sub[S_RIGHT];
-
-		/*
-		 * The only purpose of keeping the old color (afterwards in
-		 * P->color) is so the "if(node->color == NODE_BLACK)"
-		 * expression back in HXbtree_del() can work.
-		 */
-		cl = s->color;
-		s->color = p->color;
-		p->color = cl;
+		path[depth-1]->sub[dir[depth-1]] = io_node;
+		path[depth++]        = io_node;
 		return depth;
 	}
 
 	/*
-	 * Case 2: @p's right child @r has no left child. In this case, @r's
-	 * right subtree is pulled up and placed where @p was. @r will get @p's
-	 * left subtree.
+	 * Walk down to the leftmost element, keep track of inorder node
+	 * and its parent.
 	 */
-	r->sub[S_LEFT] = p->sub[S_LEFT];
-	cl = r->color;
-	r->color = p->color;
-	p->color = cl;
-	path[depth - 1]->sub[dir[depth - 1]] = r;
-	path[depth]  = r;
-	dir[depth++] = S_RIGHT;
+	spos = depth++;
+
+	do {
+		io_parent    = io_node;
+		path[depth]  = io_parent;
+		dir[depth++] = S_LEFT;
+		io_node      = io_parent->sub[S_LEFT];
+	} while (io_node->sub[S_LEFT] != NULL);
+
+	/* move node up */
+	path[spos-1]->sub[dir[spos-1]] = path[spos] = io_node;
+	io_parent->sub[S_LEFT]         = io_node->sub[S_RIGHT];
+	io_node->sub[S_LEFT]           = orig_node->sub[S_LEFT];
+	io_node->sub[S_RIGHT]          = orig_node->sub[S_RIGHT];
+
+	color          = io_node->color;
+	io_node->color = orig_node->color;
+
+	/*
+	 * The nodes (@io_node and @orig_node) have been swapped. While
+	 * @orig_node has no pointers to it, it still exists and decisions are
+	 * made upon its properties in HXbtree_del() and btree_dmov() until it
+	 * is freed later. Hence we need to keep the color.
+	 */
+	orig_node->color = color;
 	return depth;
 }
 
