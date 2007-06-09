@@ -41,8 +41,7 @@ static void test_1(void)
 	walk_tree(btree->root, buf, sizeof(buf));
 
 	printf("Test 1C: Check for correct positions and colors\n");
-	if(sbc_strcmp(buf, "8%b(4%b(2,6),12%b(10,14))") != 0)
-		printf("\t" "...failed\n");
+	sbc_strcmp(buf, "8%b(4%b(2,6),12%b(10,14))");
 
 	/*        8
 	 *      /     \
@@ -55,8 +54,7 @@ static void test_1(void)
 	printf("Test 1D: Node insertion and test for positions/colors\n");
 	HXbtree_add(btree, "9");
 	walk_tree(btree->root, buf, sizeof(buf));
-	if(sbc_strcmp(buf, "8%b(4%b(2,6),12(10%b(9),14%b))") != 0)
-		printf("\t" "...failed\n");
+	sbc_strcmp(buf, "8%b(4%b(2,6),12(10%b(9),14%b))");
 
 	printf("Test 1E: Height check\n");
 	height_check(btree);
@@ -71,8 +69,7 @@ static void test_1(void)
 	printf("Test 1G: Node deletion\n");
 	HXbtree_del(btree, "8");
 	walk_tree(btree->root, buf, sizeof(buf));
-	if(sbc_strcmp(buf, "9%b(4%b(2,6),12(10%b,14%b))") != 0)
-		printf("\t" "...failed\n");
+	sbc_strcmp(buf, "9%b(4%b(2,6),12(10%b,14%b))");
 
 	/*        9       (8 replaced by its in-order successor 9)
 	 *      /    \
@@ -356,9 +353,12 @@ static void height_check(const struct HXbtree *tree)
 
 static int sbc_strcmp(const char *result, const char *expected)
 {
+	int ret = strcmp(result, expected);
 	printf("\t" "Expected: %s\n", expected);
 	printf("\t" "  Result: %s\n", result);
-	return strcmp(result, expected);
+	if (ret != 0)
+		printf("\t\t...failed\n");
+	return ret;
 }
 
 static int strtolcmp(const void *a, const void *b)
