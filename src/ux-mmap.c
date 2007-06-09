@@ -31,8 +31,7 @@ EXPORT_SYMBOL void *mmap(void *start, size_t length, int prot, int flags,
 		return MAP_FAILED;
 
 	p = MapViewOfFile(fmap, dw_desired_access(prot, flags),
-		(offset & (0xFFFFFFFF00000000ULL)) >> 32,
-		(offset & 0xFFFFFFFFUL), length);
+		(offset >> 32) & 0xFFFFFFFFUL, offset & 0xFFFFFFFFUL, length);
 	CloseHandle(fmap);
 	if(p == NULL)
 		return MAP_FAILED;
