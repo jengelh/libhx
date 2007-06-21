@@ -7,6 +7,8 @@
 #include <libHX.h>
 
 enum {
+	S_LEFT = 0,
+	S_RIGHT,
 	NODE_RED = 0,
 	NODE_BLACK,
 	Z_32 = sizeof("4294967296"),
@@ -14,12 +16,17 @@ enum {
 
 static struct HXbtree *generate_fixed_tree(unsigned int, ...);
 static struct HXbtree *generate_perfect_tree(unsigned int, unsigned int);
+static struct HXbtree *generate_random_tree(unsigned int);
+static void destroy_random_tree(struct HXbtree *, unsigned int);
 static void height_check(const struct HXbtree *);
 static int sbc_strcmp(const char *, const char *);
 static int strtolcmp(const void *, const void *);
 static inline void timer_start(void);
 static inline void timer_end(void);
 static unsigned int tree_height(const struct HXbtree_node *);
+static int verify_black_height(const struct HXbtree_node *);
+static unsigned int verify_red_no_red_children(const struct HXbtree_node *);
+static unsigned int verify_random_tree(const struct HXbtree *);
 static void __walk_tree(const struct HXbtree_node *, char *, size_t);
 static void walk_tree(const struct HXbtree_node *, char *, size_t);
 
@@ -221,31 +228,8 @@ static void test_5(void)
 	return;
 }
 
-static unsigned int test_6b(const struct HXbtree_node *node,
-    unsigned int black_height, unsigned int counted_height)
-{
-	unsigned int ret = 1;
-
-	if (node->color == NODE_BLACK)
-		++counted_height;
-
-	if (node->sub[0] == NULL && node->sub[1] == NULL &&
-	    black_height != counted_height)
-		/* Black height violated */
-		return 0;
-
-	if (node->sub[0] != NULL)
-		ret &= test_6b(node->sub[0], black_height, counted_height);
-	if (node->sub[1] != NULL)
-		ret &= test_6b(node->sub[1], black_height, counted_height);
-
-	return ret;
-}
-
 static void test_6(void)
 {
-	const struct HXbtree_node *node;
-	unsigned int black_height = 0;
 	char buf[80];
 
 	printf("Test 6A: AMOV rebalancing\n");
@@ -261,18 +245,25 @@ static void test_6(void)
 	walk_tree(btree->root, buf, sizeof(buf));
 	printf("\t" "Post: %s\n", buf);
 
-	printf("Test 6B: Black height\n");
-	node = btree->root;
-	while (node != NULL) {
-		if (node->color == NODE_BLACK)
-			++black_height;
-		node = node->sub[0];
-	}
-	printf("\t" "Height to left-most node: %u\n", black_height);
-	if (!test_6b(btree->root, black_height, 0))
-		printf("\t" "...failed\n");
+	printf("Test 6B: Black height is %d\n",
+	       verify_black_height(btree->root));
 
 	HXbtree_free(btree);
+	return;
+}
+
+static void test_7(void)
+{
+	unsigned int e, order;
+	printf("Test 7: DMOV\n");
+
+	for (order = 2; order <= 12; ++order) {
+		printf("\t" "Tree of order %u\n", order);
+		e = (1 << order) - 1;
+		btree = generate_random_tree(e);
+		destroy_random_tree(btree, e);
+		
+	}
 	return;
 }
 
@@ -287,6 +278,7 @@ int main(void)
 	test_5();
 	test_6();
 	//test_4();
+	test_7();
 	return EXIT_SUCCESS;
 }
 
@@ -335,6 +327,44 @@ static struct HXbtree *generate_perfect_tree(unsigned int height,
 	}
 
 	return b;
+}
+
+static struct HXbtree *generate_random_tree(unsigned int elements)
+{
+	unsigned int range = elements * 4;
+	struct HXbtree *ret;
+
+	ret = HXbtree_init(HXBT_ICMP);
+	if (ret == NULL)
+		abort();
+
+	while (elements--) {
+		unsigned int number = HX_irand(1, range);
+		if (HXbtree_find(ret, (const void *)number)) {
+			++elements;
+			continue;
+		}
+		HXbtree_add(ret, (const void *)number);
+	}
+
+	return ret;
+}
+
+static void destroy_random_tree(struct HXbtree *tree, unsigned int elements)
+{
+	unsigned int range = elements * 4;
+
+	while (tree->items > 0) {
+		unsigned int number = HX_irand(1, range);
+		if (HXbtree_find(tree, (const void *)number) == NULL)
+			continue;
+		HXbtree_del(tree, (const void *)number);
+		if (tree->items > 0)
+			verify_random_tree(tree);
+	}
+
+	HXbtree_free(tree);
+	return;
 }
 
 static void height_check(const struct HXbtree *tree)
@@ -406,6 +436,69 @@ static unsigned int tree_height(const struct HXbtree_node *node)
 	if(node->sub[1] != NULL)
 		b += tree_height(node->sub[1]);
 	return (a > b) ? a : b;
+}
+
+static int verify_black_height(const struct HXbtree_node *node)
+{
+	unsigned int lh = 0, rh = 0;
+
+	if (node->sub[S_LEFT] != NULL)
+		if ((lh = verify_black_height(node->sub[S_LEFT])) == -1)
+			return -1;
+	if (node->sub[S_RIGHT] != NULL)
+		if ((rh = verify_black_height(node->sub[S_RIGHT])) == -1)
+			return -1;
+	if (node->sub[S_LEFT] != NULL && node->sub[S_RIGHT] != NULL)
+		if (lh != rh)
+			return -1;
+	if (node->sub[S_LEFT] != NULL)
+		return lh + (node->color == NODE_BLACK);
+	else
+		return rh + (node->color == NODE_BLACK);
+}
+
+static unsigned int verify_red_no_red_children(const struct HXbtree_node *node)
+{
+	unsigned int ret = 1;
+
+	if (node->sub[S_LEFT] != NULL) {
+		if (node->color == NODE_RED &&
+		    node->sub[S_LEFT]->color == NODE_RED)
+			return 0;
+		ret &= verify_red_no_red_children(node->sub[S_LEFT]);
+	}
+	if (node->sub[S_RIGHT] != NULL) {
+		if (node->color == NODE_RED &&
+		    node->sub[S_RIGHT]->color == NODE_RED)
+			return 0;
+		ret &= verify_red_no_red_children(node->sub[S_RIGHT]);
+	}
+
+	return ret;
+}
+
+static unsigned int verify_random_tree(const struct HXbtree *tree)
+{
+	int h;
+
+	/* Root is black */
+	if (tree->root->color != NODE_BLACK) {
+		printf("\t" "Root is not black\n");
+		return 0;
+	}
+
+	/* A red node may not have any red children */
+	if (!verify_red_no_red_children(tree->root)) {
+		printf("\t" "Red node may not have red children violated\n");
+		return 0;
+	}
+
+	if ((h = verify_black_height(tree->root)) == -1) {
+		printf("\t" "Black height violated\n");
+		return 0;
+	}
+
+	return 1;
 }
 
 static void __walk_tree(const struct HXbtree_node *node, char *buf, size_t s)
