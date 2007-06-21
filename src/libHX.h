@@ -9,7 +9,7 @@
 	see the file named "LICENSE.LGPL2".
 */
 #ifndef _LIBHX_H
-#define _LIBHX_H 20070512
+#define _LIBHX_H 20070614
 
 #ifndef __cplusplus
 #	include <stdarg.h>
@@ -178,9 +178,12 @@ enum {
 	HXTYPE_VAL,
 	/* for opt: set specific string value */
 	HXTYPE_SVAL,
-	/* accept a string "yes", "no", "true", "false" and put into *(int*) */
+	/*
+	 * accept a string "yes", "no", "true", "false" and
+	 * put into *(unsigned int*)
+	 */
 	HXTYPE_BOOL,
-	/* read _one byte_ and put it into *(char *) */
+	/* read _one byte_ and put it into *(unsigned char *) */
 	HXTYPE_BYTE,
 	/* read an integer/float (sscanf %d/%o/%x/%f) */
 	HXTYPE_UCHAR,

@@ -589,7 +589,7 @@ static void do_assign(struct HXoptcb *cbi)
 
     switch(opt->type & HXOPT_TYPEMASK) {
         case HXTYPE_NONE: {
-            int *p;
+            unsigned int *p;
             if((p = opt->ptr) != NULL) {
                 p = opt->ptr;
                 if(opt->type & HXOPT_INC)      ++*p;
@@ -609,12 +609,12 @@ static void do_assign(struct HXoptcb *cbi)
             CALL_CB;
             break;
         case HXTYPE_BOOL: {
-            int *p = opt->ptr;
+            unsigned int *p = opt->ptr;
             if((p = opt->ptr) != NULL)
                 *p = strcasecmp(cbi->data, "yes") == 0 ||
                      strcasecmp(cbi->data, "on") == 0 ||
                      strcasecmp(cbi->data, "true") == 0 ||
-                     strcmp(cbi->data, "1");
+                     (strcmp(cbi->data, "0") != 0 && *cbi->data != '\0');
             break;
         }
         case HXTYPE_BYTE:
