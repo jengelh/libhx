@@ -16,7 +16,7 @@ int main(void)
 
 	char *tx = NULL;
 	FILE *fp = fopen("longline.txt", "r");
-	while(HX_getl(&tx, fp) != NULL)
+	while (HX_getl(&tx, fp) != NULL)
 		printf("%s", tx);
 
 	fclose(fp);

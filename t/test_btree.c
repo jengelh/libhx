@@ -68,7 +68,7 @@ static void test_1(void)
 
 	printf("Test 1F: Standard traverse\n");
 	trav = HXbtrav_init(btree);
-	while((node = HXbtraverse(trav)) != NULL)
+	while ((node = HXbtraverse(trav)) != NULL)
 		printf("\t" "key: %s (%s)\n", (const char *)node->key,
 		       Color[node->color]);
 	HXbtrav_free(trav);
@@ -95,15 +95,15 @@ static void test_2(void)
 
 	printf("Test 2A: Traverse with B-tree change\n");
 	trav = HXbtrav_init(btree);
-	while((node = HXbtraverse(trav)) != NULL) {
+	while ((node = HXbtraverse(trav)) != NULL) {
 		walk_tree(btree->root, buf, sizeof(buf));
 		printf("\t" "tree: %s\n", buf);
 		printf("\t" " key: %s (%s)\n",
 		       (const char *)node->key, Color[node->color]);
-		if(strcmp(node->key, "4") == 0) {
+		if (strcmp(node->key, "4") == 0) {
 			printf("\t" "Deleting [current] node \"4\"\n");
 			HXbtree_del(btree, "4");
-		} else if(strcmp(node->key, "12") == 0) {
+		} else if (strcmp(node->key, "12") == 0) {
 			printf("\t" "Deleting [next] node \"14\"\n");
 			HXbtree_del(btree, "14");
 		}
@@ -119,7 +119,7 @@ static void test_2(void)
 
 	printf("Test 2B: Traverse with B-tree destruction\n");
 	trav = HXbtrav_init(btree);
-	while((node = HXbtraverse(trav)) != NULL) {
+	while ((node = HXbtraverse(trav)) != NULL) {
 		printf("\t" "About to delete \"%s\"\n",
 		       (const char *)node->key);
 		HXbtree_del(btree, node->key);
@@ -131,7 +131,7 @@ static void test_2(void)
 
 	printf("Test 2C: Traversing empty tree\n");
 	trav = HXbtrav_init(btree);
-	while(HXbtraverse(trav) != NULL)
+	while (HXbtraverse(trav) != NULL)
 		printf("\t" "...failed\n");
 
 	HXbtrav_free(trav);
@@ -179,22 +179,22 @@ static void test_4(void)
 	btree = HXbtree_init(HXBT_ICMP);
 
 	timer_start();
-	for(n = 1; n != 0; ++n) {
+	for (n = 1; n != 0; ++n) {
 		HXbtree_add(btree, (const void *)n);
-		if((n & 0xFFFFF) != 0)
+		if ((n & 0xFFFFF) != 0)
 			continue;
 		hg = tree_height(btree->root);
 		printf("\t%u objects, height %d\n", btree->items, hg);
-		if(hg == 47)
+		if (hg == 47)
 			break;
 	}
 	timer_end();
 
 	/* Once used to see if alignment could be optimized */
 	printf("Test 4B: Lookup speed\n");
-	for(i = 0; i < 5; ++i) {
+	for (i = 0; i < 5; ++i) {
 		timer_start();
-		for(n = btree->items; n >= 1; --n)
+		for (n = btree->items; n >= 1; --n)
 			HXbtree_find(btree, (const void *)n);
 		timer_end();
 	}
@@ -416,7 +416,7 @@ static inline void timer_end(void)
 
 	sec = tv_end.tv_sec  - tv_start.tv_sec;
 	acc = tv_end.tv_usec - tv_start.tv_usec;
-	if(acc < 0) {
+	if (acc < 0) {
 		delta.tv_sec  = sec - 1;
 		delta.tv_usec = 1000000 + acc;
 	} else {
@@ -431,9 +431,9 @@ static inline void timer_end(void)
 static unsigned int tree_height(const struct HXbtree_node *node)
 {
 	unsigned int a = 1, b = 1;
-	if(node->sub[0] != NULL)
+	if (node->sub[0] != NULL)
 		a += tree_height(node->sub[0]);
-	if(node->sub[1] != NULL)
+	if (node->sub[1] != NULL)
 		b += tree_height(node->sub[1]);
 	return (a > b) ? a : b;
 }
@@ -506,17 +506,17 @@ static void __walk_tree(const struct HXbtree_node *node, char *buf, size_t s)
 	int has_children = node->sub[0] != NULL || node->sub[1] != NULL;
 	HX_strlcat(buf, node->key, s);
 
-	if(node->color == 1)
+	if (node->color == NODE_BLACK)
 		HX_strlcat(buf, "%b", s);
-	if(has_children)
+	if (has_children)
 		HX_strlcat(buf, "(" /* ) */, s);
-	if(node->sub[0] != NULL)
+	if (node->sub[0] != NULL)
 		__walk_tree(node->sub[0], buf, s);
-	if(node->sub[1] != NULL) {
+	if (node->sub[1] != NULL) {
 		HX_strlcat(buf, ",", s);
 		__walk_tree(node->sub[1], buf, s);
 	}
-	if(has_children)
+	if (has_children)
 		HX_strlcat(buf, /* ( */ ")", s);
 	return;
 }

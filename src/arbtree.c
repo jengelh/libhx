@@ -1,13 +1,12 @@
 /*
-	libHX/arbtree.c - Associative RB-tree
-	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2002 - 2007
-
-	This file is part of libHX. libHX is free software; you can
-	redistribute it and/or modify it under the terms of the GNU
-	Lesser General Public License as published by the Free Software
-	Foundation; however ONLY version 2 of the License. For details,
-	see the file named "LICENSE.LGPL2".
-*/
+ *	libHX/arbtree.c - Associative RB-tree
+ *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2002 - 2007
+ *
+ *	This file is part of libHX. libHX is free software; you can
+ *	redistribute it and/or modify it under the terms of the GNU
+ *	Lesser General Public License as published by the Free Software
+ *	Foundation; either version 2 or 3 of the License.
+ */
 #include <errno.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -58,9 +57,9 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int opts, ...)
 	             offsetof(struct HXbtree_node, sub[0]) !=
 	             offsetof(struct HXbtree, root));
 
-	if(opts & ~HXBT_FLAGS_OK)
+	if (opts & ~HXBT_FLAGS_OK)
 		fprintf(stderr, "libHX-btree warning: unknown flags passed!\n");
-	if((btree = malloc(sizeof(struct HXbtree))) == NULL)
+	if ((btree = malloc(sizeof(struct HXbtree))) == NULL)
 		return NULL;
 
 	memset(btree, 0, sizeof(struct HXbtree));
@@ -75,10 +74,10 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int opts, ...)
 	 */
 	btree->tid = 1;
 
-	if(opts & HXBT_CMPFN)     btree->cmpfn = va_arg(argp, void *);
-	else if(opts & HXBT_SCMP) btree->cmpfn = static_cast(void *, strcmp);
-	else if(opts & HXBT_ICMP) btree->cmpfn = value_cmp;
-	else if(opts & HXBT_MAP)  btree->cmpfn = static_cast(void *, strcmp);
+	if (opts & HXBT_CMPFN)     btree->cmpfn = va_arg(argp, void *);
+	else if (opts & HXBT_SCMP) btree->cmpfn = static_cast(void *, strcmp);
+	else if (opts & HXBT_ICMP) btree->cmpfn = value_cmp;
+	else if (opts & HXBT_MAP)  btree->cmpfn = static_cast(void *, strcmp);
 	else {
 		fprintf(stderr,
 		        "libHX-btree error: Your code does not use any of\n"
@@ -121,10 +120,10 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 	dir[depth++] = 0;
 	node = btree->root;
 
-	while(node != NULL) {
+	while (node != NULL) {
 		int res = btree->cmpfn(key, node->key);
-		if(res == 0) {
-			if(!(btree->opts & HXBT_MAP)) {
+		if (res == 0) {
+			if (!(btree->opts & HXBT_MAP)) {
 				errno = EEXIST;
 				return NULL;
 			}
@@ -133,7 +132,7 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 			 * The node already exists (found the key), overwrite
 			 * the data.
 			 */
-			if(btree->opts & HXBT_CDATA) {
+			if (btree->opts & HXBT_CDATA) {
 				void *p = &node->data;
 				HX_strclone(p, data);
 			} else {
@@ -149,7 +148,7 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 		node         = node->sub[res];
 	}
 
-	if((node = malloc(sizeof(struct HXbtree_node))) == NULL)
+	if ((node = malloc(sizeof(struct HXbtree_node))) == NULL)
 		return NULL;
 
 	/*
@@ -163,14 +162,14 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 	++btree->items;
 
 	/* New node, push data into it */
-	if(btree->opts & HXBT_MAP) {
+	if (btree->opts & HXBT_MAP) {
 		node->key  = (btree->opts & HXBT_CKEY) ?
 		             HX_strdup(key) : const_cast(void *, key);
 		node->data = (btree->opts & HXBT_CDATA) ?
 		             HX_strdup(data) : const_cast(void *, data);
 	} else {
 		/* For convenience, node->key == node->data */
-		if(btree->opts & HXBT_CDATA)
+		if (btree->opts & HXBT_CDATA)
 			node->key = node->data = HX_strdup(key);
 		else
 			node->key = node->data = const_cast(void *, key);
@@ -195,8 +194,8 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_find(const struct HXbtree *btree,
 	struct HXbtree_node *node = btree->root;
 	int res;
 
-	while(node != NULL) {
-		if((res = btree->cmpfn(key, node->key)) == 0)
+	while (node != NULL) {
+		if ((res = btree->cmpfn(key, node->key)) == 0)
 			return node;
 		node = node->sub[res > 0];
 	}
@@ -207,7 +206,7 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_find(const struct HXbtree *btree,
 EXPORT_SYMBOL void *HXbtree_get(const struct HXbtree *btree, const void *key)
 {
 	const struct HXbtree_node *node;
-	if((node = HXbtree_find(btree, key)) == NULL)
+	if ((node = HXbtree_find(btree, key)) == NULL)
 		return NULL;
 	return node->data;
 }
@@ -219,16 +218,16 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 	unsigned int depth = 0;
 	void *itemptr;
 
-	if(btree->root == NULL)
+	if (btree->root == NULL)
 		return NULL;
 
 	path[depth]  = reinterpret_cast(struct HXbtree_node *, &btree->root);
 	dir[depth++] = 0;
 	node         = btree->root;
 
-	while(node != NULL) {
+	while (node != NULL) {
 		int res = btree->cmpfn(key, node->key);
-		if(res == 0)
+		if (res == 0)
 			break;
 		res          = res > 0;
 		path[depth]  = node;
@@ -236,7 +235,7 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 		node         = node->sub[res];
 	}
 
-	if(node == NULL) {
+	if (node == NULL) {
 		errno = ENOENT;
 		return NULL;
 	}
@@ -247,10 +246,10 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 	++btree->tid;
 
 	path[depth] = node;
-	if(node->sub[S_RIGHT] == NULL)
+	if (node->sub[S_RIGHT] == NULL)
 		/* Simple case: No right subtree, replace by left subtree. */
 		path[depth-1]->sub[dir[depth-1]] = node->sub[S_LEFT];
-	else if(node->sub[S_LEFT] == NULL)
+	else if (node->sub[S_LEFT] == NULL)
 		/* Simple case: No left subtree, replace by right subtree. */
 		path[depth-1]->sub[dir[depth-1]] = node->sub[S_RIGHT];
 	else
@@ -264,15 +263,15 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 	 * Deleting a red node does not violate either of the rules, so it is
 	 * not necessary to rebalance in such a case.
 	 */
-	if(node->color == NODE_BLACK)
+	if (node->color == NODE_BLACK)
 		btree_dmov(path, dir, depth);
 
-	if(btree->opts & HXBT_MAP) {
-		if(btree->opts & HXBT_CKEY)
+	if (btree->opts & HXBT_MAP) {
+		if (btree->opts & HXBT_CKEY)
 			free(node->key);
-		if(btree->opts & HXBT_CDATA)
+		if (btree->opts & HXBT_CDATA)
 			free(node->data);
-	} else if(btree->opts & HXBT_CDATA) {
+	} else if (btree->opts & HXBT_CDATA) {
 		/* remember, @node->key == @node->data, so only one free() */
 		free(node->key);
 	}
@@ -292,7 +291,7 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
  */
 EXPORT_SYMBOL void HXbtree_free(struct HXbtree *btree)
 {
-	if(btree->root != NULL)
+	if (btree->root != NULL)
 		btree_free_dive(btree, btree->root);
 	free(btree);
 	return;
@@ -301,7 +300,7 @@ EXPORT_SYMBOL void HXbtree_free(struct HXbtree *btree)
 EXPORT_SYMBOL void *HXbtrav_init(const struct HXbtree *btree)
 {
 	struct HXbtrav *travp;
-	if((travp = calloc(1, sizeof(struct HXbtrav))) == NULL)
+	if ((travp = calloc(1, sizeof(struct HXbtrav))) == NULL)
 		return NULL;
 
 	travp->tree = btree;
@@ -311,7 +310,7 @@ EXPORT_SYMBOL void *HXbtrav_init(const struct HXbtree *btree)
 EXPORT_SYMBOL struct HXbtree_node *HXbtraverse(void *in)
 {
 	struct HXbtrav *travp = in;
-	if(travp->tid != travp->tree->tid || travp->current == NULL)
+	if (travp->tid != travp->tree->tid || travp->current == NULL)
 		/*
 		 * Every HXbtree operation that significantly changes the
 		 * B-tree, increments @transact so we can decide here to
@@ -325,7 +324,7 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtraverse(void *in)
 EXPORT_SYMBOL void HXbtrav_free(void *in)
 {
 	struct HXbtrav *travp = in;
-	if(travp->tree->opts & HXBT_CID)
+	if (travp->tree->opts & HXBT_CID)
 		free(travp->checkpoint);
 	free(travp);
 	return;
@@ -335,7 +334,7 @@ EXPORT_SYMBOL void HXbtrav_free(void *in)
 static void btrav_checkpoint(struct HXbtrav *travp,
     const struct HXbtree_node *node)
 {
-	if(travp->tree->opts & HXBT_CID)
+	if (travp->tree->opts & HXBT_CID)
 		HX_strclone(&travp->checkpoint, node->key);
 	else
 		travp->checkpoint = node->key;
@@ -344,37 +343,37 @@ static void btrav_checkpoint(struct HXbtrav *travp,
 
 static struct HXbtree_node *btrav_next(struct HXbtrav *trav)
 {
-	if(trav->current->sub[S_RIGHT] != NULL) {
+	if (trav->current->sub[S_RIGHT] != NULL) {
 		/* Got a right child */
 		struct HXbtree_node *node;
 		trav->dir[trav->depth++] = S_RIGHT;
 		node = trav->current->sub[S_RIGHT];
 
 		/* Which might have left childs (our inorder successors!) */
-		while(node != NULL) {
+		while (node != NULL) {
 			trav->path[trav->depth] = node;
 			node = node->sub[S_LEFT];
 			trav->dir[trav->depth++] = S_LEFT;
 		}
 		trav->current = trav->path[--trav->depth];
-	} else if(trav->depth == 0) {
+	} else if (trav->depth == 0) {
 		/* No right child, no more parents */
 		return trav->current = NULL;
-	} else if(trav->dir[trav->depth-1] == S_LEFT) {
+	} else if (trav->dir[trav->depth-1] == S_LEFT) {
 		/* We are the left child of the parent, move on to parent */
 		trav->current = trav->path[--trav->depth];
-	} else if(trav->dir[trav->depth-1] == S_RIGHT) {
+	} else if (trav->dir[trav->depth-1] == S_RIGHT) {
 		/*
 		 * There is no right child, and we are the right child of the
 		 * parent, so move on to the next inorder node (a distant
 		 * parent). This works by walking up the path until we are the
 		 * left child of a parent.
 		 */
-		while(1) {
-			if(trav->depth == 0)
+		while (1) {
+			if (trav->depth == 0)
 				/* No more parents */
 				return trav->current = NULL;
-			if(trav->dir[trav->depth-1] != S_RIGHT)
+			if (trav->dir[trav->depth-1] != S_RIGHT)
 				break;
 			--trav->depth;
 		}
@@ -399,9 +398,9 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 
 	trav->depth = 0;
 
-	if(trav->current == NULL) {
+	if (trav->current == NULL) {
 		/* Walk down the tree to the smallest element */
-		while(node != NULL) {
+		while (node != NULL) {
 			trav->path[trav->depth] = node;
 			node = node->sub[S_LEFT];
 			trav->dir[trav->depth++] = S_LEFT;
@@ -412,10 +411,10 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 		unsigned char newdir[BT_MAXDEP];
 		int found = 0, newdepth = 0, res;
 
-		while(node != NULL) {
+		while (node != NULL) {
 			newpath[newdepth] = trav->path[trav->depth] = node;
 			res = btree->cmpfn(trav->checkpoint, node->key);
-			if(res == 0) {
+			if (res == 0) {
 				++trav->depth;
 				++found;
 				break;
@@ -446,7 +445,7 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 			node = node->sub[res];
 		}
 
-		if(found) {
+		if (found) {
 			/*
 			 * We found the node, but which HXbtraverse() has
 			 * already returned. Advance to the next inorder node.
@@ -466,18 +465,18 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 		}
 	}
 
-	if(trav->depth == 0) {
+	if (trav->depth == 0) {
 		/* no more elements */
 		trav->current = NULL;
 	} else {
 		trav->current = trav->path[--trav->depth];
-		if(trav->current == NULL)
+		if (trav->current == NULL)
 			fprintf(stderr, "btrav_rewalk: problem: current==NULL\n");
 		btrav_checkpoint(trav, trav->current);
 	}
 
 	trav->tid = btree->tid;
-	if(go_next)
+	if (go_next)
 		return btrav_next(trav);
 	else
 		return trav->current;
@@ -502,7 +501,7 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 		parent = path[depth-1];
 		uncle  = grandp->sub[!LR];
 
-		if(uncle != NULL && uncle->color == NODE_RED) {
+		if (uncle != NULL && uncle->color == NODE_RED) {
 			/*
 			 * Case 3 (WP): Only colors have to be swapped to keep
 			 * the black height. But rebalance needs to continue.
@@ -514,13 +513,12 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 			continue;
 		}
 
-
 		/*
 		 * Case 4 (WP): New node is the right child of its parent, and
 		 * the parent is the left child of the grandparent. A left
 		 * rotate is done at the parent to transform it into a case 5.
 		 */
-		if(dir[depth-1] != LR) {
+		if (dir[depth-1] != LR) {
 			newnode          = parent->sub[!LR];
 			parent->sub[!LR] = newnode->sub[LR];
 			newnode->sub[LR] = parent;
@@ -544,7 +542,7 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 		parent->color    = NODE_BLACK;
 		++*tid;
 		break;
-	} while(depth >= 3 && path[depth-1]->color == NODE_RED);
+	} while (depth >= 3 && path[depth-1]->color == NODE_RED);
 
 	return;
 }
@@ -609,22 +607,22 @@ static void btree_dmov(struct HXbtree_node **path, unsigned char *dir,
 {
 	struct HXbtree_node *w, *x;
 
-	while(1) {
+	while (1) {
 		unsigned char LR = dir[depth - 1];
 		x = path[depth - 1]->sub[LR];
 
-		if(x != NULL && x->color == NODE_RED) {
+		if (x != NULL && x->color == NODE_RED) {
 			/* Case 1: */
 			x->color = NODE_BLACK;
 			break;
 		}
 
-		if(depth < 2)
+		if (depth < 2)
 			break;
 
 		/* @w is the sibling of @x (the current node). */
 		w = path[depth - 1]->sub[!LR];
-		if(w->color == NODE_RED) {
+		if (w->color == NODE_RED) {
 			/*
 			 * Extra case: @w is of color red. In order to collapse
 			 * cases, a left rotate is performed at @x's parent and
@@ -642,16 +640,16 @@ static void btree_dmov(struct HXbtree_node **path, unsigned char *dir,
 			/* 2A, 3AA, 3B */
 		}
 
-		if((w->sub[LR] == NULL || w->sub[LR]->color == NODE_BLACK) &&
-		  (w->sub[!LR] == NULL || w->sub[!LR]->color == NODE_BLACK)) {
+		if ((w->sub[LR] == NULL || w->sub[LR]->color == NODE_BLACK) &&
+		   (w->sub[!LR] == NULL || w->sub[!LR]->color == NODE_BLACK)) {
 			/* Case 2: @w has no red children. */
 			w->color = NODE_RED;
 			--depth;
 			continue;
 		}
 
-		if(w->sub[!LR] == NULL || w->sub[!LR]->color == NODE_BLACK) {
-			/* Case 3A: @w's LR child is red */
+		if (w->sub[!LR] == NULL || w->sub[!LR]->color == NODE_BLACK) {
+			/* Case 5 */
 			struct HXbtree_node *y = w->sub[LR];
 			y->color = NODE_BLACK;
 			w->color = NODE_RED;
@@ -660,7 +658,7 @@ static void btree_dmov(struct HXbtree_node **path, unsigned char *dir,
 			w = path[depth - 1]->sub[!LR] = y;
 		}
 
-		/* Case 3: @w's !LR child is red */
+		/* Case 6 */
 		w->color = path[depth - 1]->color;
 		path[depth - 1]->color = NODE_BLACK;
 		w->sub[!LR]->color = NODE_BLACK;
@@ -681,17 +679,17 @@ static void btree_free_dive(const struct HXbtree *btree,
 	 * deletion with HXbtree_del(). Since this functions is meant to free
 	 * it all, it does not need to care about rebalancing.
 	 */
-	if(node->sub[S_LEFT] != NULL)
+	if (node->sub[S_LEFT] != NULL)
 		btree_free_dive(btree, node->sub[S_LEFT]);
-	if(node->sub[S_RIGHT] != NULL)
+	if (node->sub[S_RIGHT] != NULL)
 		btree_free_dive(btree, node->sub[S_RIGHT]);
 
-	if(btree->opts & HXBT_MAP) {
-		if(btree->opts & HXBT_CKEY)
+	if (btree->opts & HXBT_MAP) {
+		if (btree->opts & HXBT_CKEY)
 			free(node->key);
-		if(btree->opts & HXBT_CDATA)
+		if (btree->opts & HXBT_CDATA)
 			free(node->data);
-	} else if(btree->opts & HXBT_CDATA) {
+	} else if (btree->opts & HXBT_CDATA) {
 		/* remember, node->key == node->data, so only one free() */
 		free(node->key);
 	}

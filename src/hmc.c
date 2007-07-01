@@ -1,13 +1,12 @@
 /*
-	libHX/hmc.c
-	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2002 - 2007
-
-	This file is part of libHX. libHX is free software; you can
-	redistribute it and/or modify it under the terms of the GNU
-	Lesser General Public License as published by the Free Software
-	Foundation; however ONLY version 2 of the License. For details,
-	see the file named "LICENSE.LGPL2".
-*/
+ *	libHX/hmc.c
+ *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2002 - 2007
+ *
+ *	This file is part of libHX. libHX is free software; you can
+ *	redistribute it and/or modify it under the terms of the GNU
+ *	Lesser General Public License as published by the Free Software
+ *	Foundation; either version 2 or 3 of the License.
+ */
 #include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +15,7 @@
 
 #define HMC_IDENT 0x200571AF
 #define CHECK_IDENT(c) \
-	if((c)->id != HMC_IDENT) \
+	if ((c)->id != HMC_IDENT) \
 		fprintf(stderr, "libHX-hmc error: not a hmc object!\n");
 
 struct memcont {
@@ -54,7 +53,7 @@ EXPORT_SYMBOL hmc_t *hmc_minit(const void *ptr, size_t len)
 
 EXPORT_SYMBOL hmc_t *hmc_strasg(hmc_t **vp, const char *s)
 {
-	if(s == NULL) {
+	if (s == NULL) {
 		hmc_free(*vp);
 		*vp = NULL;
 		return NULL;
@@ -65,10 +64,10 @@ EXPORT_SYMBOL hmc_t *hmc_strasg(hmc_t **vp, const char *s)
 EXPORT_SYMBOL hmc_t *hmc_memasg(hmc_t **vp, const void *ptr, size_t len)
 {
 	struct memcont *ctx;
-	if(*vp != NULL) {
+	if (*vp != NULL) {
 		ctx = containerof(*vp, struct memcont, data);
 		CHECK_IDENT(ctx);
-		if(ctx->alloc < len) {
+		if (ctx->alloc < len) {
 			ctx = realloc(ctx, sizeof(struct memcont) + len);
 			ctx->alloc = len;
 		}
@@ -78,7 +77,7 @@ EXPORT_SYMBOL hmc_t *hmc_memasg(hmc_t **vp, const void *ptr, size_t len)
 		ctx->alloc = len;
 	}
 
-	if(ptr == NULL) {
+	if (ptr == NULL) {
 		ctx->length  = 0;
 		ctx->data[0] = '\0';
 		return *vp = ctx->data;
@@ -100,7 +99,7 @@ EXPORT_SYMBOL hmc_t *hmc_trunc(hmc_t **vp, size_t len)
 {
 	struct memcont *ctx = containerof(*vp, struct memcont, data);
 	CHECK_IDENT(ctx);
-	if(len > ctx->alloc) {
+	if (len > ctx->alloc) {
 		ctx = realloc(ctx, sizeof(struct memcont) + len);
 		ctx->alloc = len;
 	} else {
@@ -112,7 +111,7 @@ EXPORT_SYMBOL hmc_t *hmc_trunc(hmc_t **vp, size_t len)
 
 EXPORT_SYMBOL hmc_t *hmc_strcat(hmc_t **vp, const char *s)
 {
-	if(s == NULL)
+	if (s == NULL)
 		return *vp;
 	return hmc_memcat(vp, s, strlen(s));
 }
@@ -123,11 +122,11 @@ EXPORT_SYMBOL hmc_t *hmc_memcat(hmc_t **vp, const void *ptr, size_t len)
 	size_t nl = ctx->length + len;
 
 	CHECK_IDENT(ctx);
-	if(nl > ctx->alloc) {
+	if (nl > ctx->alloc) {
 		ctx = realloc(ctx, sizeof(struct memcont) + nl);
 		ctx->alloc = nl;
 	}
-	if(ptr == NULL)
+	if (ptr == NULL)
 		return *vp = ctx->data;
 
 	memcpy(&ctx->data[ctx->length], ptr, len);
@@ -139,7 +138,7 @@ EXPORT_SYMBOL hmc_t *hmc_memcat(hmc_t **vp, const void *ptr, size_t len)
 EXPORT_SYMBOL hmc_t *hmc_strpcat(hmc_t **vp, const char *s)
 {
 	/* Prepend string @s to @*vp */
-	if(s == NULL)
+	if (s == NULL)
 		return *vp;
 	return hmc_memins(vp, 0, s, strlen(s));
 }
@@ -152,7 +151,7 @@ EXPORT_SYMBOL hmc_t *hmc_mempcat(hmc_t **vp, const void *ptr, size_t len)
 
 EXPORT_SYMBOL hmc_t *hmc_strins(hmc_t **vp, size_t pos, const char *s)
 {
-	if(s == NULL)
+	if (s == NULL)
 		return *vp;
 	return hmc_memins(vp, pos, s, strlen(s));
 }
@@ -169,11 +168,11 @@ EXPORT_SYMBOL hmc_t *hmc_memins(hmc_t **vp, size_t pos, const void *ptr,
 	size_t nl = ctx->length + len;
 
 	CHECK_IDENT(ctx);
-	if(ctx->alloc < nl) {
+	if (ctx->alloc < nl) {
 		ctx = realloc(ctx, sizeof(struct memcont) + nl);
 		ctx->alloc = nl;
 	}
-	if(ptr == NULL)
+	if (ptr == NULL)
 		return *vp = ctx->data;
 
 	memmove(&ctx->data[pos + len], &ctx->data[pos], ctx->length - pos);
@@ -201,7 +200,7 @@ EXPORT_SYMBOL hmc_t *hmc_memdel(hmc_t *vp, size_t pos, size_t len)
 EXPORT_SYMBOL void hmc_free(hmc_t *vp)
 {
 	struct memcont *ctx;
-	if(vp == NULL)
+	if (vp == NULL)
 		return;
 	ctx = containerof(vp, struct memcont, data);
 	CHECK_IDENT(ctx);

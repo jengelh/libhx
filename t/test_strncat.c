@@ -5,7 +5,7 @@ int main(void)
 {
 	char wall_1[4] = "ABCD", data[4] = "DATA", wall_2[4] = "XYZW";
 
-	if(snprintf(data, sizeof(data), "12345678") >= sizeof(data))
+	if (snprintf(data, sizeof(data), "12345678") >= sizeof(data))
 		printf("Not enoguh space\n");
 	printf("String: >%s<\n", data);
 

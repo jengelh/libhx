@@ -1,15 +1,14 @@
 /*
-	libHX/libHX.h
-	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 1999 - 2007
-
-	This file is part of libHX. libHX is free software; you can
-	redistribute it and/or modify it under the terms of the GNU
-	Lesser General Public License as published by the Free Software
-	Foundation; however ONLY version 2 of the License. For details,
-	see the file named "LICENSE.LGPL2".
-*/
+ *	libHX/libHX.h
+ *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 1999 - 2007
+ *
+ *	This file is part of libHX. libHX is free software; you can
+ *	redistribute it and/or modify it under the terms of the GNU
+ *	Lesser General Public License as published by the Free Software
+ *	Foundation; either version 2 or 3 of the License.
+ */
 #ifndef _LIBHX_H
-#define _LIBHX_H 20070614
+#define _LIBHX_H 20070701
 
 #ifndef __cplusplus
 #	include <stdarg.h>
@@ -346,7 +345,7 @@ extern int munmap(void *, size_t);
 static inline void *HX_memdup(const void *buf, size_t len)
 {
 	void *ret;
-	if((ret = malloc(len)) == NULL)
+	if ((ret = malloc(len)) == NULL)
 		return NULL;
 	return memcpy(ret, buf, len);
 }
@@ -354,7 +353,7 @@ static inline void *HX_memdup(const void *buf, size_t len)
 static inline char *HX_strlcat(char *dest, const char *src, size_t len)
 {
 	ssize_t x = len - strlen(dest) - 1;
-	if(x <= 0)
+	if (x <= 0)
 		return dest;
 	return strncat(dest, src, x);
 }
@@ -370,7 +369,7 @@ static inline char *HX_strlncat(char *dest, const char *src, size_t dlen,
     size_t slen)
 {
 	ssize_t x = dlen - strlen(dest) - 1;
-	if(x <= 0)
+	if (x <= 0)
 		return dest;
 	x = ((ssize_t)slen < x) ? (ssize_t)slen : x;
 	return strncat(dest, src, x);
@@ -379,7 +378,7 @@ static inline char *HX_strlncat(char *dest, const char *src, size_t dlen,
 static inline int HX_zveclen(const char **args)
 {
 	int argk = 0;
-	while(*args++ != NULL)
+	while (*args++ != NULL)
 		++argk;
 	return argk;
 }
@@ -450,7 +449,7 @@ extern "C" {
 
 static inline char *HX_strdup(const char *src)
 {
-	if(src == NULL)
+	if (src == NULL)
 		return NULL;
 #ifdef __cplusplus
 	return HX_memdup<char *>(src, strlen(src) + 1);

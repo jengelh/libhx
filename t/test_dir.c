@@ -7,7 +7,7 @@ int main(void)
 	const char *n;
 
 	printf("Available files in /tmp:\n");
-	while((n = HXdir_read(d)) != NULL)
+	while ((n = HXdir_read(d)) != NULL)
 		printf("\t" "%s\n", n);
 
 	HXdir_close(d);

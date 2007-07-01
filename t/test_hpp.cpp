@@ -14,7 +14,7 @@ int main(void)
 	HXbtree_free(bt);
 
 	void *hnd = HX_dlopen("/lib/libm.so.6");
-	if(hnd != NULL) {
+	if (hnd != NULL) {
 		double (*cosp)(double) = HX_dlsym<double (*)(double)>(hnd, "cos");
 		printf("%f\n", (*cosp)(2.0));
 		HX_dlclose(hnd);

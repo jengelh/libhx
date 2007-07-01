@@ -1,13 +1,12 @@
 /*
-	libHX/deque.c
-	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2002 - 2007
-
-	This file is part of libHX. libHX is free software; you can
-	redistribute it and/or modify it under the terms of the GNU
-	Lesser General Public License as published by the Free Software
-	Foundation; however ONLY version 2 of the License. For details,
-	see the file named "LICENSE.LGPL2".
-*/
+ *	libHX/deque.c
+ *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2002 - 2007
+ *
+ *	This file is part of libHX. libHX is free software; you can
+ *	redistribute it and/or modify it under the terms of the GNU
+ *	Lesser General Public License as published by the Free Software
+ *	Foundation; either version 2 or 3 of the License.
+ */
 #include <errno.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -21,7 +20,7 @@ static inline void HXdeque_drop(struct HXdeque *, struct HXdeque_node *);
 EXPORT_SYMBOL struct HXdeque *HXdeque_init(void)
 {
 	struct HXdeque *dq;
-	if((dq = calloc(1, sizeof(struct HXdeque))) == NULL)
+	if ((dq = calloc(1, sizeof(struct HXdeque))) == NULL)
 		return NULL;
 	return dq;
 }
@@ -30,14 +29,14 @@ EXPORT_SYMBOL struct HXdeque_node *HXdeque_push(struct HXdeque *dq,
     const void *ptr)
 {
 	struct HXdeque_node *nd;
-	if((nd = malloc(sizeof(struct HXdeque_node))) == NULL)
+	if ((nd = malloc(sizeof(struct HXdeque_node))) == NULL)
 		return NULL;
 	nd->prev   = dq->last;
 	nd->next   = NULL;
 	nd->parent = dq;
 	nd->ptr    = const_cast(void *, ptr);
 
-	if(dq->first == NULL) {
+	if (dq->first == NULL) {
 		dq->first = dq->last = nd;
 	} else {
 		dq->last->next = nd;
@@ -50,7 +49,7 @@ EXPORT_SYMBOL struct HXdeque_node *HXdeque_push(struct HXdeque *dq,
 
 EXPORT_SYMBOL void *HXdeque_pop(struct HXdeque *dq)
 {
-	if(dq->last == NULL)
+	if (dq->last == NULL)
 		return NULL;
 	return HXdeque_del(dq->last);
 }
@@ -60,9 +59,9 @@ EXPORT_SYMBOL struct HXdeque_node *HXdeque_unshift(struct HXdeque *dq,
 {
 	struct HXdeque_node *nd;
 
-	if(dq->first == NULL)
+	if (dq->first == NULL)
 		return HXdeque_push(dq, ptr);
-	if((nd = malloc(sizeof(struct HXdeque_node))) == NULL)
+	if ((nd = malloc(sizeof(struct HXdeque_node))) == NULL)
 		return NULL;
 
 	nd->prev   = NULL;
@@ -78,7 +77,7 @@ EXPORT_SYMBOL struct HXdeque_node *HXdeque_unshift(struct HXdeque *dq,
 
 EXPORT_SYMBOL void *HXdeque_shift(struct HXdeque *dq)
 {
-	if(dq->first == NULL)
+	if (dq->first == NULL)
 		return NULL;
 	return HXdeque_del(dq->first);
 }
@@ -103,7 +102,7 @@ EXPORT_SYMBOL void *HXdeque_del(struct HXdeque_node *node)
 EXPORT_SYMBOL void HXdeque_free(struct HXdeque *dq)
 {
 	struct HXdeque_node *node = dq->first;
-	while(node != NULL) {
+	while (node != NULL) {
 		struct HXdeque_node *next = node->next;
 		free(node);
 		node = next;
@@ -116,8 +115,8 @@ EXPORT_SYMBOL struct HXdeque_node *HXdeque_find(struct HXdeque *dq,
   const void *ptr)
 {
 	struct HXdeque_node *travp;
-	for(travp = dq->first; travp != NULL; travp = travp->next)
-		if(travp->ptr == ptr)
+	for (travp = dq->first; travp != NULL; travp = travp->next)
+		if (travp->ptr == ptr)
 			return travp;
 	return NULL;
 }
@@ -125,8 +124,8 @@ EXPORT_SYMBOL struct HXdeque_node *HXdeque_find(struct HXdeque *dq,
 EXPORT_SYMBOL void *HXdeque_get(struct HXdeque *dq, const void *ptr)
 {
 	struct HXdeque_node *trav = dq->first;
-	for(trav = dq->first; trav != NULL; trav = trav->next)
-		if(trav->ptr == ptr)
+	for (trav = dq->first; trav != NULL; trav = trav->next)
+		if (trav->ptr == ptr)
 			return trav->ptr;
 	return NULL;
 }
@@ -134,7 +133,7 @@ EXPORT_SYMBOL void *HXdeque_get(struct HXdeque *dq, const void *ptr)
 EXPORT_SYMBOL void HXdeque_genocide(struct HXdeque *dq)
 {
 	struct HXdeque_node *trav = dq->first;
-	while(trav != NULL) {
+	while (trav != NULL) {
 		struct HXdeque_node *next = trav->next;
 		free(trav->ptr);
 		free(trav);
@@ -154,11 +153,11 @@ EXPORT_SYMBOL void **HXdeque_to_vec(struct HXdeque *dq, unsigned int *num)
 		return NULL;
 
 	p = ret;
-	for(trav = dq->first; trav != NULL; trav = trav->next)
+	for (trav = dq->first; trav != NULL; trav = trav->next)
 		*p++ = trav->ptr;
 	*p = NULL;
 
-	if(num != NULL)
+	if (num != NULL)
 		*num = dq->items;
 	return ret;
 }
@@ -172,7 +171,7 @@ static inline void HXdeque_add(struct HXdeque_node *af,
 	nd->prev   = af;
 	af->next   = nd;
 	nd->parent = parent;
-	if(parent->last == af)
+	if (parent->last == af)
 		parent->last = nd;
 	return;
 }
@@ -182,11 +181,11 @@ static inline void HXdeque_drop(struct HXdeque *parent,
 {
 	struct HXdeque_node *left = node->prev, *right = node->next;
 
-	if(left == NULL)  parent->first = right;
+	if (left == NULL) parent->first = right;
 	else              left->next = right;
 
-	if(right == NULL) parent->last = left;
-	else              right->prev = left;
+	if (right == NULL) parent->last = left;
+	else               right->prev = left;
 
 	return;
 }
