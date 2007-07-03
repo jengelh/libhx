@@ -50,7 +50,8 @@ cp -a doc "$b/%_docdir/%name";
 
 %files
 %defattr(-,root,root)
-%_libdir/%{name}*
+%attr(0644,root,root) %_libdir/%name.la
+%_libdir/%{name}*.so*
 %_includedir/%{name}*
 %docdir %_docdir/%name
 %_docdir/%name
