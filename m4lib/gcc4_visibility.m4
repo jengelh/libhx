@@ -12,7 +12,7 @@ AC_DEFUN([CHECK_GCC_FVISIBILITY], [
 		[cv_fvisibility_hidden=no]
 	))
 	if test "$cv_fvisibility_hidden" = "yes"; then
-		AC_DEFINE(HAVE_VISIBILITY_HIDDEN, [],
+		AC_DEFINE(HAVE_VISIBILITY_HIDDEN, [1],
 		  [True if compiler supports -fvisibility=hidden])
 		AC_SUBST(GCC_FVISIBILITY_HIDDEN, [-fvisibility=hidden])
 	fi
