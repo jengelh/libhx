@@ -1,5 +1,5 @@
 /*
- *	libHX/arbtree.c - Associative RB-tree
+ *	libHX/arbtree.c - Associative map with RB-tree
  *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2002 - 2007
  *
  *	This file is part of libHX. libHX is free software; you can
@@ -21,7 +21,7 @@ enum {
 	HXBT_FLAGS_OK = HXBT_MAP | HXBT_CKEY | HXBT_CDATA | HXBT_CMPFN |
 	                HXBT_ICMP | HXBT_SCMP | HXBT_CID,
 
-	/* Allow for a worst-case tree with max. 16 million objects */
+	/* Allows for at least 16 million objects (in a worst-case tree) */
 	BT_MAXDEP     = 48,
 };
 
@@ -612,19 +612,20 @@ static void btree_dmov(struct HXbtree_node **path, unsigned char *dir,
 		x = path[depth - 1]->sub[LR];
 
 		if (x != NULL && x->color == NODE_RED) {
-			/* Case 1: */
+			/* (WP) "delete_one_child" */
 			x->color = NODE_BLACK;
 			break;
 		}
 
 		if (depth < 2)
+			/* Case 1 */
 			break;
 
 		/* @w is the sibling of @x (the current node). */
 		w = path[depth - 1]->sub[!LR];
 		if (w->color == NODE_RED) {
 			/*
-			 * Extra case: @w is of color red. In order to collapse
+			 * Case 2. @w is of color red. In order to collapse
 			 * cases, a left rotate is performed at @x's parent and
 			 * colors are swapped to make @w a black node.
 			 */
@@ -637,12 +638,11 @@ static void btree_dmov(struct HXbtree_node **path, unsigned char *dir,
 			dir[depth]  = LR;
 			path[depth - 1] = w;
 			w = path[++depth - 1]->sub[!LR];
-			/* 2A, 3AA, 3B */
 		}
 
 		if ((w->sub[LR] == NULL || w->sub[LR]->color == NODE_BLACK) &&
 		   (w->sub[!LR] == NULL || w->sub[!LR]->color == NODE_BLACK)) {
-			/* Case 2: @w has no red children. */
+			/* Case 3/4: @w has no red children. */
 			w->color = NODE_RED;
 			--depth;
 			continue;
