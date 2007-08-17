@@ -318,7 +318,7 @@ static struct HXbtree *generate_perfect_tree(unsigned int height,
 		abort();
 
 	for (y = 0; y < height; ++y) {
-		for(x = left; x < right; x += incr) {
+		for (x = left; x < right; x += incr) {
 			snprintf(buf, sizeof(buf), "%u", x * mult);
 			HXbtree_add(b, buf);
 		}
