@@ -9,9 +9,6 @@
  */
 #include <sys/stat.h>
 #include <sys/types.h>
-#ifdef __GLIBC__
-#	include <alloca.h>
-#endif
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
