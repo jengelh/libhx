@@ -5,7 +5,7 @@ Release:        jen0
 Group:          System/Libraries
 URL:            http://jengelh.hopto.org/f/%name/
 Summary:        General-purpose library
-License:        LGPL2
+License:        LGPL2 LGPL3
 Source:         http://jengelh.hopto.org/f/%name/%name-%version.tar.bz2
 BuildRoot:      %_tmppath/%name-%version-build
 BuildRequires:	gcc-c++ perl
