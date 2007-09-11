@@ -1,3 +1,4 @@
 
 SVN /trunk
 ==========
+- [r96]: Fix output of line-wrapped help text

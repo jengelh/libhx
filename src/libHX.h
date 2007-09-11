@@ -219,10 +219,6 @@ enum {
 	HXOPT_XOR      = 1 << 12,
 	HXFORMAT_IMMED = 1 << 13,
 
-	HXOPT_LOPMASK2 = HXOPT_OR | HXOPT_AND | HXOPT_XOR,
-	HXOPT_LOPMASK  = HXOPT_LOPMASK2 | HXOPT_NOT,
-	HXOPT_TYPEMASK = 0x1F, /* 5 bits */
-
 	/* HX_getopt() flags */
 	HXOPT_PTHRU       = 1 << 0,
 	HXOPT_DESTROY_OLD = 1 << 1,

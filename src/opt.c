@@ -93,6 +93,10 @@ enum {
 	W_BRACKET = 1 << 1,
 	W_ALT     = 1 << 2,
 	W_EQUAL   = 1 << 3,
+
+	HXOPT_LOPMASK2 = HXOPT_OR | HXOPT_AND | HXOPT_XOR,
+	HXOPT_LOPMASK  = HXOPT_LOPMASK2 | HXOPT_NOT,
+	HXOPT_TYPEMASK = 0x1F, /* 5 bits */
 };
 
 /* Functions */
@@ -100,7 +104,7 @@ static inline const struct HXoption *lookup_long(const struct HXoption *, const 
 static inline const struct HXoption *lookup_short(const struct HXoption *, char);
 static void do_assign(struct HXoptcb *);
 static void opt_to_text(const struct HXoption *, char *, size_t, unsigned int);
-static void print_indent(const char *, size_t, size_t, FILE *);
+static void print_indent(const char *, unsigned int, FILE *);
 static inline char *shell_unescape(char *);
 static inline unsigned int takes_void(unsigned int);
 
@@ -402,7 +406,7 @@ EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
 	FILE *fp = (nfp == NULL) ? stderr : nfp;
 	const struct HXoption *travp;
 	char tmp[84] = {'\0'};
-	size_t tw = 0, wd = 0;
+	unsigned int tw = 0;
 
 	HX_getopt_usage(cbi, nfp);
 
@@ -421,11 +425,11 @@ EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
 	travp = cbi->table;
 	while (travp->ln != NULL || travp->sh != '\0') {
 		opt_to_text(travp, tmp, sizeof(tmp), W_NONE);
-		wd = fprintf(fp, "  %-*s    ", static_cast(int, tw), tmp);
+		fprintf(fp, "  %-*s    ", static_cast(int, tw), tmp);
 		if (travp->help == NULL)
 			fprintf(fp, "\n");
 		else
-			print_indent(travp->help, tw + 6, wd, fp);
+			print_indent(travp->help, tw + 6, fp);
 		++travp;
 	}
 	return;
@@ -768,9 +772,9 @@ static void opt_to_text(const struct HXoption *opt, char *buf, size_t len,
 	return;
 }
 
-static void print_indent(const char *msg, size_t ind, size_t pos, FILE *fp)
+static void print_indent(const char *msg, unsigned int ind, FILE *fp)
 {
-	size_t rest = SCREEN_WIDTH - pos;
+	size_t rest = SCREEN_WIDTH - ind;
 	char *p;
 	while (1) {
 		if (strlen(msg) < rest) {
@@ -781,9 +785,10 @@ static void print_indent(const char *msg, size_t ind, size_t pos, FILE *fp)
 			fprintf(fp, "%s", msg);
 			break;
 		}
-		fprintf(fp, "%.*s", static_cast(int, p - msg), p);
+		fprintf(fp, "%.*s\n%*s", static_cast(unsigned int, p - msg),
+		        msg, ind, "");
 		msg  = p + 1;
-		rest = ind;
+		rest = SCREEN_WIDTH - ind;
 	}
 	fprintf(fp, "\n");
 	return;
