@@ -143,9 +143,9 @@ EXPORT_SYMBOL void HXdeque_genocide(struct HXdeque *dq)
 	return;
 }
 
-EXPORT_SYMBOL void **HXdeque_to_vec(struct HXdeque *dq, unsigned int *num)
+EXPORT_SYMBOL void **HXdeque_to_vec(const struct HXdeque *dq, unsigned int *num)
 {
-	struct HXdeque_node *trav;
+	const struct HXdeque_node *trav;
 	void **ret, **p;
 
 	ret = malloc((dq->items + 1) * sizeof(void *));

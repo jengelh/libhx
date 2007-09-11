@@ -108,7 +108,7 @@ extern void *HXdeque_get(struct HXdeque *, const void *);
 extern void *HXdeque_del(struct HXdeque_node *);
 extern void HXdeque_free(struct HXdeque *);
 extern void HXdeque_genocide(struct HXdeque *);
-extern void **HXdeque_to_vec(struct HXdeque *, unsigned int *);
+extern void **HXdeque_to_vec(const struct HXdeque *, unsigned int *);
 
 /*
  *	DIR.C
