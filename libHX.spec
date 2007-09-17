@@ -57,5 +57,3 @@ cp -a doc "$b/%_docdir/%name";
 %_docdir/%name
 
 %changelog -n libHX
-* Tue Feb 27 2007 - jengelh
-- BT_MAXDEP was set too low, crashing if more than 512K objects were in a tree
