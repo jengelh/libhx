@@ -51,6 +51,7 @@ cp -a doc "$b/%_docdir/%name";
 %files
 %defattr(-,root,root)
 %_libdir/%{name}*.so*
+%_libdir/pkgconfig/*
 %_includedir/%{name}*
 %docdir %_docdir/%name
 %_docdir/%name
