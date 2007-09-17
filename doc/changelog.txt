@@ -1,4 +1,10 @@
 
 SVN /trunk
 ==========
+
+
+libHX 1.10.1 (September 17 2007)
+================================
 - [r96]: Fix output of line-wrapped help text
+- tarball: in libHX 1.10.0 I forgot to provide the configure - sorry
+  (but you could regenerate it using ./autogen.sh if you have autotools)

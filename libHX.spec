@@ -1,11 +1,11 @@
 
 Name:           libHX
-Version:        1.10.0
+Version:        1.10.1
 Release:        jen0
 Group:          System/Libraries
 URL:            http://jengelh.hopto.org/f/%name/
 Summary:        General-purpose library
-License:        LGPL2 LGPL3
+License:        LGPL2 LGPL3 and NOT LATER
 Source:         http://jengelh.hopto.org/f/%name/%name-%version.tar.bz2
 BuildRoot:      %_tmppath/%name-%version-build
 BuildRequires:	gcc-c++ perl
@@ -28,7 +28,6 @@ A library for:
 %setup
 
 %build
-./autogen.sh;
 %configure
 make %{?jobs:-j%jobs};
 perl -i -pe 's/^shouldnotlink=yes/shouldnotlink=no/;' \
@@ -39,18 +38,18 @@ b="%buildroot";
 rm -Rf "$b";
 mkdir "$b";
 make install DESTDIR="$b";
+rm -f "$b/%_libdir/%name.la";
 mkdir -p "$b/%_docdir";
 cp -a doc "$b/%_docdir/%name";
 
 %post
-%run_ldconfig
+/sbin/ldconfig
 
 %postun
-%run_ldconfig
+/sbin/ldconfig
 
 %files
 %defattr(-,root,root)
-%attr(0644,root,root) %_libdir/%name.la
 %_libdir/%{name}*.so*
 %_includedir/%{name}*
 %docdir %_docdir/%name
