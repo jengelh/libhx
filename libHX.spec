@@ -9,6 +9,7 @@ License:        LGPL2 LGPL3 but NOT LATER
 Source:         http://jengelh.hopto.org/f/%name/%name-%version.tar.bz2
 BuildRoot:      %_tmppath/%name-%version-build
 BuildRequires:	gcc-c++ perl
+Obsoletes:	libHX10
 
 %description
 A library for:
@@ -23,11 +24,12 @@ A library for:
   /dev/urandom support
 - various string, memory and zvec ops
 
-%package -n libHX-devel
+%package devel
 Group:		Development/Libraries/C and C++
 Summary:	Development files for libHX
+Requires:	libHX = %version
 
-%description -n libHX-devel
+%description devel
 A library for:
 - A+R/B trees to use for lists or maps (associative arrays)
 - Deques (double-ended queues) (Stacks (LIFO) / Queues (FIFOs))
@@ -69,7 +71,7 @@ cp -a doc "$b/%_docdir/%name";
 %defattr(-,root,root)
 %_libdir/%{name}*.so.*
 
-%files -n libHX-devel
+%files devel
 %defattr(-,root,root)
 %_libdir/%{name}*.so
 %_libdir/pkgconfig/*
