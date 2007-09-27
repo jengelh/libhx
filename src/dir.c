@@ -22,6 +22,12 @@
 #	include <io.h>
 #endif
 #include "libHX.h"
+#ifndef S_IRUGO
+#	define S_IRUGO (S_IRUSR | S_IRGRP | S_IROTH)
+#endif
+#ifndef S_IWUGO
+#	define S_IWUGO (S_IWUSR | S_IWGRP | S_IWOTH)
+#endif
 
 struct HXdir {
 #if defined _WIN32
@@ -113,12 +119,16 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
     unsigned int opts, ...)
 {
 	char buf[MAXLNLEN];
+	unsigned int extra_flags = 0;
 	int dd, eax = 0, sd, l;
 
 	if ((sd = open(src, O_RDONLY | O_BINARY)) < 0)
 		return -errno;
-	if ((dd = open(dest, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC |
-	    (!!(opts & HXF_KEEP) * O_EXCL), 0666)) < 0) {
+	if (opts & HXF_KEEP)
+		extra_flags = O_EXCL;
+	dd = open(dest, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC |
+	     extra_flags, S_IRUGO | S_IWUGO);
+	if (dd < 0) {
 		eax = errno;
 		close(sd);
 		errno = eax;
