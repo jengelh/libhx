@@ -115,7 +115,7 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 	char buf[MAXLNLEN];
 	int dd, eax = 0, sd, l;
 
-	if ((sd = open(src, O_RDONLY | O_BINARY, 0400)) < 0)
+	if ((sd = open(src, O_RDONLY | O_BINARY)) < 0)
 		return -errno;
 	if ((dd = open(dest, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC |
 	    (!!(opts & HXF_KEEP) * O_EXCL), 0666)) < 0) {
