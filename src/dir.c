@@ -132,7 +132,7 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 		eax = errno;
 		close(sd);
 		errno = eax;
-		if (eax == EEXIST)
+		if (extra_flags != 0 && eax == EEXIST)
 			return 1;
 		return -errno;
 	}

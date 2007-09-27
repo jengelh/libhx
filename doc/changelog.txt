@@ -2,6 +2,7 @@
 SVN /trunk
 ==========
 - [r105]: pass up NULL from memory allocation error
+- [r108]: only return success on EEXIST when HXF_KEEP was given
 
 
 libHX 1.10.1 (September 17 2007)
