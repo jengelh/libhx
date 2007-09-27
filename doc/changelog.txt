@@ -1,6 +1,7 @@
 
 SVN /trunk
 ==========
+- [r105]: pass up NULL from memory allocation error
 
 
 libHX 1.10.1 (September 17 2007)
