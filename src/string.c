@@ -46,6 +46,8 @@ EXPORT_SYMBOL char *HX_dirname(const char *s)
 		return HX_strdup(".");
 
 	dir = HX_strdup(s);
+	if (dir == NULL)
+		return NULL;
 	*strrchr(dir, '/') = '\0';
 	return dir;
 }
