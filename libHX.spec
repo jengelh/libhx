@@ -1,6 +1,6 @@
 
 Name:           libHX
-Version:        1.10.1
+Version:        1.10.2
 Release:        jen0
 Group:          System/Libraries
 URL:            http://jengelh.hopto.org/p/%name/

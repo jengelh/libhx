@@ -1,8 +1,13 @@
 
 SVN /trunk
 ==========
+
+
+libHX 1.10.2 (December 06 2007)
+===============================
 - [r105]: pass up NULL from memory allocation error
 - [r108]: only return success on EEXIST when HXF_KEEP was given
+- [r112]: HX_dirname() incorrectly computed the path
 
 
 libHX 1.10.1 (September 17 2007)
