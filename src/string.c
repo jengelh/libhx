@@ -41,15 +41,24 @@ EXPORT_SYMBOL char *HX_chomp(char *s)
 
 EXPORT_SYMBOL char *HX_dirname(const char *s)
 {
-	char *dir;
-	if (strrchr(s, '/') == NULL)
+	const char *last, *stop;
+	char *p;
+
+	if (*s == '\0')
 		return HX_strdup(".");
 
-	dir = HX_strdup(s);
-	if (dir == NULL)
-		return NULL;
-	*strrchr(dir, '/') = '\0';
-	return dir;
+	for (last = s + strlen(s) - 1; last > s && *last == '/'; --last)
+		;
+
+	if ((stop = HX_strbchr(s, last, '/')) == NULL)
+		return HX_strdup(".");
+
+	for (; stop > s && *stop == '/'; --stop)
+		;
+
+	p = HX_memdup(s, stop - s + 2);
+	p[stop-s+1] = '\0';
+	return p;
 }
 
 EXPORT_SYMBOL hmc_t *HX_getl(hmc_t **ptr, FILE *fp)

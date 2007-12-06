@@ -20,6 +20,11 @@ int main(void)
 		printf("%s", tx);
 
 	fclose(fp);
+
+	printf("%s\n", HX_dirname("/"));
+	printf("%s\n", HX_dirname("//"));
+	printf("%s\n", HX_dirname("etc//foo/"));
+	printf("%s\n", HX_dirname("//etc//foo//"));
 	return 0;
 }
 
