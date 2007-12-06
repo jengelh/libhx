@@ -6,4 +6,5 @@ AM_CFLAGS        = $(regular_CFLAGS) -I$(top_srcdir)/src
 AM_CXXFLAGS      = -Wall -pipe -I$(top_srcdir)/src
 LDADD            = ../src/libHX.la
 test_btree_LDADD = ../src/libHX.la -lm
+test_hpp_SOURCES = test_hpp.cpp
 test_hpp_LDADD   = ../src/libHX.la -ldl
