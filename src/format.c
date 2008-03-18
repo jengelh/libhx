@@ -1,6 +1,6 @@
 /*
  *	libHX/format.c
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2007
+ *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2007 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -42,16 +42,20 @@ static void HXformat_transform(hmc_t **, struct HXdeque *,
 	const struct fmt_entry *);
 static void HXformat_xfrm_after(hmc_t **, const char *);
 static void HXformat_xfrm_before(hmc_t **, const char *);
+static void HXformat_xfrm_ifempty(hmc_t **, const char *);
+static void HXformat_xfrm_ifnempty(hmc_t **, const char *);
 static void HXformat_xfrm_lower(hmc_t **, const char *);
 static void HXformat_xfrm_upper(hmc_t **, const char *);
 
 /* Variables */
 static const struct modifier_info modifier_list[] = {
 #define E(s) (s), sizeof(s)-1
-	{HXformat_xfrm_after,  E("after=\""),  1},
-	{HXformat_xfrm_before, E("before=\""), 1},
-	{HXformat_xfrm_lower,  E("lower"),     0},
-	{HXformat_xfrm_upper,  E("upper"),     0},
+	{HXformat_xfrm_after,    E("after=\""),    1},
+	{HXformat_xfrm_before,   E("before=\""),   1},
+	{HXformat_xfrm_ifempty,  E("ifempty=\""),  1},
+	{HXformat_xfrm_ifnempty, E("ifnempty=\""), 1},
+	{HXformat_xfrm_lower,    E("lower"),       0},
+	{HXformat_xfrm_upper,    E("upper"),       0},
 	{NULL},
 #undef E
 };
@@ -374,6 +378,22 @@ static void HXformat_xfrm_before(hmc_t **x, const char *arg)
 	if (**x != '\0')
 		hmc_strpcat(x, arg);
 	return;
+}
+
+static void HXformat_xfrm_ifempty(hmc_t **val, const char *repl)
+{
+	if (**val == '\0' && repl != NULL)
+		hmc_strasg(val, repl);
+	else
+		hmc_trunc(val, 0);
+}
+
+static void HXformat_xfrm_ifnempty(hmc_t **val, const char *repl)
+{
+	if (**val != '\0' && repl != NULL)
+		hmc_strasg(val, repl);
+	else
+		hmc_trunc(val, 0);
 }
 
 static void HXformat_xfrm_lower(hmc_t **x, const char *arg)
