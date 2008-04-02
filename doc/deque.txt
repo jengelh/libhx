@@ -14,7 +14,7 @@ DESCRIPTION
 
 SYNOPSIS
 
-    #include <libHX.h>
+    #include <libHX/deque.h>
 
     struct HXdeque {
         ...;

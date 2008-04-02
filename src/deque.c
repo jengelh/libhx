@@ -11,7 +11,8 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include "libHX.h"
+#include <libHX.h>
+#include <libHX/deque.h>
 
 static inline void HXdeque_add(struct HXdeque_node *, struct HXdeque_node *);
 static inline void HXdeque_drop(struct HXdeque *, struct HXdeque_node *);
