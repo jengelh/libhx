@@ -4,7 +4,7 @@ string - String and memory manipulation functions                    2007-03-17
 
 SYNOPSIS
 
-    #include <libHX.h>
+    #include <libHX/string.h>
 
     char *HX_chomp(char *S);
     void *HX_memdup(const void *B, size_t LEN);
