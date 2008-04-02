@@ -10,7 +10,7 @@ DESCRPITION
 
 SYNOPSIS
 
-    #include <libHX.h>
+    #include <libHX/arbtree.h>
 
     struct HXbtree {
         ...

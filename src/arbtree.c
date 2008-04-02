@@ -9,9 +9,11 @@
  */
 #include <errno.h>
 #include <stdarg.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include "libHX.h"
+#include <libHX.h>
+#include <libHX/arbtree.h>
 
 enum {
 	S_LEFT        = 0,
