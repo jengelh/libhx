@@ -29,7 +29,7 @@
 #	include <unistd.h>
 #endif
 #ifdef LIBHX_INTERNAL /* only for compiling libHX */
-#	include "internal.h"
+#	include "libHX/internal.h"
 #endif
 
 #ifdef __cplusplus

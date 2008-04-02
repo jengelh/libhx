@@ -10,13 +10,13 @@
 #ifndef LIBHX_INTERNAL_H
 #define LIBHX_INTERNAL_H 1
 
-#include "config.h"
+#include "libHX/config.h"
 
 #ifdef __MINGW32__
-#	include "uxcompat.h"
+#	include "libHX/uxcompat.h"
 #endif
 #ifdef _MSC_VER
-#	include "uxcompat.h"
+#	include "libHX/uxcompat.h"
 #	define snprintf _snprintf
 #endif
 
