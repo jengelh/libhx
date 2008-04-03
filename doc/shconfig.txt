@@ -22,7 +22,7 @@ DESCRIPTION
 
 SYNOPSIS
 
-    #include <libHX.h>
+    #include <libHX/option.h>
 
     struct HXoption;
 

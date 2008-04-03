@@ -9,7 +9,7 @@ DESCRIPTION
 
 SYNOPSIS
 
-    #include <libHX.h>
+    #include <libHX/option.h>
 
     struct HXbtree *HXformat_init(void);
     void HXformat_free(struct HXbtree *VTAB);
