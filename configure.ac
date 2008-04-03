@@ -23,4 +23,4 @@ regular_CFLAGS="-D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
 	-Winline -pipe"
 AC_SUBST(regular_CFLAGS)
 AC_SUBST(regular_LIBS)
-AC_OUTPUT([Makefile src/Makefile t/Makefile libHX.pc])
+AC_OUTPUT([Makefile src/Makefile libHX.pc])
