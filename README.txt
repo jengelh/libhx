@@ -11,7 +11,7 @@ A general-purpose library for typical low-level operations.
     and deletion and small memory footprint for ordered traversals. (Using a
     hash would have meant to gather all keys first and sort them.)
 
-  • deques (HXdeque_*)
+  • deques (HXdeque_*, HXlist_*, HXclist_*)
 
     Deques — double-ended queues, essentially a doubly-linked list — are
     suitable for both providing stack and queue functionality.
