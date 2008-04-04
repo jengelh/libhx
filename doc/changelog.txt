@@ -1,6 +1,9 @@
 
-SVN /trunk
-==========
+libHX 1.15 (April 04 2008)
+==========================
+- HXformat: add %(ifempty) and %(ifnempty) tags
+- libHX.h: split into {arbtree,deque,option,string}.h (and libHX.h)
+- Add inline-doubly-linked-list data structures
 
 
 libHX 1.10.2 (December 06 2007)

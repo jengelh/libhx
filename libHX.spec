@@ -1,65 +1,63 @@
 
-Name:           libHX
-Version:        1.10.2
-Release:        jen0
-Group:          System/Libraries
-URL:            http://jengelh.hopto.org/p/%name/
-Summary:        General-purpose library
-License:        LGPL2 LGPL3 but NOT LATER
-Source:         http://jengelh.hopto.org/f/%name/%name-%version.tar.bz2
-BuildRoot:      %_tmppath/%name-%version-build
-BuildRequires:	gcc-c++ perl
-Obsoletes:	libHX10
+Name:		libHX10
+%define lname	libHX
+Version:	1.15
+Release:	0
+Group:		System/Libraries
+URL:		http://jengelh.hopto.org/projects/libHX/
+Summary:	General-purpose library for typical low-level operations
+License:	LGPL2 LGPL3 but NOT LATER
+Source:		http://jengelh.hopto.org/files/libHX/libHX-%version.tar.bz2
+BuildRoot:	%_tmppath/%name-%version-build
+BuildRequires:	gcc-c++
 
 %description
 A library for:
-- A+R/B trees to use for lists or maps (associative arrays)
-- Deques (double-ended queues) (Stacks (LIFO) / Queues (FIFOs))
+- rbtree with key-value pair extension
+- deques (double-ended queues) (Stacks (LIFO) / Queues (FIFOs))
 - platform independent opendir-style directory access
 - platform independent dlopen-style shared library access
 - auto-storage strings with direct access
 - command line option (argv) parser
-- shell-style config file parser
+- shconfig-style config file parser
 - platform independent random number generator with transparent
   /dev/urandom support
 - various string, memory and zvec ops
 
-%package devel
+%package -n libHX-devel
 Group:		Development/Libraries/C and C++
 Summary:	Development files for libHX
-Requires:	libHX = %version
+Requires:	libHX10 = %version
 
-%description devel
+%description -n libHX-devel
 A library for:
-- A+R/B trees to use for lists or maps (associative arrays)
-- Deques (double-ended queues) (Stacks (LIFO) / Queues (FIFOs))
+- rbtree with key-value pair extension
+- deques (double-ended queues) (Stacks (LIFO) / Queues (FIFOs))
 - platform independent opendir-style directory access
 - platform independent dlopen-style shared library access
 - auto-storage strings with direct access
 - command line option (argv) parser
-- shell-style config file parser
+- shconfig-style config file parser
 - platform independent random number generator with transparent
   /dev/urandom support
 - various string, memory and zvec ops
 
 %debug_package
 %prep
-%setup
+%setup -n %lname-%version
 
 %build
 %configure
 make %{?jobs:-j%jobs};
-perl -i -pe 's/^shouldnotlink=yes/shouldnotlink=no/;' \
-	src/%name.la src/.libs/%name.lai;
 
 %install
 b="%buildroot";
 rm -Rf "$b";
 mkdir "$b";
 make install DESTDIR="$b";
-rm -f "$b/%_libdir/%name.la";
+rm -f "$b/%_libdir/%lname.la";
 mkdir -p "$b/%_docdir";
-cp -a doc "$b/%_docdir/%name";
+cp -a doc "$b/%_docdir/%lname";
 
 %post
 /sbin/ldconfig
@@ -69,12 +67,12 @@ cp -a doc "$b/%_docdir/%name";
 
 %files
 %defattr(-,root,root)
-%_libdir/%{name}*.so.*
+%_libdir/%{lname}*.so.*
 
-%files devel
+%files -n libHX-devel
 %defattr(-,root,root)
-%_libdir/%{name}*.so
+%_libdir/%{lname}*.so
 %_libdir/pkgconfig/*
-%_includedir/%{name}*
-%docdir %_docdir/%name
-%_docdir/%name
+%_includedir/*
+%docdir %_docdir/%lname
+%_docdir/%lname
