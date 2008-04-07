@@ -13,7 +13,7 @@ static void t_format(int argc)
 	struct HXbtree *fmt = HXformat_init();
 	HXformat_add(fmt, "USER", "jengelh", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ARGC", &argc, HXTYPE_INT);
-	HXformat_add(fmt, "ARGK", (const void *)argc, HXTYPE_INT | HXFORMAT_IMMED);
+	HXformat_add(fmt, "ARGK", (const void *)(long)argc, HXTYPE_INT | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ZERO", "", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ONE", "1", HXTYPE_STRING | HXFORMAT_IMMED);
 	++argc;

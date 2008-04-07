@@ -168,7 +168,7 @@ static void test_3(void)
 
 static void test_4(void)
 {
-	unsigned int n;
+	unsigned long n;
 	int hg, i;
 
 	/*
@@ -339,7 +339,8 @@ static struct HXbtree *generate_random_tree(unsigned int elements)
 		abort();
 
 	while (elements--) {
-		unsigned int number = HX_irand(1, range);
+		unsigned long number = HX_irand(1, range);
+
 		if (HXbtree_find(ret, (const void *)number)) {
 			++elements;
 			continue;
@@ -355,7 +356,8 @@ static void destroy_random_tree(struct HXbtree *tree, unsigned int elements)
 	unsigned int range = elements * 4;
 
 	while (tree->items > 0) {
-		unsigned int number = HX_irand(1, range);
+		unsigned long number = HX_irand(1, range);
+
 		if (HXbtree_find(tree, (const void *)number) == NULL)
 			continue;
 		HXbtree_del(tree, (const void *)number);
