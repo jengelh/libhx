@@ -1,0 +1,8 @@
+config.h*
+t?-arbtree
+t?-compile
+t?-deque
+t?-dir
+t?-list
+t?-option
+t?-string

@@ -4,8 +4,7 @@ Makefile
 Makefile.in
 *.la
 *.lo
-
-/src/config.h*
+*.o
 
 /aclocal.m4
 /autom4te*.cache
@@ -20,6 +19,6 @@ Makefile.in
 /libtool
 /ltmain.sh
 /missing
-/stamp-h1
+stamp-h1
 
 /libHX.pc
