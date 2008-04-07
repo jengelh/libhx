@@ -20,7 +20,7 @@ AC_CHECK_LIB([dl], [dlopen], [regular_LIBS="$regular_LIBS -ldl"])
 regular_CFLAGS="-D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
 	-D_REENTRANT -Wall -Waggregate-return -Wmissing-declarations \
 	-Wmissing-prototypes -Wredundant-decls -Wshadow -Wstrict-prototypes \
-	-Winline -pipe"
+	-Winline -Wformat=2 -pipe"
 AC_SUBST(regular_CFLAGS)
 AC_SUBST(regular_LIBS)
 AC_OUTPUT([Makefile src/Makefile libHX.pc])
