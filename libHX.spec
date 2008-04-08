@@ -5,7 +5,7 @@ Version:	1.15
 Release:	0
 Group:		System/Libraries
 URL:		http://jengelh.hopto.org/projects/libHX/
-Summary:	General-purpose library for typical low-level operations
+Summary:	Library for commonly needed tasks in C
 License:	LGPL2 LGPL3 but NOT LATER
 Source:		http://jengelh.hopto.org/files/libHX/libHX-%version.tar.bz2
 BuildRoot:	%_tmppath/%name-%version-build
@@ -13,14 +13,14 @@ BuildRequires:	gcc-c++
 
 %description
 A library for:
-- rbtree with key-value pair extension
+- rbtree with key-value pair extension ("maps")
 - deques (double-ended queues) (Stacks (LIFO) / Queues (FIFOs))
-- platform independent opendir-style directory access
-- platform independent dlopen-style shared library access
+- platform-independent opendir-style directory access
+- platform-independent dlopen-style shared library access
 - auto-storage strings with direct access
 - command line option (argv) parser
 - shconfig-style config file parser
-- platform independent random number generator with transparent
+- platform-independent random number generator with transparent
   /dev/urandom support
 - various string, memory and zvec ops
 
