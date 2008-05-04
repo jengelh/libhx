@@ -1,6 +1,6 @@
 /*
  *	libHX/dir.c
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2002 - 2007
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -112,7 +112,6 @@ EXPORT_SYMBOL void HXdir_close(void *dv)
 	closedir(d->ptr);
 #endif
 	free(d);
-	return;
 }
 
 EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
@@ -319,5 +318,3 @@ static int mkdir_gen(const char *d)
 	}
 	return 1;
 }
-
-//=============================================================================

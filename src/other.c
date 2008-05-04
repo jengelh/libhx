@@ -1,6 +1,6 @@
 /*
  *	libHX/other.c
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 1999 - 2007
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -35,7 +35,6 @@ EXPORT_SYMBOL void HX_zvecfree(char **args)
 		++travp;
 	}
 	free(args);
-	return;
 }
 
 EXPORT_SYMBOL int HX_fsystem(unsigned int opts, const char *prog,
@@ -155,5 +154,3 @@ int win32_system(const char **argv)
 	return system(buf);
 }
 #endif
-
-//=============================================================================

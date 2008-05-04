@@ -1,6 +1,6 @@
 /*
  *	libHX/format.c
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2007 - 2008
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2007 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -85,7 +85,6 @@ EXPORT_SYMBOL void HXformat_free(struct HXbtree *table)
 
 	HXbtrav_free(trav);
 	HXbtree_free(table);
-	return;
 }
 
 EXPORT_SYMBOL int HXformat_add(struct HXbtree *table, const char *key,
@@ -361,7 +360,6 @@ static void HXformat_transform(hmc_t **out, struct HXdeque *dq,
 
 	hmc_strcat(out, wp);
 	hmc_free(wp);
-	return;
 #undef IMM
 #undef PTR
 }
@@ -370,14 +368,12 @@ static void HXformat_xfrm_after(hmc_t **x, const char *arg)
 {
 	if (**x != '\0')
 		hmc_strcat(x, arg);
-	return;
 }
 
 static void HXformat_xfrm_before(hmc_t **x, const char *arg)
 {
 	if (**x != '\0')
 		hmc_strpcat(x, arg);
-	return;
 }
 
 static void HXformat_xfrm_ifempty(hmc_t **val, const char *repl)
@@ -399,13 +395,9 @@ static void HXformat_xfrm_ifnempty(hmc_t **val, const char *repl)
 static void HXformat_xfrm_lower(hmc_t **x, const char *arg)
 {
 	HX_strlower(*x);
-	return;
 }
 
 static void HXformat_xfrm_upper(hmc_t **x, const char *arg)
 {
 	HX_strupper(*x);
-	return;
 }
-
-//=============================================================================

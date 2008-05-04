@@ -1,6 +1,6 @@
 /*
  *	libHX/deque.c
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2002 - 2007
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -88,7 +88,6 @@ EXPORT_SYMBOL void HXdeque_move(struct HXdeque_node *nd,
 {
 	HXdeque_drop(nd->parent, nd);
 	HXdeque_add(af, nd);
-	return;
 }
 
 EXPORT_SYMBOL void *HXdeque_del(struct HXdeque_node *node)
@@ -109,7 +108,6 @@ EXPORT_SYMBOL void HXdeque_free(struct HXdeque *dq)
 		node = next;
 	}
 	free(dq);
-	return;
 }
 
 EXPORT_SYMBOL struct HXdeque_node *HXdeque_find(struct HXdeque *dq,
@@ -141,7 +139,6 @@ EXPORT_SYMBOL void HXdeque_genocide(struct HXdeque *dq)
 		trav = next;
 	}
 	free(dq);
-	return;
 }
 
 EXPORT_SYMBOL void **HXdeque_to_vec(const struct HXdeque *dq, unsigned int *num)
@@ -174,7 +171,6 @@ static inline void HXdeque_add(struct HXdeque_node *af,
 	nd->parent = parent;
 	if (parent->last == af)
 		parent->last = nd;
-	return;
 }
 
 static inline void HXdeque_drop(struct HXdeque *parent,
@@ -187,8 +183,4 @@ static inline void HXdeque_drop(struct HXdeque *parent,
 
 	if (right == NULL) parent->last = left;
 	else               right->prev = left;
-
-	return;
 }
-
-//=============================================================================

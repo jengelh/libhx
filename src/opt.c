@@ -1,6 +1,6 @@
 /*
  *	libHX/opt.c
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2002 - 2007
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -41,6 +41,7 @@
 #include <sys/types.h>
 #include <ctype.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -106,7 +107,7 @@ static void do_assign(struct HXoptcb *);
 static void opt_to_text(const struct HXoption *, char *, size_t, unsigned int);
 static void print_indent(const char *, unsigned int, FILE *);
 static inline char *shell_unescape(char *);
-static inline unsigned int takes_void(unsigned int);
+static inline bool takes_void(unsigned int);
 
 //-----------------------------------------------------------------------------
 EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
@@ -126,7 +127,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 
 	HXdeque_push(remaining, HX_strdup(*opt++)); /* put argv[0] back */
 
-	while (1) {
+	while (true) {
 		const char *cur = *opt;
 
 		if (state == S_TWOLONG) {
@@ -179,7 +180,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		}
 
 		if (state == S_LONG) {
-			unsigned int got_value = (strchr(cur, '=') != NULL);
+			bool got_value = (strchr(cur, '=') != NULL);
 
 			if ((cbi.current = lookup_long(table, key)) == NULL) {
 				if (flags & HXOPT_PTHRU) {
@@ -432,14 +433,12 @@ EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
 			print_indent(travp->help, tw + 6, fp);
 		++travp;
 	}
-	return;
 }
 
 EXPORT_SYMBOL void HX_getopt_help_cb(const struct HXoptcb *cbi)
 {
 	HX_getopt_help(cbi, stdout);
 	exit(EXIT_SUCCESS);
-	return;
 }
 
 EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
@@ -504,14 +503,12 @@ EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 	}
 
 	fprintf(fp, "\n");
-	return;
 }
 
 EXPORT_SYMBOL void HX_getopt_usage_cb(const struct HXoptcb *cbi)
 {
 	HX_getopt_usage(cbi, stdout);
 	exit(EXIT_SUCCESS);
-	return;
 }
 
 //-----------------------------------------------------------------------------
@@ -618,7 +615,6 @@ EXPORT_SYMBOL void HX_shconfig_free(const struct HXoption *table)
 			free(*ptr);
 		++table;
 	}
-	return;
 }
 
 //-----------------------------------------------------------------------------
@@ -701,7 +697,6 @@ static void do_assign(struct HXoptcb *cbi)
 		        opt->type & HXOPT_TYPEMASK);
 		break;
 	} /* switch */
-	return;
 }
 
 static inline const struct HXoption *lookup_short(const struct HXoption *table,
@@ -769,14 +764,14 @@ static void opt_to_text(const struct HXoption *opt, char *buf, size_t len,
 	if (flags & W_BRACKET)
 		buf[i++] = ']';
 	buf[i] = '\0';
-	return;
 }
 
 static void print_indent(const char *msg, unsigned int ind, FILE *fp)
 {
 	size_t rest = SCREEN_WIDTH - ind;
 	char *p;
-	while (1) {
+
+	while (true) {
 		if (strlen(msg) < rest) {
 			fprintf(fp, "%s", msg);
 			break;
@@ -791,7 +786,6 @@ static void print_indent(const char *msg, unsigned int ind, FILE *fp)
 		rest = SCREEN_WIDTH - ind;
 	}
 	fprintf(fp, "\n");
-	return;
 }
 
 static inline char *shell_unescape(char *o)
@@ -831,10 +825,8 @@ static inline char *shell_unescape(char *o)
 	return NULL;
 }
 
-static inline unsigned int takes_void(unsigned int t)
+static inline bool takes_void(unsigned int t)
 {
 	t &= HXOPT_TYPEMASK;
 	return t == HXTYPE_NONE || t == HXTYPE_VAL || t == HXTYPE_SVAL;
 }
-
-//=============================================================================

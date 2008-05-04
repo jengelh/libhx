@@ -1,6 +1,6 @@
 /*
  *	libHX/arbtree.c - Associative map with RB-tree
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2002 - 2007
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -9,6 +9,7 @@
  */
 #include <errno.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -76,10 +77,14 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int opts, ...)
 	 */
 	btree->tid = 1;
 
-	if (opts & HXBT_CMPFN)     btree->cmpfn = va_arg(argp, void *);
-	else if (opts & HXBT_SCMP) btree->cmpfn = static_cast(void *, strcmp);
-	else if (opts & HXBT_ICMP) btree->cmpfn = value_cmp;
-	else if (opts & HXBT_MAP)  btree->cmpfn = static_cast(void *, strcmp);
+	if (opts & HXBT_CMPFN)
+		btree->cmpfn = va_arg(argp, void *);
+	else if (opts & HXBT_SCMP)
+		btree->cmpfn = static_cast(void *, strcmp);
+	else if (opts & HXBT_ICMP)
+		btree->cmpfn = value_cmp;
+	else if (opts & HXBT_MAP)
+		btree->cmpfn = static_cast(void *, strcmp);
 	else {
 		fprintf(stderr,
 		        "libHX-btree error: Your code does not use any of\n"
@@ -296,7 +301,6 @@ EXPORT_SYMBOL void HXbtree_free(struct HXbtree *btree)
 	if (btree->root != NULL)
 		btree_free_dive(btree, btree->root);
 	free(btree);
-	return;
 }
 
 EXPORT_SYMBOL void *HXbtrav_init(const struct HXbtree *btree)
@@ -312,6 +316,7 @@ EXPORT_SYMBOL void *HXbtrav_init(const struct HXbtree *btree)
 EXPORT_SYMBOL struct HXbtree_node *HXbtraverse(void *in)
 {
 	struct HXbtrav *travp = in;
+
 	if (travp->tid != travp->tree->tid || travp->current == NULL)
 		/*
 		 * Every HXbtree operation that significantly changes the
@@ -326,10 +331,10 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtraverse(void *in)
 EXPORT_SYMBOL void HXbtrav_free(void *in)
 {
 	struct HXbtrav *travp = in;
+
 	if (travp->tree->opts & HXBT_CID)
 		free(travp->checkpoint);
 	free(travp);
-	return;
 }
 
 //-----------------------------------------------------------------------------
@@ -340,7 +345,6 @@ static void btrav_checkpoint(struct HXbtrav *travp,
 		HX_strclone(&travp->checkpoint, node->key);
 	else
 		travp->checkpoint = node->key;
-	return;
 }
 
 static struct HXbtree_node *btrav_next(struct HXbtrav *trav)
@@ -348,6 +352,7 @@ static struct HXbtree_node *btrav_next(struct HXbtrav *trav)
 	if (trav->current->sub[S_RIGHT] != NULL) {
 		/* Got a right child */
 		struct HXbtree_node *node;
+
 		trav->dir[trav->depth++] = S_RIGHT;
 		node = trav->current->sub[S_RIGHT];
 
@@ -371,7 +376,7 @@ static struct HXbtree_node *btrav_next(struct HXbtrav *trav)
 		 * parent). This works by walking up the path until we are the
 		 * left child of a parent.
 		 */
-		while (1) {
+		while (true) {
 			if (trav->depth == 0)
 				/* No more parents */
 				return trav->current = NULL;
@@ -396,7 +401,7 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 	 */
 	const struct HXbtree *btree = trav->tree;
 	struct HXbtree_node *node   = btree->root;
-	unsigned int go_next = 0;
+	bool go_next = false;
 
 	trav->depth = 0;
 
@@ -411,14 +416,15 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 		/* Search for the specific node to rebegin traversal at. */
 		const struct HXbtree_node *newpath[BT_MAXDEP];
 		unsigned char newdir[BT_MAXDEP];
-		int found = 0, newdepth = 0, res;
+		int newdepth = 0, res;
+		bool found = false;
 
 		while (node != NULL) {
 			newpath[newdepth] = trav->path[trav->depth] = node;
 			res = btree->cmpfn(trav->checkpoint, node->key);
 			if (res == 0) {
 				++trav->depth;
-				++found;
+				found = true;
 				break;
 			}
 			res = res > 0;
@@ -453,7 +459,7 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 			 * already returned. Advance to the next inorder node.
 			 * (Code needs to come after @current assignment.)
 			 */
-			go_next = 1;
+			go_next = true;
 		} else {
 			/*
 			 * If the node travp->current is actually deleted (@res
@@ -499,6 +505,7 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 	 */
 	do {
 		unsigned int LR = dir[depth-2];
+
 		grandp = path[depth-2];
 		parent = path[depth-1];
 		uncle  = grandp->sub[!LR];
@@ -545,8 +552,6 @@ static void btree_amov(struct HXbtree_node **path, const unsigned char *dir,
 		++*tid;
 		break;
 	} while (depth >= 3 && path[depth-1]->color == NODE_RED);
-
-	return;
 }
 
 static unsigned int btree_del(struct HXbtree_node **path, unsigned char *dir,
@@ -609,7 +614,7 @@ static void btree_dmov(struct HXbtree_node **path, unsigned char *dir,
 {
 	struct HXbtree_node *w, *x;
 
-	while (1) {
+	while (true) {
 		unsigned char LR = dir[depth - 1];
 		x = path[depth - 1]->sub[LR];
 
@@ -669,7 +674,6 @@ static void btree_dmov(struct HXbtree_node **path, unsigned char *dir,
 		path[depth - 2]->sub[dir[depth - 2]] = w;
 		break;
 	}
-	return;
 }
 
 static void btree_free_dive(const struct HXbtree *btree,
@@ -697,12 +701,9 @@ static void btree_free_dive(const struct HXbtree *btree,
 	}
 
 	free(node);
-	return;
 }
 
 static int value_cmp(const void *pa, const void *pb)
 {
 	return pa - pb;
 }
-
-//=============================================================================

@@ -1,6 +1,6 @@
 /*
  *	libHX/rand.c
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2003 - 2007
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2003 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -33,14 +33,12 @@ static __attribute__((constructor)) void HXrand_init(void)
 #else
 	srand(time(NULL));
 #endif
-	return;
 }
 
 static __attribute__((destructor)) void HXrand_deinit(void)
 {
 	close(rand_fd);
 	rand_fd = -1;
-	return;
 }
 
 EXPORT_SYMBOL int HX_rand(void)

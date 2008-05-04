@@ -1,6 +1,6 @@
 /*
  *	libHX/hmc.c
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 2002 - 2007
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -205,5 +205,4 @@ EXPORT_SYMBOL void hmc_free(hmc_t *vp)
 	ctx = containerof(vp, struct memcont, data);
 	CHECK_IDENT(ctx);
 	free(ctx);
-	return;
 }

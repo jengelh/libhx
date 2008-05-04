@@ -30,7 +30,6 @@ EXPORT_SYMBOL void HX_dlclose(void *handle)
 #else
 	dlclose(handle);
 #endif
-	return;
 }
 
 EXPORT_SYMBOL const char *HX_dlerror(void)

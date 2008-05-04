@@ -84,7 +84,6 @@ static void test_1(void)
 	 *   / \      /  \
 	 *  2   6   10    14
 	 */
-	return;
 }
 
 static void test_2(void)
@@ -137,7 +136,6 @@ static void test_2(void)
 	HXbtrav_free(trav);
 	HXbtree_free(btree);
 	printf("Test 2D: Pick a memory debugger, check the leaks now.\n");
-	return;
 }
 
 static void test_3(void)
@@ -163,7 +161,6 @@ static void test_3(void)
 	HXbtrav_free(trav);
 	HXbtree_free(btree);
 	printf("done\n");
-	return;
 }
 
 static void test_4(void)
@@ -200,7 +197,6 @@ static void test_4(void)
 	}
 
 	HXbtree_free(btree);
-	return;
 }
 
 static void test_5(void)
@@ -225,7 +221,6 @@ static void test_5(void)
 	walk_tree(btree->root, buf, sizeof(buf));
 	printf("\t%s\n", buf);
 	HXbtree_free(btree);
-	return;
 }
 
 static void test_6(void)
@@ -249,7 +244,6 @@ static void test_6(void)
 	       verify_black_height(btree->root));
 
 	HXbtree_free(btree);
-	return;
 }
 
 static void test_7(void)
@@ -264,7 +258,6 @@ static void test_7(void)
 		destroy_random_tree(btree, e);
 		
 	}
-	return;
 }
 
 int main(void)
@@ -366,7 +359,6 @@ static void destroy_random_tree(struct HXbtree *tree, unsigned int elements)
 	}
 
 	HXbtree_free(tree);
-	return;
 }
 
 static void height_check(const struct HXbtree *tree)
@@ -380,7 +372,6 @@ static void height_check(const struct HXbtree *tree)
 	printf("\t" "Average height: %f\n", avg);
 	printf("\t" "Maximum height: %f\n", max);
 	printf("\t" "Current height: %u\n", tree_height(tree->root));
-	return;
 }
 
 static int sbc_strcmp(const char *result, const char *expected)
@@ -403,7 +394,6 @@ static inline void timer_start(void)
 	gettimeofday(&tv_start, NULL);
 	printf("Timer started at %ld.%06ld\n",
 	       tv_start.tv_sec, tv_start.tv_usec);
-	return;
 }
 
 static inline void timer_end(void)
@@ -427,7 +417,6 @@ static inline void timer_end(void)
 	}
 
 	printf("Timer difference: %ld.%06ld\n", delta.tv_sec, delta.tv_usec);
-	return;
 }
 
 static unsigned int tree_height(const struct HXbtree_node *node)
@@ -520,14 +509,10 @@ static void __walk_tree(const struct HXbtree_node *node, char *buf, size_t s)
 	}
 	if (has_children)
 		HX_strlcat(buf, /* ( */ ")", s);
-	return;
 }
 
 static void walk_tree(const struct HXbtree_node *node, char *buf, size_t s)
 {
 	*buf = '\0';
 	__walk_tree(node, buf, s);
-	return;
 }
-
-//=============================================================================
