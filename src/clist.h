@@ -25,10 +25,24 @@ struct HXclist_head {
 #define HXCLIST_HEAD(name) \
 	struct HXclist_head name = HXCLIST_HEAD_INIT(name)
 
-static inline void HXclist_init_head(struct HXclist_head *head)
+static inline void HXclist_init(struct HXclist_head *head)
 {
 	head->list.next = head->list.prev = &head->list;
 	head->items = 0;
+}
+
+static __attribute__((deprecated)) inline void
+HXclist_init_head(struct HXclist_head *head)
+{
+	head->list.next = head->list.prev = &head->list;
+	head->items = 0;
+}
+
+static inline void HXclist_del(struct HXclist_head *head,
+    struct HXlist_head *node)
+{
+	--head->items;
+	HXlist_del(node);
 }
 
 static inline void HXclist_unshift(struct HXclist_head *head,
@@ -58,7 +72,7 @@ static inline struct HXlist_head *__HXclist_pop(struct HXclist_head *head)
 
 #define HXclist_pop(head, type, member) ({ \
 	struct HXlist_head *x = __HXclist_pop(head); \
-	container_of(x, type, member); \
+	HXlist_entry(x, type, member); \
 })
 
 static inline struct HXlist_head *__HXclist_shift(struct HXclist_head *head)
@@ -74,7 +88,7 @@ static inline struct HXlist_head *__HXclist_shift(struct HXclist_head *head)
 
 #define HXclist_shift(head, type, member) ({ \
 	struct HXlist_head *x = __HXclist_shift(head); \
-	container_of(x, type, member); \
+	HXlist_entry(x, type, member); \
 })
 
 #ifdef __cplusplus

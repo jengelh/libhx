@@ -17,6 +17,7 @@ extern "C" {
 		(type *)((char *)__mptr - offsetof(type, member));	\
 	})
 #endif
+#define HXlist_entry(ptr, type, member) container_of((ptr), type, member)
 
 struct HXlist_head {
 	struct HXlist_head *next, *prev;
@@ -26,7 +27,13 @@ struct HXlist_head {
 #define HXLIST_HEAD(name) \
 	struct HXlist_head name = HXLIST_HEAD_INIT(name)
 
-static inline void HXlist_init_head(struct HXlist_head *list)
+static inline void HXlist_init(struct HXlist_head *list)
+{
+	list->next = list->prev = list;
+}
+
+static __attribute__((deprecated)) inline void
+HXlist_init_head(struct HXlist_head *list)
 {
 	list->next = list->prev = list;
 }
@@ -64,10 +71,21 @@ static inline void HXlist_del(struct HXlist_head *entry)
 	for ((pos) = (head)->next; (pos) != (void *)(head); \
 	     (pos) = (pos)->next)
 
+#define HXlist_for_each_safe(pos, n, head) \
+	for ((pos) = (head)->next, (n) = (pos)->next; (pos) != (void *)(head); \
+	     (pos) = (n), (n) = (pos)->next)
+
 #define HXlist_for_each_entry(pos, head, member) \
-	for ((pos) = container_of((head)->next, typeof(*(pos)), member); \
+	for ((pos) = HXlist_entry((head)->next, typeof(*(pos)), member); \
 	     &(pos)->member != (void *)(head); \
-	     (pos) = container_of((pos)->member.next, typeof(*(pos)), member))
+	     (pos) = HXlist_entry((pos)->member.next, typeof(*(pos)), member))
+
+#define HXlist_for_each_entry_safe(pos, n, head, member) \
+	for ((pos) = HXlist_entry((head)->next, typeof(*(pos)), member), \
+	     (n) = HXlist_entry((pos)->member.next, typeof(*(pos)), member); \
+	     &(pos)->member != (void *)(head); \
+	     (pos) = (n), (n) = HXlist_entry((n)->member.next, typeof(*(n)), \
+	     member))
 
 #ifdef __cplusplus
 } /* extern "C" */

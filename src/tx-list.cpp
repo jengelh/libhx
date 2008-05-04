@@ -28,7 +28,7 @@ static void l_init(unsigned int max, bool unshift)
 #else
 		obj = malloc(sizeof(*obj));
 #endif
-		HXlist_init_head(&obj->list);
+		HXlist_init(&obj->list);
 		obj->id[0] = HX_irand('a', 'z'+1);
 		obj->id[1] = HX_irand('a', 'z'+1);
 		obj->id[2] = HX_irand('a', 'z'+1);
@@ -44,11 +44,11 @@ static void l_init(unsigned int max, bool unshift)
 
 static void l_traverse(void)
 {
-	const struct text_object *obj;
+	const struct text_object *obj, *safe;
 	unsigned int i;
 
 	i = 0;
-	HXlist_for_each_entry(obj, &strings_ct, list)
+	HXlist_for_each_entry_safe(obj, safe, &strings_ct, list)
 		printf("Retrieving item %u (\"%s\")\n", ++i, obj->id);
 }
 
