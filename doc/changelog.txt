@@ -1,4 +1,11 @@
 
+
+libHX 1.17 (May 08 2008)
+========================
+- HXlist: added HXlist_for_each_safe, HXlist_for_each_entry_safe
+- HXclist: added HXclist_del
+
+
 libHX 1.15 (April 04 2008)
 ==========================
 - HXformat: add %(ifempty) and %(ifnempty) tags

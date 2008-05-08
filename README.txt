@@ -66,8 +66,4 @@ Resources
 
   • libHX tarball releases
   • libHX GIT repository (gitweb)
-  • libHX clone URL — git://dev.computergmbh.de/libHX
-
-       Optimized for readability, not some stupid browser or resolution
-                                Make a donation
-
+  • libHX clone URL — git://dev.medozas.de/libHX

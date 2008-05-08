@@ -1,13 +1,13 @@
 
 Name:		libHX10
 %define lname	libHX
-Version:	1.15
+Version:	1.17
 Release:	0
 Group:		System/Libraries
-URL:		http://jengelh.hopto.org/projects/libHX/
+URL:		http://jengelh.medozas.de/projects/libHX/
 Summary:	Library for commonly needed tasks in C
 License:	LGPL2 LGPL3 but NOT LATER
-Source:		http://jengelh.hopto.org/files/libHX/libHX-%version.tar.bz2
+Source:		http://jengelh.medozas.de/files/libHX/libHX-%version.tar.bz2
 BuildRoot:	%_tmppath/%name-%version-build
 BuildRequires:	gcc-c++
 
@@ -60,10 +60,10 @@ mkdir -p "$b/%_docdir";
 cp -a doc "$b/%_docdir/%lname";
 
 %post
-/sbin/ldconfig
+%run_ldconfig
 
 %postun
-/sbin/ldconfig
+%run_ldconfig
 
 %files
 %defattr(-,root,root)
@@ -75,4 +75,4 @@ cp -a doc "$b/%_docdir/%lname";
 %_libdir/pkgconfig/*
 %_includedir/*
 %docdir %_docdir/%lname
-%_docdir/%lname
+%doc %_docdir/%lname/*
