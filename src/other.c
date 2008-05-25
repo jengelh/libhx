@@ -27,6 +27,16 @@ static int win32_system(const char **);
 #endif
 
 //-----------------------------------------------------------------------------
+EXPORT_SYMBOL int HX_ffs(unsigned long n)
+{
+	int s = 0;
+	if (n == 0)
+		return -1;
+	while ((n >>= 1) >= 1)
+		++s;
+	return s;
+}
+
 EXPORT_SYMBOL void HX_zvecfree(char **args)
 {
 	char **travp = args;

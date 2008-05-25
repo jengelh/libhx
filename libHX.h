@@ -8,7 +8,7 @@
  *	Foundation; either version 2 or 3 of the License.
  */
 #ifndef _LIBHX_H
-#define _LIBHX_H 20080402
+#define _LIBHX_H 20080518
 
 #ifndef __cplusplus
 #	include <stdarg.h>
@@ -75,6 +75,7 @@ enum {
 	HX_FSYSTEM_ARGV1 = 1 << 2,
 };
 
+extern int HX_ffs(unsigned long);
 extern void HX_zvecfree(char **);
 extern int HX_fsystem(unsigned int, const char *, const char *, ...);
 extern int HX_vfsystem(unsigned int, const char *, const char *, va_list);
