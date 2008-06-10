@@ -1,5 +1,9 @@
 
 
+- remove deprecated HXlist_init_head() and HXclist_init_head()
+  [replaced by HXlist_init() and HXclist_init()]
+
+
 libHX 1.17 (May 08 2008)
 ========================
 - HXlist: added HXlist_for_each_safe, HXlist_for_each_entry_safe

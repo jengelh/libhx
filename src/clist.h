@@ -33,13 +33,6 @@ static inline void HXclist_init(struct HXclist_head *head)
 	head->items = 0;
 }
 
-static __attribute__((deprecated)) inline void
-HXclist_init_head(struct HXclist_head *head)
-{
-	head->list.next = head->list.prev = &head->list;
-	head->items = 0;
-}
-
 static inline void HXclist_del(struct HXclist_head *head,
     struct HXlist_head *node)
 {

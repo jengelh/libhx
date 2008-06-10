@@ -32,12 +32,6 @@ static inline void HXlist_init(struct HXlist_head *list)
 	list->next = list->prev = list;
 }
 
-static __attribute__((deprecated)) inline void
-HXlist_init_head(struct HXlist_head *list)
-{
-	list->next = list->prev = list;
-}
-
 static inline void __HXlist_add(struct HXlist_head *nu,
     struct HXlist_head *prev, struct HXlist_head *next)
 {
