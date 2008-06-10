@@ -14,6 +14,10 @@ struct text_object {
 	char id[5];
 };
 
+union list_encap {
+	struct HXlist_head list;
+};
+
 static HXCLIST_HEAD(strings_ct);
 
 static void l_init(unsigned int max, bool unshift)
@@ -67,6 +71,32 @@ static void l_dump(bool pop)
 	printf("Remaining elements: %u\n", strings_ct.items);
 }
 
+static void l_empty(void)
+{
+	static const char *const fstr[] = {"fail", "pass"};
+	struct HXclist_head clh;
+	struct HXlist_head lh;
+	union list_encap *pos;
+	unsigned int count = 0;
+	bool success = true;
+
+	HXlist_init(&lh);
+	HXclist_init(&clh);
+
+	HXlist_for_each_entry(pos, &lh, list)
+		success = false;
+	HXlist_for_each_entry(pos, &clh, list)
+		success = false;
+
+	printf("Zero traversal: %s\n", fstr[success]);
+
+	HXclist_push(&clh, &lh);
+	HXlist_for_each_entry(pos, &clh, list)
+		++count;
+
+	printf("One traversal: %s\n", fstr[count == 1]);
+}
+
 int main(int argc, const char **argv)
 {
 	unsigned int max = 10;
@@ -77,5 +107,6 @@ int main(int argc, const char **argv)
 	l_init(max, HX_rand() & 1);
 	l_traverse();
 	l_dump(HX_rand() & 1);
+	l_empty();
 	return EXIT_SUCCESS;
 }
