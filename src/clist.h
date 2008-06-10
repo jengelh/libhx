@@ -16,7 +16,9 @@ extern "C" {
 struct HXclist_head {
 	union {
 		struct HXlist_head list;
-		struct HXlist_head *next, *prev;
+		struct {
+			struct HXlist_head *next, *prev;
+		};
 	};
 	unsigned int items;
 };
