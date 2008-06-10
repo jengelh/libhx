@@ -8,7 +8,7 @@
  *	Foundation; either version 2 or 3 of the License.
  */
 #ifndef _LIBHX_H
-#define _LIBHX_H 20080518
+#define _LIBHX_H 20080610
 
 #ifndef __cplusplus
 #	include <stdarg.h>

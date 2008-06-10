@@ -1,5 +1,5 @@
 
-AC_INIT([libHX], [1.17])
+AC_INIT([libHX], [1.18])
 AC_CONFIG_HEADERS([libHX/config.h])
 AC_PROG_INSTALL
 AM_INIT_AUTOMAKE

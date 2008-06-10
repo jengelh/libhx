@@ -1,7 +1,11 @@
 
 
+libHX 1.18 (June 10 2008)
+=========================
+- implement reverse iterating through HXlist
 - remove deprecated HXlist_init_head() and HXclist_init_head()
   [replaced by HXlist_init() and HXclist_init()]
+- added HX_ffs()
 
 
 libHX 1.17 (May 08 2008)
