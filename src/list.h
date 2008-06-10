@@ -71,14 +71,27 @@ static inline void HXlist_del(struct HXlist_head *entry)
 	for ((pos) = (head)->next; (pos) != (void *)(head); \
 	     (pos) = (pos)->next)
 
+#define HXlist_for_each_prev(pos, head) \
+	for ((pos) = (head)->prev; (pos) != (void *)(head); \
+	     (pos) = (pos)->prev)
+
 #define HXlist_for_each_safe(pos, n, head) \
 	for ((pos) = (head)->next, (n) = (pos)->next; (pos) != (void *)(head); \
 	     (pos) = (n), (n) = (pos)->next)
+
+#define HXlist_for_each_prev_safe(pos, n, head) \
+	for ((pos) = (head)->prev, (n) = (pos)->prev; (pos) != (void *)(head); \
+	     (pos) = (n), (n) = (pos)->prev)
 
 #define HXlist_for_each_entry(pos, head, member) \
 	for ((pos) = HXlist_entry((head)->next, typeof(*(pos)), member); \
 	     &(pos)->member != (void *)(head); \
 	     (pos) = HXlist_entry((pos)->member.next, typeof(*(pos)), member))
+
+#define HXlist_for_each_entry_rev(pos, head, member) \
+	for ((pos) = HXlist_entry((head)->prev, typeof(*(pos)), member); \
+	     &(pos)->member != (void *)(head); \
+	     (pos) = HXlist_entry((pos)->member.prev, typeof(*(pos)), member))
 
 #define HXlist_for_each_entry_safe(pos, n, head, member) \
 	for ((pos) = HXlist_entry((head)->next, typeof(*(pos)), member), \
