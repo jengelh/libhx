@@ -274,7 +274,7 @@ EXPORT_SYMBOL int HX_rrmdir(const char *dir)
 		hmc_strasg(&fn, dir);
 		hmc_strcat(&fn, "/");
 		hmc_strcat(&fn, trav);
-		if (stat(fn, &sb) < 0) {
+		if (lstat(fn, &sb) < 0) {
 			ret = -errno;
 			break;
 		}
@@ -301,7 +301,7 @@ EXPORT_SYMBOL int HX_rrmdir(const char *dir)
 static int mkdir_gen(const char *d)
 {
 	struct stat sb;
-	if (stat(d, &sb) < 0) {
+	if (lstat(d, &sb) < 0) {
 #if defined(_WIN32)
 		if (mkdir(d) < 0)
 #else

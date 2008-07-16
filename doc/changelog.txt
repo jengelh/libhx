@@ -1,5 +1,11 @@
 
 
+libHX 1.19 (July 16 2008)
+=========================
+- need to use lstat() on directory operations such as mkdir and rrmdir
+- use RTLD_LAZY when opening dynamic libraries
+
+
 libHX 1.18 (June 10 2008)
 =========================
 - implement reverse iterating through HXlist
