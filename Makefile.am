@@ -7,7 +7,8 @@ pkgconfigdir     = @pkgconfigdir@
 pkgconfig_DATA   = libHX.pc
 
 nobase_include_HEADERS = libHX.h libHX/arbtree.h libHX/clist.h \
-	libHX/deque.h libHX/list.h libHX/option.h libHX/string.h
+	libHX/deque.h libHX/list.h libHX/option.h libHX/string.h \
+	libHX/libxml_helper.h
 
 $(pkgconfig_DATA): config.status
 
