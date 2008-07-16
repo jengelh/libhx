@@ -1,6 +1,6 @@
 
 
-libHX 1.19 (July 16 2008)
+libHX 1.22 (July 16 2008)
 =========================
 - need to use lstat() on directory operations such as mkdir and rrmdir
 - use RTLD_LAZY when opening dynamic libraries
