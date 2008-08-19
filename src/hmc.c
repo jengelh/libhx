@@ -88,7 +88,7 @@ EXPORT_SYMBOL hmc_t *hmc_memasg(hmc_t **vp, const void *ptr, size_t len)
 	return *vp = ctx->data;
 }
 
-EXPORT_SYMBOL size_t hmc_length(hmc_t *vp)
+EXPORT_SYMBOL size_t hmc_length(const hmc_t *vp)
 {
 	struct memcont *ctx = containerof(vp, struct memcont, data);
 	CHECK_IDENT(ctx);

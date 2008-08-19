@@ -29,7 +29,7 @@ extern hmc_t *hmc_sinit(const char *);
 extern hmc_t *hmc_minit(const void *, size_t);
 extern hmc_t *hmc_strasg(hmc_t **, const char *);
 extern hmc_t *hmc_memasg(hmc_t **, const void *, size_t);
-extern size_t hmc_length(hmc_t *);
+extern size_t hmc_length(const hmc_t *);
 extern hmc_t *hmc_trunc(hmc_t **, size_t);
 extern hmc_t *hmc_strcat(hmc_t **, const char *);
 extern hmc_t *hmc_memcat(hmc_t **, const void *, size_t);
