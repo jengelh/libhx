@@ -13,6 +13,14 @@
 #include "libHX/config.h"
 #include "libHX/defs.h"
 
+#ifdef __cplusplus
+	/* Only for our dual C/C++ testsuites */
+#	define const_cast(type, expr)       const_cast<type>(expr)
+#	define dynamic_cast(type, expr)     dynamic_cast<type>(expr)
+#	define static_cast(type, expr)      static_cast<type>(expr)
+#	define reinterpret_cast(type, expr) reinterpret_cast<type>(expr)
+#endif
+
 #ifdef __MINGW32__
 #	include "libHX/uxcompat.h"
 #endif

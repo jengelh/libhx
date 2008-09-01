@@ -2,8 +2,10 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <libHX/defs.h>
 #include <libHX/string.h>
 #include <libHX.h>
+#include "internal.h"
 
 static void t_path(void)
 {
@@ -25,7 +27,8 @@ static void t_strncat(void)
 {
 	char data[5] = "DATA";
 
-	if (snprintf(data, sizeof(data), "12345678") >= sizeof(data))
+	if (snprintf(data, sizeof(data), "12345678") >= 
+	    static_cast(ssize_t, sizeof(data)))
 		printf("Not enoguh space\n");
 	printf("String: >%s<\n", data);
 
