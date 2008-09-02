@@ -1,6 +1,1 @@
-#include <libHX.h>
-
-int main(void)
-{
-	return 0;
-}
+#include "tx-compile.cpp"
