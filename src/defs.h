@@ -2,8 +2,13 @@
 #define _LIBHX_DEFS_H 1
 
 #ifndef __cplusplus
+	/* These are annotations only in C mode. */
 #	ifndef const_cast
 #		define const_cast(type, expr)       ((type)(expr))
+#	endif
+#	ifndef signed_cast
+		/* N.B. signed_cast<> does not exist in C++. */
+#		define signed_cast(type, expr)      ((type)(expr))
 #	endif
 #	ifndef static_cast
 #		define static_cast(type, expr)      ((type)(expr))
