@@ -4,7 +4,6 @@
 #	include <cstdlib>
 #endif
 #include <libHX/arbtree.h>
-#include <libHX/deque.h>
 
 int main(void)
 {

@@ -7,7 +7,7 @@
 #	include <stdlib.h>
 #endif
 #include <libHX/clist.h>
-#include <libHX.h>
+#include <libHX/misc.h>
 
 struct text_object {
 	struct HXlist_head list;

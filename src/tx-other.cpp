@@ -3,7 +3,7 @@
 #else
 #	include <cstdlib>
 #endif
-#include <libHX.h>
+#include <libHX/misc.h>
 
 int main(void)
 {

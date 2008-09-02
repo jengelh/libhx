@@ -9,8 +9,8 @@
 #	include <cstdlib>
 #endif
 #include <libHX/defs.h>
+#include <libHX/misc.h>
 #include <libHX/string.h>
-#include <libHX.h>
 #include "internal.h"
 
 static void t_path(void)

@@ -1,10 +1,13 @@
 #include <sys/time.h>
 #include <math.h>
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libHX.h>
+#include <libHX/arbtree.h>
+#include <libHX/misc.h>
+#include <libHX/string.h>
 
 enum {
 	S_LEFT = 0,
