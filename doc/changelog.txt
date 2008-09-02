@@ -1,4 +1,9 @@
 
+libHX 1.23 (September 02 2008)
+==============================
+- code cleanup: misc.h has been split off libHX.h
+- add defs.h
+
 
 libHX 1.22 (July 16 2008)
 =========================
