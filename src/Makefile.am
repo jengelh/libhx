@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 
-AM_CFLAGS        = -DLIBHX_INTERNAL ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN}
+AM_CFLAGS        = ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN}
 DEFAULT_INCLUDES = -I${top_srcdir} -I${top_builddir}
 
 lib_LTLIBRARIES  = libHX.la
