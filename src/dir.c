@@ -22,12 +22,6 @@
 #	include <io.h>
 #endif
 #include "libHX.h"
-#ifndef S_IRUGO
-#	define S_IRUGO (S_IRUSR | S_IRGRP | S_IROTH)
-#endif
-#ifndef S_IWUGO
-#	define S_IWUGO (S_IWUSR | S_IWGRP | S_IWOTH)
-#endif
 
 struct HXdir {
 #if defined _WIN32
