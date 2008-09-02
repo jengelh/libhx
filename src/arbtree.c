@@ -13,8 +13,9 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libHX.h>
 #include <libHX/arbtree.h>
+#include <libHX/string.h>
+#include "internal.h"
 
 enum {
 	S_LEFT        = 0,

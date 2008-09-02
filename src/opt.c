@@ -45,7 +45,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "libHX.h"
+#include <libHX/deque.h>
+#include <libHX/misc.h>
+#include <libHX/option.h>
+#include <libHX/string.h>
+#include "internal.h"
 
 /* Definitions */
 #define CALL_CB \

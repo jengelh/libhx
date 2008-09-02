@@ -20,8 +20,13 @@
 #if defined _WIN32
 #	include <direct.h>
 #	include <io.h>
+#else
+#	include <dirent.h>
+#	include <unistd.h>
 #endif
-#include "libHX.h"
+#include <libHX/misc.h>
+#include <libHX/string.h>
+#include "internal.h"
 
 struct HXdir {
 #if defined _WIN32

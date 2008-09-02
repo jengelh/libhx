@@ -19,7 +19,8 @@
 #	include <sys/wait.h>
 #	include <unistd.h>
 #endif
-#include "libHX.h"
+#include <libHX/misc.h>
+#include "internal.h"
 
 static int run_program(const char *, const char **, unsigned int);
 #ifdef _WIN32

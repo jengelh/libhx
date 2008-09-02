@@ -16,7 +16,8 @@
 #ifdef __unix__
 #	include <unistd.h>
 #endif
-#include "libHX.h"
+#include <libHX/misc.h>
+#include "internal.h"
 
 static int rand_fd = -1;
 

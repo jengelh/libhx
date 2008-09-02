@@ -1,6 +1,14 @@
 #ifndef _LIBHX_MISC_H
 #define _LIBHX_MISC_H 1
 
+#ifndef __cplusplus
+#	include <stdarg.h>
+#	include <stdio.h>
+#else
+#	include <cstdarg>
+#	include <cstdio>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

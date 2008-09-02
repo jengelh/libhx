@@ -3,7 +3,8 @@
 #else
 #	include <dlfcn.h>
 #endif
-#include "libHX.h"
+#include <libHX/misc.h>
+#include "internal.h"
 
 EXPORT_SYMBOL void *HX_dlopen(const char *file)
 {

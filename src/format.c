@@ -11,7 +11,11 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "libHX.h"
+#include <libHX/arbtree.h>
+#include <libHX/deque.h>
+#include <libHX/option.h>
+#include <libHX/string.h>
+#include "internal.h"
 
 /* Definitions */
 #define MAX_KEY_SIZE 256

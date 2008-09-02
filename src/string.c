@@ -1,6 +1,6 @@
 /*
  *	libHX/string.c
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 1999 - 2007
+ *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 1999 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -13,7 +13,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "libHX.h"
+#include <libHX/string.h>
+#include "internal.h"
 
 static inline unsigned int min_uint(unsigned int a, unsigned int b)
 {

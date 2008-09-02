@@ -11,7 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "libHX.h"
+#include <libHX/string.h>
+#include "internal.h"
 
 #define HMC_IDENT 0x200571AF
 #define CHECK_IDENT(c) \
