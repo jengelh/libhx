@@ -1,3 +1,8 @@
+#ifndef __cplusplus
+#	include <stdlib.h>
+#else
+#	include <cstdlib>
+#endif
 #include <libHX.h>
 
 int main(void)
@@ -17,5 +22,5 @@ int main(void)
 			break;
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }

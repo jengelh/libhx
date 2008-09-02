@@ -1,4 +1,10 @@
-#include <stdio.h>
+#ifndef __cplusplus
+#	include <stdio.h>
+#	include <stdlib.h>
+#else
+#	include <cstdio>
+#	include <cstdlib>
+#endif
 #include <libHX.h>
 
 int main(void)
@@ -11,5 +17,5 @@ int main(void)
 		printf("\t" "%s\n", n);
 
 	HXdir_close(d);
-	return 0;
+	return EXIT_SUCCESS;
 }
