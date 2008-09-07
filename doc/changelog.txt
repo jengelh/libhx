@@ -1,6 +1,8 @@
 
 - HXmc: pointer was not automatically updated after hmc_trunc()
 - HXmc: rename functions and put them into the HX* namespace (API change)
+- HXmc: HXmc_strcpy(hxmc, NULL) will no longer free the mc but act like
+  HXmc_strcpy(hxmc, "")
 - HXmc: make code resistant to memory allocation failure
 
 
