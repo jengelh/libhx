@@ -4,10 +4,10 @@ AM_CFLAGS        = ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN}
 DEFAULT_INCLUDES = -I${top_srcdir} -I${top_builddir}
 
 lib_LTLIBRARIES  = libHX.la
-libHX_la_SOURCES = arbtree.c deque.c dir.c dl.c format.c hmc.c opt.c other.c \
+libHX_la_SOURCES = arbtree.c deque.c dir.c dl.c format.c mc.c opt.c other.c \
                    rand.c string.c
 libHX_la_LIBADD  = ${regular_LIBS}
-libHX_la_LDFLAGS = -version-info 13:0:0
+libHX_la_LDFLAGS = -version-info 14:0:0
 
 noinst_PROGRAMS    = tc-compile tx-compile
 noinst_PROGRAMS   += tc-arbtree tx-arbtree

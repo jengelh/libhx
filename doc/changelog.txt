@@ -1,5 +1,6 @@
 
 - hmc: pointer was not automatically updated after hmc_trunc()
+- hmc: rename functions and put them into the HX* namespace (API change)
 
 
 libHX 1.23 (September 02 2008)

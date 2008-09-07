@@ -13,6 +13,21 @@
 #include <libHX/string.h>
 #include "internal.h"
 
+static void t_mc(void)
+{
+	hxmc_t *s, *old_s;
+
+	s = HXmc_meminit(NULL, 4096);
+	printf("%zu\n", HXmc_length(s));
+	if (HXmc_length(s) != 0)
+		abort();
+	old_s = s;
+	HXmc_trunc(&s, 8192);
+	if (old_s != s)
+		fprintf(stderr, "INFO: HXmc: no reallocation took place.\n");
+	HXmc_free(s);
+}
+
 static void t_path(void)
 {
 	printf("# dirname\n");
@@ -71,8 +86,8 @@ static void t_split(void)
 
 int main(int argc, const char **argv)
 {
-	hmc_t *tx = NULL;
-	const char *file = (argc >= 2) ? argv[1] : "t-string.c";
+	hxmc_t *tx = NULL;
+	const char *file = (argc >= 2) ? argv[1] : "tx-string.c";
 	FILE *fp = fopen(file, "r");
 
 	if (fp == NULL) {
@@ -83,6 +98,7 @@ int main(int argc, const char **argv)
 		fclose(fp);
 	}
 
+	t_mc();
 	t_path();
 	t_strncat();
 	t_strsep();

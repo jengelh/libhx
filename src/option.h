@@ -11,9 +11,9 @@
 extern "C" {
 #endif
 
-#ifndef __libhx_internal_hmc_t_defined
-#define __libhx_internal_hmc_t_defined 1
-typedef char hmc_t;
+#ifndef __libhx_internal_hxmc_t_defined
+#define __libhx_internal_hxmc_t_defined 1
+typedef char hxmc_t;
 #endif
 
 struct HXbtree;
@@ -26,7 +26,7 @@ extern struct HXbtree *HXformat_init(void);
 extern void HXformat_free(struct HXbtree *);
 extern int HXformat_add(struct HXbtree *, const char *, const void *,
 	unsigned int);
-extern int HXformat_aprintf(const struct HXbtree *, hmc_t **, const char *);
+extern int HXformat_aprintf(const struct HXbtree *, hxmc_t **, const char *);
 extern int HXformat_sprintf(const struct HXbtree *, char *, size_t, const char *);
 extern int HXformat_fprintf(const struct HXbtree *, FILE *, const char *);
 

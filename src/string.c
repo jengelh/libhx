@@ -62,21 +62,21 @@ EXPORT_SYMBOL char *HX_dirname(const char *s)
 	return p;
 }
 
-EXPORT_SYMBOL hmc_t *HX_getl(hmc_t **ptr, FILE *fp)
+EXPORT_SYMBOL hxmc_t *HX_getl(hxmc_t **ptr, FILE *fp)
 {
-	/* Read a whole line, using a HMC string as dynamic buffer. */
+	/* Read a whole line into a dynamic buffer. */
 	char temp[MAXLNLEN];
 
 	if (fgets(temp, sizeof(temp), fp) == NULL)
 		return NULL;
 
 	if (*ptr == NULL)
-		*ptr = hmc_sinit("");
+		*ptr = HXmc_meminit(NULL, 0);
 	else
-		hmc_trunc(ptr, 0);
+		HXmc_trunc(ptr, 0);
 
 	do {
-		hmc_strcat(ptr, temp);
+		HXmc_strcat(ptr, temp);
 		if (strchr(temp, '\n') != NULL)
 			break;
 	} while (fgets(temp, sizeof(temp), fp) != NULL);

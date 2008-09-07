@@ -16,29 +16,29 @@
 extern "C" {
 #endif
 
-#ifndef __libhx_internal_hmc_t_defined
-#define __libhx_internal_hmc_t_defined 1
-typedef char hmc_t;
+#ifndef __libhx_internal_hxmc_t_defined
+#define __libhx_internal_hxmc_t_defined 1
+typedef char hxmc_t;
 #endif
 
 /*
  *	HMC.C
  */
-extern hmc_t *hmc_dup(const void *);
-extern hmc_t *hmc_sinit(const char *);
-extern hmc_t *hmc_minit(const void *, size_t);
-extern hmc_t *hmc_strasg(hmc_t **, const char *);
-extern hmc_t *hmc_memasg(hmc_t **, const void *, size_t);
-extern size_t hmc_length(const hmc_t *);
-extern hmc_t *hmc_trunc(hmc_t **, size_t);
-extern hmc_t *hmc_strcat(hmc_t **, const char *);
-extern hmc_t *hmc_memcat(hmc_t **, const void *, size_t);
-extern hmc_t *hmc_strpcat(hmc_t **, const char *);
-extern hmc_t *hmc_mempcat(hmc_t **, const void *, size_t);
-extern hmc_t *hmc_strins(hmc_t **, size_t, const char *);
-extern hmc_t *hmc_memins(hmc_t **, size_t, const void *, size_t);
-extern hmc_t *hmc_memdel(hmc_t *, size_t, size_t);
-extern void hmc_free(hmc_t *);
+extern hxmc_t *HXmc_dup(const void *);
+extern hxmc_t *HXmc_strinit(const char *);
+extern hxmc_t *HXmc_meminit(const void *, size_t);
+extern hxmc_t *HXmc_strcpy(hxmc_t **, const char *);
+extern hxmc_t *HXmc_memcpy(hxmc_t **, const void *, size_t);
+extern size_t HXmc_length(const hxmc_t *);
+extern hxmc_t *HXmc_trunc(hxmc_t **, size_t);
+extern hxmc_t *HXmc_strcat(hxmc_t **, const char *);
+extern hxmc_t *HXmc_memcat(hxmc_t **, const void *, size_t);
+extern hxmc_t *HXmc_strpcat(hxmc_t **, const char *);
+extern hxmc_t *HXmc_mempcat(hxmc_t **, const void *, size_t);
+extern hxmc_t *HXmc_strins(hxmc_t **, size_t, const char *);
+extern hxmc_t *HXmc_memins(hxmc_t **, size_t, const void *, size_t);
+extern hxmc_t *HXmc_memdel(hxmc_t *, size_t, size_t);
+extern void HXmc_free(hxmc_t *);
 
 /*
  *	STRING.C
@@ -46,7 +46,7 @@ extern void hmc_free(hmc_t *);
 extern char *HX_basename(const char *);
 extern char *HX_chomp(char *);
 extern char *HX_dirname(const char *);
-extern hmc_t *HX_getl(hmc_t **, FILE *);
+extern hxmc_t *HX_getl(hxmc_t **, FILE *);
 extern char **HX_split(const char *, const char *, int *, int);
 extern int HX_split5(char *, const char *, int, char **);
 extern char *HX_strbchr(const char *, const char *, char);

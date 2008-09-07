@@ -1,5 +1,5 @@
 
-Name:		libHX13
+Name:		libHX14
 %define lname	libHX
 Version:	1.23
 Release:	0
@@ -27,7 +27,7 @@ A library for:
 %package -n libHX-devel
 Group:		Development/Libraries/C and C++
 Summary:	Development files for libHX
-Requires:	libHX13 = %version
+Requires:	libHX14 = %version
 
 %description -n libHX-devel
 A library for:

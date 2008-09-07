@@ -26,14 +26,14 @@ struct fmt_entry {
 };
 
 struct modifier_info {
-	void (*transform)(hmc_t **, const char *);
+	void (*transform)(hxmc_t **, const char *);
 	const char *name;
 	unsigned int length, has_arg;
 };
 
 struct modifier {
-	void (*transform)(hmc_t **, const char *);
-	hmc_t *arg;
+	void (*transform)(hxmc_t **, const char *);
+	hxmc_t *arg;
 };
 
 /* Functions */
@@ -41,15 +41,15 @@ static inline char *HX_strchr0(const char *, char);
 static const char *HXformat_read_modifier_arg(const char *, struct modifier *);
 static int HXformat_read_one_modifier(const char **, struct HXdeque *);
 static int HXformat_read_modifiers(const char **, struct HXdeque *);
-static hmc_t *HXformat_read_key(const char **);
-static void HXformat_transform(hmc_t **, struct HXdeque *,
+static hxmc_t *HXformat_read_key(const char **);
+static void HXformat_transform(hxmc_t **, struct HXdeque *,
 	const struct fmt_entry *);
-static void HXformat_xfrm_after(hmc_t **, const char *);
-static void HXformat_xfrm_before(hmc_t **, const char *);
-static void HXformat_xfrm_ifempty(hmc_t **, const char *);
-static void HXformat_xfrm_ifnempty(hmc_t **, const char *);
-static void HXformat_xfrm_lower(hmc_t **, const char *);
-static void HXformat_xfrm_upper(hmc_t **, const char *);
+static void HXformat_xfrm_after(hxmc_t **, const char *);
+static void HXformat_xfrm_before(hxmc_t **, const char *);
+static void HXformat_xfrm_ifempty(hxmc_t **, const char *);
+static void HXformat_xfrm_ifnempty(hxmc_t **, const char *);
+static void HXformat_xfrm_lower(hxmc_t **, const char *);
+static void HXformat_xfrm_upper(hxmc_t **, const char *);
 
 /* Variables */
 static const struct modifier_info modifier_list[] = {
@@ -125,9 +125,9 @@ EXPORT_SYMBOL int HXformat_add(struct HXbtree *table, const char *key,
 }
 
 EXPORT_SYMBOL int HXformat_aprintf(const struct HXbtree *table,
-    hmc_t **resultp, const char *fmt)
+    hxmc_t **resultp, const char *fmt)
 {
-	hmc_t *key, *out = hmc_sinit("");
+	hxmc_t *key, *out = HXmc_meminit(NULL, 0);
 	const struct fmt_entry *entry;
 	const struct modifier *mod;
 	const char *last, *current;
@@ -140,11 +140,11 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXbtree *table,
 
 	while ((current = HX_strchr0(last, '%')) != NULL) {
 		if (current - last > 0)
-			hmc_memcat(&out, last, current - last);
+			HXmc_memcat(&out, last, current - last);
 		if (*current == '\0')
 			break;
 		if (*(current+1) != '(' /* ) */) {
-			hmc_strcat(&out, "%");
+			HXmc_strcat(&out, "%");
 			last = current + 2;
 			continue;
 		}
@@ -155,18 +155,18 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXbtree *table,
 
 		key = HXformat_read_key(&current);
 		if ((entry = HXbtree_get(table, key)) == NULL) {
-			hmc_strcat(&out, "%(");
-			hmc_strcat(&out, key);
-			hmc_strcat(&out, ")");
+			HXmc_strcat(&out, "%(");
+			HXmc_strcat(&out, key);
+			HXmc_strcat(&out, ")");
 		} else {
 			HXformat_transform(&out, dq, entry);
 		}
 
 		while ((mod = HXdeque_shift(dq)) != NULL)
 			if (mod->arg != NULL)
-				hmc_free(mod->arg);
+				HXmc_free(mod->arg);
 
-		hmc_free(key);
+		HXmc_free(key);
 		last = current + 1; /* closing parenthesis */
 	}
 
@@ -176,7 +176,7 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXbtree *table,
 
  out:
 	ret = -errno;
-	hmc_free(out);
+	HXmc_free(out);
 	HXdeque_free(dq);
 	return ret;
 }
@@ -184,7 +184,7 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXbtree *table,
 EXPORT_SYMBOL int HXformat_fprintf(const struct HXbtree *table, FILE *filp,
     const char *fmt)
 {
-	hmc_t *str;
+	hxmc_t *str;
 	int ret;
 
 	if ((ret = HXformat_aprintf(table, &str, fmt)) <= 0)
@@ -192,14 +192,14 @@ EXPORT_SYMBOL int HXformat_fprintf(const struct HXbtree *table, FILE *filp,
 	errno = 0;
 	if (fputs(str, filp) < 0)
 		ret = -errno;
-	hmc_free(str);
+	HXmc_free(str);
 	return ret;
 }
 
 EXPORT_SYMBOL int HXformat_sprintf(const struct HXbtree *table, char *dest,
     size_t size, const char *fmt)
 {
-	hmc_t *str;
+	hxmc_t *str;
 	int ret;
 
 	if ((ret = HXformat_aprintf(table, &str, fmt)) < 0)
@@ -209,7 +209,7 @@ EXPORT_SYMBOL int HXformat_sprintf(const struct HXbtree *table, char *dest,
 		return 0;
 	}
 	strncpy(dest, str, size);
-	hmc_free(str);
+	HXmc_free(str);
 	return strlen(dest);
 }
 
@@ -234,7 +234,7 @@ static const char *HXformat_read_modifier_arg(const char *data,
 	}
 
 	m->arg = NULL;
-	hmc_memasg(&m->arg, data, quote - data);
+	HXmc_memcpy(&m->arg, data, quote - data);
 	return quote + 1;
 }
 
@@ -279,22 +279,22 @@ static int HXformat_read_modifiers(const char **current, struct HXdeque *dq)
 	return ret;
 }
 
-static hmc_t *HXformat_read_key(const char **pptr)
+static hxmc_t *HXformat_read_key(const char **pptr)
 {
 	const char *ptr = *pptr;
 	unsigned int idx = 0, len = strlen(ptr);
-	hmc_t *ret = NULL;
+	hxmc_t *ret = NULL;
 
 	while (idx < len && idx < MAX_KEY_SIZE && ptr[idx] != '\0' &&
 	    strchr(/* ( */ "\t\n\v )", ptr[idx]) == NULL)
 		++idx;
 
-	hmc_memasg(&ret, ptr, idx);
+	HXmc_memcpy(&ret, ptr, idx);
 	*pptr = &ptr[idx];
 	return ret;
 }
 
-static void HXformat_transform(hmc_t **out, struct HXdeque *dq,
+static void HXformat_transform(hxmc_t **out, struct HXdeque *dq,
     const struct fmt_entry *entry)
 {
 #define IMM(fmt, type) \
@@ -309,23 +309,23 @@ static void HXformat_transform(hmc_t **out, struct HXdeque *dq,
 	static const char *const tf[] = {"false", "true"};
 	char buf[sizeof("18446744073709551616")-1];
 	const struct modifier *mod;
-	hmc_t *wp = NULL;
+	hxmc_t *wp = NULL;
 
 	*buf = '\0';
 	switch (entry->type) {
 		case HXTYPE_STRING:
 		case HXTYPE_STRING | HXFORMAT_IMMED:
-			hmc_strasg(&wp, entry->ptr);
+			HXmc_strcpy(&wp, entry->ptr);
 			break;
 		case HXTYPE_STRP:
-			hmc_strasg(&wp, *static_cast(const char **, entry->ptr));
+			HXmc_strcpy(&wp, *static_cast(const char **, entry->ptr));
 			break;
 		case HXTYPE_BOOL:
-			hmc_strasg(&wp, tf[!!*static_cast(const int *,
+			HXmc_strcpy(&wp, tf[!!*static_cast(const int *,
 			           entry->ptr)]);
 			break;
 		case HXTYPE_BOOL | HXFORMAT_IMMED:
-			hmc_strasg(&wp, tf[entry->ptr != NULL]);
+			HXmc_strcpy(&wp, tf[entry->ptr != NULL]);
 			break;
 
 		case HXTYPE_BYTE:   PTR("%c", unsigned char);
@@ -357,51 +357,51 @@ static void HXformat_transform(hmc_t **out, struct HXdeque *dq,
 	}
 
 	if (*buf != '\0')
-		hmc_strasg(&wp, buf);
+		HXmc_strcpy(&wp, buf);
 
 	while ((mod = HXdeque_shift(dq)) != NULL)
 		mod->transform(&wp, mod->arg);
 
-	hmc_strcat(out, wp);
-	hmc_free(wp);
+	HXmc_strcat(out, wp);
+	HXmc_free(wp);
 #undef IMM
 #undef PTR
 }
 
-static void HXformat_xfrm_after(hmc_t **x, const char *arg)
+static void HXformat_xfrm_after(hxmc_t **x, const char *arg)
 {
 	if (**x != '\0')
-		hmc_strcat(x, arg);
+		HXmc_strcat(x, arg);
 }
 
-static void HXformat_xfrm_before(hmc_t **x, const char *arg)
+static void HXformat_xfrm_before(hxmc_t **x, const char *arg)
 {
 	if (**x != '\0')
-		hmc_strpcat(x, arg);
+		HXmc_strpcat(x, arg);
 }
 
-static void HXformat_xfrm_ifempty(hmc_t **val, const char *repl)
+static void HXformat_xfrm_ifempty(hxmc_t **val, const char *repl)
 {
 	if (**val == '\0' && repl != NULL)
-		hmc_strasg(val, repl);
+		HXmc_strcpy(val, repl);
 	else
-		hmc_trunc(val, 0);
+		HXmc_trunc(val, 0);
 }
 
-static void HXformat_xfrm_ifnempty(hmc_t **val, const char *repl)
+static void HXformat_xfrm_ifnempty(hxmc_t **val, const char *repl)
 {
 	if (**val != '\0' && repl != NULL)
-		hmc_strasg(val, repl);
+		HXmc_strcpy(val, repl);
 	else
-		hmc_trunc(val, 0);
+		HXmc_trunc(val, 0);
 }
 
-static void HXformat_xfrm_lower(hmc_t **x, const char *arg)
+static void HXformat_xfrm_lower(hxmc_t **x, const char *arg)
 {
 	HX_strlower(*x);
 }
 
-static void HXformat_xfrm_upper(hmc_t **x, const char *arg)
+static void HXformat_xfrm_upper(hxmc_t **x, const char *arg)
 {
 	HX_strupper(*x);
 }

@@ -541,7 +541,7 @@ EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
 {
 	struct HXoptcb cbi = {.table = table, .match_sh = '\0'};
 	char *reparse = NULL;
-	hmc_t *ln = NULL;
+	hxmc_t *ln = NULL;
 	FILE *fp;
 
 	if ((fp = fopen(file, "r")) == NULL)
@@ -584,7 +584,7 @@ EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
 		}
 	}
 
-	hmc_free(ln);
+	HXmc_free(ln);
 	fclose(fp);
 	return 1;
 }

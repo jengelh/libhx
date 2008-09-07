@@ -259,7 +259,7 @@ EXPORT_SYMBOL int HX_rrmdir(const char *dir)
 {
 	struct HXdir *ptr;
 	const char *trav;
-	hmc_t *fn = NULL;
+	hxmc_t *fn = NULL;
 	int ret = 0;
 
 	if ((ptr = HXdir_open(dir)) == NULL)
@@ -270,9 +270,9 @@ EXPORT_SYMBOL int HX_rrmdir(const char *dir)
 
 		if (strcmp(trav, ".") == 0 || strcmp(trav, "..") == 0)
 			continue;
-		hmc_strasg(&fn, dir);
-		hmc_strcat(&fn, "/");
-		hmc_strcat(&fn, trav);
+		HXmc_strcpy(&fn, dir);
+		HXmc_strcat(&fn, "/");
+		HXmc_strcat(&fn, trav);
 		if (lstat(fn, &sb) < 0) {
 			ret = -errno;
 			break;
@@ -292,7 +292,7 @@ EXPORT_SYMBOL int HX_rrmdir(const char *dir)
 	if (rmdir(dir) < 0)
 		ret = -errno;
 	HXdir_close(ptr);
-	hmc_free(fn);
+	HXmc_free(fn);
 	return ret;
 }
 
