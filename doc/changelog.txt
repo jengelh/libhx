@@ -1,6 +1,7 @@
 
-- hmc: pointer was not automatically updated after hmc_trunc()
-- hmc: rename functions and put them into the HX* namespace (API change)
+- HXmc: pointer was not automatically updated after hmc_trunc()
+- HXmc: rename functions and put them into the HX* namespace (API change)
+- HXmc: make code resistant to memory allocation failure
 
 
 libHX 1.23 (September 02 2008)

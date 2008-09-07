@@ -70,10 +70,14 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcpy(hxmc_t **vp, const void *ptr, size_t len)
 		CHECK_IDENT(ctx);
 		if (ctx->alloc < len) {
 			ctx = realloc(ctx, sizeof(struct memcont) + len);
+			if (ctx == NULL)
+				return NULL;
 			ctx->alloc = len;
 		}
 	} else {
 		ctx = malloc(sizeof(struct memcont) + len);
+		if (ctx == NULL)
+			return NULL;
 		ctx->id    = HXMC_IDENT;
 		ctx->alloc = len;
 	}
@@ -102,6 +106,8 @@ EXPORT_SYMBOL hxmc_t *HXmc_trunc(hxmc_t **vp, size_t len)
 	CHECK_IDENT(ctx);
 	if (len > ctx->alloc) {
 		ctx = realloc(ctx, sizeof(struct memcont) + len);
+		if (ctx == NULL)
+			return NULL;
 		ctx->alloc = len;
 	} else {
 		ctx->data[len] = '\0';
@@ -125,6 +131,8 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcat(hxmc_t **vp, const void *ptr, size_t len)
 	CHECK_IDENT(ctx);
 	if (nl > ctx->alloc) {
 		ctx = realloc(ctx, sizeof(struct memcont) + nl);
+		if (ctx == NULL)
+			return NULL;
 		ctx->alloc = nl;
 	}
 	if (ptr == NULL)
@@ -171,6 +179,8 @@ EXPORT_SYMBOL hxmc_t *HXmc_memins(hxmc_t **vp, size_t pos, const void *ptr,
 	CHECK_IDENT(ctx);
 	if (ctx->alloc < nl) {
 		ctx = realloc(ctx, sizeof(struct memcont) + nl);
+		if (ctx == NULL)
+			return NULL;
 		ctx->alloc = nl;
 	}
 	if (ptr == NULL)
