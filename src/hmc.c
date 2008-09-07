@@ -107,7 +107,7 @@ EXPORT_SYMBOL hmc_t *hmc_trunc(hmc_t **vp, size_t len)
 		ctx->data[len] = '\0';
 		ctx->length = len;
 	}
-	return ctx->data;
+	return *vp = ctx->data;
 }
 
 EXPORT_SYMBOL hmc_t *hmc_strcat(hmc_t **vp, const char *s)
