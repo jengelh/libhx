@@ -1,4 +1,8 @@
 
+
+- add HX_hexdump() for debugging within programs
+
+
 libHX 1.25 (September 07 2008)
 ==============================
 - install missing misc.h

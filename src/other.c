@@ -7,8 +7,10 @@
  *	Lesser General Public License as published by the Free Software
  *	Foundation; either version 2 or 3 of the License.
  */
+#include <ctype.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -36,6 +38,45 @@ EXPORT_SYMBOL int HX_ffs(unsigned long n)
 	while ((n >>= 1) >= 1)
 		++s;
 	return s;
+}
+
+EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
+{
+	const unsigned char *ptr = vptr;
+	unsigned int i, j;
+	bool tty = isatty(fileno(fp));
+
+	fprintf(fp, "Dumping %u bytes\n", len);
+	for (i = 0; i < len / 16; ++i) {
+		fprintf(fp, "%04x | ", i * 16);
+		for (j = 0; j < 16; ++j)
+			fprintf(fp, "%02x%c", *ptr++, (j == 7) ? '-' : ' ');
+		ptr -= 16;
+		fprintf(fp, "| ");
+		for (j = 0; j < 16; ++j, ++ptr)
+			if (isprint(*ptr))
+				fprintf(fp, "%c", *ptr);
+			else if (tty)
+				fprintf(fp, "\e[31m.\e[0m"); // ]]
+			else
+				fprintf(fp, ".");
+		fprintf(fp, "\n");
+	}
+	fprintf(fp, "%04x | ", i * 16);
+	len -= i * 16;
+	for (i = 0; i < len; ++i)
+		fprintf(fp, "%02x%c", ptr[i], (i == 7) ? '-' : ' ');
+	for (; i < 16; ++i)
+		fprintf(fp, "   ");
+	fprintf(fp, "| ");
+	for (i = 0; i < len; ++i)
+		if (isprint(ptr[i]))
+			fprintf(fp, "%c", ptr[i]);
+		else if (tty)
+			fprintf(fp, "\e[31m.\e[0m"); // ]]
+		else
+			fprintf(fp, ".");
+	fprintf(fp, "\n");
 }
 
 EXPORT_SYMBOL void HX_zvecfree(char **args)
