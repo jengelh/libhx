@@ -1,6 +1,8 @@
 
 
 - add HX_hexdump() for debugging within programs
+- fix double free in the error path of HX_getopt() when a long option preceded
+  a short option of which the latter had problems (i.e. missing argument)
 
 
 libHX 1.25 (September 07 2008)

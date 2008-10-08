@@ -179,6 +179,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 
 			do_assign(&cbi);
 			free(key);
+			key   = NULL;
 			state = S_NORMAL;
 			/* fallthrough */
 		}
@@ -212,6 +213,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			do_assign(&cbi);
 
 			free(key);
+			key   = NULL;
 			state = S_NORMAL;
 			cur   = *++opt;
 			/* fallthrough */
