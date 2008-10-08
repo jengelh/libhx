@@ -11,6 +11,7 @@ libHX_la_LDFLAGS = -version-info 15:0:1
 
 noinst_PROGRAMS    = tc-compile tx-compile
 noinst_PROGRAMS   += tc-arbtree tx-arbtree
+noinst_PROGRAMS   += tc-cast
 noinst_PROGRAMS   += tc-deque tx-deque
 noinst_PROGRAMS   += tc-list tx-list
 noinst_PROGRAMS   += tc-misc tx-misc

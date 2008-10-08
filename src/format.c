@@ -83,7 +83,7 @@ EXPORT_SYMBOL void HXformat_free(struct HXbtree *table)
 	while ((node = HXbtraverse(trav)) != NULL) {
 		entry = node->data;
 		if (entry->type == (HXTYPE_STRING | HXFORMAT_IMMED))
-			free(static_cast(void *, entry->ptr));
+			free(const_cast(void *, entry->ptr));
 		free(entry);
 	}
 
@@ -318,7 +318,7 @@ static void HXformat_transform(hxmc_t **out, struct HXdeque *dq,
 			HXmc_strcpy(&wp, entry->ptr);
 			break;
 		case HXTYPE_STRP:
-			HXmc_strcpy(&wp, *static_cast(const char **, entry->ptr));
+			HXmc_strcpy(&wp, *static_cast(const char **, const_cast(void *, entry->ptr)));
 			break;
 		case HXTYPE_BOOL:
 			HXmc_strcpy(&wp, tf[!!*static_cast(const int *,

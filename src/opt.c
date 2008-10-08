@@ -401,7 +401,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		 */
 		HX_zvecfree((char **)*argv);
 
-	*argv = static_cast(const char **, HXdeque_to_vec(remaining, &argk));
+	*argv = const_cast(const char **, HXdeque_to_vec(remaining, &argk));
 	*argc = argk;
 	HXdeque_free(remaining);
 	return 1;

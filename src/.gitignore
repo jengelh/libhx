@@ -1,5 +1,6 @@
 /config.h*
 /t?-arbtree
+/t?-cast
 /t?-compile
 /t?-deque
 /t?-dir
