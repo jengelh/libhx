@@ -1,4 +1,8 @@
-/* Testing for compile error in the cast helpers */
+/*
+ *	Testing for compile error in the cast helpers
+ *	written by Jan Engelhardt
+ *	this program is released in the Public Domain
+ */
 #define HXDEV_NEW_CAST
 #include <libHX/defs.h>
 

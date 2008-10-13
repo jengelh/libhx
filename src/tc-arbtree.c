@@ -1,3 +1,8 @@
+/*
+ *	arbtree test program
+ *	written by Jan Engelhardt
+ *	this program is released in the Public Domain
+ */
 #include <sys/time.h>
 #include <math.h>
 #include <stdarg.h>

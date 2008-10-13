@@ -1,12 +1,12 @@
 
 Name:		libHX14
 %define lname	libHX
-Version:	1.25
+Version:	1.26
 Release:	0
 Group:		System/Libraries
 URL:		http://jengelh.medozas.de/projects/libHX/
 Summary:	Library for commonly needed tasks in C
-License:	LGPL2 LGPL3
+License:	LGPL2,3
 Source:		http://jengelh.medozas.de/files/libHX/libHX-%version.tar.bz2
 BuildRoot:	%_tmppath/%name-%version-build
 BuildRequires:	gcc-c++

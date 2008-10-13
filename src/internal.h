@@ -1,11 +1,11 @@
 /*
  *	libHX/internal.h
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 1999 - 2007
+ *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 1999 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
  *	Lesser General Public License as published by the Free Software
- *	Foundation; either version 2 or 3 of the License.
+ *	Foundation; either version 2.1 or 3 of the License.
  */
 #ifndef LIBHX_INTERNAL_H
 #define LIBHX_INTERNAL_H 1

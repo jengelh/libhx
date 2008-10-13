@@ -1,11 +1,13 @@
 
 
+libHX 1.26 (October 12 2008)
+============================
 - add HX_hexdump() for debugging within programs
 - fix double free in the error path of HX_getopt() when a long option preceded
   a short option of which the latter had problems (i.e. missing argument)
 - add actual typechecking to signed_cast()
 - add typechecking to static_cast(),
-  but this is normally disabled to avoid compile interruption
+  (but this is normally disabled to avoid compile interruption)
 
 
 libHX 1.25 (September 07 2008)

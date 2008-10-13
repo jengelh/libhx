@@ -1,6 +1,11 @@
 /*
 A=b;C="d" ; E = "F;" ;
 */
+/*
+ *	option parser test program
+ *	written by Jan Engelhardt
+ *	this program is released in the Public Domain
+ */
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
