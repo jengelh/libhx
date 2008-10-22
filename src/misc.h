@@ -59,18 +59,6 @@ extern int HX_vfsystem(unsigned int, const char *, const char *, va_list);
 extern int HX_rand(void);
 extern unsigned int HX_irand(unsigned int, unsigned int);
 
-#ifdef _WIN32
-#	define MAP_FAILED ((void *)-1)
-#	define PROT_NONE   0x0
-#	define PROT_READ   0x1
-#	define PROT_WRITE  0x2
-#	define PROT_EXEC   0x4
-#	define MAP_SHARED  0x1
-#	define MAP_PRIVATE 0x2
-extern void *mmap(void *, size_t, int, int, int, off_t);
-extern int munmap(void *, size_t);
-#endif
-
 /*
  *	INLINE FUNCTIONS
  */

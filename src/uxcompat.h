@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #ifndef ENOSYS
 #	define ENOSYS 38 /* Function not implemented */
@@ -47,6 +48,18 @@ extern "C" {
 #ifndef S_ISSOCK
 #	define S_ISSOCK(__mode) (((__mode) & S_IFMT) == S_IFSOCK)
 #endif
+#ifndef S_IRGRP
+#	define S_IRGRP 00040
+#endif
+#ifndef S_IWGRP
+#	define S_IWGRP 00020
+#endif
+#ifndef S_IROTH
+#	define S_IROTH 00004
+#endif
+#ifndef S_IWOTH
+#	define S_IWOTH 00002
+#endif
 
 /*
  *	UX-FILE.C
@@ -64,8 +77,17 @@ extern int symlink(const char *, const char *);
 /*
  *	UX-MMAP.C
  */
+#ifdef _WIN32
+#	define MAP_FAILED ((void *)-1)
+#	define PROT_NONE   0x0
+#	define PROT_READ   0x1
+#	define PROT_WRITE  0x2
+#	define PROT_EXEC   0x4
+#	define MAP_SHARED  0x1
+#	define MAP_PRIVATE 0x2
 extern void *mmap(void *, size_t, int, int, int, off_t);
 extern int munmap(void *, size_t);
+#endif
 
 #ifdef __cplusplus
 } /* extern "C" */

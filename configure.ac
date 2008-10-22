@@ -10,6 +10,13 @@ AC_DISABLE_STATIC
 AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
 
+AC_MSG_CHECKING([for mingw32])
+AC_TRY_COMPILE(, [return __MINGW32__;],
+	[ac_cv_mingw32=yes; AC_MSG_RESULT([yes])],
+	[ac_cv_mingw32=no; AC_MSG_RESULT([no])]
+)
+AM_CONDITIONAL([MINGW32], [test "$ac_cv_mingw32" = yes])
+
 AC_ARG_WITH([pkgconfigdir], AS_HELP_STRING([--with-pkgconfigdir=PATH],
 	[Path to the pkgconfig directory [[LIBDIR/pkgconfig]]]),
 	[pkgconfigdir="$withval"], [pkgconfigdir='${libdir}/pkgconfig'])

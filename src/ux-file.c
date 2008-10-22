@@ -1,7 +1,6 @@
 #include <errno.h>
-#include "libHX.h"
+#include "internal.h"
 
-//-----------------------------------------------------------------------------
 EXPORT_SYMBOL int chown(const char *path, long uid, long gid)
 {
 	return -ENOSYS;
@@ -46,5 +45,3 @@ EXPORT_SYMBOL int symlink(const char *src, const char *dest)
 {
 	return -EPERM;
 }
-
-//=============================================================================

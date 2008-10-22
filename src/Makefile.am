@@ -5,9 +5,13 @@ DEFAULT_INCLUDES = -I${top_srcdir} -I${top_builddir}
 
 lib_LTLIBRARIES  = libHX.la
 libHX_la_SOURCES = arbtree.c deque.c dir.c dl.c format.c mc.c opt.c other.c \
-                   rand.c string.c
+                   rand.c string.c ${mingw32_extra}
 libHX_la_LIBADD  = ${regular_LIBS}
 libHX_la_LDFLAGS = -version-info 15:0:1
+
+if MINGW32
+mingw32_extra    = ux-file.c ux-mmap.c
+endif
 
 noinst_PROGRAMS    = tc-compile tx-compile
 noinst_PROGRAMS   += tc-arbtree tx-arbtree

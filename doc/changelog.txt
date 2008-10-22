@@ -1,5 +1,8 @@
 
 
+- build: fixed compile errors with i586-mingw32msvc cross compile
+
+
 libHX 1.26 (October 12 2008)
 ============================
 - add HX_hexdump() for debugging within programs

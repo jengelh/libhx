@@ -20,6 +20,7 @@
 #if defined _WIN32
 #	include <direct.h>
 #	include <io.h>
+#	include <windows.h>
 #else
 #	include <dirent.h>
 #	include <unistd.h>

@@ -9,14 +9,15 @@
  */
 #include <sys/types.h>
 #include <io.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <windows.h>
-#include "libHX.h"
+#include "internal.h"
+#include "misc.h"
 
 static inline DWORD dw_desired_access(int, int);
 static inline DWORD fl_protect(int, int);
 
-//----------------------------------------------------------------------------
 EXPORT_SYMBOL void *mmap(void *start, size_t length, int prot, int flags,
     int fd, off_t offset)
 {
@@ -30,7 +31,8 @@ EXPORT_SYMBOL void *mmap(void *start, size_t length, int prot, int flags,
 		return MAP_FAILED;
 
 	p = MapViewOfFile(fmap, dw_desired_access(prot, flags),
-		(offset >> 32) & 0xFFFFFFFFUL, offset & 0xFFFFFFFFUL, length);
+		((int64_t)offset >> 32) & 0xFFFFFFFFUL,
+		offset & 0xFFFFFFFFUL, length);
 	CloseHandle(fmap);
 	if (p == NULL)
 		return MAP_FAILED;
@@ -45,7 +47,6 @@ EXPORT_SYMBOL int munmap(void *start, size_t length)
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
 static inline DWORD dw_desired_access(int prot, int flags)
 {
 	if (flags & MAP_PRIVATE) return FILE_MAP_COPY;
@@ -75,5 +76,3 @@ static inline DWORD fl_protect(int prot, int flags)
 		return PAGE_READONLY;
 	return 0;
 }
-
-//=============================================================================
