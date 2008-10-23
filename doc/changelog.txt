@@ -1,6 +1,13 @@
 
 
+libHX 1.27 (October 23 2008)
+============================
+No functional changes for Linux platforms.
+
 - build: fixed compile errors with i586-mingw32msvc cross compile
+- regenerated the Makefile.in files in the tarball with an updated
+  version of automake-tranquility so that they are now
+  POSIX-compliant and work with BSD make
 
 
 libHX 1.26 (October 12 2008)
