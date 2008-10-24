@@ -13,6 +13,7 @@
 #include <libHX/arbtree.h>
 #include <libHX/misc.h>
 #include <libHX/string.h>
+#include "internal.h"
 
 enum {
 	S_LEFT = 0,
@@ -46,8 +47,8 @@ static struct timeval tv_start;
 static void test_1(void)
 {
 	struct HXbtree_node *node;
-	struct HXbtrav *trav;
 	char buf[80];
+	void *trav;
 
 	printf("Test 1A: Creating tree with 7 elements (hg 3)\n");
 	btree = generate_perfect_tree(3, 2);
@@ -97,20 +98,21 @@ static void test_1(void)
 static void test_2(void)
 {
 	const struct HXbtree_node *node;
-	struct HXbtrav *trav;
 	char buf[80];
+	void *trav;
 
 	printf("Test 2A: Traverse with B-tree change\n");
 	trav = HXbtrav_init(btree);
 	while ((node = HXbtraverse(trav)) != NULL) {
+		const char *key = static_cast(const char *, node->key);
+
 		walk_tree(btree->root, buf, sizeof(buf));
 		printf("\t" "tree: %s\n", buf);
-		printf("\t" " key: %s (%s)\n",
-		       (const char *)node->key, Color[node->color]);
-		if (strcmp(node->key, "4") == 0) {
+		printf("\t" " key: %s (%s)\n", key, Color[node->color]);
+		if (strcmp(key, "4") == 0) {
 			printf("\t" "Deleting [current] node \"4\"\n");
 			HXbtree_del(btree, "4");
-		} else if (strcmp(node->key, "12") == 0) {
+		} else if (strcmp(key, "12") == 0) {
 			printf("\t" "Deleting [next] node \"14\"\n");
 			HXbtree_del(btree, "14");
 		}
@@ -128,7 +130,7 @@ static void test_2(void)
 	trav = HXbtrav_init(btree);
 	while ((node = HXbtraverse(trav)) != NULL) {
 		printf("\t" "About to delete \"%s\"\n",
-		       (const char *)node->key);
+		       static_cast(const char *, node->key));
 		HXbtree_del(btree, node->key);
 	}
 
@@ -149,7 +151,7 @@ static void test_2(void)
 static void test_3(void)
 {
 	const struct HXbtree_node *node;
-	struct HXbtrav *trav;
+	void *trav;
 
 	printf("Test 3: Creating tree with 63 elements (hg 6), "
 	       "testing traverser path pickup code\n");
@@ -158,8 +160,10 @@ static void test_3(void)
 
 	printf("\t");
 	while ((node = HXbtraverse(trav)) != NULL) {
-		printf("%s", (const char *)node->key);
-		if (strcmp(node->key, "21") == 0) {
+		const char *key = static_cast(const char *, node->key);
+
+		printf("%s", key);
+		if (strcmp(key, "21") == 0) {
 			HXbtree_del(btree, "21");
 			printf("*");
 		}
@@ -394,7 +398,8 @@ static int sbc_strcmp(const char *result, const char *expected)
 
 static int strtolcmp(const void *a, const void *b)
 {
-	return strtol(a, NULL, 0) - strtol(b, NULL, 0);
+	return strtol(static_cast(const char *, a), NULL, 0) -
+	       strtol(static_cast(const char *, b), NULL, 0);
 }
 
 static inline void timer_start(void)
@@ -503,7 +508,7 @@ static unsigned int verify_random_tree(const struct HXbtree *tree)
 static void __walk_tree(const struct HXbtree_node *node, char *buf, size_t s)
 {
 	int has_children = node->sub[0] != NULL || node->sub[1] != NULL;
-	HX_strlcat(buf, node->key, s);
+	HX_strlcat(buf, static_cast(const char *, node->key), s);
 
 	if (node->color == NODE_BLACK)
 		HX_strlcat(buf, "%b", s);
