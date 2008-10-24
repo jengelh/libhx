@@ -30,6 +30,7 @@ tc_misc_LDADD      = libHX.la
 tc_option_LDADD    = libHX.la
 tc_string_LDADD    = libHX.la
 tx_arbtree_SOURCES = tx-arbtree.cpp
+tx_arbtree_LDADD   = libHX.la -lm
 tx_compile_SOURCES = tx-compile.cpp
 tx_compile_LDADD   = libHX.la
 tx_deque_SOURCES   = tx-deque.cpp
