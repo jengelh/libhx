@@ -7,4 +7,5 @@ includedir=@includedir@
 Name:		libHX
 Description:	General-purpose library
 Version:	@PACKAGE_VERSION@
+Cflags:		-I${includedir}
 Libs:		-lHX
