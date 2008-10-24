@@ -13,6 +13,8 @@
 extern "C" {
 #endif
 
+struct stat;
+
 /*
  *	DIR.C
  */
@@ -39,7 +41,7 @@ extern void HX_dlclose(void *);
 extern const char *HX_dlerror(void);
 
 /*
- *	OTHER.C
+ *	MISC.C
  */
 enum {
 	HX_FSYSTEM_ARGV  = 1 << 0,
@@ -49,6 +51,7 @@ enum {
 
 extern int HX_ffs(unsigned long);
 extern void HX_hexdump(FILE *, const void *, unsigned int);
+extern long HX_time_compare(const struct stat *, const struct stat *, char);
 extern void HX_zvecfree(char **);
 extern int HX_fsystem(unsigned int, const char *, const char *, ...);
 extern int HX_vfsystem(unsigned int, const char *, const char *, va_list);

@@ -24,6 +24,12 @@ AC_SUBST(pkgconfigdir)
 
 m4_sinclude(m4lib/gcc4_visibility.m4)
 AC_CHECK_LIB([dl], [dlopen], [regular_LIBS="$regular_LIBS -ldl"])
+
+AC_CHECK_MEMBERS(
+	[struct stat.st_mtimensec, struct stat.st_mtim,
+	struct stat.st_mtimespec, struct stat.st_mtime],
+	[], [], [#include <sys/stat.h>])
+
 regular_CFLAGS="-D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
 	-D_REENTRANT -Wall -Waggregate-return -Wmissing-declarations \
 	-Wmissing-prototypes -Wredundant-decls -Wshadow -Wstrict-prototypes \

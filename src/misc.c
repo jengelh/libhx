@@ -7,6 +7,7 @@
  *	Lesser General Public License as published by the Free Software
  *	Foundation; either version 2.1 or 3 of the License.
  */
+#include <sys/stat.h>
 #include <ctype.h>
 #include <errno.h>
 #include <stdarg.h>
@@ -77,6 +78,52 @@ EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
 		else
 			fprintf(fp, ".");
 	fprintf(fp, "\n");
+}
+
+EXPORT_SYMBOL long HX_time_compare(const struct stat *a,
+    const struct stat *b, char sel)
+{
+	long r;
+
+#if defined(HAVE_STRUCT_STAT_ST_MTIMENSEC)
+	if (sel == 'm')
+		return ((r = a->st_mtime - b->st_mtime) != 0) ?
+		       r : a->st_mtimensec - b->st_mtimensec;
+	else if (sel == 'a')
+		return ((r = a->st_atime - b->st_atime) != 0) ?
+		       r : a->st_atimensec - b->st_atimensec;
+	else if (sel == 'c')
+		return ((r = a->st_ctime - b->st_ctime) != 0) ?
+		       r : a->st_ctimensec - b->st_ctimensec;
+#elif defined(HAVE_STRUCT_STAT_ST_MTIM)
+	if (sel == 'm')
+		return ((r = a->st_mtim.tv_sec - b->st_mtim.tv_sec) != 0) ?
+		       r : a->st_mtim.tv_nsec - b->st_mtim.tv_nsec;
+	else if (sel == 'a')
+		return ((r = a->st_atim.tv_sec - b->st_atim.tv_sec) != 0) ?
+		       r : a->st_atim.tv_nsec - b->st_atim.tv_nsec;
+	else if (sel == 'c')
+		return ((r = a->st_ctim.tv_sec - b->st_ctim.tv_sec) != 0) ?
+		       r : a->st_ctim.tv_nsec - b->st_ctim.tv_nsec;
+#elif defined(HAVE_STRUCT_STAT_ST_ATIMESPEC)
+	if (sel == 'm')
+		return ((r = a->st_mtimespec.tv_sec - b->st_mtimespec.tv_sec) != 0) ?
+		       r : a->st_mtimespec.tv_nsec - b->st_mtimespec.tv_nsec;
+	else if (sel == 'a')
+		return ((r = a->st_atimespec.tv_sec - b->st_atimespec.tv_sec) != 0) ?
+		       r : a->st_atimespec.tv_nsec - b->st_atimespec.tv_nsec;
+	else if (sel == 'c')
+		return ((r = a->st_ctimespec.tv_sec - b->st_ctimespec.tv_sec) != 0) ?
+		       r : a->st_ctimespec.tv_nsec - b->st_ctimespec.tv_nsec;
+#elif defined(HAVE_STRUCT_STAT_ST_MTIME)
+	if (sel == 'm')
+		return a->st_mtime - b->st_mtime;
+	else if (sel == 'a')
+		return a->st_atime - b->st_atime;
+	else if (sel == 'c')
+		return a->st_ctime - b->st_ctime;
+#endif
+	return 0;
 }
 
 EXPORT_SYMBOL void HX_zvecfree(char **args)
