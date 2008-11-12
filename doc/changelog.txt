@@ -1,5 +1,8 @@
 
 
+- add HXTYPE_{U,}INT{8,16,32,64}
+
+
 libHX 1.27 (October 23 2008)
 ============================
 No functional changes for Linux platforms.

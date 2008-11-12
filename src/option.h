@@ -64,6 +64,14 @@ enum {
 	HXTYPE_STRING,
 	HXTYPE_STRP, /* (const char **) */
 	HXTYPE_STRDQ,
+	HXTYPE_UINT8,
+	HXTYPE_UINT16,
+	HXTYPE_UINT32,
+	HXTYPE_UINT64,
+	HXTYPE_INT8,
+	HXTYPE_INT16,
+	HXTYPE_INT32,
+	HXTYPE_INT64,
 
 	/* .type extra flags */
 	/* argument is optional */

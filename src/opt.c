@@ -42,6 +42,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -673,9 +674,17 @@ static void do_assign(struct HXoptcb *cbi)
 	NTYPE_S(HXTYPE_INT,    int);
 	NTYPE_U(HXTYPE_ULONG,  unsigned long);
 	NTYPE_S(HXTYPE_LONG,   long);
+	NTYPE_U(HXTYPE_UINT8,  uint8_t);
+	NTYPE_S(HXTYPE_INT8,   int8_t);
+	NTYPE_U(HXTYPE_UINT16, uint16_t);
+	NTYPE_S(HXTYPE_INT16,  int16_t);
+	NTYPE_U(HXTYPE_UINT32, uint32_t);
+	NTYPE_S(HXTYPE_INT32,  int32_t);
 #ifndef _MSC_VER
 	NTYPE(HXTYPE_ULLONG,   unsigned long long, strtoull);
 	NTYPE(HXTYPE_LLONG,    long long, strtoll);
+	NTYPE(HXTYPE_UINT64,   uint64_t, strtoull);
+	NTYPE(HXTYPE_INT64,    int64_t, strtoll);
 #endif
 	case HXTYPE_FLOAT:
 		cbi->data_dbl = strtod(cbi->data, NULL);
