@@ -122,6 +122,8 @@ EXPORT_SYMBOL long HX_time_compare(const struct stat *a,
 		return a->st_atime - b->st_atime;
 	else if (sel == 'c')
 		return a->st_ctime - b->st_ctime;
+#else
+#	error Tis not ending well.
 #endif
 	return 0;
 }
