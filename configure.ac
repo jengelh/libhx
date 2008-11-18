@@ -1,5 +1,5 @@
 
-AC_INIT([libHX], [1.27])
+AC_INIT([libHX], [1.28])
 AC_CONFIG_HEADERS([libHX/config.h])
 AC_PROG_INSTALL
 AM_INIT_AUTOMAKE
@@ -34,6 +34,9 @@ regular_CFLAGS="-D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
 	-D_REENTRANT -Wall -Waggregate-return -Wmissing-declarations \
 	-Wmissing-prototypes -Wredundant-decls -Wshadow -Wstrict-prototypes \
 	-Wformat=2 -pipe"
-AC_SUBST(regular_CFLAGS)
-AC_SUBST(regular_LIBS)
+regular_CXXFLAGS="-D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
+	-D_REENTRANT -Wall -Wno-pointer-arith -Wredundant-decls -fPIC -pipe";
+AC_SUBST([regular_CFLAGS])
+AC_SUBST([regular_CXXFLAGS])
+AC_SUBST([regular_LIBS])
 AC_OUTPUT([Makefile src/Makefile libHX.pc])
