@@ -2,7 +2,7 @@
 AC_INIT([libHX], [1.28])
 AC_CONFIG_HEADERS([libHX/config.h])
 AC_PROG_INSTALL
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([-Wall -Wno-override])
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
@@ -11,18 +11,21 @@ AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
 
 AC_MSG_CHECKING([for mingw32])
-AC_TRY_COMPILE(, [return __MINGW32__;],
+AC_LANG_PUSH([C])
+AC_COMPILE_IFELSE(
+	[AC_LANG_PROGRAM([], [return __MINGW32__;])],
 	[ac_cv_mingw32=yes; AC_MSG_RESULT([yes])],
 	[ac_cv_mingw32=no; AC_MSG_RESULT([no])]
 )
+AC_LANG_POP([C])
 AM_CONDITIONAL([MINGW32], [test "$ac_cv_mingw32" = yes])
 
 AC_ARG_WITH([pkgconfigdir], AS_HELP_STRING([--with-pkgconfigdir=PATH],
 	[Path to the pkgconfig directory [[LIBDIR/pkgconfig]]]),
 	[pkgconfigdir="$withval"], [pkgconfigdir='${libdir}/pkgconfig'])
-AC_SUBST(pkgconfigdir)
+AC_SUBST([pkgconfigdir])
 
-m4_sinclude(m4lib/gcc4_visibility.m4)
+m4_include([m4/gcc4_visibility.m4])
 AC_CHECK_LIB([dl], [dlopen], [regular_LIBS="$regular_LIBS -ldl"])
 
 AC_CHECK_MEMBERS(
@@ -39,4 +42,5 @@ regular_CXXFLAGS="-D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
 AC_SUBST([regular_CFLAGS])
 AC_SUBST([regular_CXXFLAGS])
 AC_SUBST([regular_LIBS])
-AC_OUTPUT([Makefile src/Makefile libHX.pc])
+AC_CONFIG_FILES([Makefile src/Makefile libHX.pc])
+AC_OUTPUT
