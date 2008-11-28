@@ -1,6 +1,7 @@
 
 AC_INIT([libHX], [1.28])
 AC_CONFIG_HEADERS([libHX/config.h])
+AC_CONFIG_MACRO_DIR([m4])
 AC_PROG_INSTALL
 AM_INIT_AUTOMAKE([-Wall -Wno-override])
 AC_PROG_CC
@@ -25,7 +26,7 @@ AC_ARG_WITH([pkgconfigdir], AS_HELP_STRING([--with-pkgconfigdir=PATH],
 	[pkgconfigdir="$withval"], [pkgconfigdir='${libdir}/pkgconfig'])
 AC_SUBST([pkgconfigdir])
 
-m4_include([m4/gcc4_visibility.m4])
+CHECK_GCC_FVISIBILITY
 AC_CHECK_LIB([dl], [dlopen], [regular_LIBS="$regular_LIBS -ldl"])
 
 AC_CHECK_MEMBERS(
