@@ -1,6 +1,6 @@
 /*
  *	libHX/string.c
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 1999 - 2008
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU

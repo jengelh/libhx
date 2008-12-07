@@ -1,6 +1,6 @@
 /*
  *	libHX/assorted/tofrac.c
- *	Copyright © Jan Engelhardt <jengelh [at] gmx de>, 1999 - 2005
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2005
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
