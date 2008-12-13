@@ -9,7 +9,6 @@
  */
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -25,6 +24,7 @@
 #	include <dirent.h>
 #	include <unistd.h>
 #endif
+#include <libHX/ctype_helper.h>
 #include <libHX/misc.h>
 #include <libHX/string.h>
 #include "internal.h"
@@ -230,7 +230,7 @@ EXPORT_SYMBOL int HX_mkdir(const char *idir)
 				*p = '/';
 			++p;
 		}
-		if (isalpha(dir[0]) && dir[1] == ':')
+		if (HX_isalpha(dir[0]) && dir[1] == ':')
 			i = 2;
 	}
 #else
