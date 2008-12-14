@@ -2,6 +2,7 @@
 
 - defs: add a working offsetof() and containerof() for C++ mode
 - defs: use GCC's __builtin_offsetof
+- defs: resolve warnings with signed_cast() for char* -> const char* conversions
 - dir: HX_rrmdir: do not stop on error
 - mc: change first argument type for HXmc_dup()
   [compatible change, no ABI version bump]

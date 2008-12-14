@@ -24,6 +24,9 @@
 			__builtin_types_compatible_p(a, const signed char *) || \
 			__builtin_types_compatible_p(a, const unsigned char *), \
 			/* and if it has none... */ \
+			__builtin_types_compatible_p(a, const char *) || \
+			__builtin_types_compatible_p(a, const signed char *) || \
+			__builtin_types_compatible_p(a, const unsigned char *) || \
 			__builtin_types_compatible_p(a, char *) || \
 			__builtin_types_compatible_p(a, signed char *) || \
 			__builtin_types_compatible_p(a, unsigned char *) \
