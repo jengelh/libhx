@@ -74,18 +74,9 @@ static inline new_type signed_cast(unsigned char *expr)
 			(type)(expr); \
 		})
 #	endif
-#	if defined(__GNUC__) && defined(HXDEV_EXT_CAST)
-		/*
-		 * This one may cause shadow warnings when nested, or compile
-		 * errors when used in declarations, and hence is normally
-		 * disabled.
-		 */
-#		ifndef static_cast
-#			define static_cast(type, expr) ({ \
-				if (0) { typeof(type) __p __attribute__((unused)) = (expr); } \
-				(type)(expr); \
-			})
-#		endif
+#	if defined(__GNUC__) && !defined(static_cast)
+#		define static_cast(type, expr) \
+			((struct { type x; }){expr}.x)
 #	endif
 
 #	ifndef signed_cast

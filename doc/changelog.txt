@@ -16,6 +16,7 @@
 New feature: Type-checking casts.
 - defs: enable type-checking signed_cast()
 - defs: add signed_cast<> for C++ mode
+- defs: rewrite static_cast() to not cause -Wshadow warnings when nested
 
 
 libHX 1.28 (November 18 2008)

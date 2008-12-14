@@ -299,7 +299,7 @@ static void HXformat_transform(hxmc_t **out, struct HXdeque *dq,
 {
 #define IMM(fmt, type) \
 	snprintf(buf, sizeof(buf), (fmt), \
-	static_cast(type, static_cast(long, entry->ptr))); \
+	static_cast(type, reinterpret_cast(long, entry->ptr))); \
 	break;
 #define PTR(fmt, type) \
 	snprintf(buf, sizeof(buf), (fmt), \
