@@ -275,23 +275,28 @@ EXPORT_SYMBOL int HX_rrmdir(const char *dir)
 		HXmc_strcat(&fn, "/");
 		HXmc_strcat(&fn, trav);
 		if (lstat(fn, &sb) < 0) {
-			ret = -errno;
-			break;
+			if (ret == 0)
+				ret = -errno;
+			continue;
 		}
 
 		if (S_ISDIR(sb.st_mode)) {
 			if (HX_rrmdir(fn) <= 0) {
-				ret = -errno;
-				break;
+				if (ret == 0)
+					ret = -errno;
+				continue;
 			}
 		} else if (unlink(fn) < 0) {
-			ret = -errno;
-			break;
+			if (ret == 0)
+				ret = -errno;
+			continue;
 		}
 	}
 
-	if (rmdir(dir) < 0)
-		ret = -errno;
+	if (rmdir(dir) < 0) {
+		if (ret == 0)
+			ret = -errno;
+	}
 	HXdir_close(ptr);
 	HXmc_free(fn);
 	return ret;
