@@ -24,6 +24,7 @@ New feature: Type-checking casts.
 
 New misc code:
 - ctype_helper: initial version
+- opt: HXTYPE_BOOL and HXTYPE_NONE now take int * (instead of unsigned int *)
 
 
 libHX 1.28 (November 18 2008)
