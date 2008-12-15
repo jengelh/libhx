@@ -16,7 +16,11 @@
 #ifdef __cplusplus
 	/* Only for our dual C/C++ testsuites */
 #	define const_cast(type, expr)       const_cast<type>(expr)
+#	define const_cast1(type, expr)      const_cast<type>(expr)
+#	define const_cast2(type, expr)      const_cast<type>(expr)
+#	define const_cast3(type, expr)      const_cast<type>(expr)
 #	define dynamic_cast(type, expr)     dynamic_cast<type>(expr)
+#	define signed_cast(type, expr)      signed_cast<type>(expr)
 #	define static_cast(type, expr)      static_cast<type>(expr)
 #	define reinterpret_cast(type, expr) reinterpret_cast<type>(expr)
 #endif

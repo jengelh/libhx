@@ -16,7 +16,7 @@ endif
 
 noinst_PROGRAMS    = tc-compile tx-compile
 noinst_PROGRAMS   += tc-arbtree tx-arbtree
-noinst_PROGRAMS   += tc-cast
+noinst_PROGRAMS   += tc-cast tx-cast
 noinst_PROGRAMS   += tc-deque tx-deque
 noinst_PROGRAMS   += tc-list tx-list
 noinst_PROGRAMS   += tc-misc tx-misc
@@ -33,6 +33,8 @@ tc_option_LDADD    = libHX.la
 tc_string_LDADD    = libHX.la
 tx_arbtree_SOURCES = tx-arbtree.cpp
 tx_arbtree_LDADD   = libHX.la -lm
+tx_cast_SOURCES    = tx-cast.cpp
+tx_cast_LDADD      = -lm
 tx_compile_SOURCES = tx-compile.cpp
 tx_compile_LDADD   = libHX.la
 tx_deque_SOURCES   = tx-deque.cpp
