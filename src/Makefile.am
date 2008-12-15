@@ -24,6 +24,7 @@ noinst_PROGRAMS   += tc-option tx-option
 noinst_PROGRAMS   += tc-dir tx-dir
 noinst_PROGRAMS   += tc-string tx-string
 tc_arbtree_LDADD   = libHX.la -lm
+tc_cast_LDADD      = -lm
 tc_compile_LDADD   = libHX.la
 tc_dir_LDADD       = libHX.la
 tc_list_LDADD      = libHX.la
