@@ -15,6 +15,7 @@
 
 New feature: Type-checking casts.
 - defs: enable type-checking signed_cast()
+- defs: add signed_cast<> for C++ mode
 
 
 libHX 1.28 (November 18 2008)

@@ -12,6 +12,42 @@
 #		define containerof(var, type, member) reinterpret_cast<type *>( \
 			reinterpret_cast<char *>(var) - offsetof(type, member))
 #	endif
+
+template<typename new_type>
+static inline new_type signed_cast(const char *expr)
+{
+	return reinterpret_cast<new_type>(expr);
+}
+
+template<typename new_type>
+static inline new_type signed_cast(const signed char *expr)
+{
+	return reinterpret_cast<new_type>(expr);
+}
+
+template<typename new_type>
+static inline new_type signed_cast(const unsigned char *expr)
+{
+	return reinterpret_cast<new_type>(expr);
+}
+
+template<typename new_type>
+static inline new_type signed_cast(char *expr)
+{
+	return reinterpret_cast<new_type>(expr);
+}
+
+template<typename new_type>
+static inline new_type signed_cast(signed char *expr)
+{
+	return reinterpret_cast<new_type>(expr);
+}
+
+template<typename new_type>
+static inline new_type signed_cast(unsigned char *expr)
+{
+	return reinterpret_cast<new_type>(expr);
+}
 #else
 	/* N.B. signed_cast<> does not exist in C++. */
 #	define __signed_cast_compatible(a, b) \
