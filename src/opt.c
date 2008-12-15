@@ -400,9 +400,10 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		 * passthrough chaining, i.e. all but the first call to
 		 * HX_getopt() should have this set.
 		 */
-		HX_zvecfree((char **)*argv);
+		HX_zvecfree(const_cast2(char **, *argv));
 
-	*argv = const_cast(const char **, HXdeque_to_vec(remaining, &argk));
+	*argv = reinterpret_cast(const char **,
+	        HXdeque_to_vec(remaining, &argk));
 	*argc = argk;
 	HXdeque_free(remaining);
 	return 1;
