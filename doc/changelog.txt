@@ -24,6 +24,7 @@ New feature: Type-checking casts.
 
 New misc code:
 - ctype_helper: initial version
+- mc: add HXmc_setlen()
 - opt: HXTYPE_BOOL and HXTYPE_NONE now take int * (instead of unsigned int *)
 
 

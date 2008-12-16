@@ -30,6 +30,7 @@ extern hxmc_t *HXmc_meminit(const void *, size_t);
 extern hxmc_t *HXmc_strcpy(hxmc_t **, const char *);
 extern hxmc_t *HXmc_memcpy(hxmc_t **, const void *, size_t);
 extern size_t HXmc_length(const hxmc_t *);
+extern hxmc_t *HXmc_setlen(hxmc_t **, size_t);
 extern hxmc_t *HXmc_trunc(hxmc_t **, size_t);
 extern hxmc_t *HXmc_strcat(hxmc_t **, const char *);
 extern hxmc_t *HXmc_memcat(hxmc_t **, const void *, size_t);
