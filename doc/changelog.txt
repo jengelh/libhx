@@ -1,6 +1,8 @@
 
 
 - dir: HX_rrmdir: do not stop on error
+- mc: change first argument type for HXmc_dup()
+  [compatible change, no ABI version bump]
 - opt: fix interpretation of strings during conversion to bool
   (all strings that were not empty and not 0 were interpreted as "true",
   and this included the strings "no", "off" and "false", which should

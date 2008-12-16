@@ -32,7 +32,7 @@ struct memcont {
 };
 
 //-----------------------------------------------------------------------------
-EXPORT_SYMBOL hxmc_t *HXmc_dup(const void *vp)
+EXPORT_SYMBOL hxmc_t *HXmc_dup(const hxmc_t *vp)
 {
 	struct memcont *dst, *src = containerof(vp, struct memcont, data);
 	CHECK_IDENT(src);
