@@ -9,6 +9,7 @@
   (all strings that were not empty and not 0 were interpreted as "true",
   and this included the strings "no", "off" and "false", which should
   actually have mapped to, well, "false".)
+- rand: use autoconf to detect presence of unix functions
 
 
 libHX 1.28 (November 18 2008)
