@@ -31,6 +31,8 @@ New misc code:
 
 New arbtree code:
 - arbtree: add struct HXbtree_node->char *skey and char *sdata
+- arbtree: support arbitrary key/data duplication
+- arbtree: add HXbtree_init2
 
 
 libHX 1.28 (November 18 2008)

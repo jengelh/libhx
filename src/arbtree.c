@@ -22,8 +22,6 @@ enum {
 	S_RIGHT,
 	NODE_RED      = 0,
 	NODE_BLACK,
-	HXBT_FLAGS_OK = HXBT_MAP | HXBT_CKEY | HXBT_CDATA | HXBT_CMPFN |
-	                HXBT_ICMP | HXBT_SCMP | HXBT_CID,
 
 	/* Allows for at least 16 million objects (in a worst-case tree) */
 	BT_MAXDEP     = 48,
@@ -58,6 +56,9 @@ static void *HXbtree_valuecpy(const void *p, size_t len)
 
 EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int flags, ...)
 {
+	static const unsigned int allowed_flags =
+		HXBT_MAP | HXBT_CKEY | HXBT_CDATA | HXBT_CMPFN |
+		HXBT_ICMP | HXBT_SCMP | HXBT_CID;
 	struct HXbtree *btree;
 	va_list argp;
 	va_start(argp, flags);
@@ -66,7 +67,7 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int flags, ...)
 	             offsetof(struct HXbtree_node, sub[0]) !=
 	             offsetof(struct HXbtree, root));
 
-	if (flags & ~HXBT_FLAGS_OK)
+	if (flags & ~allowed_flags)
 		fprintf(stderr, "libHX-btree warning: unknown flags passed!\n");
 	if ((btree = malloc(sizeof(struct HXbtree))) == NULL)
 		return NULL;
@@ -80,14 +81,7 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int flags, ...)
 	}
 	btree->flags = flags;
 	btree->items = 0;
-
-	/*
-	 * This should not be zero, otherwise the traverser functions will not
-	 * start off correctly, since trav->tid is 0, but trav->tid must not
-	 * equal btree->transact because that would mean the traverser is in
-	 * sync with the tree.
-	 */
-	btree->tid = 1;
+	btree->tid   = 1;
 
 	if (flags & HXBT_CMPFN)
 		btree->k_compare = va_arg(argp, void *);
@@ -127,6 +121,74 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int flags, ...)
 
 	va_end(argp);
 	return btree;
+}
+
+EXPORT_SYMBOL struct HXbtree *HXbtree_init2(unsigned int flags,
+    int (*k_compare)(const void *, const void *, size_t),
+    void *(*k_clone)(const void *, size_t), void (*k_free)(void *),
+    void *(*d_clone)(const void *, size_t), void (*d_free)(void *),
+    size_t key_size, size_t data_size)
+{
+	static const unsigned int allowed_flags =
+		HXBT_MAP | HXBT_SKEY | HXBT_SDATA |
+		HXBT_CID | HXBT_CKEY | HXBT_CDATA;
+	struct HXbtree *t;
+
+	if (flags & ~allowed_flags) {
+		fprintf(stderr, "%s: too many flags (%#x)\n", __func__, flags);
+		return NULL;
+	}
+
+	if ((t = calloc(1, sizeof(*t))) == NULL)
+		return NULL;
+
+
+	t->flags     = flags;
+	t->key_size  = key_size;
+	t->data_size = data_size;
+	/*
+	 * TID must not be zero, otherwise the traverser functions will not
+	 * start off correctly, since trav->tid is 0, but trav->tid must not
+	 * equal btree->transact because that would mean the traverser is in
+	 * sync with the tree.
+	 */
+	t->tid = 1;
+
+	/* Set some defaults */
+	t->k_clone = HXbtree_valuecpy;
+	t->d_clone = HXbtree_valuecpy;
+
+	if (flags & HXBT_SKEY)
+		t->k_compare = static_cast(void *, strcmp);
+	else if (key_size == 0)
+		t->k_compare = value_cmp;
+	else
+		t->k_compare = memcmp;
+
+	if (flags & HXBT_CKEY) {
+		t->k_clone = (flags & HXBT_SKEY) ?
+		             static_cast(void *, HX_strdup) : HX_memdup;
+		t->k_free  = free;
+	}
+	if (flags & HXBT_CDATA) {
+		t->d_clone = (flags & HXBT_SDATA) ?
+		             static_cast(void *, HX_strdup) : HX_memdup;
+		t->d_free  = free;
+	}
+
+	/* Update with user-supplied functions */
+	if (k_compare != NULL)
+		t->k_compare = k_compare;
+	if (k_clone != NULL)
+		t->k_clone   = k_clone;
+	if (k_free != NULL)
+		t->k_free    = k_free;
+	if (d_clone != NULL)
+		t->d_clone   = d_clone;
+	if (d_free != NULL)
+		t->d_free    = d_free;
+
+	return t;
 }
 
 EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
