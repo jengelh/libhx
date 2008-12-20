@@ -67,6 +67,12 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int flags, ...)
 		return NULL;
 
 	memset(btree, 0, sizeof(struct HXbtree));
+	if (!(flags & HXBT_MAP) && (flags & HXBT_CDATA)) {
+		fprintf(stderr, "libHX-btree warning: in non-map mode, "
+		        "HXBT_CKEY should be used over HXBT_CDATA\n");
+		flags &= ~HXBT_CDATA;
+		flags |= HXBT_CKEY;
+	}
 	btree->flags = flags;
 	btree->items = 0;
 
@@ -177,7 +183,7 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 		             HX_strdup(data) : const_cast1(void *, data);
 	} else {
 		/* For convenience, node->key == node->data */
-		if (btree->flags & HXBT_CDATA)
+		if (btree->flags & HXBT_CKEY)
 			node->key = node->data = HX_strdup(key);
 		else
 			node->key = node->data = const_cast1(void *, key);
@@ -279,7 +285,7 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 			free(node->key);
 		if (btree->flags & HXBT_CDATA)
 			free(node->data);
-	} else if (btree->flags & HXBT_CDATA) {
+	} else if (btree->flags & HXBT_CKEY) {
 		/* remember, @node->key == @node->data, so only one free() */
 		free(node->key);
 	}
@@ -696,7 +702,7 @@ static void btree_free_dive(const struct HXbtree *btree,
 			free(node->key);
 		if (btree->flags & HXBT_CDATA)
 			free(node->data);
-	} else if (btree->flags & HXBT_CDATA) {
+	} else if (btree->flags & HXBT_CKEY) {
 		/* remember, node->key == node->data, so only one free() */
 		free(node->key);
 	}

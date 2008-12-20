@@ -297,7 +297,7 @@ static struct HXbtree *generate_fixed_tree(unsigned int f, ...)
 	char buf[Z_32];
 	va_list argp;
 
-	b = HXbtree_init(HXBT_CDATA | HXBT_CID | HXBT_CMPFN, strtolcmp);
+	b = HXbtree_init(HXBT_CKEY | HXBT_CID | HXBT_CMPFN, strtolcmp);
 	if (b == NULL)
 		abort();
 
@@ -321,7 +321,7 @@ static struct HXbtree *generate_perfect_tree(unsigned int height,
 	struct HXbtree *b;
 	char buf[Z_32];
 
-	b = HXbtree_init(HXBT_CDATA | HXBT_CID | HXBT_CMPFN, strtolcmp);
+	b = HXbtree_init(HXBT_CKEY | HXBT_CID | HXBT_CMPFN, strtolcmp);
 	if (b == NULL)
 		abort();
 
