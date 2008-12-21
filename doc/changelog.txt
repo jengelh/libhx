@@ -1,5 +1,6 @@
 
 
+- arbtree: reject illegal flag combinations
 - defs: add a working offsetof() and containerof() for C++ mode
 - defs: use GCC's __builtin_offsetof
 - defs: resolve warnings with signed_cast() for char* -> const char* conversions

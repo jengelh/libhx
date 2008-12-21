@@ -69,16 +69,20 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int flags, ...)
 
 	if (flags & ~allowed_flags)
 		fprintf(stderr, "libHX-btree warning: unknown flags passed!\n");
-	if ((btree = malloc(sizeof(struct HXbtree))) == NULL)
+	if ((flags & (HXBT_SCMP | HXBT_ICMP)) == (HXBT_SCMP | HXBT_ICMP)) {
+		fprintf(stderr, "libHX-btree error: canot use SCMP|ICMP\n");
 		return NULL;
-
-	memset(btree, 0, sizeof(struct HXbtree));
+	}
 	if (!(flags & HXBT_MAP) && (flags & HXBT_CDATA)) {
 		fprintf(stderr, "libHX-btree warning: in non-map mode, "
 		        "HXBT_CKEY should be used over HXBT_CDATA\n");
 		flags &= ~HXBT_CDATA;
 		flags |= HXBT_CKEY;
 	}
+	if ((btree = malloc(sizeof(struct HXbtree))) == NULL)
+		return NULL;
+
+	memset(btree, 0, sizeof(struct HXbtree));
 	btree->flags = flags;
 	btree->items = 0;
 	btree->tid   = 1;
