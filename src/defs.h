@@ -12,6 +12,42 @@
 #		define containerof(var, type, member) reinterpret_cast<type *>( \
 			reinterpret_cast<char *>(var) - offsetof(type, member))
 #	endif
+
+template<typename new_type>
+static inline new_type signed_cast(const char *expr)
+{
+	return reinterpret_cast<new_type>(expr);
+}
+
+template<typename new_type>
+static inline new_type signed_cast(const signed char *expr)
+{
+	return reinterpret_cast<new_type>(expr);
+}
+
+template<typename new_type>
+static inline new_type signed_cast(const unsigned char *expr)
+{
+	return reinterpret_cast<new_type>(expr);
+}
+
+template<typename new_type>
+static inline new_type signed_cast(char *expr)
+{
+	return reinterpret_cast<new_type>(expr);
+}
+
+template<typename new_type>
+static inline new_type signed_cast(signed char *expr)
+{
+	return reinterpret_cast<new_type>(expr);
+}
+
+template<typename new_type>
+static inline new_type signed_cast(unsigned char *expr)
+{
+	return reinterpret_cast<new_type>(expr);
+}
 #else
 	/* N.B. signed_cast<> does not exist in C++. */
 #	define __signed_cast_compatible(a, b) \
@@ -24,32 +60,44 @@
 			__builtin_types_compatible_p(a, const signed char *) || \
 			__builtin_types_compatible_p(a, const unsigned char *), \
 			/* and if it has none... */ \
+			__builtin_types_compatible_p(a, const char *) || \
+			__builtin_types_compatible_p(a, const signed char *) || \
+			__builtin_types_compatible_p(a, const unsigned char *) || \
 			__builtin_types_compatible_p(a, char *) || \
 			__builtin_types_compatible_p(a, signed char *) || \
 			__builtin_types_compatible_p(a, unsigned char *) \
 		)
 
-#	if defined(__GNUC__) && defined(HXDEV_EXT_CAST)
-#		ifndef signed_cast
-#			define signed_cast(type, expr) ({ \
-				BUILD_BUG_ON(!__signed_cast_compatible(typeof(type), typeof(expr))); \
-				(type)(expr); \
-			})
-#		endif
-
-		/*
-		 * This one may cause shadow warnings when nested, or compile
-		 * errors when used in declarations, and hence is normally
-		 * disabled.
-		 */
-#		ifndef static_cast
-#			define static_cast(type, expr) ({ \
-				if (0) { typeof(type) __p __attribute__((unused)) = (expr); } \
-				(type)(expr); \
-			})
-#		endif
+#	if defined(__GNUC__) && !defined(signed_cast)
+#		define signed_cast(type, expr) ({ \
+			BUILD_BUG_ON(!__signed_cast_compatible(typeof(type), typeof(expr))); \
+			(type)(expr); \
+		})
 #	endif
-
+#	if defined(__GNUC__) && !defined(static_cast)
+#		define static_cast(type, expr) \
+			((struct { type x; }){expr}.x)
+#	endif
+#	if defined(__GNUC__) && !defined(const_cast1)
+#		define __const_cast_strip1(expr) \
+			typeof(*(struct { typeof(expr) x; }){0}.x)
+#		define __const_cast_strip2(expr) \
+			typeof(**(struct { typeof(expr) x; }){0}.x)
+#		define __const_cast_strip3(expr) \
+			typeof(***(struct { typeof(expr) x; }){0}.x)
+#		define const_cast1(new_type, expr) ({ \
+			BUILD_BUG_ON(!__builtin_types_compatible_p(__const_cast_strip1(expr), __const_cast_strip1(new_type))); \
+			(new_type)(expr); \
+		})
+#		define const_cast2(new_type, expr) ({ \
+			BUILD_BUG_ON(!__builtin_types_compatible_p(__const_cast_strip2(expr), __const_cast_strip2(new_type))); \
+			(new_type)(expr); \
+		})
+#		define const_cast3(new_type, expr) ({ \
+			BUILD_BUG_ON(!__builtin_types_compatible_p(__const_cast_strip3(expr), __const_cast_strip3(new_type))); \
+			(new_type)(expr); \
+		})
+#	endif
 #	ifndef signed_cast
 #		define signed_cast(type, expr)      ((type)(expr))
 #	endif

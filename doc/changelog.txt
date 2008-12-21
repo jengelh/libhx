@@ -2,6 +2,7 @@
 
 - defs: add a working offsetof() and containerof() for C++ mode
 - defs: use GCC's __builtin_offsetof
+- defs: resolve warnings with signed_cast() for char* -> const char* conversions
 - dir: HX_rrmdir: do not stop on error
 - mc: change first argument type for HXmc_dup()
   [compatible change, no ABI version bump]
@@ -10,6 +11,15 @@
   and this included the strings "no", "off" and "false", which should
   actually have mapped to, well, "false".)
 - rand: use autoconf to detect presence of unix functions
+
+
+New feature: Type-checking casts.
+- defs: enable type-checking signed_cast()
+- defs: add signed_cast<> for C++ mode
+- defs: rewrite static_cast() to not cause -Wshadow warnings when nested
+- defs: rewrite const_cast() to do type checking
+  (actually, const_cast1(), cosnt_cast2() and const_cast3() were introduced.
+  const_cast() is kept to not break program compilation.)
 
 
 libHX 1.28 (November 18 2008)

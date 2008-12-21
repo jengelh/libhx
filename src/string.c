@@ -25,8 +25,8 @@ EXPORT_SYMBOL char *HX_basename(const char *s)
 {
 	const char *p;
 	if ((p = strrchr(s, '/')) != NULL)
-		return const_cast(char *, p + 1);
-	return const_cast(char *, s);
+		return const_cast1(char *, p + 1);
+	return const_cast1(char *, s);
 }
 
 EXPORT_SYMBOL char *HX_chomp(char *s)

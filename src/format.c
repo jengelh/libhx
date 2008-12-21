@@ -83,7 +83,7 @@ EXPORT_SYMBOL void HXformat_free(struct HXbtree *table)
 	while ((node = HXbtraverse(trav)) != NULL) {
 		entry = node->data;
 		if (entry->type == (HXTYPE_STRING | HXFORMAT_IMMED))
-			free(const_cast(void *, entry->ptr));
+			free(const_cast1(void *, entry->ptr));
 		free(entry);
 	}
 
@@ -219,7 +219,7 @@ static inline char *HX_strchr0(const char *s, char c)
 	char *ret = strchr(s, c);
 	if (ret != NULL)
 		return ret;
-	return const_cast(char *, &s[strlen(s)]);
+	return const_cast1(char *, &s[strlen(s)]);
 }
 
 static const char *HXformat_read_modifier_arg(const char *data,
@@ -299,7 +299,7 @@ static void HXformat_transform(hxmc_t **out, struct HXdeque *dq,
 {
 #define IMM(fmt, type) \
 	snprintf(buf, sizeof(buf), (fmt), \
-	static_cast(type, static_cast(long, entry->ptr))); \
+	static_cast(type, reinterpret_cast(long, entry->ptr))); \
 	break;
 #define PTR(fmt, type) \
 	snprintf(buf, sizeof(buf), (fmt), \
@@ -318,7 +318,7 @@ static void HXformat_transform(hxmc_t **out, struct HXdeque *dq,
 			HXmc_strcpy(&wp, entry->ptr);
 			break;
 		case HXTYPE_STRP:
-			HXmc_strcpy(&wp, *static_cast(const char **, const_cast(void *, entry->ptr)));
+			HXmc_strcpy(&wp, *static_cast(const char *const *, entry->ptr));
 			break;
 		case HXTYPE_BOOL:
 			HXmc_strcpy(&wp, tf[!!*static_cast(const int *,

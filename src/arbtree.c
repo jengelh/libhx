@@ -144,7 +144,7 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 				void *p = &node->data;
 				HX_strclone(p, data);
 			} else {
-				node->data = const_cast(void *, data);
+				node->data = const_cast1(void *, data);
 			}
 
 			return node;
@@ -172,15 +172,15 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 	/* New node, push data into it */
 	if (btree->opts & HXBT_MAP) {
 		node->key  = (btree->opts & HXBT_CKEY) ?
-		             HX_strdup(key) : const_cast(void *, key);
+		             HX_strdup(key) : const_cast1(void *, key);
 		node->data = (btree->opts & HXBT_CDATA) ?
-		             HX_strdup(data) : const_cast(void *, data);
+		             HX_strdup(data) : const_cast1(void *, data);
 	} else {
 		/* For convenience, node->key == node->data */
 		if (btree->opts & HXBT_CDATA)
 			node->key = node->data = HX_strdup(key);
 		else
-			node->key = node->data = const_cast(void *, key);
+			node->key = node->data = const_cast1(void *, key);
 	}
 
 	/*

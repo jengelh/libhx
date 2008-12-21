@@ -35,7 +35,7 @@ EXPORT_SYMBOL struct HXdeque_node *HXdeque_push(struct HXdeque *dq,
 	nd->prev   = dq->last;
 	nd->next   = NULL;
 	nd->parent = dq;
-	nd->ptr    = const_cast(void *, ptr);
+	nd->ptr    = const_cast1(void *, ptr);
 
 	if (dq->first == NULL) {
 		dq->first = dq->last = nd;
@@ -68,7 +68,7 @@ EXPORT_SYMBOL struct HXdeque_node *HXdeque_unshift(struct HXdeque *dq,
 	nd->prev   = NULL;
 	nd->next   = dq->first;
 	nd->parent = dq;
-	nd->ptr    = const_cast(void *, ptr);
+	nd->ptr    = const_cast1(void *, ptr);
 
 	dq->first->prev = nd;
 	dq->first = nd;
