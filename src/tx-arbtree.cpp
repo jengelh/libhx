@@ -2,6 +2,9 @@
  *	arbtree test program
  *	written by Jan Engelhardt
  *	this program is released in the Public Domain
+ *
+ *	Do not take this file as a reason to do casts on everything!
+ *	only because this file has to be compilable in both C and C++ mode.
  */
 #include <sys/time.h>
 #include <math.h>
@@ -447,10 +450,12 @@ static int verify_black_height(const struct HXbtree_node *node)
 	unsigned int lh = 0, rh = 0;
 
 	if (node->sub[S_LEFT] != NULL)
-		if ((lh = verify_black_height(node->sub[S_LEFT])) == -1)
+		if ((lh = verify_black_height(node->sub[S_LEFT])) ==
+		    static_cast(unsigned int, -1))
 			return -1;
 	if (node->sub[S_RIGHT] != NULL)
-		if ((rh = verify_black_height(node->sub[S_RIGHT])) == -1)
+		if ((rh = verify_black_height(node->sub[S_RIGHT])) ==
+		    static_cast(unsigned int, -1))
 			return -1;
 	if (node->sub[S_LEFT] != NULL && node->sub[S_RIGHT] != NULL)
 		if (lh != rh)
