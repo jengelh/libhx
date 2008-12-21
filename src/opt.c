@@ -7,37 +7,6 @@
  *	Lesser General Public License as published by the Free Software
  *	Foundation; either version 2.1 or 3 of the License.
  */
-
-/*
- *	Feature list:
- *	- bundling ("-a -b -c" is equal to "-abc"; "-a 7" is equal to "-a7")
- *
- *	- passthrough (for option parser chaining)
- *	  (put unknown options back into argv / retrieve leftover arguments)
- *
- *	- handling for a single dash "-" which is commonly used
- *	  to refer to stdin/stdout (popt totally fails this)
- *
- *	- option table based (like popt; unlike libc getopt (string-based))
- *
- *	- only one execution command needed
- *	  (like Perl's Getopt::Long; unlike popt/getopt)
- *
- *	- internal support for HXdeques and HXbtrees
- *	  (like Getopt::Long can accept pointers to arrays / hashes;
- *	  great stuff, lets you do cool things like gcc's -D macro=definition
- *	  in one line!)
- *
- *	- long options with --long=value or --long value
- *
- *	- the usual "--" handling
- *
- *	Not supported:
- *	- "+option" (don't need that)
- *	- "-longoption" (don't need that either)
- *	- table inclusion (have not needed it so far)
- */
-
 #include <sys/types.h>
 #include <errno.h>
 #include <stdbool.h>
@@ -520,27 +489,6 @@ EXPORT_SYMBOL void HX_getopt_usage_cb(const struct HXoptcb *cbi)
 }
 
 //-----------------------------------------------------------------------------
-/*
- * Multiple possibilities for shconfig_pv()'s flags:
- *
- * %SHCONF_ONE
- * Parsing will stop after one file has been successfully parsed. This allows
- * for a "hardcoded+personal" configuration style. If you had
- *
- *	const char *pv[] = {".", "/usr/local/etc", "/etc", NULL};
- *	HX_shconfig_pv(pv, "app.conf", table, flags | SHCONF_ONE);
- *
- * only the first (from left to right) successfully parsed will be read.
- *
- * To build the current options from default files
- * "hardcoded+default+personal", this would be the answer:
- *
- *	const char *pv[] = {"/etc", "/usr/local/etc", ".", NULL};
- *	HX_shconfig_pv(pv, "app.conf", table, flags);
- *
- * which reads all files, from left to right.
- */
-
 EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
 {
 	struct HXoptcb cbi = {.table = table, .match_sh = '\0'};
