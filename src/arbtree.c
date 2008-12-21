@@ -51,6 +51,11 @@ static void btree_free_dive(const struct HXbtree *, struct HXbtree_node *);
 static int value_cmp(const void *, const void *, size_t);
 
 //-----------------------------------------------------------------------------
+static void *HXbtree_valuecpy(const void *p, size_t len)
+{
+	return const_cast1(void *, p);
+}
+
 EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int flags, ...)
 {
 	struct HXbtree *btree;
@@ -107,6 +112,19 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int flags, ...)
 		return NULL;
 	}
 
+	if (flags & HXBT_CKEY) {
+		btree->k_clone = static_cast(void *, HX_strdup);
+		btree->k_free  = free;
+	} else {
+		btree->k_clone = HXbtree_valuecpy;
+	}
+	if (flags & HXBT_CDATA) {
+		btree->d_clone = static_cast(void *, HX_strdup);
+		btree->d_free  = free;
+	} else {
+		btree->d_clone = HXbtree_valuecpy;
+	}
+
 	va_end(argp);
 	return btree;
 }
@@ -147,8 +165,11 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 			 * the data.
 			 */
 			if (btree->flags & HXBT_CDATA) {
-				void *p = &node->data;
-				HX_strclone(p, data);
+				void *p = node->data;
+
+				node->data = btree->d_clone(node->data, btree->data_size);
+				if (p != NULL && btree->d_free != NULL)
+					btree->d_free(p);
 			} else {
 				node->data = const_cast1(void *, data);
 			}
@@ -178,13 +199,15 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 	/* New node, push data into it */
 	if (btree->flags & HXBT_MAP) {
 		node->key  = (btree->flags & HXBT_CKEY) ?
-		             HX_strdup(key) : const_cast1(void *, key);
+		             btree->k_clone(key, btree->key_size) :
+		             const_cast1(void *, key);
 		node->data = (btree->flags & HXBT_CDATA) ?
-		             HX_strdup(data) : const_cast1(void *, data);
+		             btree->d_clone(data, btree->data_size) :
+		             const_cast1(void *, data);
 	} else {
 		/* For convenience, node->key == node->data */
 		if (btree->flags & HXBT_CKEY)
-			node->key = node->data = HX_strdup(key);
+			node->key = node->data = btree->k_clone(key, btree->key_size);
 		else
 			node->key = node->data = const_cast1(void *, key);
 	}
@@ -281,13 +304,13 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 		btree_dmov(path, dir, depth);
 
 	if (btree->flags & HXBT_MAP) {
-		if (btree->flags & HXBT_CKEY)
-			free(node->key);
-		if (btree->flags & HXBT_CDATA)
-			free(node->data);
-	} else if (btree->flags & HXBT_CKEY) {
+		if ((btree->flags & HXBT_CKEY) && btree->k_free != NULL)
+			btree->k_free(node->key);
+		if ((btree->flags & HXBT_CDATA) && btree->d_free != NULL)
+			btree->d_free(node->data);
+	} else if ((btree->flags & HXBT_CKEY) && btree->k_free != NULL) {
 		/* remember, @node->key == @node->data, so only one free() */
-		free(node->key);
+		btree->k_free(node->key);
 	}
 
 	free(node);
@@ -338,9 +361,10 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtraverse(void *in)
 EXPORT_SYMBOL void HXbtrav_free(void *in)
 {
 	struct HXbtrav *travp = in;
+	const struct HXbtree *tree = travp->tree;
 
-	if (travp->tree->flags & HXBT_CID)
-		free(travp->checkpoint);
+	if ((tree->flags & HXBT_CID) && tree->k_free != NULL)
+		tree->k_free(travp->checkpoint);
 	free(travp);
 }
 
@@ -348,10 +372,17 @@ EXPORT_SYMBOL void HXbtrav_free(void *in)
 static void btrav_checkpoint(struct HXbtrav *travp,
     const struct HXbtree_node *node)
 {
-	if (travp->tree->flags & HXBT_CID)
-		HX_strclone(&travp->checkpoint, node->key);
-	else
+	const struct HXbtree *tree = travp->tree;
+
+	if (tree->flags & HXBT_CID) {
+		void *p = travp->checkpoint;
+
+		travp->checkpoint = tree->k_clone(node->key, tree->key_size);
+		if (tree->k_free != NULL)
+			tree->k_free(p);
+	} else {
 		travp->checkpoint = node->key;
+	}
 }
 
 static struct HXbtree_node *btrav_next(struct HXbtrav *trav)
@@ -698,13 +729,13 @@ static void btree_free_dive(const struct HXbtree *btree,
 		btree_free_dive(btree, node->sub[S_RIGHT]);
 
 	if (btree->flags & HXBT_MAP) {
-		if (btree->flags & HXBT_CKEY)
-			free(node->key);
-		if (btree->flags & HXBT_CDATA)
-			free(node->data);
-	} else if (btree->flags & HXBT_CKEY) {
-		/* remember, node->key == node->data, so only one free() */
-		free(node->key);
+		if ((btree->flags & HXBT_CKEY) && btree->k_free != NULL)
+			btree->k_free(node->key);
+		if ((btree->flags & HXBT_CDATA) && btree->d_free != NULL)
+			btree->d_free(node->data);
+	} else if ((btree->flags & HXBT_CDATA) && btree->k_free != NULL) {
+		/* remember, @node->key == @node->data, so only one free() */
+		btree->k_free(node->key);
 	}
 
 	free(node);
