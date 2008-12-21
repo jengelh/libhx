@@ -7,7 +7,10 @@ extern "C" {
 
 struct HXdeque_node {
 	struct HXdeque_node *next;
-	void *ptr;
+	union {
+		void *ptr;
+		char *sptr;
+	};
 	struct HXdeque *parent;
 	struct HXdeque_node *prev;
 };

@@ -24,6 +24,7 @@ New feature: Type-checking casts.
 
 New misc code:
 - ctype_helper: initial version
+- deque: add struct HXdeque_node->char *sptr as a typed variant for ptr
 - mc: add HXmc_setlen()
 - opt: HXTYPE_BOOL and HXTYPE_NONE now take int * (instead of unsigned int *)
 
