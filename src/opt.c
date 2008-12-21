@@ -39,13 +39,13 @@
  */
 
 #include <sys/types.h>
-#include <ctype.h>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libHX/ctype_helper.h>
 #include <libHX/deque.h>
 #include <libHX/misc.h>
 #include <libHX/option.h>
@@ -562,7 +562,7 @@ EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
 			continue;
 		if ((val = strchr(lp, '=')) == NULL)
 			continue;
-		while (isspace(*key))
+		while (HX_isspace(*key))
 			++key;
 
 		/* Skip any whitespace directly before and after '=' */
@@ -570,7 +570,7 @@ EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
 			*w = '\0';
 
 		*val++ = '\0';
-		while (isspace(*val))
+		while (HX_isspace(*val))
 			++val;
 
 		/* Handle escape codes and quotes, and assign to TAB entry */
@@ -632,7 +632,7 @@ static void do_assign(struct HXoptcb *cbi)
 
 	switch (opt->type & HXOPT_TYPEMASK) {
 	case HXTYPE_NONE: {
-		unsigned int *p;
+		int *p;
 		if ((p = opt->ptr) != NULL) {
 			p = opt->ptr;
 			if (opt->type & HXOPT_INC)      ++*p;
@@ -653,12 +653,12 @@ static void do_assign(struct HXoptcb *cbi)
 		CALL_CB;
 		break;
 	case HXTYPE_BOOL: {
-		unsigned int *p = opt->ptr;
+		int *p;
 		if ((p = opt->ptr) != NULL)
 			*p = strcasecmp(cbi->data, "yes") == 0 ||
 			     strcasecmp(cbi->data, "on") == 0 ||
 			     strcasecmp(cbi->data, "true") == 0 ||
-			     (isdigit(*cbi->data) &&
+			     (HX_isdigit(*cbi->data) &&
 			     strtoul(cbi->data, NULL, 0) != 0);
 		break;
 	}

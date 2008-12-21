@@ -7,11 +7,11 @@
  *	Lesser General Public License as published by the Free Software
  *	Foundation; either version 2.1 or 3 of the License.
  */
-#include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <libHX/arbtree.h>
+#include <libHX/ctype_helper.h>
 #include <libHX/deque.h>
 #include <libHX/option.h>
 #include <libHX/string.h>
@@ -258,7 +258,7 @@ static int HXformat_read_one_modifier(const char **pcurrent,
 		else
 			mnew.arg = NULL;
 
-		while (isspace(*curr))
+		while (HX_isspace(*curr))
 			++curr;
 
 		if ((mnew_ptr = HX_memdup(&mnew, sizeof(mnew))) == NULL)

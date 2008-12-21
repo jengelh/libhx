@@ -97,6 +97,17 @@ EXPORT_SYMBOL size_t HXmc_length(const hxmc_t *vp)
 	return ctx->length;
 }
 
+EXPORT_SYMBOL hxmc_t *HXmc_setlen(hxmc_t **vp, size_t len)
+{
+	struct memcont *ctx;
+	if (HXmc_trunc(vp, len) == NULL)
+		return NULL;
+
+	ctx = containerof(*vp, struct memcont, data);
+	ctx->length = len;
+	return *vp;
+}
+
 EXPORT_SYMBOL hxmc_t *HXmc_trunc(hxmc_t **vp, size_t len)
 {
 	struct memcont *ctx = containerof(*vp, struct memcont, data);

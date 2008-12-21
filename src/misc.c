@@ -8,7 +8,6 @@
  *	Foundation; either version 2.1 or 3 of the License.
  */
 #include <sys/stat.h>
-#include <ctype.h>
 #include <errno.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -22,6 +21,7 @@
 #	include <sys/wait.h>
 #	include <unistd.h>
 #endif
+#include <libHX/ctype_helper.h>
 #include <libHX/misc.h>
 #include "internal.h"
 
@@ -55,7 +55,7 @@ EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
 		ptr -= 16;
 		fprintf(fp, "| ");
 		for (j = 0; j < 16; ++j, ++ptr)
-			if (isprint(*ptr))
+			if (HX_isprint(*ptr))
 				fprintf(fp, "%c", *ptr);
 			else if (tty)
 				fprintf(fp, "\e[31m.\e[0m"); // ]]
@@ -71,7 +71,7 @@ EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
 		fprintf(fp, "   ");
 	fprintf(fp, "| ");
 	for (i = 0; i < len; ++i)
-		if (isprint(ptr[i]))
+		if (HX_isprint(ptr[i]))
 			fprintf(fp, "%c", ptr[i]);
 		else if (tty)
 			fprintf(fp, "\e[31m.\e[0m"); // ]]

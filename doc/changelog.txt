@@ -22,6 +22,13 @@ New feature: Type-checking casts.
   const_cast() is kept to not break program compilation.)
 
 
+New misc code:
+- ctype_helper: initial version
+- deque: add struct HXdeque_node->char *sptr as a typed variant for ptr
+- mc: add HXmc_setlen()
+- opt: HXTYPE_BOOL and HXTYPE_NONE now take int * (instead of unsigned int *)
+
+
 libHX 1.28 (November 18 2008)
 =============================
 - add HXTYPE_{U,}INT{8,16,32,64}

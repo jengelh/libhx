@@ -8,11 +8,11 @@
  *	Foundation; either version 2.1 or 3 of the License.
  */
 #include <sys/types.h>
-#include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libHX/ctype_helper.h>
 #include <libHX/string.h>
 #include "internal.h"
 
@@ -186,7 +186,7 @@ EXPORT_SYMBOL char *HX_strlower(char *expr)
 {
 	char *orig = expr;
 	while (*expr != '\0') {
-		*expr = tolower(*expr);
+		*expr = HX_tolower(*expr);
 		++expr;
 	}
 	return orig;
@@ -198,7 +198,7 @@ EXPORT_SYMBOL size_t HX_strltrim(char *expr)
 	size_t diff = 0;
 	travp = expr;
 
-	while (*travp != '\0' && isspace(*travp))
+	while (*travp != '\0' && HX_isspace(*travp))
 		++travp;
 	if ((diff = travp - expr) > 0)
 		memmove(expr, travp, diff);
@@ -249,7 +249,7 @@ EXPORT_SYMBOL char *HX_strrev(char *expr)
 EXPORT_SYMBOL size_t HX_strrtrim(char *expr)
 {
 	int i = strlen(expr), s = 0;
-	while (i-- && isspace(expr[i]))
+	while (i-- && HX_isspace(expr[i]))
 		++s;
 	expr[++i] = '\0';
 	return s;
@@ -303,7 +303,7 @@ EXPORT_SYMBOL char *HX_strupper(char *expr)
 {
 	char *orig = expr;
 	while (*expr != '\0') {
-		*expr = toupper(*expr);
+		*expr = HX_toupper(*expr);
 		++expr;
 	}
 	return orig;
