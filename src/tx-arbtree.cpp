@@ -26,6 +26,16 @@ enum {
 	Z_32 = sizeof("4294967296"),
 };
 
+struct t9_fruit {
+	unsigned int pad;
+	char name[20];
+};
+
+struct t9_fruit2 {
+	unsigned int pad;
+	char *name;
+};
+
 static struct HXbtree *generate_fixed_tree(unsigned int, ...);
 static struct HXbtree *generate_perfect_tree(unsigned int, unsigned int);
 static struct HXbtree *generate_random_tree(unsigned int);
@@ -42,6 +52,20 @@ static unsigned int verify_random_tree(const struct HXbtree *);
 static void __walk_tree(const struct HXbtree_node *, char *, size_t);
 static void walk_tree(const struct HXbtree_node *, char *, size_t);
 
+static const char *const fruits[] = {
+	/* Our garden, left side */
+	"cherry",
+	"strawberry",
+	"gooseberry",
+	/* ?salad/cabbage? */
+	"plum",
+
+	/* right side */
+	"whitecurrant",
+	"redcurrant",
+	"blackcurrant",
+	"apple",
+};
 static const char *const Color[] = {"RED", "BLACK"};
 static struct HXbtree *btree;
 static struct timeval tv_start;
@@ -81,8 +105,7 @@ static void test_1(void)
 	printf("Test 1F: Standard traverse\n");
 	trav = HXbtrav_init(btree);
 	while ((node = HXbtraverse(trav)) != NULL)
-		printf("\t" "key: %s (%s)\n", (const char *)node->key,
-		       Color[node->color]);
+		printf("\t" "key: %s (%s)\n", node->skey, Color[node->color]);
 	HXbtrav_free(trav);
 
 	printf("Test 1G: Node deletion\n");
@@ -107,15 +130,13 @@ static void test_2(void)
 	printf("Test 2A: Traverse with B-tree change\n");
 	trav = HXbtrav_init(btree);
 	while ((node = HXbtraverse(trav)) != NULL) {
-		const char *key = static_cast(const char *, node->key);
-
 		walk_tree(btree->root, buf, sizeof(buf));
 		printf("\t" "tree: %s\n", buf);
-		printf("\t" " key: %s (%s)\n", key, Color[node->color]);
-		if (strcmp(key, "4") == 0) {
+		printf("\t" " key: %s (%s)\n", node->skey, Color[node->color]);
+		if (strcmp(node->skey, "4") == 0) {
 			printf("\t" "Deleting [current] node \"4\"\n");
 			HXbtree_del(btree, "4");
-		} else if (strcmp(key, "12") == 0) {
+		} else if (strcmp(node->skey, "12") == 0) {
 			printf("\t" "Deleting [next] node \"14\"\n");
 			HXbtree_del(btree, "14");
 		}
@@ -132,8 +153,7 @@ static void test_2(void)
 	printf("Test 2B: Traverse with B-tree destruction\n");
 	trav = HXbtrav_init(btree);
 	while ((node = HXbtraverse(trav)) != NULL) {
-		printf("\t" "About to delete \"%s\"\n",
-		       static_cast(const char *, node->key));
+		printf("\t" "About to delete \"%s\"\n", node->skey);
 		HXbtree_del(btree, node->key);
 	}
 
@@ -163,10 +183,8 @@ static void test_3(void)
 
 	printf("\t");
 	while ((node = HXbtraverse(trav)) != NULL) {
-		const char *key = static_cast(const char *, node->key);
-
-		printf("%s", key);
-		if (strcmp(key, "21") == 0) {
+		printf("%s", node->skey);
+		if (strcmp(node->skey, "21") == 0) {
 			HXbtree_del(btree, "21");
 			printf("*");
 		}
@@ -275,6 +293,162 @@ static void test_7(void)
 	}
 }
 
+static void test_8(void)
+{
+	unsigned int i;
+
+	printf("Test 8: Comparator functions\n");
+	btree = HXbtree_init(HXBT_SCMP);
+	HXbtree_add(btree, "Hello");
+	HXbtree_add(btree, "World");
+	HXbtree_free(btree);
+
+	btree = HXbtree_init(HXBT_ICMP);
+	for (i = 0; i < 10; ++i)
+		HXbtree_add(btree, reinterpret_cast(void *,
+		            static_cast(long, i)));
+	HXbtree_free(btree);
+}
+
+static int t9_fruit_cmp(const void *pa, const void *pb, size_t len)
+{
+	/* need cast for C++ :-/ */
+	const struct t9_fruit *a =
+		reinterpret_cast(const struct t9_fruit *, pa);
+	const struct t9_fruit *b =
+		reinterpret_cast(const struct t9_fruit *, pb);
+	return strcmp(a->name, b->name);
+}
+
+static int t9_fruit2_cmp(const void *pa, const void *pb, size_t len)
+{
+	const struct t9_fruit2 *a =
+		reinterpret_cast(const struct t9_fruit2 *, pa);
+	const struct t9_fruit2 *b =
+		reinterpret_cast(const struct t9_fruit2 *, pb);
+	return strcmp(a->name, b->name);
+}
+
+static void *t9_fruit2_dup(const void *pa, size_t len)
+{
+	const struct t9_fruit2 *src =
+		reinterpret_cast(const struct t9_fruit2 *, pa);
+	struct t9_fruit2 *dst;
+
+	dst = reinterpret_cast(struct t9_fruit2 *, HX_memdup(src, sizeof(*src)));
+	dst->name = HX_strdup(src->name);
+	return dst;
+}
+
+static void t9_fruit2_del(void *pa)
+{
+	struct t9_fruit2 *a = reinterpret_cast(struct t9_fruit2 *, pa);
+
+	if (a == NULL)
+		return;
+	free(a->name);
+	free(a);
+}
+
+static void test_9(unsigned int extra_flags)
+{
+	struct t9_fruit temp_fruit;
+	struct t9_fruit2 temp_fruit2;
+	const struct HXbtree_node *node;
+	unsigned int i;
+	void *trav;
+
+	printf("Group 9: HXbtree_init2\n");
+	printf("Test 9a: Integer bitmap\n\tcontents:");
+	btree = HXbtree_init2(extra_flags, NULL, NULL, NULL, NULL, NULL, 0, 0);
+	for (i = 0; i < 15; ++i)
+		HXbtree_add(btree, reinterpret_cast(void *,
+		            static_cast(long, i)));
+	trav = HXbtrav_init(btree);
+	while ((node = HXbtraverse(trav)) != NULL)
+		printf(" %u", static_cast(unsigned int,
+		       reinterpret_cast(long, node->key)));
+	HXbtrav_free(trav);
+	HXbtree_free(btree);
+	printf("\n");
+
+	printf("Test 9b: String bitmap\n\tThe garden has:");
+	btree = HXbtree_init2(HXBT_SKEY | extra_flags, NULL,
+	        NULL, NULL, NULL, NULL, 0, 0);
+	for (i = 0; i < ARRAY_SIZE(fruits); ++i)
+		HXbtree_add(btree, fruits[i]);
+	trav = HXbtrav_init(btree);
+	while ((node = HXbtraverse(trav)) != NULL)
+		printf(" %s[%p]", node->skey, node->skey);
+	HXbtrav_free(trav);
+	HXbtree_free(btree);
+	printf("\n");
+
+	printf("Test 9c: String bitmap in copy mode\n\tThe garden has:");
+	btree = HXbtree_init2(HXBT_SKEY | HXBT_CKEY | extra_flags, NULL,
+	        NULL, NULL, NULL, NULL, 0, 0);
+	for (i = 0; i < ARRAY_SIZE(fruits); ++i)
+		HXbtree_add(btree, fruits[i]);
+	trav = HXbtrav_init(btree);
+	while ((node = HXbtraverse(trav)) != NULL)
+		printf(" %s[%p]", node->skey, node->skey);
+	HXbtrav_free(trav);
+	HXbtree_free(btree);
+	printf("\n");
+
+	printf("Test 9d: Data bitmap, copy mode\n\tThe garden has:");
+	btree = HXbtree_init2(HXBT_CKEY | extra_flags, t9_fruit_cmp,
+	        NULL, NULL, NULL, NULL, sizeof(struct t9_fruit), 0);
+	for (i = 0; i < ARRAY_SIZE(fruits); ++i) {
+		HX_strlcpy(temp_fruit.name, fruits[i], sizeof(temp_fruit.name));
+		HXbtree_add(btree, &temp_fruit);
+	}
+	trav = HXbtrav_init(btree);
+	while ((node = HXbtraverse(trav)) != NULL) {
+		const struct t9_fruit *f =
+			reinterpret_cast(const struct t9_fruit *, node->key);
+		printf(" %s[%p]", f->name, f->name);
+	}
+	HXbtrav_free(trav);
+	HXbtree_free(btree);
+	printf("\n");
+
+	printf("Test 9e: Deep data bitmap, copy mode\n\t");
+	btree = HXbtree_init2(HXBT_CKEY | extra_flags, t9_fruit2_cmp,
+	        t9_fruit2_dup, t9_fruit2_del, NULL, NULL,
+	        sizeof(struct t9_fruit2), 0);
+	for (i = 0; i < ARRAY_SIZE(fruits); ++i) {
+		temp_fruit2.name = const_cast1(char *, fruits[i]);
+		HXbtree_add(btree, &temp_fruit2);
+	}
+	trav = HXbtrav_init(btree);
+	while ((node = HXbtraverse(trav)) != NULL) {
+		const struct t9_fruit2 *f =
+			reinterpret_cast(const struct t9_fruit2 *, node->key);
+		printf(" %s[%p]", f->name, f->name);
+	}
+	HXbtrav_free(trav);
+	HXbtree_free(btree);
+	printf("\n");
+
+	printf("Test 9f: Detached string key with data\n\t");
+	btree = HXbtree_init2(HXBT_MAP | HXBT_SKEY | HXBT_CDATA | extra_flags,
+	        NULL, NULL, NULL, t9_fruit2_dup, t9_fruit2_del, 0, 0);
+	for (i = 0; i < ARRAY_SIZE(fruits); ++i) {
+		temp_fruit2.name = const_cast1(char *, fruits[i]);
+		HXbtree_add(btree, fruits[i], &temp_fruit2);
+	}
+	trav = HXbtrav_init(btree);
+	while ((node = HXbtraverse(trav)) != NULL) {
+		const struct t9_fruit2 *f =
+			reinterpret_cast(const struct t9_fruit2 *, node->data);
+		printf(" %s[%p]:%s[%p]", node->skey, node->skey, f->name, f->name);
+	}
+	HXbtrav_free(trav);
+	HXbtree_free(btree);
+	printf("\n");
+}
+
 int main(void)
 {
 	setvbuf(stdout, NULL, _IOLBF, 0);
@@ -287,6 +461,10 @@ int main(void)
 	test_6();
 	//test_4();
 	test_7();
+	test_8();
+	test_9(0);
+	printf("With CID\n");
+	test_9(HXBT_CID);
 	return EXIT_SUCCESS;
 }
 
@@ -297,7 +475,7 @@ static struct HXbtree *generate_fixed_tree(unsigned int f, ...)
 	char buf[Z_32];
 	va_list argp;
 
-	b = HXbtree_init(HXBT_CDATA | HXBT_CID | HXBT_CMPFN, strtolcmp);
+	b = HXbtree_init(HXBT_CKEY | HXBT_CID | HXBT_CMPFN, strtolcmp);
 	if (b == NULL)
 		abort();
 
@@ -321,7 +499,7 @@ static struct HXbtree *generate_perfect_tree(unsigned int height,
 	struct HXbtree *b;
 	char buf[Z_32];
 
-	b = HXbtree_init(HXBT_CDATA | HXBT_CID | HXBT_CMPFN, strtolcmp);
+	b = HXbtree_init(HXBT_CKEY | HXBT_CID | HXBT_CMPFN, strtolcmp);
 	if (b == NULL)
 		abort();
 
@@ -513,7 +691,7 @@ static unsigned int verify_random_tree(const struct HXbtree *tree)
 static void __walk_tree(const struct HXbtree_node *node, char *buf, size_t s)
 {
 	int has_children = node->sub[0] != NULL || node->sub[1] != NULL;
-	HX_strlcat(buf, static_cast(const char *, node->key), s);
+	HX_strlcat(buf, node->skey, s);
 
 	if (node->color == NODE_BLACK)
 		HX_strlcat(buf, "%b", s);

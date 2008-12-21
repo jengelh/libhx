@@ -8,7 +8,7 @@ lib_LTLIBRARIES  = libHX.la
 libHX_la_SOURCES = arbtree.c deque.c dir.c dl.c format.c mc.c misc.c opt.c \
                    rand.c string.c ${mingw32_extra}
 libHX_la_LIBADD  = ${regular_LIBS}
-libHX_la_LDFLAGS = -version-info 17:0:3
+libHX_la_LDFLAGS = -version-info 17:0:0
 
 if MINGW32
 mingw32_extra    = ux-file.c ux-mmap.c
