@@ -8,6 +8,10 @@
 #endif
 #include <libxml/parser.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 static inline int xml_strcmp(const xmlChar *a, const char *b)
 {
 #ifdef __cplusplus
@@ -57,5 +61,9 @@ static inline xmlAttr *xml_setprop(xmlNode *node, const char *name,
 	return xmlSetProp(node, (const xmlChar *)name, (const xmlChar *)value);
 #endif
 }
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* _LIBHX_LIBXML_HELPER_H */

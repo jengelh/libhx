@@ -657,8 +657,8 @@ static void do_assign(struct HXoptcb *cbi)
 			*p = strcasecmp(cbi->data, "yes") == 0 ||
 			     strcasecmp(cbi->data, "on") == 0 ||
 			     strcasecmp(cbi->data, "true") == 0 ||
-			     (strcmp(cbi->data, "0") != 0 &&
-			     *cbi->data != '\0');
+			     (isdigit(*cbi->data) &&
+			     strtoul(cbi->data, NULL, 0) != 0);
 		break;
 	}
 	case HXTYPE_BYTE:

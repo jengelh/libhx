@@ -1,7 +1,18 @@
 #ifndef _LIBHX_DEFS_H
 #define _LIBHX_DEFS_H 1
 
-#ifndef __cplusplus
+#ifdef __cplusplus
+#	if defined(__GNUC__) && !defined(offsetof)
+#		define offsetof(type, member) __builtin_offsetof(type, member)
+#	endif
+#	ifndef offsetof
+#		define reinterpret_cast<long>(&(static_cast<type *>(NULL)->member))
+#	endif
+#	ifndef containerof
+#		define containerof(var, type, member) reinterpret_cast<type *>( \
+			reinterpret_cast<char *>(var) - offsetof(type, member))
+#	endif
+#else
 	/* N.B. signed_cast<> does not exist in C++. */
 #	define __signed_cast_compatible(a, b) \
 		__builtin_choose_expr( \
@@ -51,16 +62,18 @@
 #	ifndef reinterpret_cast
 #		define reinterpret_cast(type, expr) ((type)(expr))
 #	endif
+#	if defined(__GNUC__) && !defined(offsetof)
+#		define offsetof(type, member) __builtin_offsetof(type, member)
+#	endif
+#	ifndef offsetof
+#		define reinterpret_cast(long, &(static_cast(type *, NULL)->member))
+#	endif
+#	ifndef containerof
+#		define containerof(var, type, member) reinterpret_cast(type *, \
+			reinterpret_cast(char *, var) - offsetof(type, member))
+#	endif
 #endif
 
-#ifndef offsetof
-#	define offsetof(type, member) \
-		reinterpret_cast(long, &(static_cast(type *, NULL)->member))
-#endif
-#ifndef containerof
-#	define containerof(var, type, member) reinterpret_cast(type *, \
-		reinterpret_cast(const char *, var) - offsetof(type, member))
-#endif
 #ifndef ARRAY_SIZE
 #	define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
 #endif

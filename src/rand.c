@@ -16,10 +16,40 @@
 #ifdef __unix__
 #	include <unistd.h>
 #endif
+#ifdef HAVE_GETTIMEOFDAY
+#	include <sys/time.h>
+#endif
 #include <libHX/misc.h>
 #include "internal.h"
 
 static int rand_fd = -1;
+
+static unsigned int HXrand_obtain_seed(void)
+{
+	unsigned int s;
+
+#if defined(HAVE_GETTIMEOFDAY)
+	struct timeval tv;
+
+	s  = tv.tv_sec;
+	s ^= tv.tv_usec << 16;
+#else
+	s = time(NULL);
+#endif
+#ifdef HAVE_GETPID
+	s ^= getpid() << 9;
+#endif
+#ifdef HAVE_GETPPID
+	s ^= getppid() << 1;
+#endif
+#ifdef HAVE_GETEUID
+	s ^= geteuid() << 13;
+#endif
+#ifdef HAVE_GETEGID
+	s ^= getegid() << 5;
+#endif
+	return s;
+}
 
 static __attribute__((constructor)) void HXrand_init(void)
 {
@@ -29,11 +59,7 @@ static __attribute__((constructor)) void HXrand_init(void)
 		if ((fd = open("/dev/urandom", O_RDONLY | O_BINARY)) >= 0)
 			rand_fd = fd;
 
-#ifdef __unix__
-	srand(time(NULL) ^ ((getpid() + getppid() + geteuid() + getegid()) << 5));
-#else
-	srand(time(NULL));
-#endif
+	srand(HXrand_obtain_seed());
 }
 
 static __attribute__((destructor)) void HXrand_deinit(void)
