@@ -24,7 +24,14 @@ enum {
 
 struct HXbtree_node {
 	struct HXbtree_node *sub[2];
-	void *key, *data;
+	union {
+		void *key;
+		const char *const skey;
+	};
+	union {
+		void *data;
+		char *sdata;
+	};
 	unsigned char color;
 };
 

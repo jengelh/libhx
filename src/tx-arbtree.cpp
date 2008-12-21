@@ -81,8 +81,7 @@ static void test_1(void)
 	printf("Test 1F: Standard traverse\n");
 	trav = HXbtrav_init(btree);
 	while ((node = HXbtraverse(trav)) != NULL)
-		printf("\t" "key: %s (%s)\n", (const char *)node->key,
-		       Color[node->color]);
+		printf("\t" "key: %s (%s)\n", node->skey, Color[node->color]);
 	HXbtrav_free(trav);
 
 	printf("Test 1G: Node deletion\n");
@@ -107,15 +106,13 @@ static void test_2(void)
 	printf("Test 2A: Traverse with B-tree change\n");
 	trav = HXbtrav_init(btree);
 	while ((node = HXbtraverse(trav)) != NULL) {
-		const char *key = static_cast(const char *, node->key);
-
 		walk_tree(btree->root, buf, sizeof(buf));
 		printf("\t" "tree: %s\n", buf);
-		printf("\t" " key: %s (%s)\n", key, Color[node->color]);
-		if (strcmp(key, "4") == 0) {
+		printf("\t" " key: %s (%s)\n", node->skey, Color[node->color]);
+		if (strcmp(node->skey, "4") == 0) {
 			printf("\t" "Deleting [current] node \"4\"\n");
 			HXbtree_del(btree, "4");
-		} else if (strcmp(key, "12") == 0) {
+		} else if (strcmp(node->skey, "12") == 0) {
 			printf("\t" "Deleting [next] node \"14\"\n");
 			HXbtree_del(btree, "14");
 		}
@@ -132,8 +129,7 @@ static void test_2(void)
 	printf("Test 2B: Traverse with B-tree destruction\n");
 	trav = HXbtrav_init(btree);
 	while ((node = HXbtraverse(trav)) != NULL) {
-		printf("\t" "About to delete \"%s\"\n",
-		       static_cast(const char *, node->key));
+		printf("\t" "About to delete \"%s\"\n", node->skey);
 		HXbtree_del(btree, node->key);
 	}
 
@@ -163,10 +159,8 @@ static void test_3(void)
 
 	printf("\t");
 	while ((node = HXbtraverse(trav)) != NULL) {
-		const char *key = static_cast(const char *, node->key);
-
-		printf("%s", key);
-		if (strcmp(key, "21") == 0) {
+		printf("%s", node->skey);
+		if (strcmp(node->skey, "21") == 0) {
 			HXbtree_del(btree, "21");
 			printf("*");
 		}
@@ -513,7 +507,7 @@ static unsigned int verify_random_tree(const struct HXbtree *tree)
 static void __walk_tree(const struct HXbtree_node *node, char *buf, size_t s)
 {
 	int has_children = node->sub[0] != NULL || node->sub[1] != NULL;
-	HX_strlcat(buf, static_cast(const char *, node->key), s);
+	HX_strlcat(buf, node->skey, s);
 
 	if (node->color == NODE_BLACK)
 		HX_strlcat(buf, "%b", s);

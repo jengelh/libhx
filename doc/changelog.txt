@@ -29,6 +29,10 @@ New misc code:
 - opt: HXTYPE_BOOL and HXTYPE_NONE now take int * (instead of unsigned int *)
 
 
+New arbtree code:
+- arbtree: add struct HXbtree_node->char *skey and char *sdata
+
+
 libHX 1.28 (November 18 2008)
 =============================
 - add HXTYPE_{U,}INT{8,16,32,64}
