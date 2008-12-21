@@ -33,7 +33,7 @@ struct HXbtree {
 	void *uptr;
 	struct HXbtree_node *root;
 	unsigned int items, tid;
-	unsigned char opts;
+	unsigned char flags;
 };
 
 extern struct HXbtree *HXbtree_init(unsigned int, ...);
