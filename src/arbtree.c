@@ -48,7 +48,7 @@ static unsigned int btree_del(struct HXbtree_node **, unsigned char *,
 	unsigned int);
 static void btree_dmov(struct HXbtree_node **, unsigned char *, unsigned int);
 static void btree_free_dive(const struct HXbtree *, struct HXbtree_node *);
-static int value_cmp(const void *, const void *);
+static int value_cmp(const void *, const void *, size_t);
 
 //-----------------------------------------------------------------------------
 EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int flags, ...)
@@ -85,13 +85,13 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init(unsigned int flags, ...)
 	btree->tid = 1;
 
 	if (flags & HXBT_CMPFN)
-		btree->cmpfn = va_arg(argp, void *);
+		btree->k_compare = va_arg(argp, void *);
 	else if (flags & HXBT_SCMP)
-		btree->cmpfn = static_cast(void *, strcmp);
+		btree->k_compare = static_cast(void *, strcmp);
 	else if (flags & HXBT_ICMP)
-		btree->cmpfn = value_cmp;
+		btree->k_compare = value_cmp;
 	else if (flags & HXBT_MAP)
-		btree->cmpfn = static_cast(void *, strcmp);
+		btree->k_compare = static_cast(void *, strcmp);
 	else {
 		fprintf(stderr,
 		        "libHX-btree error: Your code does not use any of\n"
@@ -135,7 +135,7 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_add(struct HXbtree *btree,
 	node = btree->root;
 
 	while (node != NULL) {
-		int res = btree->cmpfn(key, node->key);
+		int res = btree->k_compare(key, node->key, btree->key_size);
 		if (res == 0) {
 			if (!(btree->flags & HXBT_MAP)) {
 				errno = EEXIST;
@@ -209,7 +209,7 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_find(const struct HXbtree *btree,
 	int res;
 
 	while (node != NULL) {
-		if ((res = btree->cmpfn(key, node->key)) == 0)
+		if ((res = btree->k_compare(key, node->key, btree->key_size)) == 0)
 			return node;
 		node = node->sub[res > 0];
 	}
@@ -240,7 +240,7 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 	node         = btree->root;
 
 	while (node != NULL) {
-		int res = btree->cmpfn(key, node->key);
+		int res = btree->k_compare(key, node->key, btree->key_size);
 		if (res == 0)
 			break;
 		res          = res > 0;
@@ -428,7 +428,7 @@ static struct HXbtree_node *btrav_rewalk(struct HXbtrav *trav)
 
 		while (node != NULL) {
 			newpath[newdepth] = trav->path[trav->depth] = node;
-			res = btree->cmpfn(trav->checkpoint, node->key);
+			res = btree->k_compare(trav->checkpoint, node->key, btree->key_size);
 			if (res == 0) {
 				++trav->depth;
 				found = true;
@@ -710,7 +710,7 @@ static void btree_free_dive(const struct HXbtree *btree,
 	free(node);
 }
 
-static int value_cmp(const void *pa, const void *pb)
+static int value_cmp(const void *pa, const void *pb, size_t len)
 {
 	return pa - pb;
 }

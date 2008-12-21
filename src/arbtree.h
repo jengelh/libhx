@@ -36,11 +36,12 @@ struct HXbtree_node {
 };
 
 struct HXbtree {
-	int (*cmpfn)(const void *, const void *);
+	int (*k_compare)(const void *, const void *, size_t);
 	void *uptr;
 	struct HXbtree_node *root;
 	unsigned int items, tid;
 	unsigned char flags;
+	size_t key_size;
 };
 
 extern struct HXbtree *HXbtree_init(unsigned int, ...);
