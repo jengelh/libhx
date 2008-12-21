@@ -32,14 +32,13 @@
 			__builtin_types_compatible_p(a, unsigned char *) \
 		)
 
+#	if defined(__GNUC__) && !defined(signed_cast)
+#		define signed_cast(type, expr) ({ \
+			BUILD_BUG_ON(!__signed_cast_compatible(typeof(type), typeof(expr))); \
+			(type)(expr); \
+		})
+#	endif
 #	if defined(__GNUC__) && defined(HXDEV_EXT_CAST)
-#		ifndef signed_cast
-#			define signed_cast(type, expr) ({ \
-				BUILD_BUG_ON(!__signed_cast_compatible(typeof(type), typeof(expr))); \
-				(type)(expr); \
-			})
-#		endif
-
 		/*
 		 * This one may cause shadow warnings when nested, or compile
 		 * errors when used in declarations, and hence is normally
