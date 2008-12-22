@@ -449,6 +449,13 @@ static void test_9(unsigned int extra_flags)
 	printf("\n");
 }
 
+static void test_10(void)
+{
+	printf("Test 10: Rejection of illegal parameters\n");
+	btree = HXbtree_init(HXBT_SCMP | HXBT_ICMP);
+	printf("\tscmp|icmp=%p (should be NULL)\n", btree);
+}
+
 int main(void)
 {
 	setvbuf(stdout, NULL, _IOLBF, 0);
@@ -465,6 +472,7 @@ int main(void)
 	test_9(0);
 	printf("With CID\n");
 	test_9(HXBT_CID);
+	test_10();
 	return EXIT_SUCCESS;
 }
 

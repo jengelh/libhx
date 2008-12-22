@@ -1,5 +1,6 @@
 
 
+- arbtree: reject illegal flag combinations
 - defs: add a working offsetof() and containerof() for C++ mode
 - defs: use GCC's __builtin_offsetof
 - defs: resolve warnings with signed_cast() for char* -> const char* conversions
@@ -11,6 +12,7 @@
   and this included the strings "no", "off" and "false", which should
   actually have mapped to, well, "false".)
 - rand: use autoconf to detect presence of unix functions
+- string: replace HX_strrev implementation by one that does not allocate
 
 
 New feature: Type-checking casts.
