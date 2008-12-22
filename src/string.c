@@ -231,17 +231,18 @@ EXPORT_SYMBOL size_t HX_strrcspn(const char *s, const char *rej)
 	return n;
 }
 
-EXPORT_SYMBOL char *HX_strrev(char *expr)
+EXPORT_SYMBOL char *HX_strrev(char *s)
 {
-	char *dyn = HX_strdup(expr), *orig = expr;
-	size_t s = strlen(dyn);
+	size_t i, z = strlen(s)-1, z2 = z / 2;
 
-	dyn += s;
-	while (s--)
-		*expr++ = *--dyn;
+	for (i = 0; i < z2; ++i) {
+		char temp;
+		temp = s[i];
+		s[i] = s[z-i];
+		s[z-i] = temp;
+	}
 
-	free(dyn);
-	return orig;
+	return s;
 }
 
 EXPORT_SYMBOL size_t HX_strrtrim(char *expr)

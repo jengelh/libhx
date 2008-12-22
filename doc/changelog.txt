@@ -12,6 +12,7 @@
   and this included the strings "no", "off" and "false", which should
   actually have mapped to, well, "false".)
 - rand: use autoconf to detect presence of unix functions
+- string: replace HX_strrev implementation by one that does not allocate
 
 
 New feature: Type-checking casts.
