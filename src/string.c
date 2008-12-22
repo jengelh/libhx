@@ -212,9 +212,7 @@ EXPORT_SYMBOL char *HX_strmid(const char *expr, long offset, long length)
 
 	if (offset < 0)
 		offset = strlen(expr) + offset;
-	if (length == 0)
-		length = strlen(expr) - offset;
-	else if (length < 0)
+	if (length < 0)
 		length = strlen(expr) - offset + length;
 	if ((buffer = malloc(length + 1)) == NULL)
 		return NULL;

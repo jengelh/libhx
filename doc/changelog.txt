@@ -38,6 +38,8 @@ New arbtree code:
 Removals:
 - mc: remove HXmc_dup
   [you can use HXmc_meminit(old, HXmc_length(old))]
+- string: HX_strmid behavior changed for length=0
+  [no more "remaining string", now returns a zero-length string]
 
 
 libHX 1.28 (November 18 2008)
