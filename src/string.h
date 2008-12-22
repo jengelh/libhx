@@ -24,7 +24,6 @@ typedef char hxmc_t;
 /*
  *	HMC.C
  */
-extern hxmc_t *HXmc_dup(const hxmc_t *);
 extern hxmc_t *HXmc_strinit(const char *);
 extern hxmc_t *HXmc_meminit(const void *, size_t);
 extern hxmc_t *HXmc_strcpy(hxmc_t **, const char *);

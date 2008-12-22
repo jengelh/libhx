@@ -32,14 +32,6 @@ struct memcont {
 };
 
 //-----------------------------------------------------------------------------
-EXPORT_SYMBOL hxmc_t *HXmc_dup(const hxmc_t *vp)
-{
-	struct memcont *dst, *src = containerof(vp, struct memcont, data);
-	CHECK_IDENT(src);
-	dst = HX_memdup(src, sizeof(struct memcont) + src->alloc);
-	return dst->data;
-}
-
 EXPORT_SYMBOL hxmc_t *HXmc_strinit(const char *s)
 {
 	hxmc_t *t = NULL;
