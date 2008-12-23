@@ -7,6 +7,7 @@
  *	Lesser General Public License as published by the Free Software
  *	Foundation; either version 2.1 or 3 of the License.
  */
+#include "config.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
@@ -31,6 +32,7 @@ static unsigned int HXrand_obtain_seed(void)
 #if defined(HAVE_GETTIMEOFDAY)
 	struct timeval tv;
 
+	gettimeofday(&tv, NULL);
 	s  = tv.tv_sec;
 	s ^= tv.tv_usec << 16;
 #else
