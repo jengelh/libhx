@@ -1,5 +1,8 @@
 
 
+libHX 2.0 (December 23 2008)
+============================
+Fixes:
 - arbtree: reject illegal flag combinations
 - arbtree: correctly set errno in HXbtree_find and HXbtree_get
 - arbtree: do not return dangling pointer in HXbtree_del

@@ -1,7 +1,7 @@
 
-Name:		libHX14
+Name:		libHX17
 %define lname	libHX
-Version:	1.28
+Version:	2.0
 Release:	0
 Group:		System/Libraries
 URL:		http://jengelh.medozas.de/projects/libHX/
@@ -27,7 +27,7 @@ A library for:
 %package -n libHX-devel
 Group:		Development/Libraries/C and C++
 Summary:	Development files for libHX
-Requires:	libHX14 = %version
+Requires:	libHX17 = %version
 
 %description -n libHX-devel
 A library for:
@@ -57,6 +57,7 @@ mkdir "$b";
 make install DESTDIR="$b";
 rm -f "$b/%_libdir/%lname.la";
 mkdir -p "$b/%_docdir";
+rm -f doc/*.lyx;
 cp -a doc "$b/%_docdir/%lname";
 
 %post
