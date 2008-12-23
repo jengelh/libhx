@@ -1,6 +1,7 @@
 
 
 - defs: fix bogus offsetof macro for non-GCC
+- defs: add a pair of guarding parentheses in static_cast()
 
 
 libHX 2.0 (December 23 2008)

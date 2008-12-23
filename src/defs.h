@@ -77,7 +77,7 @@ static inline new_type signed_cast(unsigned char *expr)
 #	endif
 #	if defined(__GNUC__) && !defined(static_cast)
 #		define static_cast(type, expr) \
-			((struct { type x; }){expr}.x)
+			((struct { type x; }){(expr)}.x)
 #	endif
 #	if defined(__GNUC__) && !defined(const_cast1)
 #		define __const_cast_strip1(expr) \
