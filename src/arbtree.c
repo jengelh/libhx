@@ -298,11 +298,14 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_find(const struct HXbtree *btree,
 	int res;
 
 	while (node != NULL) {
-		if ((res = btree->k_compare(key, node->key, btree->key_size)) == 0)
+		if ((res = btree->k_compare(key, node->key, btree->key_size)) == 0) {
+			errno = 0;
 			return node;
+		}
 		node = node->sub[res > 0];
 	}
 
+	errno = EINVAL;
 	return NULL;
 }
 
@@ -311,6 +314,7 @@ EXPORT_SYMBOL void *HXbtree_get(const struct HXbtree *btree, const void *key)
 	const struct HXbtree_node *node;
 	if ((node = HXbtree_find(btree, key)) == NULL)
 		return NULL;
+	errno = 0;
 	return node->data;
 }
 

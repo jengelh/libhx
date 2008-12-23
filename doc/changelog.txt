@@ -1,6 +1,7 @@
 
 
 - arbtree: reject illegal flag combinations
+- arbtree: correctly set errno in HXbtree_find and HXbtree_get
 - defs: add a working offsetof() and containerof() for C++ mode
 - defs: use GCC's __builtin_offsetof
 - defs: resolve warnings with signed_cast() for char* -> const char* conversions
