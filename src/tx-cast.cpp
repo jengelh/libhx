@@ -21,7 +21,7 @@ int main(void)
 
 	void *sr_00 = reinterpret_cast(void *, static_cast(long, 8));
 	int sr_01 = reinterpret_cast(long, sr_00);
-	void *sr_02 = reinterpret_cast(void *, reinterpret_cast(int, &si_00));
+	void *sr_02 = reinterpret_cast(void *, static_cast(long, static_cast(int, reinterpret_cast(long, &si_00))));
 	printf("sr: %p %u; %p[%p]\n", sr_00, sr_01, sr_02, &si_00);
 
 	double st_00 = sqrt(static_cast(int,
