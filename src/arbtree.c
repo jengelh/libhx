@@ -346,7 +346,17 @@ EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 		errno = ENOENT;
 		return NULL;
 	}
-	itemptr = node->data;
+
+	/*
+	 * Return the data for the node. But it is not going to be useful
+	 * if ARBtree was directed to copy it (because it will be released
+	 * below.)
+	 */
+	if (btree->flags & HXBT_MAP)
+		itemptr = (btree->flags & HXBT_CDATA) ? NULL : node->data;
+	else
+		/* node->data is ok; same as key */
+		itemptr = (btree->flags & HXBT_CKEY) ? NULL : node->data;
 
 	/* Removal of the node from the tree */
 	--btree->items;

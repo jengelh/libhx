@@ -456,6 +456,23 @@ static void test_10(void)
 	printf("\tscmp|icmp=%p (should be NULL)\n", btree);
 }
 
+static void test_11(void)
+{
+	void *p;
+
+	btree = HXbtree_init(HXBT_SCMP);
+	HXbtree_add(btree, "Hello");
+	p = HXbtree_del(btree, static_cast(const void *, "Hello"));
+	printf(">%s<\n", reinterpret_cast(const char *, p));
+	HXbtree_free(btree);
+
+	btree = HXbtree_init(HXBT_SCMP | HXBT_CKEY);
+	HXbtree_add(btree, "Hello");
+	p = HXbtree_del(btree, static_cast(const void *, "Hello"));
+	printf(">%s<\n", reinterpret_cast(const char *, p));
+	HXbtree_free(btree);
+}
+
 int main(void)
 {
 	setvbuf(stdout, NULL, _IOLBF, 0);
@@ -473,6 +490,7 @@ int main(void)
 	printf("With CID\n");
 	test_9(HXBT_CID);
 	test_10();
+	test_11();
 	return EXIT_SUCCESS;
 }
 
