@@ -6,7 +6,8 @@
 #		define offsetof(type, member) __builtin_offsetof(type, member)
 #	endif
 #	ifndef offsetof
-#		define reinterpret_cast<long>(&(static_cast<type *>(NULL)->member))
+#		define offsetof(type, member) \
+			reinterpret_cast<long>(&(static_cast<type *>(NULL)->member))
 #	endif
 #	ifndef containerof
 #		define containerof(var, type, member) reinterpret_cast<type *>( \
@@ -114,7 +115,8 @@ static inline new_type signed_cast(unsigned char *expr)
 #		define offsetof(type, member) __builtin_offsetof(type, member)
 #	endif
 #	ifndef offsetof
-#		define reinterpret_cast(long, &(static_cast(type *, NULL)->member))
+#		define offsetof(type, member) \
+			reinterpret_cast(long, &(static_cast(type *, NULL)->member))
 #	endif
 #	ifndef containerof
 #		define containerof(var, type, member) reinterpret_cast(type *, \

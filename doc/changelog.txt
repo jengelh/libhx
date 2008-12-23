@@ -1,5 +1,8 @@
 
 
+- defs: fix bogus offsetof macro for non-GCC
+
+
 libHX 2.0 (December 23 2008)
 ============================
 Fixes:
