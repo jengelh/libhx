@@ -38,6 +38,7 @@ struct HXbtree_node {
 };
 
 struct HXbtree {
+	/* The size argument is needed for memcmp. */
 	int (*k_compare)(const void *, const void *, size_t);
 	void *uptr;
 	struct HXbtree_node *root;
