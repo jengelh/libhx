@@ -8,7 +8,6 @@
 #include <libHX/clist.h>
 #include <libHX/list.h>
 #include <libHX/ctype_helper.h>
-#include <libHX/libxml_helper.h>
 
 int main(void)
 {
