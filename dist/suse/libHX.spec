@@ -1,7 +1,7 @@
 
 Name:		libHX17
 %define lname	libHX
-Version:	2.0
+Version:	2.1
 Release:	0
 Group:		System/Libraries
 URL:		http://jengelh.medozas.de/projects/libHX/
