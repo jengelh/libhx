@@ -56,7 +56,7 @@
 \begin_body
 
 \begin_layout Title
-libHX 2.0
+libHX 2.1
 \begin_inset Newline newline
 \end_inset
 
@@ -204,9 +204,19 @@ libHX uses GNU autotools as a build environment, which means that all you
 \family typewriter
 configure
 \family default
- with any options that you need.
- Pay attention to bi-arch systems where you most likely need to specify
- 
+ with any options that you need, plus the usual 
+\family typewriter
+make
+\family default
+ and 
+\family typewriter
+make install
+\family default
+ as desired.
+\end_layout
+
+\begin_layout Standard
+Pay attention to bi-arch systems where you most likely need to specify 
 \begin_inset Quotes eld
 \end_inset
 
@@ -243,7 +253,7 @@ GNU C Compiler 3.x or newer.
 \end_layout
 
 \begin_layout Itemize
-approximately 73
+approximately 79
 \begin_inset space ~
 \end_inset
 
@@ -399,7 +409,7 @@ HXbtree_
 \end_layout
 
 \begin_layout Section
-Annotation casts
+Type-checking casts
 \end_layout
 
 \begin_layout Standard
@@ -642,6 +652,11 @@ const unsigned char
 static_cast()
 \family default
  would also throw at least a compiler warning about the different signedness.)
+ libHX does provide a 
+\family typewriter
+signed_cast<>
+\family default
+ for C++ though.
  This is where 
 \family typewriter
 signed_cast
