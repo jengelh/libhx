@@ -146,4 +146,9 @@ static inline new_type signed_cast(unsigned char *expr)
 #	define S_IRWXUGO (S_IRUGO | S_IWUGO | S_IXUGO)
 #endif
 
+/* 2^32 and -2^31 have differing length */
+#define HXSIZEOF_Z32 sizeof("-4294967296")
+/* 2^64 and -2^63 have same length */
+#define HXSIZEOF_Z64 sizeof("18446744073709551616")
+
 #endif /* _LIBHX_DEFS_H */
