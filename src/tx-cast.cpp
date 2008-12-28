@@ -61,6 +61,18 @@ static void c_const3(void)
 		"is run, __builtin_choose_expr works as desired.\n"), co_06));
 }
 
+static void c_constA(void)
+{
+	static const char r1[] = "static";
+	char *w1 UNUSED = const_cast1(char *, r1);
+
+	static const char *const r2[] = {"static"};
+	char **w2 UNUSED = const_cast2(char **, r2);
+
+	static const char *const *const r3[] = {NULL};
+	char ***w3 UNUSED = const_cast3(char ***, r3);
+}
+
 int main(void)
 {
 	c_signed();
@@ -69,5 +81,6 @@ int main(void)
 	c_const1();
 	c_const2();
 	c_const3();
+	c_constA();
 	return 0;
 }

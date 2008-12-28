@@ -1,5 +1,8 @@
 
 
+- defs/cast: avoid warning between conversion from type[] to type *
+
+
 libHX 2.1 (December 23 2008)
 ============================
 - defs: fix bogus offsetof macro for non-GCC
