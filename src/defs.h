@@ -108,6 +108,11 @@ static inline new_type signed_cast(unsigned char *expr)
 #	ifndef const_cast
 #		define const_cast(type, expr)       ((type)(expr))
 #	endif
+#	ifndef const_cast1
+#		define const_cast1(type, expr)      ((type)(expr))
+#		define const_cast2(type, expr)      ((type)(expr))
+#		define const_cast3(type, expr)      ((type)(expr))
+#	endif
 #	ifndef reinterpret_cast
 #		define reinterpret_cast(type, expr) ((type)(expr))
 #	endif

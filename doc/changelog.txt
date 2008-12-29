@@ -1,6 +1,7 @@
 
 
 - defs/cast: avoid warning between conversion from type[] to type *
+- defs/cast: add fallback defs for const_castN()
 
 
 libHX 2.1 (December 23 2008)
