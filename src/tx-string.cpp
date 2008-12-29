@@ -80,11 +80,37 @@ static void t_strsep(void)
 
 static void t_split(void)
 {
-	int fd;
-	char **ar = HX_split(
-		"root:x:0:0:Jan Engelhardt:/home/jengelha:/bin/bash", ":", &fd, 0);
-	/* Analyze @ar with debugger */
-	HX_zvecfree(ar);
+	char t1[] = "root:x:0:0:root:/root:/bin/bash";
+	char t2[sizeof(t1)];
+	int f0, f1, f2;
+	char **a0, **a1, *a2[10];
+	char *const *wp;
+
+	memcpy(t2, t1, sizeof(t1));
+	a0 = HX_split(t1, ":", &f0, 0);
+	a1 = HX_split4(t1, ":", &f1, 0);
+	f2 = HX_split5(t2, ":", ARRAY_SIZE(a2), a2);
+
+	/* complete allocation */
+	printf("HX_split1: a0[%p]:", a0);
+	for (wp = a0; *wp != NULL; ++wp)
+		printf(" %s[%p]", *wp, *wp);
+	printf("\n");
+
+	/* array allocated */
+	printf("HX_split4: a1[%p]:", a1);
+	for (wp = a1; *wp != NULL; ++wp)
+		printf(" %s[%p]", *wp, *wp);
+	printf("\n");
+
+	/* nothing allocated */
+	printf("HX_split5: a2[%p]:", a2);
+	for (wp = a2; f2 > 0; --f2)
+		printf(" %s[%p]", *wp, *wp);
+	printf("\n");
+
+	HX_zvecfree(a0);
+	free(a1);
 }
 
 int main(int argc, const char **argv)

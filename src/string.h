@@ -48,6 +48,7 @@ extern char *HX_chomp(char *);
 extern char *HX_dirname(const char *);
 extern hxmc_t *HX_getl(hxmc_t **, FILE *);
 extern char **HX_split(const char *, const char *, int *, int);
+extern char **HX_split4(char *, const char *, int *, int);
 extern int HX_split5(char *, const char *, int, char **);
 extern char *HX_strbchr(const char *, const char *, char);
 extern char *HX_strclone(char **, const char *);

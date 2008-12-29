@@ -7948,7 +7948,11 @@ delimiters,
 \series bold
 size_t *
 \series default
-fields);
+fields, 
+\series bold
+int
+\series default
+ max);
 \begin_inset Index
 status open
 
@@ -7958,6 +7962,44 @@ status open
 \size normal
 \color none
 HX_split
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+char **
+\series default
+HX_split4(
+\series bold
+char *
+\series default
+s, 
+\series bold
+const char *
+\series default
+delimiters, 
+\series bold
+int *
+\series default
+fields, 
+\series bold
+int
+\series default
+ max);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HX_split4
 \end_layout
 
 \end_inset
@@ -8085,6 +8127,17 @@ delimiters
 \end_inset
 
  string.
+ Both the substrings and the array holding the pointers to these substrings
+ will be allocated as required; the original string is not modified.
+ If 
+\family typewriter
+max
+\family default
+ is larger than zero, produces no more than 
+\family typewriter
+max
+\family default
+ fields.
  If 
 \family typewriter
 fields
@@ -8110,9 +8163,52 @@ char
 
 *
 \family default
-, and the user needs to free it when done with it, preferably using 
+, and the user needs to free it when done with it, using 
 \family typewriter
 HX_zvecfree
+\family default
+ or equivalent.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_split4
+\family default
+ Split the string 
+\family typewriter
+s
+\family default
+ in-place on any characters from the 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+delimiters
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+ string.
+ The array that will be holding the pointers to the substrings will be allocated
+ and needs to be freed by the user, using 
+\family typewriter
+free
+\family default
+(3).
+ The 
+\family typewriter
+fields
+\family default
+ and 
+\family typewriter
+max
+\family default
+ arguments work as with 
+\family typewriter
+HX_split
 \family default
 .
 \end_layout
@@ -8138,24 +8234,35 @@ delimiters
 \begin_inset Quotes erd
 \end_inset
 
- string, but produce at most 
-\family typewriter
-max-1
-\family default
- fields.
- The results are stored in the 
+ string.
+ The array for the substring pointers must be provided by the user through
+ the 
 \family typewriter
 stack
 \family default
- array, which must have space for at least 
+ argument.
+ 
 \family typewriter
 max
 \family default
- members; this is so a 
+ must be the number of elements in the array or less.
+ The array will not be 
 \family typewriter
 NULL
 \family default
- sentinal can be placed.
+-terminated
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+An implementation may however decide to put NULL in the unassigned fields,
+ but this is implementation and situation-specific.
+ Do not rely on it.
+\end_layout
+
+\end_inset
+
+.
  The number of fields produced is returned.
 \end_layout
 
@@ -8675,6 +8782,13 @@ Examples
 
 \begin_layout Subsubsection
 Using HX_split5
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:string-ex-HX_split5"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard

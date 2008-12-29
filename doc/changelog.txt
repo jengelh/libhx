@@ -2,6 +2,7 @@
 
 Features:
 - defs: add HXSIZEOF_Z*
+- string: add HX_split4 function
 
 
 libHX 2.1 (December 23 2008)

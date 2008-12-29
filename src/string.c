@@ -131,6 +131,27 @@ EXPORT_SYMBOL char **HX_split(const char *str, const char *delim,
 	return ret;
 }
 
+EXPORT_SYMBOL char **HX_split4(char *s, const char *delim, int *fld, int max)
+{
+	char **stk;
+	const char *p = s;
+	int count = 0;
+
+	for (p = strpbrk(p, delim); p != NULL; p = strpbrk(++p, delim))
+		if (++count >= max) {
+			count = max;
+			break;
+		}
+
+	stk = malloc(sizeof(char *) * (count + 1));
+	if (stk == NULL)
+		return NULL;
+	count = HX_split5(s, delim, count, stk);
+	if (fld != NULL)
+		*fld = count;
+	return stk;
+}
+
 EXPORT_SYMBOL int HX_split5(char *s, const char *delim, int max, char **stk)
 {
 	/*
