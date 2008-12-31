@@ -151,4 +151,7 @@ static inline new_type signed_cast(unsigned char *expr)
 /* 2^64 and -2^63 have same length */
 #define HXSIZEOF_Z64 sizeof("18446744073709551616")
 
+#define __HX_STRINGIFY_EXPAND(s) #s
+#define HX_STRINGIFY(s) __HX_STRINGIFY_EXPAND(s)
+
 #endif /* _LIBHX_DEFS_H */

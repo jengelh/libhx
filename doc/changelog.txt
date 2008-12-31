@@ -2,6 +2,7 @@
 
 Features:
 - defs: add HXSIZEOF_Z*
+- defs: add HX_STRINGIFY
 - string: add HX_split4 function
 
 
@@ -10,6 +11,8 @@ libHX 2.1 (December 23 2008)
 - defs: fix bogus offsetof macro for non-GCC
 - defs: add a pair of guarding parentheses in static_cast()
 - doc: generate PDF file from LyX document
+
+- defs: add HX_STRINGIFY
 
 
 libHX 2.0 (December 23 2008)

@@ -1916,6 +1916,26 @@ Macros
 \end_layout
 
 \begin_layout Subsection
+Preprocessor
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#define
+\series default
+ HX_STRINGIFY(s)
+\end_layout
+
+\begin_layout Standard
+Transforms the expansion of the argument 
+\family typewriter
+s
+\family default
+ into a C string.
+\end_layout
+
+\begin_layout Subsection
 Locators
 \end_layout
 
