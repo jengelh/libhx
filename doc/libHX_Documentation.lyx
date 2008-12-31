@@ -16072,6 +16072,873 @@ PRNG
 
 \end_layout
 
+\begin_layout Section
+Process management
+\end_layout
+
+\begin_layout Standard
+The process code is experimental at this stage (just moved from the pam_mount
+ codebase).
+ As it also relies on the POSIX functions 
+\family typewriter
+fork
+\family default
+, 
+\family typewriter
+execv
+\family default
+, 
+\family typewriter
+execvp
+\family default
+ and 
+\family typewriter
+pipe
+\family default
+(2), so it may not be available everywhere.
+ Where this is the case, the functions will return 
+\family typewriter
+-ENOSYS
+\family default
+.
+\end_layout
+
+\begin_layout Subsection
+Process metadata structure
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/proc.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ HXproc {
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+const struct
+\series default
+ HXproc_ops 
+\series bold
+*
+\series default
+p_ops;
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+void *
+\series default
+p_data;
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+unsigned int
+\series default
+ p_flags;
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+/* 
+\family roman
+\series default
+\shape italic
+Following members should only be read
+\family default
+\series bold
+\shape default
+ */
+\series default
+
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+int
+\series default
+ p_stdin, p_stdout, p_stderr;
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+int
+\series default
+ p_pid;
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+char
+\series default
+ p_status;
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+bool
+\series default
+ p_exited, p_terminated;
+\begin_inset Newline newline
+\end_inset
+
+};
+\end_layout
+
+\begin_layout Standard
+When creating a new process with the intent of running it asynchronously
+ (using 
+\family typewriter
+HXproc_run_async
+\family default
+), the first three fields must be filled in by the user.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_ops
+\family default
+ A table of callbacks, generally used for setting and/or restoring signals
+ before/after execution.
+ This member may be 
+\family typewriter
+NULL
+\family default
+.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_data
+\family default
+ Free pointer for the user to supply.
+ Will be passed to the callback functions when they are invoked.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_flags
+\family default
+ Process creation flags, see below.
+\end_layout
+
+\begin_layout Standard
+After the subprocess has been started, 
+\family typewriter
+HXproc_run_async
+\family default
+ will have filled in some fields:
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_stdin
+\family default
+ If 
+\family typewriter
+HXPROC_STDIN
+\family default
+ was specified in 
+\family typewriter
+p_flags
+\family default
+, 
+\family typewriter
+p_stdin
+\family default
+ will be assigned the write side file descriptor of the subprocess's to-be
+ stdin.
+ The subprocess will get the read side file descriptor in this member.
+ This is so that the correct fd is used in when 
+\family typewriter
+p_ops->p_postfork
+\family default
+ is called.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_stdout
+\family default
+ If 
+\family typewriter
+HXPROC_STDOUT
+\family default
+ is specified in 
+\family typewriter
+p_flags
+\family default
+, 
+\family typewriter
+p_stdout
+\family default
+ will be assigned the read side file descriptor of the subprocess's to-be
+ stdout.
+ The subprocess will get the write side file descriptor in this member.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_stderr
+\family default
+ If 
+\family typewriter
+HXPROC_STDERR
+\family default
+ is specified in 
+\family typewriter
+p_flags
+\family default
+, 
+\family typewriter
+p_stderr
+\family default
+ will be assigned the read side file descriptor of the subprocess's to-be
+ stderr, and the subprocess will get the write side fd.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_pid
+\family default
+ The process ID of the spawned process.
+\end_layout
+
+\begin_layout Standard
+Upon calling 
+\family typewriter
+HXproc_wait
+\family default
+, further fields will have been filled when the function returns:
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_exited
+\family default
+ Whether the process exited normally (cf.
+\begin_inset space \space{}
+\end_inset
+
+signalled\SpecialChar \slash{}
+terminated).
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_terminated
+\family default
+ Whether the process was terminated (signalled).
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_status
+\family default
+ The exit status of the process or the termination signal.
+\end_layout
+
+\begin_layout Subsubsection
+Flags
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:proc-pflags"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Possible values for the 
+\family typewriter
+p_flags
+\family default
+ member are:
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXPROC_STDIN
+\series medium
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXPROC_STDIN
+\end_layout
+
+\end_inset
+
+
+\family default
+\series default
+ The subprocess's stdin file descriptor shall be connected to the master
+ program, that is, not inherit the stdin of the master.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXPROC_STDOUT
+\series medium
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\series medium
+HXPROC_STDOUT
+\end_layout
+
+\end_inset
+
+
+\family default
+\series default
+ Connect the stdout file descriptor of the subprocess with the master.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXPROC_STDERR
+\series medium
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\series medium
+HXPROC_STDERR
+\end_layout
+
+\end_inset
+
+
+\family default
+\series default
+ Connect the stderr file descriptor of the subprocess with the master.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXPROC_VERBOSE
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXPROC_VERBOSE
+\end_layout
+
+\end_inset
+
+ Have the subprocess print an error message to stderr if exec'ing returned
+ an error.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXPROC_A0
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXPROC_A0
+\end_layout
+
+\end_inset
+
+ 
+\family typewriter
+argv[0]
+\family default
+ refers to program file, while 
+\family typewriter
+argv[1]
+\family default
+ to the program invocation name, with 
+\family typewriter
+argv[2]
+\family default
+ being the arguments.
+ Without this flag, 
+\family typewriter
+argv[0]
+\family default
+ will be both the program file and program invocation name, and arguments
+ begin at 
+\family typewriter
+argv[1]
+\family default
+.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXPROC_EXECV
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXPROC_EXECV
+\end_layout
+
+\end_inset
+
+ Normally, 
+\family typewriter
+execvp
+\family default
+(3)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+execvp
+\end_layout
+
+\end_inset
+
+ will be used which scans 
+\family typewriter
+$PATH
+\family default
+ for the program.
+ Use this flag to use 
+\family typewriter
+execv
+\family default
+(3)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+execv
+\end_layout
+
+\end_inset
+
+ instead, which will not do such thing.
+\end_layout
+
+\begin_layout Subsection
+Callbacks
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/proc.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ HXproc_ops {
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+void (*
+\series default
+p_prefork
+\series bold
+)
+\series default
+(
+\series bold
+void *
+\series default
+);
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+void (*
+\series default
+p_postfork
+\series bold
+)
+\series default
+(
+\series bold
+void *
+\series default
+);
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+void (*
+\series default
+p_complete
+\series bold
+)
+\series default
+(
+\series bold
+void *
+\series default
+);
+\begin_inset Newline newline
+\end_inset
+
+};
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+struct HXproc_ops
+\family default
+ provides a way to run user-specified functions just before the fork, after,
+ and when the process has been waited for.
+ They can be used to set and/or restore signals as needed, for example.
+ The function pointers can be 
+\family typewriter
+NULL
+\family default
+.
+ The 
+\family typewriter
+p_data
+\family default
+ member is passed as an argument.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_prefork
+\family default
+ Run immediately before calling 
+\family typewriter
+fork
+\family default
+(2).
+ This is useful, for taking any action regarding signals, like setting 
+\family typewriter
+SIGCHLD
+\family default
+ to 
+\family typewriter
+SIG_DFL
+\family default
+, or 
+\family typewriter
+SIGPIPE
+\family default
+ to 
+\family typewriter
+SIG_IGN
+\family default
+, for example.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_postfork
+\family default
+ Run in the subprocess (and only there) after forking.
+ Useful to do a 
+\family typewriter
+setuid
+\family default
+(2) or other change in privilege level.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+p_complete
+\family default
+ Run in 
+\family typewriter
+HXproc_wait
+\family default
+ when the process has been waited for.
+ Useful to restore the signal handler(s).
+\end_layout
+
+\begin_layout Subsection
+Process control
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/proc.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
+int
+\series default
+ HXproc_run_async(
+\series bold
+const char *const *
+\series default
+argv, 
+\series bold
+struct
+\series default
+ HXproc 
+\series bold
+*
+\series default
+proc);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HXproc_run_async
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HXproc_run_sync(
+\series bold
+const char *const *
+\series default
+argv, 
+\series bold
+unsigned int
+\series default
+ flags);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HXproc_run_sync
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HXproc_wait(
+\series bold
+struct
+\series default
+ HXproc 
+\series bold
+*
+\series default
+proc);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HXproc_wait
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXproc_run_async
+\family default
+ Start a subprocess according to the parameters in 
+\family typewriter
+proc
+\family default
+.
+ Returns a negative errno code if something went wrong, or positive non-zero
+ on success.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXproc_run_sync
+\family default
+ Start a subprocess synchronously, similar to calling 
+\family typewriter
+system
+\family default
+(3)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+system
+\end_layout
+
+\end_inset
+
+, but with the luxury of being able to specify arguments as separate strings
+ (via argv) rather than one big command line that is run through the shell.
+ 
+\family typewriter
+flags
+\family default
+ is a value composed of the HXproc flags mentioned above in section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:proc-pflags"
+
+\end_inset
+
+.
+ 
+\family typewriter
+HXPROC_STDIN
+\family default
+, 
+\family typewriter
+HXPROC_STDOUT
+\family default
+ and 
+\family typewriter
+HXPROC_STDERR
+\family default
+ are ignored because there would be no one in a synchronous execution that
+ could supply data to these file descriptors or read from them
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Even for threads, please just use the async model.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXproc_wait
+\family default
+ Wait for a subprocess to terminate, if it has not already.
+ It will also retrieve the exit status of the process and store it in the
+ 
+\family typewriter
+struct HXproc
+\family default
+.
+\end_layout
+
 \begin_layout Standard
 \start_of_appendix
 \begin_inset CommandInset index_print

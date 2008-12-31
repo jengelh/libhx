@@ -9,6 +9,7 @@ Fixes:
 Features:
 - defs: add HXSIZEOF_Z*
 - defs: add HX_STRINGIFY
+- proc: initial code
 - string: add HX_split4 function
 
 
