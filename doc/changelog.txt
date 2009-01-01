@@ -1,5 +1,7 @@
 
 
+libHX 2.2 (January 01 2009)
+===========================
 Fixes:
 - defs/cast: avoid warning between conversion from type[] to type *
 - defs/cast: add fallback defs for const_castN()

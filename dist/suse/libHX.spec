@@ -1,7 +1,7 @@
 
-Name:		libHX17
+Name:		libHX18
 %define lname	libHX
-Version:	2.1
+Version:	2.2
 Release:	0
 Group:		System/Libraries
 URL:		http://jengelh.medozas.de/projects/libHX/
@@ -27,7 +27,7 @@ A library for:
 %package -n libHX-devel
 Group:		Development/Libraries/C and C++
 Summary:	Development files for libHX
-Requires:	libHX17 = %version
+Requires:	%name = %version
 
 %description -n libHX-devel
 A library for:
