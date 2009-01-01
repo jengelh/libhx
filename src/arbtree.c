@@ -305,7 +305,7 @@ EXPORT_SYMBOL struct HXbtree_node *HXbtree_find(const struct HXbtree *btree,
 		node = node->sub[res > 0];
 	}
 
-	errno = EINVAL;
+	errno = ENOENT;
 	return NULL;
 }
 

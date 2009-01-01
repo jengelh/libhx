@@ -81,11 +81,11 @@ static inline new_type signed_cast(unsigned char *expr)
 #	endif
 #	if defined(__GNUC__) && !defined(const_cast1)
 #		define __const_cast_strip1(expr) \
-			typeof(*(struct { typeof(expr) x; }){0}.x)
+			typeof(*(struct { int z; typeof(expr) x; }){0}.x)
 #		define __const_cast_strip2(expr) \
-			typeof(**(struct { typeof(expr) x; }){0}.x)
+			typeof(**(struct { int z; typeof(expr) x; }){0}.x)
 #		define __const_cast_strip3(expr) \
-			typeof(***(struct { typeof(expr) x; }){0}.x)
+			typeof(***(struct { int z; typeof(expr) x; }){0}.x)
 #		define const_cast1(new_type, expr) ({ \
 			BUILD_BUG_ON(!__builtin_types_compatible_p(__const_cast_strip1(expr), __const_cast_strip1(new_type))); \
 			(new_type)(expr); \
@@ -107,6 +107,11 @@ static inline new_type signed_cast(unsigned char *expr)
 #	endif
 #	ifndef const_cast
 #		define const_cast(type, expr)       ((type)(expr))
+#	endif
+#	ifndef const_cast1
+#		define const_cast1(type, expr)      ((type)(expr))
+#		define const_cast2(type, expr)      ((type)(expr))
+#		define const_cast3(type, expr)      ((type)(expr))
 #	endif
 #	ifndef reinterpret_cast
 #		define reinterpret_cast(type, expr) ((type)(expr))

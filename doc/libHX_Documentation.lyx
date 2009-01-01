@@ -56,7 +56,7 @@
 \begin_body
 
 \begin_layout Title
-libHX 2.0
+libHX 2.1
 \begin_inset Newline newline
 \end_inset
 
@@ -204,9 +204,19 @@ libHX uses GNU autotools as a build environment, which means that all you
 \family typewriter
 configure
 \family default
- with any options that you need.
- Pay attention to bi-arch systems where you most likely need to specify
- 
+ with any options that you need, plus the usual 
+\family typewriter
+make
+\family default
+ and 
+\family typewriter
+make install
+\family default
+ as desired.
+\end_layout
+
+\begin_layout Standard
+Pay attention to bi-arch systems where you most likely need to specify 
 \begin_inset Quotes eld
 \end_inset
 
@@ -243,7 +253,7 @@ GNU C Compiler 3.x or newer.
 \end_layout
 
 \begin_layout Itemize
-approximately 73
+approximately 79
 \begin_inset space ~
 \end_inset
 
@@ -399,7 +409,7 @@ HXbtree_
 \end_layout
 
 \begin_layout Section
-Annotation casts
+Type-checking casts
 \end_layout
 
 \begin_layout Standard
@@ -642,6 +652,11 @@ const unsigned char
 static_cast()
 \family default
  would also throw at least a compiler warning about the different signedness.)
+ libHX does provide a 
+\family typewriter
+signed_cast<>
+\family default
+ for C++ though.
  This is where 
 \family typewriter
 signed_cast
@@ -2690,6 +2705,7 @@ le.
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status open
@@ -2753,6 +2769,7 @@ Code sample for storing integers
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status open
@@ -2796,6 +2813,7 @@ Code sample for storing strings (pointers)
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status open
@@ -2956,6 +2974,7 @@ SCMP
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status open
@@ -3219,11 +3238,7 @@ ICMP
 \family default
  must be specified when 
 \family typewriter
-HXBT
-\family default
-_\SpecialChar \-
-
-\family typewriter
+HXBT_\SpecialChar \-
 MAP
 \family default
  is selected.
@@ -7623,6 +7638,32 @@ s
 \family default
 .
  The result must not be freed.
+ The input string must not have any trailing slashes
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+This was a 
+\begin_inset Quotes eld
+\end_inset
+
+design
+\begin_inset Quotes erd
+\end_inset
+
+ choice
+\begin_inset space ~
+\end_inset
+
+--- stripping slashes at the library level would require an allocation,
+ and having slashes does not seem to happen that often.
+ Even if there are slashes in a string, the caller often has more knowledge
+ about the exact string and can just replace them by NULs.
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Description

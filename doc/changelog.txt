@@ -1,5 +1,11 @@
 
 
+Fixes:
+- defs/cast: avoid warning between conversion from type[] to type *
+- defs/cast: add fallback defs for const_castN()
+- arbtree: correctly set errno (to ENOENT) in HXbtree_find and _get
+- string: document behavior details of HX_basename
+
 Features:
 - defs: add HXSIZEOF_Z*
 - defs: add HX_STRINGIFY
