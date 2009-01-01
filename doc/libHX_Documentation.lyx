@@ -7618,6 +7618,32 @@ s
 \family default
 .
  The result must not be freed.
+ The input string must not have any trailing slashes
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+This was a 
+\begin_inset Quotes eld
+\end_inset
+
+design
+\begin_inset Quotes erd
+\end_inset
+
+ choice
+\begin_inset space ~
+\end_inset
+
+--- stripping slashes at the library level would require an allocation,
+ and having slashes does not seem to happen that often.
+ Even if there are slashes in a string, the caller often has more knowledge
+ about the exact string and can just replace them by NULs.
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Description

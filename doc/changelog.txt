@@ -3,6 +3,7 @@
 - defs/cast: avoid warning between conversion from type[] to type *
 - defs/cast: add fallback defs for const_castN()
 - arbtree: correctly set errno (to ENOENT) in HXbtree_find and _get
+- string: document behavior details of HX_basename
 
 
 libHX 2.1 (December 23 2008)
