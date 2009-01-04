@@ -613,7 +613,7 @@ static inline void timer_start(void)
 {
 	gettimeofday(&tv_start, NULL);
 	printf("Timer started at %ld.%06ld\n",
-	       tv_start.tv_sec, tv_start.tv_usec);
+	       tv_start.tv_sec, static_cast(long, tv_start.tv_usec));
 }
 
 static inline void timer_end(void)
@@ -624,7 +624,7 @@ static inline void timer_end(void)
 
 	gettimeofday(&tv_end, NULL);
 	printf("Timer ended at: %ld.%06ld\n",
-	       tv_end.tv_sec, tv_start.tv_usec);
+	       tv_end.tv_sec, static_cast(long, tv_start.tv_usec));
 
 	sec = tv_end.tv_sec  - tv_start.tv_sec;
 	acc = tv_end.tv_usec - tv_start.tv_usec;
@@ -636,7 +636,8 @@ static inline void timer_end(void)
 		delta.tv_usec = acc;
 	}
 
-	printf("Timer difference: %ld.%06ld\n", delta.tv_sec, delta.tv_usec);
+	printf("Timer difference: %ld.%06ld\n",
+	       delta.tv_sec, static_cast(long, delta.tv_usec));
 }
 
 static unsigned int tree_height(const struct HXbtree_node *node)
