@@ -2,6 +2,7 @@
 
 Fixes:
 - misc: fix time_compare on FreeBSD to actually use mtimespec
+- mc: handle HXmc_length(NULL)
 
 
 libHX 2.2 (January 01 2009)

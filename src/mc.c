@@ -84,6 +84,8 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcpy(hxmc_t **vp, const void *ptr, size_t len)
 
 EXPORT_SYMBOL size_t HXmc_length(const hxmc_t *vp)
 {
+	if (vp == NULL)
+		return 0;
 	struct memcont *ctx = containerof(vp, struct memcont, data);
 	CHECK_IDENT(ctx);
 	return ctx->length;
