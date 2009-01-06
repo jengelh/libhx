@@ -99,7 +99,7 @@ EXPORT_SYMBOL long HX_time_compare(const struct stat *a,
 	else if (sel == 'c')
 		return ((r = a->st_ctim.tv_sec - b->st_ctim.tv_sec) != 0) ?
 		       r : a->st_ctim.tv_nsec - b->st_ctim.tv_nsec;
-#elif defined(HAVE_STRUCT_STAT_ST_ATIMESPEC)
+#elif defined(HAVE_STRUCT_STAT_ST_MTIMESPEC)
 	if (sel == 'm')
 		return ((r = a->st_mtimespec.tv_sec - b->st_mtimespec.tv_sec) != 0) ?
 		       r : a->st_mtimespec.tv_nsec - b->st_mtimespec.tv_nsec;
