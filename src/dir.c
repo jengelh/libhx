@@ -34,7 +34,7 @@ struct HXdir {
 	char *dname;
 	HANDLE ptr;
 	WIN32_FIND_DATA dentry;
-	unsigned long n;
+	bool got_first;
 #else
 	DIR *ptr;
 	/*
@@ -62,7 +62,7 @@ EXPORT_SYMBOL void *HXdir_open(const char *s)
 		goto out;
 	strcpy(d->dname, s);
 	strcat(d->dname, "\\*");
-	d->n = 0;
+	d->got_first = false;
 #else
 	if ((d->ptr = opendir(s)) == NULL)
 		goto out;
@@ -82,7 +82,8 @@ EXPORT_SYMBOL const char *HXdir_read(void *dv)
 
 	errno = 0;
 #if defined _WIN32
-	if (d->n++ == 0) {
+	if (!d->got_first) {
+		d->got_first = true;
 		if ((d->ptr = FindFirstFile(d->dname, &d->dentry)) == NULL)
 			return NULL;
 	} else if (!FindNextFile(d->ptr, &d->dentry)) {
