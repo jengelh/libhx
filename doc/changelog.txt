@@ -1,6 +1,7 @@
 
 
 Fixes:
+- defs: only use __builtin_offsetof with GCC >= 4
 - misc: fix time_compare on FreeBSD to actually use mtimespec
 - mc: handle HXmc_length(NULL)
 - dir: do not cause directory traversal to restart after 2^32 entries

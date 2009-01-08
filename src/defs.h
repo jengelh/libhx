@@ -2,7 +2,7 @@
 #define _LIBHX_DEFS_H 1
 
 #ifdef __cplusplus
-#	if defined(__GNUC__) && !defined(offsetof)
+#	if defined(__GNUC__) && __GNUC__ >= 4 && !defined(offsetof)
 #		define offsetof(type, member) __builtin_offsetof(type, member)
 #	endif
 #	ifndef offsetof
@@ -116,7 +116,7 @@ static inline new_type signed_cast(unsigned char *expr)
 #	ifndef reinterpret_cast
 #		define reinterpret_cast(type, expr) ((type)(expr))
 #	endif
-#	if defined(__GNUC__) && !defined(offsetof)
+#	if defined(__GNUC__) && __GNUC__ >= 4 && !defined(offsetof)
 #		define offsetof(type, member) __builtin_offsetof(type, member)
 #	endif
 #	ifndef offsetof
