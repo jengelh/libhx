@@ -1,6 +1,8 @@
 #ifndef _LIBHX_ARBTREE_H
 #define _LIBHX_ARBTREE_H 1
 
+#include <sys/types.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

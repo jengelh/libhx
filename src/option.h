@@ -6,6 +6,7 @@
 #else
 #	include <stdio.h>
 #endif
+#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {
