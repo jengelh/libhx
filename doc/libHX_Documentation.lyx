@@ -56,25 +56,11 @@
 \begin_body
 
 \begin_layout Title
-libHX 2.2
+libHX 2.3
 \begin_inset Newline newline
 \end_inset
 
 Documentation
-\end_layout
-
-\begin_layout Standard
-\align center
-\begin_inset Note Greyedout
-status open
-
-\begin_layout Plain Layout
-It is a bit drafty right now.
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -184,9 +170,18 @@ status open
 
 \begin_layout Plain Layout
 Software projects may choose to entirely lowercase the project name for
- use in filenames, such as the Linux kernel which is released as linux-${version
-}.tar.bz2, or the project may choose to keep the name for filenames, like
- Mesa and SDL do.
+ use in filenames, such as the Linux kernel which is released as 
+\family typewriter
+linux-${
+\family default
+\shape italic
+version
+\family typewriter
+\shape default
+}.tar.bz2
+\family default
+, or the project may choose to keep the name for filenames, like Mesa and
+ SDL do.
 \end_layout
 
 \end_inset
@@ -244,7 +239,7 @@ Requirements
 \end_layout
 
 \begin_layout Itemize
-GNU C Compiler 3.x or newer.
+GNU C Compiler 3.3.5 or newer.
  Other compilers have not been tested in months
 \begin_inset space ~
 \end_inset
@@ -253,11 +248,12 @@ GNU C Compiler 3.x or newer.
 \end_layout
 
 \begin_layout Itemize
-approximately 79
+approximately 80
 \begin_inset space ~
 \end_inset
 
-KB of disk space for the shared library and header files
+KB of disk space on Linux for the shared library and header files; somewhat
+ more for *BSD.
 \end_layout
 
 \begin_layout Standard
@@ -509,6 +505,30 @@ reinterpret
 \begin_layout LyX-Code
 
 \series bold
+#include
+\series default
+ <libHX/defs.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/defs.h
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
 int
 \series default
  i;
@@ -1930,6 +1950,26 @@ Conversion is permitted when expression and target type are from the table.
 Macros
 \end_layout
 
+\begin_layout Standard
+All macros in this section are available through 
+\family typewriter
+#include <libHX/defs.h>
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/defs.h
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Subsection
 Preprocessor
 \end_layout
@@ -1940,6 +1980,18 @@ Preprocessor
 #define
 \series default
  HX_STRINGIFY(s)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_STRINGIFY
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2395,6 +2447,18 @@ Structural definition
 #include
 \series default
  <libHX/arbtree.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/arbtree.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -2509,6 +2573,29 @@ struct HXbtree_node
 
         
 \series bold
+/* 
+\family roman
+\series default
+\shape italic
+public readonly/readwrite (see notes in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:arbtree-storage"
+
+\end_inset
+
+):
+\family default
+\series bold
+\shape default
+ */
+\series default
+
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
 union
 \series default
  {
@@ -2599,29 +2686,21 @@ struct HXbtree
 :
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Description
 
 \family typewriter
 uptr
 \family default
-
-\begin_inset space ~
-\end_inset
-
---- a custom user-supplied pointer, usually to aid associating the tree
- with something else when needed
+ A custom user-supplied pointer, usually to aid associating the tree with
+ something else when needed
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Description
 
 \family typewriter
 items
 \family default
-
-\begin_inset space ~
-\end_inset
-
---- the number of items in the tree.
+ The number of items in the tree.
  This field tracks the number of items in the tree and is used to report
  the number of elements to the user, and is updated whenever an element
  is inserted or removed from the tree.
@@ -2662,6 +2741,13 @@ MAP
 
 \begin_layout Subsection
 Storage models
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:arbtree-storage"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -3022,7 +3108,7 @@ unsigned int
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Storing non-atomic
+Storing non-atomic data
 \end_layout
 
 \end_inset
@@ -4482,7 +4568,68 @@ return
 \begin_inset Newline newline
 \end_inset
 
+
+\series bold
+static int
+\series default
+ strcmp_rev3(
+\series bold
+const void *
+\series default
+a, 
+\series bold
+const void *
+\series default
+b, 
+\series bold
+size_t
+\series default
+ z)
+\begin_inset Newline newline
+\end_inset
+
+{
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+/* 
+\family roman
+\series default
+\shape italic
+z is provided for cases when things are raw memory blocks.
+
+\family default
+\series bold
+\shape default
+ */
+\series default
+
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+return
+\series default
+ strcmp(b, a);
+\begin_inset Newline newline
+\end_inset
+
+}
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
 b = HXbtree_init(HXBT_MAP | HXBT_CMPFN, strcmp_rev);
+\begin_inset Newline newline
+\end_inset
+
+b = HXbtree_init2(HXBT_MAP | HXBT_SKEY, strcmp3_rev, NULL, NULL, NULL, NULL);
 \end_layout
 
 \begin_layout Subsubsection
@@ -4559,7 +4706,11 @@ for
 \begin_inset Newline newline
 \end_inset
 
-        HXbtree_add(b, (const void *)HX_irand(1, 50));
+        HXbtree_add(b, (
+\series bold
+const void *
+\series default
+)HX_irand(1, 50));
 \end_layout
 
 \begin_layout Subsubsection
@@ -4812,6 +4963,18 @@ Structural definition
 #include
 \series default
  <libHX/deque.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/deque.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -4824,6 +4987,18 @@ Structural definition
 struct
 \series default
  HXdeque {
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+struct HXdeque
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -4872,6 +5047,18 @@ ptr;
 struct
 \series default
  HXdeque_node {
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+struct HXdeque_node
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -4976,6 +5163,18 @@ HXdeque_init(
 void
 \series default
 );
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_init
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -4992,6 +5191,18 @@ struct
 *
 \series default
 dq);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_free
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -5008,6 +5219,18 @@ struct
 *
 \series default
 dq);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_genocide
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout LyX-Code
@@ -5028,6 +5251,18 @@ dq,
 unsigned int *
 \series default
 num);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_to_vec
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5131,6 +5366,18 @@ dq,
 void *
 \series default
 ptr);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_push
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -5155,6 +5402,18 @@ dq,
 void *
 \series default
 ptr);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_unshift
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -5171,6 +5430,18 @@ struct
 *
 \series default
 dq);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_pop
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -5187,6 +5458,18 @@ struct
 *
 \series default
 dq);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_shift
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -5219,6 +5502,18 @@ struct
 *
 \series default
 node);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_move
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -5235,6 +5530,18 @@ struct
 *
 \series default
 node);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_del
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5386,6 +5693,18 @@ dq,
 const void *
 \series default
 ptr);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_find
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -5406,6 +5725,18 @@ dq,
 void *
 \series default
 ptr);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_get
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5489,9 +5820,9 @@ status open
 #include
 \series default
  <libHX/defs.h>
-\end_layout
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout LyX-Code
 
 \series bold
 #include
@@ -5615,7 +5946,7 @@ reinterpret_cast
 \series bold
 char **
 \series default
-, HXdeque_to_zvec(dq, &elem));
+, HXdeque_to_vec(dq, &elem));
 \begin_inset Newline newline
 \end_inset
 
@@ -5955,6 +6286,308 @@ struct classic_direct_data
 \end_layout
 
 \begin_layout Subsection
+Synopsis
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/list.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/list.h
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ HXlist_head {
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+struct HXlist_head
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+/* 
+\family roman
+\series default
+\shape italic
+All fields considered private
+\family default
+\series bold
+\shape default
+ */
+\series default
+
+\begin_inset Newline newline
+\end_inset
+
+}
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+HXLIST_HEAD_INIT(name);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXLIST_HEAD_INIT
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+HXLIST_HEAD(name);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXLIST_HEAD
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXlist_init(
+\series bold
+struct
+\series default
+ HXlist_head 
+\series bold
+*
+\series default
+list);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXlist_init
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXlist_add(
+\series bold
+struct
+\series default
+ HXlist_head 
+\series bold
+*
+\series default
+list, 
+\series bold
+struct
+\series default
+ HXlist_head 
+\series bold
+*
+\series default
+elem);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXlist_add
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXlist_add_tail(
+\series bold
+struct
+\series default
+ HXlist_head 
+\series bold
+*
+\series default
+list, 
+\series bold
+struct
+\series default
+ HXlist_head 
+\series bold
+*
+\series default
+elem);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXlist_add_tail
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXlist_del(
+\series bold
+struct
+\series default
+ HXlist_head 
+\series bold
+*
+\series default
+element);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXlist_del
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXLIST_HEAD_INIT
+\family default
+ This macro expands to the static initializer for a list head.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXLIST_HEAD
+\family default
+ This macro expands to the definition of a list head (i.
+\begin_inset space \thinspace{}
+\end_inset
+
+e.
+\begin_inset space \space{}
+\end_inset
+
+
+\family typewriter
+struct HXlist_head name = HXLIST_HEAD_INIT;
+\family default
+)
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXlist_init
+\family default
+ Initializes the list head.
+ This function is generally used when the list head is on the heap where
+ the static initializer cannot be used.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXlist_add
+\family default
+ Adds 
+\family typewriter
+elem
+\family default
+ to the front of the list.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXlist_add_tail
+\family default
+ Adds 
+\family typewriter
+elem
+\family default
+ to the end of the list.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXlist_del
+\family default
+ Deletes the given element from the list.
+\end_layout
+
+\begin_layout Subsection
 When to use HXdeque/HXlist
 \end_layout
 
@@ -6279,6 +6912,45 @@ Data can be added multiple times in a HXdeque without ill effects
 \end_layout
 
 \begin_layout Standard
+To support this, an extra allocation is needed on the other hand.
+ In a HXlist, to store 
+\begin_inset Formula $n$
+\end_inset
+
+ elements of compound data (e.
+\begin_inset space \thinspace{}
+\end_inset
+
+g.
+\begin_inset space \space{}
+\end_inset
+
+
+\family typewriter
+struct point
+\family default
+), 
+\begin_inset Formula $n$
+\end_inset
+
+ allocations are needed, assuming the list head is a stack object, and the
+ points are not.
+ HXdeque will need at least 
+\begin_inset Formula $2n+1$
+\end_inset
+
+ allocations, 
+\begin_inset Formula $n$
+\end_inset
+
+ for the nodes, 
+\begin_inset Formula $n$
+\end_inset
+
+ for the points and another for the head.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Newpage clearpage
 \end_inset
 
@@ -6321,6 +6993,18 @@ Synopsis
 #include
 \series default
  <libHX/clist.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/clist.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -6333,6 +7017,34 @@ Synopsis
 struct
 \series default
  HXclist_head {
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+struct HXclist_head
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+/* 
+\family roman
+\series default
+\shape italic
+public readonly:
+\family default
+\series bold
+\shape default
+ */
+\series default
+
 \begin_inset Newline newline
 \end_inset
 
@@ -6376,7 +7088,35 @@ private
 \begin_inset Newline newline
 \end_inset
 
+HXCLIST_HEAD_INIT(name);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXCLIST_HEAD_INIT
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
 HXCLIST_HEAD(name);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXCLIST_HEAD
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -6393,30 +7133,18 @@ struct
 *
 \series default
 head);
-\begin_inset Newline newline
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXclist_init
+\end_layout
+
 \end_inset
 
 
-\series bold
-void
-\series default
- HXclist_del(
-\series bold
-struct
-\series default
- HXclist_head 
-\series bold
-*
-\series default
-head, 
-\series bold
-struct 
-\series default
-HXlist_chead 
-\series bold
-*
-\series default
-node);
 \begin_inset Newline newline
 \end_inset
 
@@ -6441,6 +7169,18 @@ struct
 *
 \series default
 new_node);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXclist_unshift
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -6465,6 +7205,18 @@ struct
 *
 \series default
 new_node);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXclist_push
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -6485,6 +7237,18 @@ head,
 type
 \series default
 , member);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXclist_pop
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -6505,6 +7269,125 @@ head,
 type
 \series default
 , member);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXclist_shift
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXclist_del(
+\series bold
+struct
+\series default
+ HXclist_head 
+\series bold
+*
+\series default
+head, 
+\series bold
+struct 
+\series default
+HXlist_chead 
+\series bold
+*
+\series default
+node);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXclist_del
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXCLIST_HEAD_INIT
+\family default
+ Macro that expands to the static initializer for a clist.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXCLIST_HEAD
+\family default
+ Macro that expands to the definition of a clist head, with initialization.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXclist_init
+\family default
+ Initializes a clist.
+ This function is generally used when the head has been allocated from the
+ heap.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXclist_unshift
+\family default
+ Adds the node to the front of the list.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXclist_push
+\family default
+ Adds the node to the end of the list.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXclist_pop
+\family default
+ Removes the last node in the list and returns it.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXclist_shift
+\family default
+ Removes the first node in the list and returns it.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXclist_del
+\family default
+ Deletes the node from the list.
+\end_layout
+
+\begin_layout Standard
+The list count in the clist head is updated whenever a modification is done
+ on the clist through these functions.
 \end_layout
 
 \begin_layout Standard
@@ -6837,6 +7720,18 @@ HX_isalpha
 #include
 \series default
  <libHX/ctype_helper.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/ctype_helper.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -7190,6 +8085,18 @@ libxml_helper.h
 #include
 \series default
  <libHX/libxml_helper.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/libxml_helper.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -7394,6 +8301,18 @@ Locating chars
 #include
 \series default
  <libHX/string.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/string.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -7537,6 +8456,18 @@ Extraction
 #include
 \series default
  <libHX/string.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/string.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -7728,6 +8659,18 @@ In-place transformations
 #include
 \series default
  <libHX/string.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/string.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -7986,6 +8929,18 @@ Tokenizing
 #include
 \series default
  <libHX/string.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/string.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -8401,6 +9356,16 @@ Size-bounded string ops
 #include
 \series default
  <libHX/string.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+libHX/string.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -8595,6 +9560,18 @@ Allocation-related
 #include
 \series default
  <libHX/string.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/string.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -8870,8 +9847,9 @@ S
 \begin_inset Quotes erd
 \end_inset
 
- for stack, as HX_split5 is often used only with on-stack (automatic) variables,
- as the example for parsing 
+ for stack, as HX_split5 is often used only with on-stack variables and
+ where the field count of interest is fixed, as the example for parsing
+ 
 \family typewriter
 /etc/passwd
 \family default
@@ -8881,9 +9859,29 @@ S
 \begin_layout LyX-Code
 
 \series bold
+#include
+\series default
+ <stdio.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#include
+\series default
+ <libHX/string.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
 char *
 \series default
-stack[8];
+field[8];
 \begin_inset Newline newline
 \end_inset
 
@@ -8911,7 +9909,7 @@ while
 \series bold
 if
 \series default
- (HX_split5(line, ":", ARRAY_SIZE(stack), stack) < 7) {
+ (HX_split5(line, ":", ARRAY_SIZE(field), field) < 7) {
 \begin_inset Newline newline
 \end_inset
 
@@ -8935,7 +9933,226 @@ continue
 
         printf("Username: %s
 \backslash
-n", stack[0]);
+n", field[0]);
+\begin_inset Newline newline
+\end_inset
+
+}
+\end_layout
+
+\begin_layout Subsubsection
+Using HX_split4
+\end_layout
+
+\begin_layout Standard
+Where the number of fields is not previously known and/or estimatable, but
+ the string can be modified in place, one uses 
+\family typewriter
+HX_split4
+\family default
+ as follows:
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <errno.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#include
+\series default
+ <stdio.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#include
+\series default
+ <libHX/string.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+while
+\series default
+ (HX_getl(&line, fp) != NULL) {
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+char **
+\series default
+field = HX_split4(line, ":", NULL, 0);
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+if
+\series default
+ (field == NULL) {
+\begin_inset Newline newline
+\end_inset
+
+                fprintf(stderr, "Badness! %s
+\backslash
+n", strerror(errno));
+\begin_inset Newline newline
+\end_inset
+
+                
+\series bold
+break
+\series default
+;
+\begin_inset Newline newline
+\end_inset
+
+        }
+\begin_inset Newline newline
+\end_inset
+
+        printf("Username: %s
+\backslash
+n", field[0]);
+\begin_inset Newline newline
+\end_inset
+
+        free(field);
+\begin_inset Newline newline
+\end_inset
+
+}
+\end_layout
+
+\begin_layout Subsubsection
+Using HX_split
+\end_layout
+
+\begin_layout Standard
+Where the string is not modifiable in-place, one has to resort to using
+ the full-fledged 
+\family typewriter
+HX_split
+\family default
+ that allocates space for each substring.
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <errno.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#include
+\series default
+ <stdio.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#include
+\series default
+ <libHX/string.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+while
+\series default
+ (HX_getl(&line, fp) != NULL) {
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+char **
+\series default
+field = HX_split(line, ":", NULL, 0);
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+if
+\series default
+ (field == NULL) {
+\begin_inset Newline newline
+\end_inset
+
+                fprintf(stderr, "Badness.
+ %s
+\backslash
+n", strerror(errno));
+\begin_inset Newline newline
+\end_inset
+
+                break;
+\begin_inset Newline newline
+\end_inset
+
+        }
+\begin_inset Newline newline
+\end_inset
+
+        printf("Username: %s
+\backslash
+n", field[0]);
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+/* 
+\family roman
+\series default
+\shape italic
+Suppose 
+\begin_inset Quotes eld
+\end_inset
+
+callme
+\begin_inset Quotes erd
+\end_inset
+
+ needs the original string
+\family default
+\series bold
+\shape default
+ */
+\series default
+
+\begin_inset Newline newline
+\end_inset
+
+        callme(line);
+\begin_inset Newline newline
+\end_inset
+
+        HX_zvecfree(field);
 \begin_inset Newline newline
 \end_inset
 
@@ -8947,16 +10164,44 @@ Using HX_strsep
 \end_layout
 
 \begin_layout Standard
-HX_strsep provides for thread- and reentrant-safe tokenizing a string where
- strtok from the C standard would otherwise fail.
+
+\family typewriter
+HX_strsep
+\family default
+ provides for thread- and reentrant-safe tokenizing a string where strtok
+ from the C standard would otherwise fail.
 \end_layout
 
 \begin_layout LyX-Code
 
 \series bold
+#include
+\series default
+ <stdio.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#include
+\series default
+ <libHX/string.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
 char
 \series default
- line[] = "root:x:0:0:root:/root:/bin/bash";
+ line
+\series bold
+[]
+\series default
+ = "root:x:0:0:root:/root:/bin/bash";
 \begin_inset Newline newline
 \end_inset
 
@@ -9149,7 +10394,11 @@ This makes it quite similar to the string operations (and append seems to
  metadata structure contains the length of the memory block in the container.
  For binary data this may be the norm, but for C-style strings, the stored
  and auto-updated length field serves as an accelerator cache.
- For more details, see HXmc_length.
+ For more details, see 
+\family typewriter
+HXmc_length
+\family default
+.
 \end_layout
 
 \begin_layout Standard
@@ -9172,7 +10421,11 @@ g.
 \begin_inset space \space{}
 \end_inset
 
-struct) itself, but a pointer to the data block.
+
+\family typewriter
+struct
+\family default
+) itself, but a pointer to the data block.
  Conversely, input parameters to HXmc functions will be the data block pointer.
  It is of type 
 \family typewriter
@@ -9229,8 +10482,14 @@ hxmc_t
 \end_layout
 
 \begin_layout Standard
-HXmc ensures that the data block is terminated by a NUL byte (unless you
- trash it), so you do not have to, and of course, to be on the safe side.
+HXmc ensures that the data block is terminated by a NUL (
+\family typewriter
+'
+\backslash
+0'
+\family default
+) byte (unless you trash it), so you do not have to, and of course, to be
+ on the safe side.
  But, the automatic NUL byte is not part of the region allocated by the
  user.
  That is, when one uses the classic approach with 
@@ -9269,6 +10528,30 @@ Constructors, destructors
 \end_layout
 
 \begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/string.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/string.h
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
 hxmc_t 
 \series bold
 *
@@ -10202,6 +11485,18 @@ Initialization, use and deallocation
 #include
 \series default
  <libHX/option.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/option.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -11054,7 +12349,13 @@ b = "Hello World";
 \series bold
 char
 \series default
- c[] = "Hello World";
+ c
+\family default
+\series bold
+[]
+\family typewriter
+\series default
+ = "Hello World";
 \family default
 
 \begin_inset Newline newline
@@ -11215,6 +12516,18 @@ Synopsis
 #include
 \series default
  <libHX/misc.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/misc.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -11339,6 +12652,34 @@ Example
 \begin_layout LyX-Code
 
 \series bold
+#include
+\series default
+ <errno.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#include
+\series default
+ <stdio.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#include
+\series default
+ <libHX/misc.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
 void *
 \series default
 dh;
@@ -11403,6 +12744,18 @@ Synopsis
 #include
 \series default
  <libHX/misc.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/misc.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -11513,6 +12866,18 @@ Synopsis
 #include
 \series default
  <libHX/misc.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/misc.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -11592,6 +12957,18 @@ Possible flags that can be used with the functions:
 \family typewriter
 HXF_KEEP
 \family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXF_KEEP
+\end_layout
+
+\end_inset
+
  Do not overwrite existing files.
 \end_layout
 
@@ -11600,6 +12977,18 @@ HXF_KEEP
 \family typewriter
 HXF_UID
 \family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXF_UID
+\end_layout
+
+\end_inset
+
  Change the new file's owner to the UID given in the varargs section (
 \family typewriter
 ...
@@ -11621,6 +13010,18 @@ HXF_GID
 \family typewriter
 HXF_GID
 \family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXF_GID
+\end_layout
+
+\end_inset
+
  Change the new file's group owner to the GID given in the varargs section.
  This is processed after 
 \family typewriter
@@ -15415,6 +16816,18 @@ Synopsis
 #include
 \series default
  <libHX/option.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/option.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -15806,6 +17219,18 @@ Function overview
 #include
 \series default
  <libHX/misc.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/misc.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -16113,6 +17538,18 @@ Process metadata structure
 #include
 \series default
  <libHX/proc.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/proc.h
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 

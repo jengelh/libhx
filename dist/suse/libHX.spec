@@ -1,7 +1,7 @@
 
 Name:		libHX18
 %define lname	libHX
-Version:	2.2
+Version:	2.3
 Release:	0
 Group:		System/Libraries
 URL:		http://jengelh.medozas.de/projects/libHX/
@@ -10,6 +10,8 @@ License:	LGPL2,3
 Source:		http://jengelh.medozas.de/files/libHX/libHX-%version.tar.bz2
 BuildRoot:	%_tmppath/%name-%version-build
 BuildRequires:	gcc-c++
+# no, libxml2-devel is NOT required because nothing
+# that requires it is going to be compiled.
 
 %description
 A library for:
@@ -42,7 +44,6 @@ A library for:
   /dev/urandom support
 - various string, memory and zvec ops
 
-%debug_package
 %prep
 %setup -n %lname-%version
 
@@ -77,3 +78,4 @@ cp -a doc "$b/%_docdir/%lname";
 %_includedir/*
 %docdir %_docdir/%lname
 %doc %_docdir/%lname/*
+%doc doc/*.pdf
