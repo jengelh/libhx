@@ -3,6 +3,10 @@
 
 #ifdef __cplusplus
 #	if defined(__GNUC__) && __GNUC__ >= 4 && !defined(offsetof)
+		/*
+		 * This is here so most programs can skip inclusion
+		 * of stddef.h just to get offsetof.
+		 */
 #		define offsetof(type, member) __builtin_offsetof(type, member)
 #	endif
 #	ifndef offsetof
