@@ -6,18 +6,13 @@
 #else
 #	include <stddef.h>
 #endif
+#include <libHX/defs.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifndef container_of
-#	define container_of(ptr, type, member) ({			\
-		const typeof(((type *)0)->member) *__mptr = (ptr);	\
-		(type *)((char *)__mptr - offsetof(type, member));	\
-	})
-#endif
-#define HXlist_entry(ptr, type, member) container_of((ptr), type, member)
+#define HXlist_entry(ptr, type, member) containerof((ptr), type, member)
 
 struct HXlist_head {
 	struct HXlist_head *next, *prev;
