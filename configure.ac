@@ -37,12 +37,12 @@ AC_CHECK_FUNCS([fork execv execvp pipe], [b_proc="1"])
 AC_CHECK_FUNCS([gettimeofday getegid geteuid getpid getppid])
 AM_CONDITIONAL([B_PROC], [test "$b_proc" = 1])
 
-regular_CFLAGS="-D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
+regular_CFLAGS="-D_FILE_OFFSET_BITS=64 \
 	-D_REENTRANT -Wall -Waggregate-return -Wmissing-declarations \
 	-Wmissing-prototypes -Wredundant-decls -Wshadow -Wstrict-prototypes \
 	-Wformat=2 -pipe"
-regular_CXXFLAGS="-D_LARGEFILE_SOURCE=1 -D_LARGE_FILES -D_FILE_OFFSET_BITS=64 \
-	-D_REENTRANT -Wall -Wno-pointer-arith -Wredundant-decls -fPIC -pipe";
+regular_CXXFLAGS="-D_FILE_OFFSET_BITS=64 \
+	-D_REENTRANT -Wall -Wno-pointer-arith -Wredundant-decls -pipe";
 AC_SUBST([regular_CFLAGS])
 AC_SUBST([regular_CXXFLAGS])
 AC_SUBST([regular_LIBS])
