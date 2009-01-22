@@ -13161,6 +13161,30 @@ popt failed to do this for a long time.
 .
 \end_layout
 
+\begin_layout Standard
+A table-based approach allows for the parser to run as one atomic block
+ of code (callbacks are, by definition, 
+\begin_inset Quotes eld
+\end_inset
+
+special
+\begin_inset Quotes erd
+\end_inset
+
+ exceptions), making it more opaque than an open-coded 
+\family typewriter
+getopt
+\family default
+(3) loop.
+ You give it your argument vector and the table, snip the finger (call the
+ parser function once), and it is done.
+ In getopt on the other hand, the 
+\family typewriter
+getopt
+\family default
+ function returns for every argument it parsed and needs to be called repeatedly.
+\end_layout
+
 \begin_layout Subsection
 Synopsis
 \begin_inset CommandInset label
@@ -15907,6 +15931,217 @@ HX_getopt
 
 \begin_layout Subsection
 Examples
+\end_layout
+
+\begin_layout Subsubsection
+Basic example
+\end_layout
+
+\begin_layout Standard
+The following code snippet should provide an equivalent of the GNU getopt
+ sample
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.gnu.org/software/libtool/manual/libc/Example-of-Getopt.html
+\backslash
+#Example-of-Getopt
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <stdio.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#include
+\series default
+ <stdilb.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#include
+\series default
+ <libHX/option.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ main(
+\series bold
+int
+\series default
+ argc, 
+\series bold
+const char **
+\series default
+argv)
+\begin_inset Newline newline
+\end_inset
+
+{
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+int
+\series default
+ aflag = 0;
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+int
+\series default
+ bflag = 0;
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+char *
+\series default
+cflag = NULL;
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+struct
+\series default
+ HXoption options_table
+\series bold
+[]
+\series default
+ = {
+\begin_inset Newline newline
+\end_inset
+
+                {.sh = 'a', .type = HXTYPE_NONE, .ptr = &aflag},
+\begin_inset Newline newline
+\end_inset
+
+                {.sh = 'b', .type = HXTYPE_NONE, .ptr = &bflag},
+\begin_inset Newline newline
+\end_inset
+
+                {.sh = 'c', .type = HXTYPE_STRING, .ptr = &cflag},
+\begin_inset Newline newline
+\end_inset
+
+                HXOPT_AUTOHELP,
+\end_layout
+
+\begin_layout LyX-Code
+                HXOPT_TABLEEND,
+\begin_inset Newline newline
+\end_inset
+
+        };
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+if
+\series default
+ (HX_getopt(options_table, &argc, &argv, HXOPT_USAGEONERR) <= 0)
+\end_layout
+
+\begin_layout LyX-Code
+                
+\series bold
+return
+\series default
+ EXIT_FAILURE;
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+        printf("aflag = %d, bflag = %d, cvalue = %s
+\backslash
+n",
+\begin_inset Newline newline
+\end_inset
+
+               aflag, bflag, cvalue);
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+while
+\series default
+ (*++argv != NULL)
+\begin_inset Newline newline
+\end_inset
+
+                printf("Non-option argument %s
+\backslash
+n", *argv);
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+return
+\series default
+ EXIT_SUCCESS;
+\begin_inset Newline newline
+\end_inset
+
+}
 \end_layout
 
 \begin_layout Subsubsection
