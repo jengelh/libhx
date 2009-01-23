@@ -84,6 +84,574 @@ Introduction
 \end_layout
 
 \begin_layout Standard
+libHX collects many useful day-to-day functions, intended to reduce the
+ amount of otherwise repeatedly open-coded instructions.
+\end_layout
+
+\begin_layout Section
+Overview
+\end_layout
+
+\begin_layout Itemize
+Red-black binary tree with key-value pair extension (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:arbtree"
+
+\end_inset
+
+)
+\begin_inset Newline newline
+\end_inset
+
+Originally created to provide a data structure like Perl's associative arrays.
+ Uses an rbtree as underlying engine for somewhat quick insertion and deletion
+ with a small memory footprint for ordered traversal.
+ (Hashes would require gathering all keys first and sorting them.)
+\end_layout
+
+\begin_layout Itemize
+Deques (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:deque"
+
+\end_inset
+
+)
+\begin_inset Newline newline
+\end_inset
+
+Double-ended queues, implemented as a doubly-linked list with sentinels,
+ are suitable for both providing stack and queue functionality.
+\end_layout
+
+\begin_layout Itemize
+Inline doubly-linked list, uncounted and counted (sections
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:list"
+
+\end_inset
+
+ and
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:clist"
+
+\end_inset
+
+)
+\begin_inset Newline newline
+\end_inset
+
+Light-weight linked lists as used in the Linux kernel.
+\end_layout
+
+\begin_layout Itemize
+Common string operations (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:strings"
+
+\end_inset
+
+)
+\begin_inset Newline newline
+\end_inset
+
+basename, chomp, dirname, getl(ine), split, strlcat/strlcpy, strlower/-upper,
+ str*trim, strsep, etc.
+\end_layout
+
+\begin_layout Itemize
+Memory containers, auto-sizing string operations (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:mc"
+
+\end_inset
+
+)
+\begin_inset Newline newline
+\end_inset
+
+Scripting-like invocation for string handling
+\begin_inset space ~
+\end_inset
+
+--- automatically doing (re)allocations as needed.
+\end_layout
+
+\begin_layout Itemize
+String formatter (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:format"
+
+\end_inset
+
+)
+\begin_inset Newline newline
+\end_inset
+
+HXfmt is a small template system for by-name variable expansion.
+ It can be used to substitute placeholders in format strings supplied by
+ the user by appropriate expanded values defined by the program.
+\end_layout
+
+\begin_layout Itemize
+Directory creation, traversal, removal, and file copying (sections
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:dir-ops1"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:dir-ops2"
+
+\end_inset
+
+ and
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:file-ops"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+Option parsing (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:option"
+
+\end_inset
+
+)
+\begin_inset Newline newline
+\end_inset
+
+Table-/callback-based option parser that works similar to Perl's 
+\family typewriter
+Getopt::Long
+\family default
+
+\begin_inset space ~
+\end_inset
+
+--- no open-coding but a single 
+\begin_inset Quotes eld
+\end_inset
+
+atomic
+\begin_inset Quotes erd
+\end_inset
+
+ invocation.
+\end_layout
+
+\begin_layout Itemize
+Shell-style config parser (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:shconf"
+
+\end_inset
+
+)
+\begin_inset Newline newline
+\end_inset
+
+Configuration file reader for Shell-style 
+\begin_inset Quotes eld
+\end_inset
+
+configuration
+\begin_inset Quotes erd
+\end_inset
+
+ files with key-value pairs, as usually foudn in 
+\family typewriter
+/etc/sysconfig
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+Random number gathering (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:random"
+
+\end_inset
+
+)
+\begin_inset Newline newline
+\end_inset
+
+Convenient wrapper that uses kernel-provided RNG devices when available.
+\end_layout
+
+\begin_layout Itemize
+External process invocation (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:proc"
+
+\end_inset
+
+)
+\begin_inset Newline newline
+\end_inset
+
+Setting up pipes for the standard file descriptors for sending/capturing
+ data to/from a program.
+\end_layout
+
+\begin_layout Itemize
+
+\shape italic
+a bit more beyond that ...
+\end_layout
+
+\begin_layout Section
+Resources
+\end_layout
+
+\begin_layout Standard
+As of this writing, the repository is located at
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+git://dev.medozas.de/libHX
+\end_layout
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+--- clone URL
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://dev.medozas.de/gitweb.cgi?p=libHX
+\end_layout
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+--- gitweb interface
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://jengelh.medozas.de/projects/libHX/
+\end_layout
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+--- home page (and link to tarballs)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://freshmeat.net/projects/libHX/
+\end_layout
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+--- Freshmeat page (useful for subscription, i.
+\begin_inset space \thinspace{}
+\end_inset
+
+e.
+\begin_inset space \space{}
+\end_inset
+
+automatic notification of releases)
+\end_layout
+
+\begin_layout Section
+Installation
+\end_layout
+
+\begin_layout Standard
+libHX uses GNU autotools as a build environment, which means that all you
+ have to run as a end-user is the 
+\family typewriter
+configure
+\family default
+ with any options that you need, plus the usual 
+\family typewriter
+make
+\family default
+ and 
+\family typewriter
+make install
+\family default
+ as desired.
+\end_layout
+
+\begin_layout Standard
+Pay attention to bi-arch Linux distributions where you most likely need
+ to specify 
+\begin_inset Quotes eld
+\end_inset
+
+lib64
+\begin_inset Quotes erd
+\end_inset
+
+ instead of 
+\begin_inset Quotes eld
+\end_inset
+
+lib
+\begin_inset Quotes erd
+\end_inset
+
+:
+\end_layout
+
+\begin_layout LyX-Code
+$ 
+\series bold
+./configure --libdir='${prefix}/lib64'
+\end_layout
+
+\begin_layout Standard
+Other libdir naming besides 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+lib
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+lib64
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+ may be in use by different distributions, but are rarely seen (like 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+lib32
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Subsection
+Requirements
+\end_layout
+
+\begin_layout Itemize
+GNU C Compiler 3.3.5 or newer.
+ Other compilers (non-GCC) have not been tested in months
+\begin_inset space ~
+\end_inset
+
+--- use at your own risk.
+\end_layout
+
+\begin_layout Itemize
+approximately 80
+\begin_inset space ~
+\end_inset
+
+KB of disk space on Linux for the shared library and header files; somewhat
+ more for *BSD.
+\end_layout
+
+\begin_layout Standard
+A C++ compiler is only needed if you want to build the test programs that
+ come with libHX, in C++ mode.
+ This is done by default so it may occur that you get prompted for a C++
+ compiler, but it is not strictly required, as this is just for the test
+ programs.
+\end_layout
+
+\begin_layout Itemize
+No external libraries are needed for compilation of libHX.
+ Helper files, like 
+\family typewriter
+libxml_helper.h
+\family default
+, may reference their include files, but they are not used during compilation.
+\end_layout
+
+\begin_layout Section
+Portability notice
+\end_layout
+
+\begin_layout Standard
+libHX runs on contemporary versions of Linux, Solaris and the three BSD
+ distributions.
+ It might even work on Microsoft Windows, but this is not tested very often,
+ if at all.
+ Overly old systems, especially Unices, are not within focus.
+ While AIX
+\begin_inset space ~
+\end_inset
+
+5.3 might still classify as contemporary, strangelets like 
+\begin_inset Quotes eld
+\end_inset
+
+Ultrix
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Dynix
+\begin_inset Quotes erd
+\end_inset
+
+ you can find in the autotools-related file 
+\family typewriter
+config.guess
+\family default
+ are some that are definitely not.
+\end_layout
+
+\begin_layout Standard
+Furthermore, a compiler that understands the C99 or GNU89 standard is required.
+ The integer type 
+\begin_inset Quotes eld
+\end_inset
+
+int
+\begin_inset Quotes erd
+\end_inset
+
+ should at best have 32 bits at least.
+ There is no ultra-portable version as of this writing, but feel free to
+ start one akin to the 
+\begin_inset Quotes eld
+\end_inset
+
+p
+\begin_inset Quotes erd
+\end_inset
+
+ variants of OpenBSD software such as OpenSSH.
+\end_layout
+
+\begin_layout Section
+History
+\end_layout
+
+\begin_layout Standard
 The origins of libHX trace back, even crossing a language boundary, to when
  the author started on using Perl in 1999.
  Some tasks were just too damn useful to be open-coded every time.
@@ -96,35 +664,12 @@ HX_basename
 HX_mkdir
 \family default
 .
- The name of the ancillary function collection back then was felt as being
- too long and was truncated
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-Sometime between 2002-Oct-20--2003-Apr.
+ The name does not relate to anyone's initials; it is a result of a truncation
+ of the author's nick used years ago.
 \end_layout
 
-\end_inset
-
-, leaving the initial character 
-\begin_inset Quotes eld
-\end_inset
-
-H
-\begin_inset Quotes erd
-\end_inset
-
- and replacing the previously trailing portion by an 
-\begin_inset Quotes eld
-\end_inset
-
-X
-\begin_inset Quotes erd
-\end_inset
-
-.
- Around the beginning of 2003, the author also started on the C programming
+\begin_layout Standard
+Around the beginning of 2003, the author also started on the C programming
  language and soon the small library was converted from Perl to C.
  The libHX library as of today is the result of working with C ever since,
  and naturally grew from there to support whatever the author was in need
@@ -182,146 +727,12 @@ version
 \family default
 , or the project may choose to keep the name for filenames, like Mesa and
  SDL do.
+ libHX is of the latter.
 \end_layout
 
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Section
-Installation
-\end_layout
-
-\begin_layout Standard
-libHX uses GNU autotools as a build environment, which means that all you
- have to run as a end-user is the 
-\family typewriter
-configure
-\family default
- with any options that you need, plus the usual 
-\family typewriter
-make
-\family default
- and 
-\family typewriter
-make install
-\family default
- as desired.
-\end_layout
-
-\begin_layout Standard
-Pay attention to bi-arch systems where you most likely need to specify 
-\begin_inset Quotes eld
-\end_inset
-
-lib64
-\begin_inset Quotes erd
-\end_inset
-
- instead of 
-\begin_inset Quotes eld
-\end_inset
-
-lib
-\begin_inset Quotes erd
-\end_inset
-
-:
-\end_layout
-
-\begin_layout LyX-Code
-$ ./configure --libdir='${prefix}/lib64'
-\end_layout
-
-\begin_layout Subsection
-Requirements
-\end_layout
-
-\begin_layout Itemize
-GNU C Compiler 3.3.5 or newer.
- Other compilers have not been tested in months
-\begin_inset space ~
-\end_inset
-
---- use at your own risk.
-\end_layout
-
-\begin_layout Itemize
-approximately 80
-\begin_inset space ~
-\end_inset
-
-KB of disk space on Linux for the shared library and header files; somewhat
- more for *BSD.
-\end_layout
-
-\begin_layout Standard
-A C++ compiler is only needed if you want to build the test programs that
- come with libHX in C++ mode.
- This is done by default so it may occur that you get prompted for a C++
- compiler, but it is strictly not required, as most C++ constructs are inlined
- from header files.
-\end_layout
-
-\begin_layout Section
-Portability notice
-\end_layout
-
-\begin_layout Standard
-libHX runs on contemporary versions of Linux, Solaris and the three BSD
- distributions.
- It might even work on Microsoft Windows, but this is not tested very often
- if at all.
- Overly old systems, especially Unices, are not within focus.
- While AIX
-\begin_inset space ~
-\end_inset
-
-5.3 might still classify as contemporary, strangelets like 
-\begin_inset Quotes eld
-\end_inset
-
-Ultrix
-\begin_inset Quotes erd
-\end_inset
-
- or 
-\begin_inset Quotes eld
-\end_inset
-
-Dynix
-\begin_inset Quotes erd
-\end_inset
-
- you can find in the autotools-related file 
-\family typewriter
-config.guess
-\family default
- are some that are definitely not.
-\end_layout
-
-\begin_layout Standard
-Furthermore, a compiler that understands the C99 or GNU89 standard is required.
- The integer type 
-\begin_inset Quotes eld
-\end_inset
-
-int
-\begin_inset Quotes erd
-\end_inset
-
- should at best have 32 bits at least.
- There is no ultra-portable version as of this writing, but feel free to
- start one akin to the 
-\begin_inset Quotes eld
-\end_inset
-
-p
-\begin_inset Quotes erd
-\end_inset
-
- variants of OpenBSD software such as OpenSSH.
 \end_layout
 
 \begin_layout Standard
@@ -2417,6 +2828,13 @@ Data structures
 
 \begin_layout Section
 ARBtree
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:arbtree"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6959,6 +7377,13 @@ struct point
 
 \begin_layout Section
 Counted inline doubly-linked list
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:clist"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -10247,6 +10672,13 @@ n", p)
 
 \begin_layout Section
 Memory containers
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:mc"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11278,29 +11710,19 @@ n'
 
 \begin_layout Section
 Format templates
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:format"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-HXformat is something in the direction of printf(), but the argument list
- is not implemented by means of varargs, so is flexible even beyond compile
- time.
- You can change the format string
-\begin_inset space ~
-\end_inset
-
---- in fact, just let the user configuration provide it
-\begin_inset space ~
-\end_inset
-
---- without having to worry about argument evaluation problems.
- Positional and optional arguments are simply free.
- 
-\end_layout
-
-\begin_layout Standard
-HXfmt is a small template system used to substitute strings supplied by
- the user and containing placeholders, by appropriate expansion values defined
- by the program.
+HXfmt is a small template system for by-name variable expansion.
+ It can be used to substitute placeholders in format strings supplied by
+ the user by appropriate expanded values defined by the program.
  Such can be used to allow for flexible configuration files that define
  key-value mappings such as
 \end_layout
@@ -11657,7 +12079,7 @@ section
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:opt-types"
+reference "sub:option-types"
 
 \end_inset
 
@@ -12467,6 +12889,13 @@ Filesystem operations
 
 \begin_layout Section
 Directory traversal
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:dir-ops1"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -12732,6 +13161,13 @@ This sample will open the current directory, and print out all entries as
 
 \begin_layout Section
 Directory operations
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:dir-ops2"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -12854,6 +13290,13 @@ path
 
 \begin_layout Section
 File operations
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:file-ops"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -13082,6 +13525,13 @@ Options and Configuration Files
 
 \begin_layout Section
 Option parsing
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:option"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -13189,7 +13639,7 @@ getopt
 Synopsis
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:opt-synopsis"
+name "sub:option-synopsis"
 
 \end_inset
 
@@ -13551,7 +14001,7 @@ It is a sad fact that C++ has not gotten around to implement these yet.
 Type map
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:opt-types"
+name "sub:option-types"
 
 \end_inset
 
@@ -13606,7 +14056,7 @@ DEC
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:opt-flags"
+reference "sub:option-flags"
 
 \end_inset
 
@@ -13848,7 +14298,7 @@ NULL
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:opt-pitfalls-static"
+reference "sub:option-pitfalls-static"
 
 \end_inset
 
@@ -14751,7 +15201,7 @@ long double
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:opt-example-cb"
+reference "sub:option-example-cb"
 
 \end_inset
 
@@ -14762,7 +15212,7 @@ reference "sub:opt-example-cb"
 Flags
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:opt-flags"
+name "sub:option-flags"
 
 \end_inset
 
@@ -14859,7 +15309,7 @@ NONE
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:opt-example-incdec"
+reference "sub:option-example-incdec"
 
 \end_inset
 
@@ -15028,7 +15478,7 @@ ULONG
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:opt-example-mask"
+reference "sub:option-example-mask"
 
 \end_inset
 
@@ -15591,7 +16041,7 @@ Pitfalls
 Staticness of tables
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:opt-pitfalls-static"
+name "sub:option-pitfalls-static"
 
 \end_inset
 
@@ -15913,7 +16363,7 @@ Table nesting like implemented in popt.
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:opt-example-chained"
+reference "sub:option-example-chained"
 
 \end_inset
 
@@ -16148,7 +16598,7 @@ return
 Verbosity levels
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:opt-example-incdec"
+name "sub:option-example-incdec"
 
 \end_inset
 
@@ -16344,7 +16794,7 @@ static const struct
 Mask operations
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:opt-example-mask"
+name "sub:option-example-mask"
 
 \end_inset
 
@@ -16456,7 +16906,7 @@ net_mask |= y
 Support for non-standard actions
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:opt-example-cb"
+name "sub:option-example-cb"
 
 \end_inset
 
@@ -16645,7 +17095,7 @@ static const struct
 Chained argument processing
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:opt-example-chained"
+name "sub:option-example-chained"
 
 \end_inset
 
@@ -16950,6 +17400,13 @@ return
 
 \begin_layout Section
 Shell-style configuration file parser
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:shconf"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17168,7 +17625,7 @@ struct HXoption
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:opt-synopsis"
+reference "sub:option-synopsis"
 
 \end_inset
 
@@ -17216,7 +17673,7 @@ ptr
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:opt-types"
+reference "sub:option-types"
 
 \end_inset
 
@@ -17442,6 +17899,13 @@ Systems-related components
 
 \begin_layout Section
 Random numbers
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:random"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -17734,6 +18198,13 @@ PRNG
 
 \begin_layout Section
 Process management
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:proc"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -18611,8 +19082,12 @@ struct HXproc
 .
 \end_layout
 
-\begin_layout Standard
+\begin_layout Part
 \start_of_appendix
+Appendix
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset index_print
 LatexCommand printindex
 
