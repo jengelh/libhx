@@ -23,7 +23,6 @@ enum {
 	S_RIGHT,
 	NODE_RED = 0,
 	NODE_BLACK,
-	Z_32 = sizeof("4294967296"),
 };
 
 struct t9_fruit {
@@ -498,7 +497,7 @@ int main(void)
 static struct HXbtree *generate_fixed_tree(unsigned int f, ...)
 {
 	struct HXbtree *b;
-	char buf[Z_32];
+	char buf[HXSIZEOF_Z32];
 	va_list argp;
 
 	b = HXbtree_init(HXBT_CKEY | HXBT_CID | HXBT_CMPFN, strtolcmp);
@@ -523,7 +522,7 @@ static struct HXbtree *generate_perfect_tree(unsigned int height,
 	unsigned int left  = incr / 2;
 	unsigned int y, x;
 	struct HXbtree *b;
-	char buf[Z_32];
+	char buf[HXSIZEOF_Z32];
 
 	b = HXbtree_init(HXBT_CKEY | HXBT_CID | HXBT_CMPFN, strtolcmp);
 	if (b == NULL)
