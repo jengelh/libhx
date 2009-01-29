@@ -10,20 +10,23 @@ extern "C" {
 enum {
 	/* activates key=>value pairs */
 	HXBT_MAP   = 1 << 0,
-	/* copy key  (only for string keys!) */
+	/* copy key */
 	HXBT_CKEY  = 1 << 1,
-	/* copy data (only for string data!) */
+	/* copy data */
 	HXBT_CDATA = 1 << 2,
-	/* pointer to comparison routine passed */
+	/* HXbtree_init only: pointer to comparison routine passed */
 	HXBT_CMPFN = 1 << 3,
-	/* use direct integer comparison */
+	/* HXbtree_init only: use direct integer comparison */
 	HXBT_ICMP  = 1 << 4,
-	/* use strcmp() -- abbreviation for HXBT_CMPFN,strcmp */
+	/* HXbtree_init only:
+	 * use strcmp() -- abbreviation for HXBT_CMPFN,strcmp */
 	HXBT_SCMP  = 1 << 5,
-	HXBT_SKEY  = 1 << 5, /* init2 */
-	/* use CIDs for traverser */
+	/* HXbtree_init2 only: keys are strings */
+	HXBT_SKEY  = 1 << 5,
+	/* Copy key during traversal to ease pickup */
 	HXBT_CID   = 1 << 6,
-	HXBT_SDATA = 1 << 7, /* init2 */
+	/* HXbtree_init2 only: data are strings */
+	HXBT_SDATA = 1 << 7,
 };
 
 struct HXbtree_node {

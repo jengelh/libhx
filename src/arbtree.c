@@ -146,7 +146,6 @@ EXPORT_SYMBOL struct HXbtree *HXbtree_init2(unsigned int flags,
 	if ((t = calloc(1, sizeof(*t))) == NULL)
 		return NULL;
 
-
 	t->flags     = flags;
 	t->key_size  = key_size;
 	t->data_size = data_size;
