@@ -1,7 +1,7 @@
 
 Name:		libHX18
 %define lname	libHX
-Version:	2.3
+Version:	2.4
 Release:	0
 Group:		System/Libraries
 URL:		http://jengelh.medozas.de/projects/libHX/
@@ -57,9 +57,8 @@ rm -Rf "$b";
 mkdir "$b";
 make install DESTDIR="$b";
 rm -f "$b/%_libdir/%lname.la";
-mkdir -p "$b/%_docdir";
-rm -f doc/*.lyx;
-cp -a doc "$b/%_docdir/%lname";
+mkdir -p "$b/%_docdir/%lname";
+cp -a doc/* "$b/%_docdir/%lname/";
 
 %post
 %run_ldconfig
