@@ -130,24 +130,39 @@ EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 		/*
 		 * Put file descriptors in place... and do so before postfork,
 		 * as someone could have used proc.p_data = &proc; already.
+		 *
+		 * Take a dup of the pipe ends, so that close_pipes does not
+		 * accidentally close them.
 		 */
 		if (proc->p_flags & HXPROC_STDIN)
-			proc->p_stdin = pipes[0][0];
+			proc->p_stdin = dup(pipes[0][0]);
 		if (proc->p_flags & HXPROC_STDOUT)
-			proc->p_stdout = pipes[1][1];
+			proc->p_stdout = dup(pipes[1][1]);
 		if (proc->p_flags & HXPROC_STDERR)
-			proc->p_stderr = pipes[2][1];
+			proc->p_stderr = dup(pipes[2][1]);
 		if (proc->p_ops != NULL && proc->p_ops->p_postfork != NULL)
 			proc->p_ops->p_postfork(proc->p_data);
 
-		/* The rest of housekeeping */
-		if (proc->p_flags & HXPROC_STDIN)
-			dup2(pipes[0][0], STDIN_FILENO);
-		if (proc->p_flags & HXPROC_STDOUT)
-			dup2(pipes[1][1], STDOUT_FILENO);
-		if (proc->p_flags & HXPROC_STDERR)
-			dup2(pipes[2][1], STDERR_FILENO);
+		/*
+		 * The rest of housekeeping. Now move the pipe ends onto
+		 * their final fds.
+		 */
 		HXproc_close_pipes(pipes);
+		if ((proc->p_flags & HXPROC_STDIN) &&
+		    proc->p_stdin != STDIN_FILENO) {
+			dup2(proc->p_stdin, STDIN_FILENO);
+			close(proc->p_stdin);
+		}
+		if ((proc->p_flags & HXPROC_STDOUT) &&
+		    proc->p_stdout != STDOUT_FILENO) {
+			dup2(proc->p_stdout, STDOUT_FILENO);
+			close(proc->p_stdout);
+		}
+		if ((proc->p_flags & HXPROC_STDERR) &&
+		    proc->p_stderr != STDERR_FILENO) {
+			dup2(proc->p_stderr, STDERR_FILENO);
+			close(proc->p_stderr);
+		}
 		if (proc->p_flags & HXPROC_A0)
 			++argv;
 		if (proc->p_flags & HXPROC_EXECV)
