@@ -1,7 +1,14 @@
 
 
+libHX 2.5 (February 11 2009)
+============================
 Fixes:
 - proc: fix fd setup when the standard channels are already closed
+
+
+libHX 2.4 (February 05 2009)
+============================
+Documentation updates. A few internal cleanups, nothing user-visible.
 
 
 libHX 2.3 (January 13 2009)
