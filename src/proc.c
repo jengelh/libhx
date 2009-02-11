@@ -128,8 +128,8 @@ EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 		const char *prog = *argv;
 
 		/*
-		 * Put file descriptors in place...
-		 * someone could have used proc.p_data = &proc;
+		 * Put file descriptors in place... and do so before postfork,
+		 * as someone could have used proc.p_data = &proc; already.
 		 */
 		if (proc->p_flags & HXPROC_STDIN)
 			proc->p_stdin = pipes[0][0];
@@ -159,7 +159,7 @@ EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 			        prog, strerror(errno));
 		_exit(-1);
 	}
-	
+
 	if (proc->p_flags & HXPROC_STDIN) {
 		close(pipes[0][0]);
 		proc->p_stdin = pipes[0][1];
