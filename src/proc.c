@@ -87,26 +87,9 @@ static void HXproc_close_pipes(int (*p)[2])
 /**
  * HXproc_run_async -
  * @argv:	program and arguments
- * @pid:	resulting PID
- * @fd_stdin:	if non-%NULL, assign stdin
- * @fd_stdout:	if non-%NULL, assign stdout
- * @fd_stderr:	if non-%NULL, assign stderr
- * @setup:	child process setup function
- * @user:	username (used for FUSE)
+ * @proc:	control block with flags, also used to return info like fds
  *
  * Sets up pipes and runs the specified program.
- *
- * Side effects: Saves the old %SIGCHLD handler before and overrides it with
- * %SIG_DFL. This is needed because otherwise GDM's signal handler would
- * trigger with pam_mount's child processes.
- *
- * On success, returns true and the handler is NOT reset. Every [successful]
- * call to spawn_start() must be followed by spawn_restore_sigchld(). This is
- * usually done after waitpid(), when we are sure there are no more
- * processes that were created by pam_mount that could potentially confuse GDM.
- *
- * On failure, this function returns false and the original %SIGCHLD handler
- * will be restored.
  */
 EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 {
