@@ -1,5 +1,8 @@
 
 
+- doc: install documentation
+
+
 libHX 2.5 (February 11 2009)
 ============================
 Fixes:

@@ -2,7 +2,7 @@
 
 ACLOCAL_AMFLAGS  = -I m4
 AUTOMAKE_OPTIONS = foreign subdir-objects
-SUBDIRS          = src
+SUBDIRS          = doc src
 
 pkgconfigdir     = @pkgconfigdir@
 pkgconfig_DATA   = libHX.pc
