@@ -317,6 +317,28 @@ EXPORT_SYMBOL void *HXbtree_get(const struct HXbtree *btree, const void *key)
 	return node->data;
 }
 
+static void HXbtree_flat_fill(const struct HXbtree_node *node,
+    const struct HXbtree_node **array, unsigned int *idx)
+{
+	if (node->sub[0] != NULL)
+		HXbtree_flat_fill(node->sub[0], array, idx);
+	array[(*idx)++] = node;
+	if (node->sub[1] != NULL)
+		HXbtree_flat_fill(node->sub[1], array, idx);
+}
+
+EXPORT_SYMBOL const struct HXbtree_node **HXbtree_flatten(const struct HXbtree *tree)
+{
+	const struct HXbtree_node **array;
+	unsigned int idx = 0;
+
+	if ((array = malloc(sizeof(*array) * tree->items)) == NULL)
+		return NULL;
+
+	HXbtree_flat_fill(tree->root, array, &idx);
+	return array;
+}
+
 EXPORT_SYMBOL void *HXbtree_del(struct HXbtree *btree, const void *key)
 {
 	struct HXbtree_node *path[BT_MAXDEP], *node;

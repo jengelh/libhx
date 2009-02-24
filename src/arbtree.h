@@ -65,6 +65,7 @@ extern struct HXbtree *HXbtree_init2(unsigned int,
 extern struct HXbtree_node *HXbtree_add(struct HXbtree *, const void *, ...);
 extern struct HXbtree_node *HXbtree_find(const struct HXbtree *, const void *);
 extern void *HXbtree_get(const struct HXbtree *, const void *);
+extern const struct HXbtree_node **HXbtree_flatten(const struct HXbtree *);
 extern void *HXbtree_del(struct HXbtree *, const void *);
 extern void HXbtree_free(struct HXbtree *);
 extern void *HXbtrav_init(const struct HXbtree *);

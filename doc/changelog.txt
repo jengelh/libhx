@@ -1,6 +1,7 @@
 
 
 - doc: install documentation
+- arbtree: add "flat view" operation
 
 
 libHX 2.5 (February 11 2009)
