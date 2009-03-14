@@ -5,6 +5,7 @@ Documentation:
 - add section about Miscellaneous functions
 Changes:
 - misc: added HX_fls
+- misc: make HX_time_compare otime-capable
 
 
 libHX 2.5 (February 11 2009)

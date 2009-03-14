@@ -3065,11 +3065,15 @@ mode
 \family typewriter
 'c'
 \family default
- for the inode change time, or 
+ for the inode change time, 
 \family typewriter
 'm'
 \family default
- for the modification time.
+ for the modification time, or 
+\family typewriter
+'o'
+\family default
+ for the creation time (where available).
  Returns a negative number if the time in 
 \family typewriter
 a
