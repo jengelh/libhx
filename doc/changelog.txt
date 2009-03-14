@@ -2,6 +2,7 @@
 
 Documentation:
 - update project URLs
+- add section about Miscellaneous functions
 
 
 libHX 2.5 (February 11 2009)
