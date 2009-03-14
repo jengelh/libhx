@@ -1,5 +1,9 @@
 
 
+Documentation:
+- update project URLs
+
+
 libHX 2.5 (February 11 2009)
 ============================
 Fixes:
