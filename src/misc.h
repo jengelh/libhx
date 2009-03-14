@@ -64,7 +64,7 @@ extern unsigned int HX_irand(unsigned int, unsigned int);
 /*
  *	INLINE FUNCTIONS
  */
-static inline int HX_zveclen(const char **args)
+static inline int HX_zveclen(const char *const *args)
 {
 	int argk = 0;
 	while (*args++ != NULL)

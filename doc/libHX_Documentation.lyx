@@ -3002,7 +3002,7 @@ int
 \series default
  HX_zveclen(
 \series bold
-const char **
+const char *const *
 \series default
 );
 \begin_inset Index
