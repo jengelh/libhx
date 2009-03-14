@@ -1,6 +1,6 @@
 /*
  *	libHX/other.c
- *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2008
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2009
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -33,6 +33,15 @@ EXPORT_SYMBOL int HX_ffs(unsigned long n)
 	while ((n >>= 1) >= 1)
 		++s;
 	return s;
+}
+
+EXPORT_SYMBOL int HX_fls(unsigned long n)
+{
+	int i;
+	for (i = 31; i >= 0; --i)
+		if (n & (1 << i))
+			return i;
+	return -1;
 }
 
 EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)

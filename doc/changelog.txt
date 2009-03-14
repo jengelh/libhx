@@ -3,6 +3,8 @@
 Documentation:
 - update project URLs
 - add section about Miscellaneous functions
+Changes:
+- misc: added HX_fls
 
 
 libHX 2.5 (February 11 2009)

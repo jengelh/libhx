@@ -50,6 +50,7 @@ enum {
 };
 
 extern int HX_ffs(unsigned long);
+extern int HX_fls(unsigned long);
 extern void HX_hexdump(FILE *, const void *, unsigned int);
 extern long HX_time_compare(const struct stat *, const struct stat *, char);
 extern void HX_zvecfree(char **);

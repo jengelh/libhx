@@ -2878,6 +2878,30 @@ HX_ffs
 
 
 \series bold
+int
+\series default
+ HX_fls(
+\series bold
+unsigned long
+\series default
+ z);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_fls
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
 void
 \series default
  HX_hexdump(
@@ -2997,6 +3021,11 @@ HX_zveclen
 
 \begin_layout Description
 HX_ffs Finds the first (lowest-significant) bit in a value and returns its
+ position, or -1 to indicate failure.
+\end_layout
+
+\begin_layout Description
+HX_fls Finds the last (most-significant) bit in a value and returns its
  position, or -1 to indicate failure.
 \end_layout
 
