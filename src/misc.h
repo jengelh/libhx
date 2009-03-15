@@ -50,6 +50,7 @@ enum {
 };
 
 extern int HX_ffs(unsigned long);
+extern int HX_fls(unsigned long);
 extern void HX_hexdump(FILE *, const void *, unsigned int);
 extern long HX_time_compare(const struct stat *, const struct stat *, char);
 extern void HX_zvecfree(char **);
@@ -63,7 +64,7 @@ extern unsigned int HX_irand(unsigned int, unsigned int);
 /*
  *	INLINE FUNCTIONS
  */
-static inline int HX_zveclen(const char **args)
+static inline int HX_zveclen(const char *const *args)
 {
 	int argk = 0;
 	while (*args++ != NULL)

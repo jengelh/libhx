@@ -1,7 +1,13 @@
 
 
-- doc: install documentation
+Documentation:
+- install documentation
+- update project URLs
+- add section about Miscellaneous functions
+Changes:
 - arbtree: add "flat view" operation
+- misc: added HX_fls
+- misc: make HX_time_compare otime-capable
 
 
 libHX 2.5 (February 11 2009)

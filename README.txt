@@ -64,5 +64,5 @@ A general-purpose library for typical low-level operations.
 
 Resources
 
-  • libHX GIT repository (gitweb) — http://dev.medozas.de/gitweb.cgi?p=libHX
-  • libHX clone URL — git://dev.medozas.de/libHX
+  • libHX GIT repository (gitweb) — http://libhx.git.sf.net/
+  • libHX clone URL — git://libhx.git.sf.net/gitroot/libhx

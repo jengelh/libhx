@@ -370,6 +370,7 @@ Setting up pipes for the standard file descriptors for sending/capturing
 
 \shape italic
 a bit more beyond that ...
+ Miscellaneous
 \end_layout
 
 \begin_layout Section
@@ -386,7 +387,7 @@ status open
 
 \begin_layout Plain Layout
 
-git://dev.medozas.de/libHX
+git://libhx.git.sf.net/gitroot/libhx
 \end_layout
 
 \end_inset
@@ -404,7 +405,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://dev.medozas.de/gitweb.cgi?p=libHX
+http://libhx.git.sf.net/
 \end_layout
 
 \end_inset
@@ -422,7 +423,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://jengelh.medozas.de/projects/libHX/
+http://libhx.sf.net/
 \end_layout
 
 \end_inset
@@ -2813,6 +2814,301 @@ S_IRUSR
 | S_IROTH
 \family default
 .
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Miscellaneous functions
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/misc.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/misc.h
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HX_ffs(
+\series bold
+unsigned long
+\series default
+ z);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_ffs
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HX_fls(
+\series bold
+unsigned long
+\series default
+ z);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_fls
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HX_hexdump(
+\series bold
+FILE *
+\series default
+fp, 
+\series bold
+const void *
+\series default
+ptr, 
+\series bold
+unsigned int
+\series default
+ len);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_hexdump
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HX_time_compare(
+\series bold
+const struct
+\series default
+ stat 
+\series bold
+*
+\series default
+a, 
+\series bold
+const struct
+\series default
+ stat 
+\series bold
+*
+\series default
+b, 
+\series bold
+int
+\series default
+ mode);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_time_compare
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HX_zvecfree(
+\series bold
+char **
+\series default
+);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_zvecfree
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HX_zveclen(
+\series bold
+const char *const *
+\series default
+);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_zveclen
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+HX_ffs Finds the first (lowest-significant) bit in a value and returns its
+ position, or -1 to indicate failure.
+\end_layout
+
+\begin_layout Description
+HX_fls Finds the last (most-significant) bit in a value and returns its
+ position, or -1 to indicate failure.
+\end_layout
+
+\begin_layout Description
+HX_hexdump Outputs a nice pretty-printed hex and ASCII dump to the filedescripto
+r 
+\family typewriter
+fp
+\family default
+.
+ 
+\family typewriter
+ptr
+\family default
+ is the memory area, of which 
+\family typewriter
+len
+\family default
+ bytes will be dumped.
+\end_layout
+
+\begin_layout Description
+HX_time_compare Compares the timestamps from two 
+\family typewriter
+struct stat
+\family default
+s.
+ 
+\family typewriter
+mode
+\family default
+ indicates which field is compared, which can either be 
+\family typewriter
+'a'
+\family default
+ for the access time, 
+\family typewriter
+'c'
+\family default
+ for the inode change time, 
+\family typewriter
+'m'
+\family default
+ for the modification time, or 
+\family typewriter
+'o'
+\family default
+ for the creation time (where available).
+ Returns a negative number if the time in 
+\family typewriter
+a
+\family default
+ is less than 
+\family typewriter
+b
+\family default
+, zero when they are equal, or a positive number greater than zero if 
+\family typewriter
+a
+\family default
+ is greater than 
+\family typewriter
+b
+\family default
+.
+\end_layout
+
+\begin_layout Description
+HX_zvecfree Frees the supplied Z-vector array.
+ (Frees all array elements from the first element to (excluding) the first
+ 
+\family typewriter
+NULL
+\family default
+ element.)
+\end_layout
+
+\begin_layout Description
+HX_zveclen Counts the number of array elements until the first 
+\family typewriter
+NULL
+\family default
+ array element is seen, and returns this number.
 \end_layout
 
 \begin_layout Standard
@@ -8996,7 +9292,7 @@ s
  The result must not be freed.
  The input string must not have any trailing slashes
 \begin_inset Foot
-status collapsed
+status open
 
 \begin_layout Plain Layout
 This was a 
@@ -13537,7 +13833,7 @@ name "sec:option"
 \begin_layout Standard
 libHX uses a table-based approach like libpopt
 \begin_inset Foot
-status collapsed
+status open
 
 \begin_layout Plain Layout
 The alternative would be an iterative, open-coded approach like 

@@ -4,10 +4,10 @@ Name:		libHX18
 Version:	2.5
 Release:	0
 Group:		System/Libraries
-URL:		http://jengelh.medozas.de/projects/libHX/
+URL:		http://libhx.sf.net/
 Summary:	Library for commonly needed tasks in C
 License:	LGPL2,3
-Source:		http://jengelh.medozas.de/files/libHX/libHX-%version.tar.bz2
+Source:		http://downloads.sf.net/libhx/libHX-%version.tar.bz2
 BuildRoot:	%_tmppath/%name-%version-build
 BuildRequires:	gcc-c++
 # no, libxml2-devel is NOT required because nothing
