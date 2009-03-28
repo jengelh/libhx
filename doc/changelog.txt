@@ -8,6 +8,7 @@ Changes:
 - arbtree: add "flat view" operation
 - misc: added HX_fls
 - misc: make HX_time_compare otime-capable
+- add wx_helper.hpp
 
 
 libHX 2.5 (February 11 2009)

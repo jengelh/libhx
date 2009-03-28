@@ -19378,6 +19378,319 @@ struct HXproc
 .
 \end_layout
 
+\begin_layout Section
+Helper headers
+\end_layout
+
+\begin_layout Subsection
+wxWidgets
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/wx_helper.hpp>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/wx_helper.hpp
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Shortcut macros
+\end_layout
+
+\begin_layout Description
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxACV
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+wxACV
+\family default
+ Expands to 
+\family typewriter
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxALIGN_CENTER_VERTICAL
+\end_layout
+
+\end_inset
+
+wxALIGN_CENTER_VERTICAL
+\end_layout
+
+\begin_layout Description
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxCFF
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+wxCFF
+\family default
+ Expands to a set of 
+\begin_inset Quotes eld
+\end_inset
+
+common frame flags
+\begin_inset Quotes erd
+\end_inset
+
+ for dialogs.
+\end_layout
+
+\begin_layout Description
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxDPOS
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+wxDPOS
+\family default
+ Expands to 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxDefaultPosition
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+wxDefaultPosition
+\family default
+.
+\end_layout
+
+\begin_layout Description
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxDSIZE
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+wxDSIZE
+\family default
+ Expands to 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxDefaultSize
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+wxDefaultSize
+\family default
+.
+\end_layout
+
+\begin_layout Subsubsection
+String conversion
+\end_layout
+
+\begin_layout LyX-Code
+wxString wxfu8(
+\series bold
+const char *
+\series default
+);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxfu8
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+wxString wxfv8(
+\series bold
+const char *
+\series default
+);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxfv8
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+const char *
+\series default
+wxtu8(
+\series bold
+const
+\series default
+ wxString 
+\series bold
+&
+\series default
+);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxtu8
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+wxfu8
+\family default
+ Converts an UTF-8 string to a 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxString
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+wxString
+\family default
+ object.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+wxfv8
+\family default
+ Converts an UTF-8 string to an entity usable by 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxPrintf
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+wxPrintf
+\family default
+.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+wxtu8
+\family default
+ Converts a wxString to a pointer to char usable by 
+\family typewriter
+printf
+\family default
+.
+ Note that the validity of the pointer is very limited and usually does
+ not extend the statement in which it is used.
+ Hence storing the pointer in a variable (
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+const char *p = wxtu8(s);
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+) will make 
+\family typewriter
+p
+\family default
+ pointing to an invalid region as soon as the assignment is done.
+\end_layout
+
 \begin_layout Part
 \start_of_appendix
 Appendix
