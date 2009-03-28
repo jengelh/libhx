@@ -9042,18 +9042,66 @@ strcasecmp
 \end_inset
 
 , 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xmlGetProp
+\end_layout
+
+\end_inset
+
+
 \family typewriter
 xmlGetProp
 \family default
 , 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xmlNewProp
+\end_layout
+
+\end_inset
+
+
 \family typewriter
 xmlNewProp
 \family default
 , 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xmlNewNode
+\end_layout
+
+\end_inset
+
+
 \family typewriter
 xmlNewNode
 \family default
  and 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xmlSetProp
+\end_layout
+
+\end_inset
+
+
 \family typewriter
 xmlSetProp
 \family default
