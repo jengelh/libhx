@@ -22,6 +22,15 @@ static inline int xml_strcmp(const xmlChar *a, const char *b)
 #endif
 }
 
+static inline int xml_strcasecmp(const xmlChar *a, const char *b)
+{
+#ifdef __cplusplus
+	return strcasecmp(signed_cast<const char *>(a), b);
+#else
+	return strcasecmp(signed_cast(const char *, a), b);
+#endif
+}
+
 static inline char *xml_getprop(xmlNode *node, const char *attr)
 {
 #ifdef __cplusplus

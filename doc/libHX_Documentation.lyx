@@ -8859,6 +8859,38 @@ xml_strcmp
 
 
 \series bold
+int
+\series default
+ xml_strcasecmp(
+\series bold
+const
+\series default
+ xmlChar 
+\series bold
+*
+\series default
+a, 
+\series bold
+const char *
+\series default
+b);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xml_strcasecmp
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
 char *
 \series default
 xml_getprop(xmlNode 
@@ -8989,6 +9021,22 @@ status open
 
 \family typewriter
 strcmp
+\end_layout
+
+\end_inset
+
+, 
+\family typewriter
+strcasecmp
+\family default
+(3)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+strcasecmp
 \end_layout
 
 \end_inset
