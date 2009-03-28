@@ -3027,18 +3027,30 @@ HX_zveclen
 \end_layout
 
 \begin_layout Description
-HX_ffs Finds the first (lowest-significant) bit in a value and returns its
- position, or -1 to indicate failure.
+
+\family typewriter
+HX_ffs
+\family default
+ Finds the first (lowest-significant) bit in a value and returns its position,
+ or -1 to indicate failure.
 \end_layout
 
 \begin_layout Description
-HX_fls Finds the last (most-significant) bit in a value and returns its
- position, or -1 to indicate failure.
+
+\family typewriter
+HX_fls
+\family default
+ Finds the last (most-significant) bit in a value and returns its position,
+ or -1 to indicate failure.
 \end_layout
 
 \begin_layout Description
-HX_hexdump Outputs a nice pretty-printed hex and ASCII dump to the filedescripto
-r 
+
+\family typewriter
+HX_hexdump
+\family default
+ Outputs a nice pretty-printed hex and ASCII dump to the filedescriptor
+ 
 \family typewriter
 fp
 \family default
@@ -3055,7 +3067,11 @@ len
 \end_layout
 
 \begin_layout Description
-HX_time_compare Compares the timestamps from two 
+
+\family typewriter
+HX_time_compare
+\family default
+ Compares the timestamps from two 
 \family typewriter
 struct stat
 \family default
@@ -3101,7 +3117,11 @@ b
 \end_layout
 
 \begin_layout Description
-HX_zvecfree Frees the supplied Z-vector array.
+
+\family typewriter
+HX_zvecfree
+\family default
+ Frees the supplied Z-vector array.
  (Frees all array elements from the first element to (excluding) the first
  
 \family typewriter
@@ -3111,7 +3131,11 @@ NULL
 \end_layout
 
 \begin_layout Description
-HX_zveclen Counts the number of array elements until the first 
+
+\family typewriter
+HX_zveclen
+\family default
+ Counts the number of array elements until the first 
 \family typewriter
 NULL
 \family default
@@ -9685,7 +9709,11 @@ name "sub:string-ex-HX_split5"
 \end_layout
 
 \begin_layout Standard
-HX_split5, where the 
+
+\family typewriter
+HX_split5
+\family default
+, where the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -9702,9 +9730,12 @@ S
 \begin_inset Quotes erd
 \end_inset
 
- for stack, as HX_split5 is often used only with on-stack variables and
- where the field count of interest is fixed, as the example for parsing
- 
+ for stack, as 
+\family typewriter
+HX_split5
+\family default
+ is often used only with on-stack variables and where the field count of
+ interest is fixed, as the example for parsing 
 \family typewriter
 /etc/passwd
 \family default
@@ -16111,7 +16142,11 @@ This sample option table makes it possible to turn the verbosity of the
 \begin_inset Quotes eld
 \end_inset
 
+
+\family typewriter
 int
+\family default
+
 \begin_inset Quotes erd
 \end_inset
 
@@ -17437,7 +17472,11 @@ HX_rand
 \begin_inset Quotes eld
 \end_inset
 
+
+\family typewriter
 int
+\family default
+
 \begin_inset Quotes erd
 \end_inset
 
@@ -18537,7 +18576,11 @@ tolower
 \begin_inset Quotes eld
 \end_inset
 
+
+\family typewriter
 int
+\family default
+
 \begin_inset Quotes erd
 \end_inset
 
@@ -18562,7 +18605,11 @@ char
 \begin_inset Quotes eld
 \end_inset
 
+
+\family typewriter
 signed
+\family default
+
 \begin_inset Quotes erd
 \end_inset
 
@@ -18570,7 +18617,11 @@ signed
 \begin_inset Quotes eld
 \end_inset
 
+
+\family typewriter
 unsigned
+\family default
+
 \begin_inset Quotes erd
 \end_inset
 
