@@ -800,8 +800,15 @@ HX_
 
 .
  Functions from a clearly-defined subsystem, such as ARBtree or deque, augment
- the base prefix by a suffix, forming e.g.
- 
+ the base prefix by a suffix, forming e.
+\begin_inset space \thinspace{}
+\end_inset
+
+g.
+\begin_inset space \space{}
+\end_inset
+
+
 \begin_inset Quotes eld
 \end_inset
 
@@ -18569,7 +18576,15 @@ unsigned
 
  qualifier.
  By a high-level view, which also matches daily common sense, characters
- (a.k.a.
+ (a.
+\begin_inset space \thinspace{}
+\end_inset
+
+k.
+\begin_inset space \thinspace{}
+\end_inset
+
+a.
 \begin_inset space \space{}
 \end_inset
 
