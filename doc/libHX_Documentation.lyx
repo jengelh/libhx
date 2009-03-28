@@ -8140,975 +8140,6 @@ Some string functions are merely present in libHX because they are otherwise
 \end_layout
 
 \begin_layout Subsection
-ctype helpers
-\end_layout
-
-\begin_layout Standard
-Functions from the 
-\family typewriter
-<ctype.h>
-\family default
- header, including, but not limited to, 
-\family typewriter
-isalpha
-\family default
-, 
-\family typewriter
-tolower
-\family default
-, and so forth, are defined to take an 
-\begin_inset Quotes eld
-\end_inset
-
-int
-\begin_inset Quotes erd
-\end_inset
-
- as first argument.
- Strings used in C programs are usually 
-\begin_inset Quotes eld
-\end_inset
-
-
-\family typewriter
-char
-\begin_inset space ~
-\end_inset
-
-*
-\family default
-
-\begin_inset Quotes erd
-\end_inset
-
-, without any 
-\begin_inset Quotes eld
-\end_inset
-
-signed
-\begin_inset Quotes erd
-\end_inset
-
- or 
-\begin_inset Quotes eld
-\end_inset
-
-unsigned
-\begin_inset Quotes erd
-\end_inset
-
- qualifier.
- By a high-level view, which also matches daily common sense, characters
- (a.k.a.
-\begin_inset space \space{}
-\end_inset
-
-letters) have no notion of signedness
-\begin_inset space ~
-\end_inset
-
---- there is no 
-\begin_inset Quotes eld
-\end_inset
-
-positive
-\begin_inset Quotes erd
-\end_inset
-
- or 
-\begin_inset Quotes eld
-\end_inset
-
-negative
-\begin_inset Quotes erd
-\end_inset
-
- 
-\begin_inset Quotes eld
-\end_inset
-
-A
-\begin_inset Quotes erd
-\end_inset
-
- in at least the Latin alphabet that is mapped into the ASCII set.
- In fact, 
-\family typewriter
-char
-\begin_inset space ~
-\end_inset
-
-*
-\family default
- could either be 
-\family typewriter
-signed char
-\begin_inset space ~
-\end_inset
-
-*
-\family default
- or 
-\family typewriter
-unsigned char
-\begin_inset space ~
-\end_inset
-
-*
-\family default
-, depending on the compiler settings.
- Only when you start interpreting and using characters as a number does
- such become important.
- 
-\end_layout
-
-\begin_layout Standard
-There come the problems.
- Characters are in the same class as numbers in C, that is, can be implicitly
- converted from or to a 
-\begin_inset Quotes eld
-\end_inset
-
-number
-\begin_inset Quotes erd
-\end_inset
-
- (in this case, their ASCII code point) without causing a compiler warning.
- That may be practical in some cases, but is also a bit 
-\begin_inset Quotes eld
-\end_inset
-
-unfortunate
-\begin_inset Quotes erd
-\end_inset
-
-.
- Characters, when interpreted as the 8-bit signed numeric quantity they
- are implicitly convertable to, run from 
-\begin_inset Formula $0$
-\end_inset
-
- to 
-\begin_inset Formula $127$
-\end_inset
-
- and 
-\begin_inset Formula $-128$
-\end_inset
-
- to 
-\begin_inset Formula $-1$
-\end_inset
-
-.
- Since the 
-\family typewriter
-isalpha
-\family default
- function and others from 
-\family typewriter
-ctype.h
-\family default
- take a (signed) 
-\family typewriter
-int
-\family default
- as argument means that values fed to 
-\family typewriter
-isalpha
-\family default
- are sign-extended, preserving negative values.
-\end_layout
-
-\begin_layout LyX-Code
-
-\series bold
-/* 
-\family roman
-\series default
-\shape italic
-
-\begin_inset Quotes eld
-\end_inset
-
-hyvää yötä
-\begin_inset Quotes erd
-\end_inset
-
-, UTF-8 encoded
-\family default
-\series bold
-\shape default
- */
-\end_layout
-
-\begin_layout LyX-Code
-
-\series bold
-const char 
-\series default
-h
-\series bold
-[]
-\series default
- = {'h', 'y', 'v', 0xc3, 0xa4, 0xc3, 0xa4, ' ',
-\begin_inset Newline newline
-\end_inset
-
-                  'y', 0xc3, 0xb6, 't', 0xc3, 0xa4};
-\end_layout
-
-\begin_layout Standard
-When you now pass 
-\family typewriter
-h[3]
-\family default
- to 
-\family typewriter
-isalpha
-\family default
- for example (regardless of whether doing so actually produces a meaningful
- result), the CPU is instructed to copy 
-\begin_inset Quotes eld
-\end_inset
-
-0xc3
-\begin_inset Quotes erd
-\end_inset
-
- into a register and sign-extend it (because 
-\begin_inset Quotes eld
-\end_inset
-
-char
-\begin_inset Quotes erd
-\end_inset
-
- is often 
-\begin_inset Quotes eld
-\end_inset
-
-signed char
-\begin_inset Quotes erd
-\end_inset
-
-, see above), producing 0xffffffc3 (
-\begin_inset Formula $-61$
-\end_inset
-
-).
- But passing 
-\begin_inset Formula $-61$
-\end_inset
-
- is not what was intended.
-\end_layout
-
-\begin_layout Standard
-libHX's 
-\family typewriter
-ctype_helper.h
-\family default
- therefore provides wrappers with a different function signature that uses
- zero extension (not sign extension) by means of using an 
-\family typewriter
-unsigned
-\family default
- quantity.
- Currently this is
-\family typewriter
- unsigned char
-\family default
-, because 
-\family typewriter
-isalpha
-\family default
-'s domain only goes from 0--255.
- The implication is that you cannot pass 
-\family typewriter
-EOF
-\family default
- to 
-\family typewriter
-HX_isalpha
-\family default
-.
-\end_layout
-
-\begin_layout LyX-Code
-
-\series bold
-#include
-\series default
- <libHX/ctype_helper.h>
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-libHX/ctype_helper.h
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-bool
-\series default
- HX_isalnum(
-\series bold
-unsigned char
-\series default
- c);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-\size normal
-\color none
-HX_isalnum
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-bool
-\series default
- HX_isalpha(
-\series bold
-unsigned char
-\series default
- c);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-\size normal
-\color none
-HX_isalpha
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-bool
-\series default
- HX_isdigit(
-\series bold
-unsigned char
-\series default
- c);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-\size normal
-\color none
-HX_isdigit
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-bool
-\series default
- HX_islower(
-\series bold
-unsigned char
-\series default
- c);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-\size normal
-\color none
-HX_islower
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-bool
-\series default
- HX_isprint(
-\series bold
-unsigned char
-\series default
- c);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-\size normal
-\color none
-HX_isprint
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-bool
-\series default
- HX_isspace(
-\series bold
-unsigned char
-\series default
- c);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-HX_isspace
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-bool
-\series default
- HX_isupper(
-\series bold
-unsigned char
-\series default
- c);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-HX_isupper
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-bool
-\series default
- HX_isxdigit(
-\series bold
-unsigned char
-\series default
- c);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-\size normal
-\color none
-HX_isxdigit
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-unsigned char
-\series default
- HX_tolower(
-\series bold
-unsigned char
-\series default
- c);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-\size normal
-\color none
-HX_tolower
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-unsigned char
-\series default
- HX_toupper(
-\series bold
-unsigned char
-\series default
- c);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-\size normal
-\color none
-HX_toupper
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The 
-\family typewriter
-is*
-\family default
- functions also differ from ctype's in that they return 
-\family typewriter
-bool
-\family default
- instead of 
-\family typewriter
-int
-\family default
-.
- Not all functions from 
-\family typewriter
-ctype.h
-\family default
- are present either; 
-\family typewriter
-isascii
-\family default
-, 
-\family typewriter
-isblank
-\family default
-, 
-\family typewriter
-iscntrl
-\family default
-, 
-\family typewriter
-isgraph
-\family default
-, 
-\family typewriter
-ispunct
-\family default
- and 
-\family typewriter
-isxdigit
-\family default
- have been omitted as the author has never needed them so far.
-\end_layout
-
-\begin_layout Subsection
-libxml2 helpers
-\end_layout
-
-\begin_layout Standard
-libxml2 uses an 
-\begin_inset Quotes eld
-\end_inset
-
-
-\family typewriter
-xmlChar
-\family default
-
-\begin_inset Quotes erd
-\end_inset
-
- type as an underlying type for the strings that it reads and outputs.
- 
-\family typewriter
-xmlChar
-\family default
- is typedef'ed to 
-\family typewriter
-unsigned char
-\family default
- by libxml2, causing compiler warnings related to differing signedness whenever
- interacting with strings from the outside world, which are usually just
- a pointer to 
-\family typewriter
-char
-\family default
-.
- Because casting would be a real chore, 
-\family typewriter
-libxml_helper.h
-\family default
- will do it by providing some wrappers with better argument types.
-\end_layout
-
-\begin_layout LyX-Code
-
-\series bold
-#include
-\series default
- <libHX/libxml_helper.h>
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-libHX/libxml_helper.h
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-int
-\series default
- xml_strcmp(
-\series bold
-const
-\series default
- xmlChar 
-\series bold
-*
-\series default
-a, 
-\series bold
-const char *
-\series default
-b);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-xml_strcmp
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-int
-\series default
- xml_strcasecmp(
-\series bold
-const
-\series default
- xmlChar 
-\series bold
-*
-\series default
-a, 
-\series bold
-const char *
-\series default
-b);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-xml_strcasecmp
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-char *
-\series default
-xml_getprop(xmlNode 
-\series bold
-*
-\series default
-node, 
-\series bold
-const char *
-\series default
-attr);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-xml_getprop
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-xmlAttr 
-\series bold
-*
-\series default
-xml_newprop(xmlNode 
-\series bold
-*
-\series default
-node, 
-\series bold
-const char *
-\series default
-attr);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-xml_newprop
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-xmlNode 
-\series bold
-*
-\series default
-xml_newnode(xmlNs 
-\series bold
-*
-\series default
-ns, 
-\series bold
-const char *
-\series default
-name);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-\size normal
-\color none
-xml_newnode
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-xmlAttr 
-\series bold
-*
-\series default
-xml_setprop(xmlNode 
-\series bold
-*
-\series default
-node, 
-\series bold
-const char *
-\series default
-name, 
-\series bold
-const char *
-\series default
-value);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-\size normal
-\color none
-xml_setprop
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The functions map to 
-\family typewriter
-strcmp
-\family default
-(3)
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-strcmp
-\end_layout
-
-\end_inset
-
-, 
-\family typewriter
-strcasecmp
-\family default
-(3)
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-strcasecmp
-\end_layout
-
-\end_inset
-
-, 
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-xmlGetProp
-\end_layout
-
-\end_inset
-
-
-\family typewriter
-xmlGetProp
-\family default
-, 
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-xmlNewProp
-\end_layout
-
-\end_inset
-
-
-\family typewriter
-xmlNewProp
-\family default
-, 
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-xmlNewNode
-\end_layout
-
-\end_inset
-
-
-\family typewriter
-xmlNewNode
-\family default
- and 
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-xmlSetProp
-\end_layout
-
-\end_inset
-
-
-\family typewriter
-xmlSetProp
-\family default
-, respectively.
-\end_layout
-
-\begin_layout Subsection
 Locating chars
 \end_layout
 
@@ -19476,6 +18507,975 @@ struct HXproc
 
 \begin_layout Section
 Helper headers
+\end_layout
+
+\begin_layout Subsection
+ctype helpers
+\end_layout
+
+\begin_layout Standard
+Functions from the 
+\family typewriter
+<ctype.h>
+\family default
+ header, including, but not limited to, 
+\family typewriter
+isalpha
+\family default
+, 
+\family typewriter
+tolower
+\family default
+, and so forth, are defined to take an 
+\begin_inset Quotes eld
+\end_inset
+
+int
+\begin_inset Quotes erd
+\end_inset
+
+ as first argument.
+ Strings used in C programs are usually 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+char
+\begin_inset space ~
+\end_inset
+
+*
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+, without any 
+\begin_inset Quotes eld
+\end_inset
+
+signed
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+unsigned
+\begin_inset Quotes erd
+\end_inset
+
+ qualifier.
+ By a high-level view, which also matches daily common sense, characters
+ (a.k.a.
+\begin_inset space \space{}
+\end_inset
+
+letters) have no notion of signedness
+\begin_inset space ~
+\end_inset
+
+--- there is no 
+\begin_inset Quotes eld
+\end_inset
+
+positive
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+negative
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Quotes eld
+\end_inset
+
+A
+\begin_inset Quotes erd
+\end_inset
+
+ in at least the Latin alphabet that is mapped into the ASCII set.
+ In fact, 
+\family typewriter
+char
+\begin_inset space ~
+\end_inset
+
+*
+\family default
+ could either be 
+\family typewriter
+signed char
+\begin_inset space ~
+\end_inset
+
+*
+\family default
+ or 
+\family typewriter
+unsigned char
+\begin_inset space ~
+\end_inset
+
+*
+\family default
+, depending on the compiler settings.
+ Only when you start interpreting and using characters as a number does
+ such become important.
+ 
+\end_layout
+
+\begin_layout Standard
+There come the problems.
+ Characters are in the same class as numbers in C, that is, can be implicitly
+ converted from or to a 
+\begin_inset Quotes eld
+\end_inset
+
+number
+\begin_inset Quotes erd
+\end_inset
+
+ (in this case, their ASCII code point) without causing a compiler warning.
+ That may be practical in some cases, but is also a bit 
+\begin_inset Quotes eld
+\end_inset
+
+unfortunate
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Characters, when interpreted as the 8-bit signed numeric quantity they
+ are implicitly convertable to, run from 
+\begin_inset Formula $0$
+\end_inset
+
+ to 
+\begin_inset Formula $127$
+\end_inset
+
+ and 
+\begin_inset Formula $-128$
+\end_inset
+
+ to 
+\begin_inset Formula $-1$
+\end_inset
+
+.
+ Since the 
+\family typewriter
+isalpha
+\family default
+ function and others from 
+\family typewriter
+ctype.h
+\family default
+ take a (signed) 
+\family typewriter
+int
+\family default
+ as argument means that values fed to 
+\family typewriter
+isalpha
+\family default
+ are sign-extended, preserving negative values.
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+/* 
+\family roman
+\series default
+\shape italic
+
+\begin_inset Quotes eld
+\end_inset
+
+hyvää yötä
+\begin_inset Quotes erd
+\end_inset
+
+, UTF-8 encoded
+\family default
+\series bold
+\shape default
+ */
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+const char 
+\series default
+h
+\series bold
+[]
+\series default
+ = {'h', 'y', 'v', 0xc3, 0xa4, 0xc3, 0xa4, ' ',
+\begin_inset Newline newline
+\end_inset
+
+                  'y', 0xc3, 0xb6, 't', 0xc3, 0xa4};
+\end_layout
+
+\begin_layout Standard
+When you now pass 
+\family typewriter
+h[3]
+\family default
+ to 
+\family typewriter
+isalpha
+\family default
+ for example (regardless of whether doing so actually produces a meaningful
+ result), the CPU is instructed to copy 
+\begin_inset Quotes eld
+\end_inset
+
+0xc3
+\begin_inset Quotes erd
+\end_inset
+
+ into a register and sign-extend it (because 
+\begin_inset Quotes eld
+\end_inset
+
+char
+\begin_inset Quotes erd
+\end_inset
+
+ is often 
+\begin_inset Quotes eld
+\end_inset
+
+signed char
+\begin_inset Quotes erd
+\end_inset
+
+, see above), producing 0xffffffc3 (
+\begin_inset Formula $-61$
+\end_inset
+
+).
+ But passing 
+\begin_inset Formula $-61$
+\end_inset
+
+ is not what was intended.
+\end_layout
+
+\begin_layout Standard
+libHX's 
+\family typewriter
+ctype_helper.h
+\family default
+ therefore provides wrappers with a different function signature that uses
+ zero extension (not sign extension) by means of using an 
+\family typewriter
+unsigned
+\family default
+ quantity.
+ Currently this is
+\family typewriter
+ unsigned char
+\family default
+, because 
+\family typewriter
+isalpha
+\family default
+'s domain only goes from 0--255.
+ The implication is that you cannot pass 
+\family typewriter
+EOF
+\family default
+ to 
+\family typewriter
+HX_isalpha
+\family default
+.
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/ctype_helper.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/ctype_helper.h
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+bool
+\series default
+ HX_isalnum(
+\series bold
+unsigned char
+\series default
+ c);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HX_isalnum
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+bool
+\series default
+ HX_isalpha(
+\series bold
+unsigned char
+\series default
+ c);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HX_isalpha
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+bool
+\series default
+ HX_isdigit(
+\series bold
+unsigned char
+\series default
+ c);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HX_isdigit
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+bool
+\series default
+ HX_islower(
+\series bold
+unsigned char
+\series default
+ c);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HX_islower
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+bool
+\series default
+ HX_isprint(
+\series bold
+unsigned char
+\series default
+ c);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HX_isprint
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+bool
+\series default
+ HX_isspace(
+\series bold
+unsigned char
+\series default
+ c);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_isspace
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+bool
+\series default
+ HX_isupper(
+\series bold
+unsigned char
+\series default
+ c);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_isupper
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+bool
+\series default
+ HX_isxdigit(
+\series bold
+unsigned char
+\series default
+ c);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HX_isxdigit
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+unsigned char
+\series default
+ HX_tolower(
+\series bold
+unsigned char
+\series default
+ c);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HX_tolower
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+unsigned char
+\series default
+ HX_toupper(
+\series bold
+unsigned char
+\series default
+ c);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HX_toupper
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+is*
+\family default
+ functions also differ from ctype's in that they return 
+\family typewriter
+bool
+\family default
+ instead of 
+\family typewriter
+int
+\family default
+.
+ Not all functions from 
+\family typewriter
+ctype.h
+\family default
+ are present either; 
+\family typewriter
+isascii
+\family default
+, 
+\family typewriter
+isblank
+\family default
+, 
+\family typewriter
+iscntrl
+\family default
+, 
+\family typewriter
+isgraph
+\family default
+, 
+\family typewriter
+ispunct
+\family default
+ and 
+\family typewriter
+isxdigit
+\family default
+ have been omitted as the author has never needed them so far.
+\end_layout
+
+\begin_layout Subsection
+libxml2 helpers
+\end_layout
+
+\begin_layout Standard
+libxml2 uses an 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+xmlChar
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+ type as an underlying type for the strings that it reads and outputs.
+ 
+\family typewriter
+xmlChar
+\family default
+ is typedef'ed to 
+\family typewriter
+unsigned char
+\family default
+ by libxml2, causing compiler warnings related to differing signedness whenever
+ interacting with strings from the outside world, which are usually just
+ a pointer to 
+\family typewriter
+char
+\family default
+.
+ Because casting would be a real chore, 
+\family typewriter
+libxml_helper.h
+\family default
+ will do it by providing some wrappers with better argument types.
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/libxml_helper.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/libxml_helper.h
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ xml_strcmp(
+\series bold
+const
+\series default
+ xmlChar 
+\series bold
+*
+\series default
+a, 
+\series bold
+const char *
+\series default
+b);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xml_strcmp
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ xml_strcasecmp(
+\series bold
+const
+\series default
+ xmlChar 
+\series bold
+*
+\series default
+a, 
+\series bold
+const char *
+\series default
+b);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xml_strcasecmp
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+char *
+\series default
+xml_getprop(xmlNode 
+\series bold
+*
+\series default
+node, 
+\series bold
+const char *
+\series default
+attr);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xml_getprop
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+xmlAttr 
+\series bold
+*
+\series default
+xml_newprop(xmlNode 
+\series bold
+*
+\series default
+node, 
+\series bold
+const char *
+\series default
+attr);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xml_newprop
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+xmlNode 
+\series bold
+*
+\series default
+xml_newnode(xmlNs 
+\series bold
+*
+\series default
+ns, 
+\series bold
+const char *
+\series default
+name);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+xml_newnode
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+xmlAttr 
+\series bold
+*
+\series default
+xml_setprop(xmlNode 
+\series bold
+*
+\series default
+node, 
+\series bold
+const char *
+\series default
+name, 
+\series bold
+const char *
+\series default
+value);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+xml_setprop
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The functions map to 
+\family typewriter
+strcmp
+\family default
+(3)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+strcmp
+\end_layout
+
+\end_inset
+
+, 
+\family typewriter
+strcasecmp
+\family default
+(3)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+strcasecmp
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xmlGetProp
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+xmlGetProp
+\family default
+, 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xmlNewProp
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+xmlNewProp
+\family default
+, 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xmlNewNode
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+xmlNewNode
+\family default
+ and 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+xmlSetProp
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+xmlSetProp
+\family default
+, respectively.
 \end_layout
 
 \begin_layout Subsection
