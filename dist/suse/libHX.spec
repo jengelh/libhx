@@ -1,12 +1,12 @@
 
 Name:		libHX18
 %define lname	libHX
-Version:	2.5
+Version:	2.6
 Release:	0
 Group:		System/Libraries
 URL:		http://libhx.sf.net/
 Summary:	Library for commonly needed tasks in C
-License:	LGPL2,3
+License:	LGPL2+
 Source:		http://downloads.sf.net/libhx/libHX-%version.tar.bz2
 BuildRoot:	%_tmppath/%name-%version-build
 BuildRequires:	gcc-c++
@@ -55,10 +55,10 @@ make %{?jobs:-j%jobs};
 b="%buildroot";
 rm -Rf "$b";
 mkdir "$b";
-make install DESTDIR="$b";
+make install DESTDIR="$b" docdir="%_docdir/%lname";
 rm -f "$b/%_libdir/%lname.la";
 mkdir -p "$b/%_docdir/%lname";
-cp -a doc/* "$b/%_docdir/%lname/";
+install -pm0644 doc/* "$b/%_docdir/%lname/";
 
 %post
 %run_ldconfig
@@ -77,4 +77,3 @@ cp -a doc/* "$b/%_docdir/%lname/";
 %_includedir/*
 %docdir %_docdir/%lname
 %doc %_docdir/%lname/*
-%doc doc/*.pdf
