@@ -18669,23 +18669,9 @@ unfortunate
 
 .
  Characters, when interpreted as the 8-bit signed numeric quantity they
- are implicitly convertable to, run from 
-\begin_inset Formula $0$
-\end_inset
-
- to 
-\begin_inset Formula $127$
-\end_inset
-
- and 
-\begin_inset Formula $-128$
-\end_inset
-
- to 
-\begin_inset Formula $-1$
-\end_inset
-
-.
+ are implicitly convertable to, run from 0 to 127 and \SpecialChar \nobreakdash-
+128 to \SpecialChar \nobreakdash-
+1.
  Since the 
 \family typewriter
 isalpha
@@ -18777,16 +18763,10 @@ signed char
 \begin_inset Quotes erd
 \end_inset
 
-, see above), producing 0xffffffc3 (
-\begin_inset Formula $-61$
-\end_inset
-
-).
- But passing 
-\begin_inset Formula $-61$
-\end_inset
-
- is not what was intended.
+, see above), producing 0xffffffc3 (\SpecialChar \nobreakdash-
+61).
+ But passing \SpecialChar \nobreakdash-
+61 is not what was intended.
 \end_layout
 
 \begin_layout Standard
