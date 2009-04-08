@@ -1,5 +1,7 @@
 
 
+libHX 2.7 (April 08 2009)
+=========================
 Fixes:
 - install missing wx_helper.hpp
 
