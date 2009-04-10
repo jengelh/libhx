@@ -1,4 +1,5 @@
 #include "config.h"
+#include "internal.h"
 
 #if !defined(HAVE_FORK) || !defined(HAVE_PIPE) || !defined(HAVE_EXECV) || \
     !defined(HAVE_EXECVP)
