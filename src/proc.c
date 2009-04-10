@@ -4,7 +4,7 @@
 #if !defined(HAVE_FORK) || !defined(HAVE_PIPE) || !defined(HAVE_EXECV) || \
     !defined(HAVE_EXECVP)
 #include <errno.h>
-#include "proc.h"
+#include <libHX/proc.h>
 
 struct HXproc;
 
@@ -31,8 +31,8 @@ EXPORT_SYMBOL int HXproc_wait(struct HXproc *p)
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "defs.h"
-#include "proc.h"
+#include <libHX/defs.h>
+#include <libHX/proc.h>
 #include "internal.h"
 
 /**

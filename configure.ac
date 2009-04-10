@@ -1,6 +1,6 @@
 
 AC_INIT([libHX], [2.7])
-AC_CONFIG_HEADERS([libHX/config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_PROG_INSTALL
 AM_INIT_AUTOMAKE([-Wall -Wno-override])
@@ -48,5 +48,6 @@ regular_CXXFLAGS="-D_FILE_OFFSET_BITS=64 \
 AC_SUBST([regular_CFLAGS])
 AC_SUBST([regular_CXXFLAGS])
 AC_SUBST([regular_LIBS])
-AC_CONFIG_FILES([Makefile doc/Makefile src/Makefile libHX.pc])
+AC_CONFIG_FILES([Makefile doc/Makefile src/Makefile
+	src/include/Makefile libHX.pc])
 AC_OUTPUT

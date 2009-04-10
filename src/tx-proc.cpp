@@ -8,8 +8,8 @@
 #	include <string.h>
 #endif
 #include <unistd.h>
-#include "proc.h"
-#include "string.h"
+#include <libHX/proc.h>
+#include <libHX/string.h>
 
 static const char *const t_args1[] = {"ls", "ls", "-dl", ".", NULL};
 static const char *const t_args2[] = {"ls", "ls", "-l", NULL};

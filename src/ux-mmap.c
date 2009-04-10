@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <windows.h>
 #include "internal.h"
-#include "misc.h"
+#include <libHX/misc.h>
 
 static inline DWORD dw_desired_access(int, int);
 static inline DWORD fl_protect(int, int);

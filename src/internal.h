@@ -10,8 +10,8 @@
 #ifndef LIBHX_INTERNAL_H
 #define LIBHX_INTERNAL_H 1
 
-#include "libHX/config.h"
-#include "libHX/defs.h"
+#include "config.h"
+#include <libHX/defs.h>
 
 #ifdef __cplusplus
 	/* Only for our dual C/C++ testsuites */
@@ -26,10 +26,10 @@
 #endif
 
 #ifdef __MINGW32__
-#	include "libHX/uxcompat.h"
+#	include "uxcompat.h"
 #endif
 #ifdef _MSC_VER
-#	include "libHX/uxcompat.h"
+#	include "uxcompat.h"
 #	define snprintf _snprintf
 #endif
 
