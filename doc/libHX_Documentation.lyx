@@ -18027,6 +18027,13 @@ HXPROC_STDIN
 \series default
  The subprocess's stdin file descriptor shall be connected to the master
  program, that is, not inherit the stdin of the master.
+ Cannot be used for 
+\family typewriter
+HXproc_\SpecialChar \-
+run_\SpecialChar \-
+sync
+\family default
+ (because there would be no one to provide data in a sync operation).
 \end_layout
 
 \begin_layout Description
@@ -18051,6 +18058,11 @@ HXPROC_STDOUT
 \family default
 \series default
  Connect the stdout file descriptor of the subprocess with the master.
+ Cannot be used for 
+\family typewriter
+HXproc_run_sync
+\family default
+.
 \end_layout
 
 \begin_layout Description
@@ -18075,6 +18087,11 @@ HXPROC_STDERR
 \family default
 \series default
  Connect the stderr file descriptor of the subprocess with the master.
+ Cannot be used for 
+\family typewriter
+HXproc_run_sync
+\family default
+.
 \end_layout
 
 \begin_layout Description
@@ -18096,9 +18113,22 @@ HXPROC_NULL_STDIN
 
  The subprocess's stdin file descriptor shall be connected to 
 \family typewriter
-/dev/null
+/dev\SpecialChar \slash{}
+null
 \family default
 .
+ 
+\family typewriter
+HXPROC_\SpecialChar \-
+STDIN
+\family default
+ and 
+\family typewriter
+HXPROC_\SpecialChar \-
+NULL_\SpecialChar \-
+STDIN
+\family default
+ are mutually exclusive.
 \end_layout
 
 \begin_layout Description
@@ -18120,9 +18150,22 @@ HXPROC_NULL_STDOUT
 
  Connect the stdout file descriptor of the subprocess to 
 \family typewriter
-/dev/null
+/dev\SpecialChar \slash{}
+null
 \family default
 , thereby essentially discarding its output.
+ 
+\family typewriter
+HXPROC_\SpecialChar \-
+STDOUT
+\family default
+ and 
+\family typewriter
+HXPROC_\SpecialChar \-
+NULL_\SpecialChar \-
+STDOUT
+\family default
+ are mutuall exclusive.
 \end_layout
 
 \begin_layout Description
@@ -18144,9 +18187,22 @@ HXPROC_NULL_STDERR
 
  Connect the stderr file descriptor of the subprocess to 
 \family typewriter
-/dev/null
+/dev\SpecialChar \slash{}
+null
 \family default
 , thereby essentially discarding its output.
+ 
+\family typewriter
+HXPROC_\SpecialChar \-
+STDERR
+\family default
+ and 
+\family typewriter
+HXPROC_\SpecialChar \-
+NULL_\SpecialChar \-
+STDERR
+\family default
+ are mutually exclusive.
 \end_layout
 
 \begin_layout Description
@@ -18621,6 +18677,19 @@ HXproc_wait
 struct HXproc
 \family default
 .
+\end_layout
+
+\begin_layout Standard
+Return value will be positive non-zero on success, or negative on error.
+ Underlying system function's errors are returned, plus:
+\end_layout
+
+\begin_layout Description
+
+\family sans
+EINVAL
+\family default
+ Flags were not accepted.
 \end_layout
 
 \begin_layout Section

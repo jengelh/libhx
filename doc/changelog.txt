@@ -2,6 +2,7 @@
 
 Enhancements:
 - HXproc now knows about HXPROC_NULL_*, which can be used to discard I/O
+- HXproc: expressly prohibit HXPROC_STD* for HXproc_run_sync
 
 
 libHX 2.7 (April 08 2009)

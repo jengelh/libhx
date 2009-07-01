@@ -218,10 +218,12 @@ EXPORT_SYMBOL int HXproc_run_sync(const char *const *argv, unsigned int flags)
 
 	memset(&proc, 0, sizeof(proc));
 	/*
-	 * Assigning file descriptos makes no sense because they would not
-	 * be read from.
+	 * Assigning file descriptors makes no sense because they would not
+	 * be read from. %HXPROC_NULL_* is ok of course.
 	 */
-	proc.p_flags = flags & ~(HXPROC_STDIN | HXPROC_STDOUT | HXPROC_STDERR);
+	if (flags & (HXPROC_STDIN | HXPROC_STDOUT | HXPROC_STDERR))
+		return -EINVAL;
+	proc.p_flags = flags;
 	if ((ret = HXproc_run_async(argv, &proc)) <= 0)
 		return ret;
 	return HXproc_wait(&proc);
