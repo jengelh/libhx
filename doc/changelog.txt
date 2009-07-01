@@ -1,5 +1,7 @@
 
 
+libHX 2.8 (July 01 2009)
+========================
 Enhancements:
 - HXproc now knows about HXPROC_NULL_*, which can be used to discard I/O
 - HXproc: expressly prohibit HXPROC_STD* for HXproc_run_sync
