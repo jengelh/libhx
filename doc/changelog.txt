@@ -1,5 +1,9 @@
 
 
+Enhancements:
+- HXproc now knows about HXPROC_NULL_*, which can be used to discard I/O
+
+
 libHX 2.7 (April 08 2009)
 =========================
 Fixes:

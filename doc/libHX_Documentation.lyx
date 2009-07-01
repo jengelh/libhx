@@ -1,4 +1,4 @@
-#LyX 1.6.1 created this file. For more info see http://www.lyx.org/
+#LyX 1.6.3 created this file. For more info see http://www.lyx.org/
 \lyxformat 345
 \begin_document
 \begin_header
@@ -18075,6 +18075,78 @@ HXPROC_STDERR
 \family default
 \series default
  Connect the stderr file descriptor of the subprocess with the master.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXPROC_NULL_STDIN
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXPROC_NULL_STDIN
+\end_layout
+
+\end_inset
+
+ The subprocess's stdin file descriptor shall be connected to 
+\family typewriter
+/dev/null
+\family default
+.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXPROC_NULL_STDOUT
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXPROC_NULL_STDOUT
+\end_layout
+
+\end_inset
+
+ Connect the stdout file descriptor of the subprocess to 
+\family typewriter
+/dev/null
+\family default
+, thereby essentially discarding its output.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXPROC_NULL_STDERR
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXPROC_NULL_STDERR
+\end_layout
+
+\end_inset
+
+ Connect the stderr file descriptor of the subprocess to 
+\family typewriter
+/dev/null
+\family default
+, thereby essentially discarding its output.
 \end_layout
 
 \begin_layout Description

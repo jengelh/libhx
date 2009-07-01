@@ -13,6 +13,7 @@
 
 static const char *const t_args1[] = {"ls", "ls", "-dl", ".", NULL};
 static const char *const t_args2[] = {"ls", "ls", "-l", NULL};
+static const char *const t_args3[] = {"ls", "-l", "/proc/self/fd/", NULL};
 
 static void t_async1(void)
 {
@@ -52,5 +53,6 @@ int main(void)
 	HXproc_run_sync(t_args1 + 1, 0);
 
 	t_async1();
+	HXproc_run_sync(t_args3, HXPROC_NULL_STDIN);
 	return EXIT_SUCCESS;
 }

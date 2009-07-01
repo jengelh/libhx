@@ -26,7 +26,9 @@ EXPORT_SYMBOL int HXproc_wait(struct HXproc *p)
 
 #else /* HAVE_FORK, HAVE_PIPE, HAVE_EXECVE */
 
+#include <sys/types.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -34,6 +36,12 @@ EXPORT_SYMBOL int HXproc_wait(struct HXproc *p)
 #include <libHX/defs.h>
 #include <libHX/proc.h>
 #include "internal.h"
+
+#ifdef _WIN32
+#	define NULL_DEVICE "nul"
+#else
+#	define NULL_DEVICE "/dev/null"
+#endif
 
 /**
  * HXproc_build_pipes -
@@ -94,11 +102,31 @@ static void HXproc_close_pipes(int (*p)[2])
  */
 EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 {
-	int pipes[3][2], ret, saved_errno;
+	int pipes[3][2], nullfd = -1, ret, saved_errno;
+	unsigned int t;
 
 	proc->p_stdin = proc->p_stdout = proc->p_stderr = -1;
-	if ((ret = HXproc_build_pipes(proc, pipes)) <= 0)
+
+	t  = (proc->p_flags & (HXPROC_STDIN | HXPROC_NULL_STDIN)) ==
+	     (HXPROC_STDIN | HXPROC_NULL_STDIN);
+	t  = (proc->p_flags & (HXPROC_STDOUT | HXPROC_NULL_STDOUT)) ==
+	     (HXPROC_STDOUT | HXPROC_NULL_STDOUT);
+	t  = (proc->p_flags & (HXPROC_STDERR | HXPROC_NULL_STDERR)) ==
+	     (HXPROC_STDERR | HXPROC_NULL_STDERR);
+	if (t > 0)
+		return -EINVAL;
+
+	if (proc->p_flags & (HXPROC_NULL_STDIN | HXPROC_NULL_STDOUT |
+	    HXPROC_NULL_STDERR)) {
+		if ((nullfd = open(NULL_DEVICE, O_RDWR)) < 0)
+			return -errno;
+	}
+	if ((ret = HXproc_build_pipes(proc, pipes)) <= 0) {
+		saved_errno = errno;
+		close(nullfd);
+		errno = saved_errno;
 		return ret;
+	}
 
 	if (proc->p_ops != NULL && proc->p_ops->p_prefork != NULL)
 		proc->p_ops->p_prefork(proc->p_data);
@@ -107,6 +135,7 @@ EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 		if (proc->p_ops != NULL && proc->p_ops->p_complete != NULL)
 			proc->p_ops->p_complete(proc->p_data);
 		HXproc_close_pipes(pipes);
+		close(nullfd);
 		return -(errno = saved_errno);
 	} else if (proc->p_pid == 0) {
 		const char *prog = *argv;
@@ -120,10 +149,16 @@ EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 		 */
 		if (proc->p_flags & HXPROC_STDIN)
 			proc->p_stdin = dup(pipes[0][0]);
+		else if (proc->p_flags & HXPROC_NULL_STDIN)
+			proc->p_stdin = dup(nullfd);
 		if (proc->p_flags & HXPROC_STDOUT)
 			proc->p_stdout = dup(pipes[1][1]);
+		else if (proc->p_flags & HXPROC_NULL_STDOUT)
+			proc->p_stdout = dup(nullfd);
 		if (proc->p_flags & HXPROC_STDERR)
 			proc->p_stderr = dup(pipes[2][1]);
+		else if (proc->p_flags & HXPROC_NULL_STDERR)
+			proc->p_stderr = dup(nullfd);
 		if (proc->p_ops != NULL && proc->p_ops->p_postfork != NULL)
 			proc->p_ops->p_postfork(proc->p_data);
 
@@ -132,21 +167,22 @@ EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 		 * their final fds.
 		 */
 		HXproc_close_pipes(pipes);
-		if ((proc->p_flags & HXPROC_STDIN) &&
+		if ((proc->p_flags & (HXPROC_STDIN | HXPROC_NULL_STDIN)) &&
 		    proc->p_stdin != STDIN_FILENO) {
 			dup2(proc->p_stdin, STDIN_FILENO);
 			close(proc->p_stdin);
 		}
-		if ((proc->p_flags & HXPROC_STDOUT) &&
+		if ((proc->p_flags & (HXPROC_STDOUT | HXPROC_NULL_STDOUT)) &&
 		    proc->p_stdout != STDOUT_FILENO) {
 			dup2(proc->p_stdout, STDOUT_FILENO);
 			close(proc->p_stdout);
 		}
-		if ((proc->p_flags & HXPROC_STDERR) &&
+		if ((proc->p_flags & (HXPROC_STDERR | HXPROC_NULL_STDERR)) &&
 		    proc->p_stderr != STDERR_FILENO) {
 			dup2(proc->p_stderr, STDERR_FILENO);
 			close(proc->p_stderr);
 		}
+		close(nullfd);
 		if (proc->p_flags & HXPROC_A0)
 			++argv;
 		if (proc->p_flags & HXPROC_EXECV)

@@ -10,12 +10,15 @@ extern "C" {
 #endif
 
 enum {
-	HXPROC_VERBOSE = 1 << 0,
-	HXPROC_EXECV   = 1 << 1,
-	HXPROC_A0      = 1 << 2,
-	HXPROC_STDIN   = 1 << 3,
-	HXPROC_STDOUT  = 1 << 4,
-	HXPROC_STDERR  = 1 << 5,
+	HXPROC_VERBOSE     = 1 << 0,
+	HXPROC_EXECV       = 1 << 1,
+	HXPROC_A0          = 1 << 2,
+	HXPROC_STDIN       = 1 << 3,
+	HXPROC_STDOUT      = 1 << 4,
+	HXPROC_STDERR      = 1 << 5,
+	HXPROC_NULL_STDIN  = 1 << 6,
+	HXPROC_NULL_STDOUT = 1 << 7,
+	HXPROC_NULL_STDERR = 1 << 8,
 };
 
 struct HXproc_ops {
