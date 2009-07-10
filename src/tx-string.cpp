@@ -124,7 +124,7 @@ static void t_split(void)
 
 	/* nothing allocated */
 	printf("HX_split5: a2[%p]:", a2);
-	for (wp = a2; f2 > 0; --f2)
+	for (wp = a2; f2 > 0; --f2, ++wp)
 		printf(" %s[%p]", *wp, *wp);
 	printf("\n");
 
