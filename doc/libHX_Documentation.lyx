@@ -8382,6 +8382,30 @@ HX_basename
 \series bold
 char *
 \series default
+HX_basename_safe(
+\series bold
+const char *
+\series default
+s);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_basename_safe
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+char *
+\series default
 HX_dirname(
 \series bold
 const char *
@@ -8474,6 +8498,117 @@ design
 \end_inset
 
 .
+ A possible use for this function is, for example, to derive a logging prefix
+ from 
+\family typewriter
+argv[0]
+\family default
+.
+ If somebody passed an empty string as 
+\family typewriter
+argv[0]
+\family default
+ that would surely be odd, and 
+\family typewriter
+HX_basename_exact
+\family default
+ giving a 
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+ in that case over 
+\family typewriter
+HX_basename
+\family default
+ giving 
+\begin_inset Quotes eld
+\end_inset
+
+
+\backslash
+0
+\begin_inset Quotes erd
+\end_inset
+
+ would not make much of a difference for logging.
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+int
+\series default
+ main(
+\series bold
+int
+\series default
+ argc, 
+\series bold
+const char **
+\series default
+argv)
+\begin_inset Newline newline
+\end_inset
+
+{
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+if
+\series default
+ (foo())
+\end_layout
+
+\begin_layout LyX-Code
+                fprintf(stderr, "%s: Special condition occurred.
+\backslash
+n",
+\begin_inset Newline newline
+\end_inset
+
+                        HX_basename(argv[0]));
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+return
+\series default
+ 0;
+\begin_inset Newline newline
+\end_inset
+
+}
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_basename_exact
+\family default
+ The accurate and safe version of 
+\family typewriter
+HX_basename
+\family default
+ that deals with the root directory and other trailing slashes correctly
+ and produces the same result as 
+\family typewriter
+dirname
+\family default
+(3).
+ It returns a pointer to a newly-allocated string that must be freed when
+ done using.
+ 
+\family typewriter
+NULL
+\family default
+ may be returned in case of an allocation error.
 \end_layout
 
 \begin_layout Description

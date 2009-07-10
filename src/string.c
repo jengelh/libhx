@@ -29,6 +29,34 @@ EXPORT_SYMBOL char *HX_basename(const char *s)
 	return const_cast1(char *, s);
 }
 
+EXPORT_SYMBOL char *HX_basename_exact(const char *s)
+{
+	const char *start, *end;
+	char *ret;
+	int len;
+
+	if (*s == '\0')
+		return HX_strdup(".");
+	for (end = s + strlen(s) - 1; end >= s && *end == '/'; --end)
+		;
+	if (end < s)
+		return HX_strdup("/");
+
+	start = HX_strbchr(s, end, '/');
+	if (start == NULL) {
+		len = end - s + 1;
+		ret = HX_memdup(s, len + 1);
+	} else {
+		++start;
+		len = end - start + 1;
+		ret = HX_memdup(start, len + 1);
+	}
+	if (ret == NULL)
+		return NULL;
+	ret[len] = '\0';
+	return ret;
+}
+
 EXPORT_SYMBOL char *HX_chomp(char *s)
 {
 	char *p = s + strlen(s) - 1;

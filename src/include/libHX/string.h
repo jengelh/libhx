@@ -44,6 +44,7 @@ extern void HXmc_free(hxmc_t *);
  *	STRING.C
  */
 extern char *HX_basename(const char *);
+extern char *HX_basename_exact(const char *);
 extern char *HX_chomp(char *);
 extern char *HX_dirname(const char *);
 extern hxmc_t *HX_getl(hxmc_t **, FILE *);

@@ -1,5 +1,9 @@
 
 
+Enhancements:
+- string: add HX_basename_exact
+
+
 libHX 2.8 (July 01 2009)
 ========================
 Enhancements:
