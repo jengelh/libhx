@@ -163,10 +163,10 @@ EXPORT_SYMBOL char **HX_split4(char *s, const char *delim, int *fld, int max)
 {
 	char **stk;
 	const char *p = s;
-	int count = 0;
+	int count = 1;
 
 	for (p = strpbrk(p, delim); p != NULL; p = strpbrk(++p, delim))
-		if (++count >= max) {
+		if (++count >= max && max > 0) {
 			count = max;
 			break;
 		}
@@ -174,6 +174,7 @@ EXPORT_SYMBOL char **HX_split4(char *s, const char *delim, int *fld, int max)
 	stk = malloc(sizeof(char *) * (count + 1));
 	if (stk == NULL)
 		return NULL;
+	stk[count] = NULL;
 	count = HX_split5(s, delim, count, stk);
 	if (fld != NULL)
 		*fld = count;

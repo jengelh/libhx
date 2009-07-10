@@ -1,5 +1,7 @@
 
 
+Fixes:
+- string: fixed number of fields and trailing NULL in HX_split4
 Enhancements:
 - string: add HX_basename_exact
 
