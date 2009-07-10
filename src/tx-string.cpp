@@ -37,6 +37,8 @@ static void t_path(void)
 		{"/", "//", "etc//foo/", "//etc//foo//", NULL};
 	static const char *const d2[] =
 		{"/", "/.", "//", "etc/foo", "etc//foo", "//etc//foo", NULL};
+	static const char *const d3[] =
+		{"/usr/lib", "/usr/", "usr", "/", ".", "..", NULL};
 	const char *const *iter;
 
 	printf("# dirname\n");
@@ -46,6 +48,11 @@ static void t_path(void)
 	printf("# basename\n");
 	for (iter = d2; *iter != NULL; ++iter)
 		printf("%s\n", HX_basename(*iter));
+
+	printf("# dirname.3 testcase\n");
+	for (iter = d3; *iter != NULL; ++iter)
+		printf("\"%s\" -> \"%s\" -> \"%s\"\n", *iter,
+		       HX_dirname(*iter), HX_basename(*iter));
 }
 
 static void t_strncat(void)
