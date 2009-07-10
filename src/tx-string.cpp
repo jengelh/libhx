@@ -33,18 +33,19 @@ static void t_mc(void)
 
 static void t_path(void)
 {
+	static const char *const d1[] =
+		{"/", "//", "etc//foo/", "//etc//foo//", NULL};
+	static const char *const d2[] =
+		{"/", "/.", "//", "etc/foo", "etc//foo", "//etc//foo", NULL};
+	const char *const *iter;
+
 	printf("# dirname\n");
-	printf("%s\n", HX_dirname("/"));
-	printf("%s\n", HX_dirname("//"));
-	printf("%s\n", HX_dirname("etc//foo/"));
-	printf("%s\n", HX_dirname("//etc//foo//"));
+	for (iter = d1; *iter != NULL; ++iter)
+		printf("%s\n", HX_dirname(*iter));
+
 	printf("# basename\n");
-	printf("%s\n", HX_basename("/"));
-	printf("%s\n", HX_basename("/."));
-	printf("%s\n", HX_basename("//"));
-	printf("%s\n", HX_basename("etc/foo"));
-	printf("%s\n", HX_basename("etc//foo"));
-	printf("%s\n", HX_basename("//etc//foo"));
+	for (iter = d2; *iter != NULL; ++iter)
+		printf("%s\n", HX_basename(*iter));
 }
 
 static void t_strncat(void)
