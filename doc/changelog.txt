@@ -1,5 +1,7 @@
 
 
+libHX 2.9 (July 11 2009)
+========================
 Fixes:
 - string: fixed number of fields and trailing NULL in HX_split4
 Enhancements:
