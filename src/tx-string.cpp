@@ -40,7 +40,7 @@ static void t_path(void)
 	static const char *const d3[] =
 		{"/usr/lib", "/usr/", "usr", "/", ".", "..", NULL};
 	const char *const *iter;
-	char *item1;
+	char *item1, *item2;
 
 	printf("# dirname\n");
 	for (iter = d1; *iter != NULL; ++iter) {
@@ -50,15 +50,19 @@ static void t_path(void)
 	}
 
 	printf("# basename\n");
-	for (iter = d2; *iter != NULL; ++iter)
-		printf("%s\n", HX_basename(*iter));
+	for (iter = d2; *iter != NULL; ++iter) {
+		item2 = HX_basename_exact(*iter);
+		printf("%s\n", item2);
+		free(item2);
+	}
 
 	printf("# dirname.3 testcase\n");
 	for (iter = d3; *iter != NULL; ++iter) {
 		item1 = HX_dirname(*iter);
-		printf("\"%s\" -> \"%s\" -> \"%s\"\n", *iter,
-		       item1, HX_basename(*iter));
+		item2 = HX_basename_exact(*iter);
+		printf("\"%s\" -> \"%s\" -> \"%s\"\n", *iter, item1, item2);
 		free(item1);
+		free(item2);
 	}
 }
 
