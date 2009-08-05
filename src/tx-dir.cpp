@@ -1,3 +1,6 @@
+/*
+ *	this program is released in the Public Domain
+ */
 #ifndef __cplusplus
 #	include <stdio.h>
 #	include <stdlib.h>
