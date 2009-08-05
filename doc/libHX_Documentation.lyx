@@ -13919,7 +13919,8 @@ reference "sub:option-pitfalls-static"
 \end_layout
 
 \begin_layout Standard
-The following table lists the types that map to the common integral.
+The following table lists the types that map to the common integral and
+ floating-point types.
  Signed and unsigned integeral types are processed using 
 \family typewriter
 strtol
@@ -15167,7 +15168,12 @@ iptables
 \begin_inset Quotes erd
 \end_inset
 
-.
+
+\begin_inset space ~
+\end_inset
+
+--- things that look like an option take precedence over an option with
+ an optional argument.
  
 \begin_inset Quotes eld
 \end_inset
@@ -15180,7 +15186,7 @@ iptables
 \begin_inset Quotes erd
 \end_inset
 
- of course is not, because 
+ of course denotes an option with an argument, as 
 \begin_inset Quotes eld
 \end_inset
 
@@ -15192,7 +15198,7 @@ iptables
 \begin_inset Quotes erd
 \end_inset
 
- is not an option, but serves to indicate standard input/output.
+ is used to indicate standard input/output.
 \end_layout
 
 \begin_layout Subsection
@@ -15360,7 +15366,7 @@ main
 \begin_inset Quotes eld
 \end_inset
 
-eats
+eat
 \begin_inset Quotes erd
 \end_inset
 
