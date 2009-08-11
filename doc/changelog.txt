@@ -3,6 +3,7 @@
 Changes:
 - automatically skip building testcases if C++ compiler not available
   (reminder: libHX itself does not require a C++ compiler)
+- rand: use faster modulo-based variant for numbers within RAND_MAX range
 Enhancements:
 - time: add time delta functions (HX_diff_timeval/HX_diff_timespec)
 

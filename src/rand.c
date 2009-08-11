@@ -80,6 +80,11 @@ EXPORT_SYMBOL int HX_rand(void)
 
 EXPORT_SYMBOL unsigned int HX_irand(unsigned int lo, unsigned int hi)
 {
-	return static_cast(unsigned int, static_cast(double, HX_rand()) *
-	       (hi - lo) / RAND_MAX) + lo;
+	unsigned int delta = hi - lo;
+
+	if (delta <= RAND_MAX)
+		return HX_rand() % delta + lo;
+	else
+		return static_cast(unsigned int,
+		       static_cast(double, HX_rand()) * delta / RAND_MAX) + lo;
 }
