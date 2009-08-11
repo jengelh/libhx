@@ -2,8 +2,8 @@
 
 SUBDIRS = include
 
-AM_CFLAGS        = ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN} -Iinclude
-AM_CXXFLAGS      = ${regular_CXXFLAGS} ${GCC_FVISIBILITY_HIDDEN} -Iinclude
+AM_CFLAGS        = ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${srcdir}/include
+AM_CXXFLAGS      = ${regular_CXXFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${srcdir}/include
 
 lib_LTLIBRARIES  = libHX.la
 libHX_la_SOURCES = arbtree.c deque.c dir.c dl.c format.c mc.c misc.c opt.c \
