@@ -18,16 +18,8 @@ if B_PROC
 proc_sources     = proc.c
 endif
 
-noinst_PROGRAMS    = tc-compile tx-compile
-noinst_PROGRAMS   += tc-arbtree tx-arbtree
-noinst_PROGRAMS   += tc-cast tx-cast
-noinst_PROGRAMS   += tc-deque tx-deque
-noinst_PROGRAMS   += tc-list tx-list
-noinst_PROGRAMS   += tc-misc tx-misc
-noinst_PROGRAMS   += tc-option tx-option
-noinst_PROGRAMS   += tc-proc tx-proc
-noinst_PROGRAMS   += tc-dir tx-dir
-noinst_PROGRAMS   += tc-string tx-string
+noinst_PROGRAMS    = tc-compile tc-arbtree tc-cast tc-deque tc-dir tc-list \
+                     tc-misc tc-option tc-proc tc-string
 tc_arbtree_LDADD   = libHX.la -lm
 tc_cast_LDADD      = -lm
 tc_compile_LDADD   = libHX.la
@@ -37,6 +29,10 @@ tc_misc_LDADD      = libHX.la
 tc_option_LDADD    = libHX.la
 tc_proc_LDADD      = libHX.la
 tc_string_LDADD    = libHX.la
+
+if HAVE_CXX
+noinst_PROGRAMS   += tx-compile tx-arbtree tx-cast tx-deque tx-dir tx-list \
+                     tx-misc tx-option tx-proc tx-string
 tx_arbtree_SOURCES = tx-arbtree.cpp
 tx_arbtree_LDADD   = libHX.la -lm
 tx_cast_SOURCES    = tx-cast.cpp
@@ -55,3 +51,4 @@ tx_proc_SOURCES    = tx-proc.cpp
 tx_proc_LDADD      = libHX.la
 tx_string_SOURCES  = tx-string.cpp
 tx_string_LDADD    = libHX.la
+endif

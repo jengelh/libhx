@@ -11,6 +11,17 @@ AC_DISABLE_STATIC
 AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
 
+#
+# Check whether there really is a C++ compiler.
+# It is not mandatory to compile libHX, but we want to know.
+#
+AC_LANG_PUSH([C++])
+AC_COMPILE_IFELSE(
+	[AC_LANG_PROGRAM([], [return 0;])],
+	[ac_cv_cxx=yes], [ac_cv_cxx=no])
+AC_LANG_POP([C++])
+AM_CONDITIONAL([HAVE_CXX], [test "$ac_cv_cxx" = yes])
+
 AC_MSG_CHECKING([for mingw32])
 AC_LANG_PUSH([C])
 AC_COMPILE_IFELSE(

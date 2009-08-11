@@ -572,11 +572,9 @@ KB of disk space on Linux for the shared library and header files; somewhat
 \end_layout
 
 \begin_layout Standard
-A C++ compiler is only needed if you want to build the test programs that
- come with libHX, in C++ mode.
- This is done by default so it may occur that you get prompted for a C++
- compiler, but it is not strictly required, as this is just for the test
- programs.
+A C++ compiler is only needed if you want to build the C++ test programs
+ that come with libHX.
+ By default, if there is no C++ compiler present, these will not be built.
 \end_layout
 
 \begin_layout Itemize
