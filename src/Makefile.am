@@ -19,7 +19,7 @@ proc_sources     = proc.c
 endif
 
 noinst_PROGRAMS    = tc-compile tc-arbtree tc-cast tc-deque tc-dir tc-list \
-                     tc-misc tc-option tc-proc tc-string tc-time
+                     tc-misc tc-option tc-proc tc-rand tc-string tc-time
 tc_arbtree_LDADD   = libHX.la -lm
 tc_cast_LDADD      = -lm
 tc_compile_LDADD   = libHX.la
@@ -28,12 +28,13 @@ tc_list_LDADD      = libHX.la
 tc_misc_LDADD      = libHX.la
 tc_option_LDADD    = libHX.la
 tc_proc_LDADD      = libHX.la
+tc_rand_LDADD      = libHX.la -lrt
 tc_string_LDADD    = libHX.la
 tc_time_LDADD      = libHX.la -lrt
 
 if HAVE_CXX
 noinst_PROGRAMS   += tx-compile tx-arbtree tx-cast tx-deque tx-dir tx-list \
-                     tx-misc tx-option tx-proc tx-string tx-time
+                     tx-misc tx-option tx-proc tx-rand tx-string tx-time
 tx_arbtree_SOURCES = tx-arbtree.cpp
 tx_arbtree_LDADD   = libHX.la -lm
 tx_cast_SOURCES    = tx-cast.cpp
@@ -50,6 +51,8 @@ tx_misc_LDADD      = libHX.la
 tx_option_SOURCES  = tx-option.cpp
 tx_proc_SOURCES    = tx-proc.cpp
 tx_proc_LDADD      = libHX.la
+tx_rand_SOURCES    = tx-rand.cpp
+tx_rand_LDADD      = libHX.la -lrt
 tx_string_SOURCES  = tx-string.cpp
 tx_string_LDADD    = libHX.la
 tx_time_SOURCES    = tx-time.cpp

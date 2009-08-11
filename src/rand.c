@@ -23,8 +23,6 @@
 #include <libHX/misc.h>
 #include "internal.h"
 
-static int rand_fd = -1;
-
 static unsigned int HXrand_obtain_seed(void)
 {
 	unsigned int s;
@@ -55,31 +53,34 @@ static unsigned int HXrand_obtain_seed(void)
 
 static __attribute__((constructor)) void HXrand_init(void)
 {
-	int fd;
+	unsigned int seed;
+	int fd, ret = 0;
 
-	if (rand_fd == -1)
-		if ((fd = open("/dev/urandom", O_RDONLY | O_BINARY)) >= 0)
-			rand_fd = fd;
-
-	srand(HXrand_obtain_seed());
-}
-
-static __attribute__((destructor)) void HXrand_deinit(void)
-{
-	close(rand_fd);
-	rand_fd = -1;
+	if ((fd = open("/dev/urandom", O_RDONLY | O_BINARY)) >= 0) {
+		ret = read(fd, &seed, sizeof(seed));
+		close(fd);
+	}
+	if (ret != sizeof(seed))
+		seed = HXrand_obtain_seed();
+	srand(seed);
 }
 
 EXPORT_SYMBOL int HX_rand(void)
 {
-	int n;
-	if (rand_fd < 0 || read(rand_fd, &n, sizeof(n)) != sizeof(n))
-		return rand();
-	return (n >= 0) ? n : -n;
+	/*
+	 * If there is an overly broken system, we may need to use
+	 * alternate methods again (/dev/urandom?)
+	 */
+	return rand();
 }
 
 EXPORT_SYMBOL unsigned int HX_irand(unsigned int lo, unsigned int hi)
 {
-	return static_cast(unsigned int, static_cast(double, HX_rand()) *
-	       (hi - lo) / RAND_MAX) + lo;
+	unsigned int delta = hi - lo;
+
+	if (delta <= RAND_MAX)
+		return HX_rand() % delta + lo;
+	else
+		return static_cast(unsigned int,
+		       static_cast(double, HX_rand()) * delta / RAND_MAX) + lo;
 }
