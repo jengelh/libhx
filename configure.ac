@@ -41,11 +41,17 @@ CHECK_GCC_FVISIBILITY
 AC_CHECK_LIB([dl], [dlopen], [regular_LIBS="$regular_LIBS -ldl"])
 
 AC_CHECK_MEMBERS(
-	[struct stat.st_mtimensec, struct stat.st_mtim,
+	[struct timespec.tv_nsec,
+	struct timeval.tv_usec,
+	struct stat.st_mtimensec, struct stat.st_mtim,
 	struct stat.st_mtimespec, struct stat.st_mtime,
 	struct stat.st_otimensec, struct stat.st_otim,
 	struct stat.st_otimespec, struct stat.st_otime],
-	[], [], [#include <sys/stat.h>])
+	[], [], [
+	#include <sys/stat.h>
+	#include <sys/time.h>
+	#include <time.h>
+	])
 AC_CHECK_FUNCS([fork execv execvp pipe], [b_proc="1"])
 AC_CHECK_FUNCS([gettimeofday getegid geteuid getpid getppid])
 AM_CONDITIONAL([B_PROC], [test "$b_proc" = 1])

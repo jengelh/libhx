@@ -3,6 +3,8 @@
 Changes:
 - automatically skip building testcases if C++ compiler not available
   (reminder: libHX itself does not require a C++ compiler)
+Enhancements:
+- time: add time delta functions (HX_diff_timeval/HX_diff_timespec)
 
 
 libHX 2.9 (July 11 2009)
