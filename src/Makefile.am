@@ -28,7 +28,7 @@ tc_list_LDADD      = libHX.la
 tc_misc_LDADD      = libHX.la
 tc_option_LDADD    = libHX.la
 tc_proc_LDADD      = libHX.la
-tc_rand_LDADD      = libHX.la
+tc_rand_LDADD      = libHX.la -lrt
 tc_string_LDADD    = libHX.la
 tc_time_LDADD      = libHX.la -lrt
 
@@ -52,7 +52,7 @@ tx_option_SOURCES  = tx-option.cpp
 tx_proc_SOURCES    = tx-proc.cpp
 tx_proc_LDADD      = libHX.la
 tx_rand_SOURCES    = tx-rand.cpp
-tx_rand_LDADD      = libHX.la
+tx_rand_LDADD      = libHX.la -lrt
 tx_string_SOURCES  = tx-string.cpp
 tx_string_LDADD    = libHX.la
 tx_time_SOURCES    = tx-time.cpp
