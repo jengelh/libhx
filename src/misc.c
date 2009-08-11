@@ -1,5 +1,4 @@
 /*
- *	libHX/other.c
  *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2009
  *
  *	This file is part of libHX. libHX is free software; you can
@@ -7,20 +6,9 @@
  *	Lesser General Public License as published by the Free Software
  *	Foundation; either version 2.1 or 3 of the License.
  */
-#include <sys/stat.h>
-#include <errno.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#if defined(_WIN32)
-#	include <io.h>
-#else
-#	include <sys/types.h>
-#	include <sys/wait.h>
-#	include <unistd.h>
-#endif
+#include <stdlib.h>
+#include <unistd.h>
 #include <libHX/ctype_helper.h>
 #include <libHX/misc.h>
 #include "internal.h"
