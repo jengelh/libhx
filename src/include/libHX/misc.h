@@ -14,6 +14,8 @@ extern "C" {
 #endif
 
 struct stat;
+struct timespec;
+struct timeval;
 
 /*
  *	DIR.C
@@ -52,6 +54,10 @@ enum {
 extern int HX_ffs(unsigned long);
 extern int HX_fls(unsigned long);
 extern void HX_hexdump(FILE *, const void *, unsigned int);
+extern void HX_diff_timespec(struct timespec *,
+	const struct timespec *, const struct timespec *);
+extern void HX_diff_timeval(struct timeval *,
+	const struct timeval *, const struct timeval *);
 extern long HX_time_compare(const struct stat *, const struct stat *, char);
 extern void HX_zvecfree(char **);
 

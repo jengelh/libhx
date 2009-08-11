@@ -2956,46 +2956,6 @@ HX_hexdump
 
 
 \series bold
-int
-\series default
- HX_time_compare(
-\series bold
-const struct
-\series default
- stat 
-\series bold
-*
-\series default
-a, 
-\series bold
-const struct
-\series default
- stat 
-\series bold
-*
-\series default
-b, 
-\series bold
-int
-\series default
- mode);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-HX_time_compare
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
 void
 \series default
  HX_zvecfree(
@@ -3084,6 +3044,210 @@ len
 \begin_layout Description
 
 \family typewriter
+HX_zvecfree
+\family default
+ Frees the supplied Z-vector array.
+ (Frees all array elements from the first element to (excluding) the first
+ 
+\family typewriter
+NULL
+\family default
+ element.)
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_zveclen
+\family default
+ Counts the number of array elements until the first 
+\family typewriter
+NULL
+\family default
+ array element is seen, and returns this number.
+\end_layout
+
+\begin_layout Section
+Time functions
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/time.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HX_diff_timespec(
+\series bold
+struct
+\series default
+ timespec 
+\series bold
+*
+\series default
+delta,
+\begin_inset Newline newline
+\end_inset
+
+    
+\series bold
+const struct
+\series default
+ timespec 
+\series bold
+*
+\series default
+p, 
+\series bold
+const struct
+\series default
+ timespec 
+\series bold
+*
+\series default
+q);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_diff_timespec
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HX_diff_timeval(
+\series bold
+struct
+\series default
+ timeval 
+\series bold
+*
+\series default
+delta,
+\begin_inset Newline newline
+\end_inset
+
+    
+\series bold
+const struct
+\series default
+ timeval 
+\series bold
+*
+\series default
+p, 
+\series bold
+const struct
+\series default
+ timeval 
+\series bold
+*
+\series default
+q);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_diff_timeval
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HX_time_compare(
+\series bold
+const struct
+\series default
+ stat 
+\series bold
+*
+\series default
+a, 
+\series bold
+const struct
+\series default
+ stat 
+\series bold
+*
+\series default
+b, 
+\series bold
+int
+\series default
+ mode);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_time_compare
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_diff_timespec
+\family default
+ Calculates the difference between the two timepoints p and q, which are
+ of type 
+\family typewriter
+struct timespec
+\family default
+ (nanosecond granularity).
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_diff_timeval
+\family default
+ Calculates the difference between the two timepoints p and q, which are
+ of type 
+\family typewriter
+struct timeval
+\family default
+ (microsecnod granularity).
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
 HX_time_compare
 \family default
  Compares the timestamps from two 
@@ -3129,32 +3293,6 @@ a
 b
 \family default
 .
-\end_layout
-
-\begin_layout Description
-
-\family typewriter
-HX_zvecfree
-\family default
- Frees the supplied Z-vector array.
- (Frees all array elements from the first element to (excluding) the first
- 
-\family typewriter
-NULL
-\family default
- element.)
-\end_layout
-
-\begin_layout Description
-
-\family typewriter
-HX_zveclen
-\family default
- Counts the number of array elements until the first 
-\family typewriter
-NULL
-\family default
- array element is seen, and returns this number.
 \end_layout
 
 \begin_layout Standard

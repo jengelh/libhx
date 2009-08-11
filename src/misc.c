@@ -83,6 +83,63 @@ EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
 	fprintf(fp, "\n");
 }
 
+enum {
+	MICROSECOND = 0xf4240,
+	NANOSECOND  = 0x3b9aca00,
+};
+
+#ifdef HAVE_STRUCT_TIMESPEC_TV_NSEC
+/**
+ * Calculates @future - @past. You can also swap them and correctly
+ * get a negative time.
+ */
+EXPORT_SYMBOL void HX_diff_timespec(struct timespec *delta,
+    const struct timespec *future, const struct timespec *past)
+{
+	bool lt = future->tv_sec < past->tv_sec ||
+	          (future->tv_sec == past->tv_sec &&
+	          future->tv_nsec < past->tv_nsec);
+
+	delta->tv_sec  = future->tv_sec  - past->tv_sec;
+	delta->tv_nsec = future->tv_nsec - past->tv_nsec;
+	if (lt) {
+		if (future->tv_nsec > past->tv_nsec) {
+			delta->tv_nsec = -NANOSECOND + delta->tv_nsec;
+			++delta->tv_sec;
+		}
+		if (delta->tv_sec < 0)
+			delta->tv_nsec *= -1;
+	} else if (delta->tv_nsec < 0) {
+		delta->tv_nsec += NANOSECOND;
+		--delta->tv_sec;
+	}
+}
+#endif
+
+#ifdef HAVE_STRUCT_TIMEVAL_TV_USEC
+EXPORT_SYMBOL void HX_diff_timeval(struct timeval *delta,
+    const struct timeval *future, const struct timeval *past)
+{
+	bool lt = future->tv_sec < past->tv_sec ||
+	          (future->tv_sec == past->tv_sec &&
+	          future->tv_usec < past->tv_usec);
+
+	delta->tv_sec  = future->tv_sec  - past->tv_sec;
+	delta->tv_usec = future->tv_usec - past->tv_usec;
+	if (lt) {
+		if (future->tv_usec > past->tv_usec) {
+			delta->tv_usec = -MICROSECOND + delta->tv_usec;
+			++delta->tv_sec;
+		}
+		if (delta->tv_sec < 0)
+			delta->tv_usec *= -1;
+	} else if (delta->tv_usec < 0) {
+		delta->tv_usec += MICROSECOND;
+		--delta->tv_sec;
+	}
+}
+#endif
+
 EXPORT_SYMBOL long HX_time_compare(const struct stat *a,
     const struct stat *b, char sel)
 {
