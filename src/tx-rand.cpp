@@ -17,7 +17,7 @@ int main(void)
 	printf("\n");
 
 	clock_gettime(CLOCK_REALTIME, &past);
-	for (i = 0; i < (1 << 20); ++i) {
+	for (i = 0; i < (1 << 25); ++i) {
 		volatile unsigned int __attribute__((unused)) t =
 			HX_irand(0, RAND_MAX);
 	}
@@ -27,7 +27,7 @@ int main(void)
 	       static_cast(long, delta.tv_sec), delta.tv_nsec / 1000);
 
 	clock_gettime(CLOCK_REALTIME, &past);
-	for (i = 0; i < (1 << 20); ++i) {
+	for (i = 0; i < (1 << 25); ++i) {
 		volatile unsigned int __attribute__((unused)) t =
 			HX_irand(0, ~0U);
 	}
