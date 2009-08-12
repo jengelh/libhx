@@ -26,13 +26,10 @@ enum {
 EXPORT_SYMBOL void HX_diff_timespec(struct timespec *delta,
     const struct timespec *future, const struct timespec *past)
 {
-	bool lt = future->tv_sec < past->tv_sec ||
-	          (future->tv_sec == past->tv_sec &&
-	          future->tv_nsec < past->tv_nsec);
-
 	delta->tv_sec  = future->tv_sec  - past->tv_sec;
 	delta->tv_nsec = future->tv_nsec - past->tv_nsec;
-	if (lt) {
+	if (future->tv_sec < past->tv_sec || (future->tv_sec == past->tv_sec &&
+	    future->tv_nsec < past->tv_nsec)) {
 		if (future->tv_nsec > past->tv_nsec) {
 			delta->tv_nsec = -NANOSECOND + delta->tv_nsec;
 			++delta->tv_sec;
@@ -50,13 +47,10 @@ EXPORT_SYMBOL void HX_diff_timespec(struct timespec *delta,
 EXPORT_SYMBOL void HX_diff_timeval(struct timeval *delta,
     const struct timeval *future, const struct timeval *past)
 {
-	bool lt = future->tv_sec < past->tv_sec ||
-	          (future->tv_sec == past->tv_sec &&
-	          future->tv_usec < past->tv_usec);
-
 	delta->tv_sec  = future->tv_sec  - past->tv_sec;
 	delta->tv_usec = future->tv_usec - past->tv_usec;
-	if (lt) {
+	if (future->tv_sec < past->tv_sec || (future->tv_sec == past->tv_sec &&
+	    future->tv_usec < past->tv_usec)) {
 		if (future->tv_usec > past->tv_usec) {
 			delta->tv_usec = -MICROSECOND + delta->tv_usec;
 			++delta->tv_sec;
