@@ -31,7 +31,11 @@ struct memcont {
 	char data[1];
 };
 
-//-----------------------------------------------------------------------------
+static inline struct memcont *HXmc_base(const hxmc_t *p)
+{
+	return containerof(p, struct memcont, data);
+}
+
 EXPORT_SYMBOL hxmc_t *HXmc_strinit(const char *s)
 {
 	hxmc_t *t = NULL;
@@ -55,7 +59,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcpy(hxmc_t **vp, const void *ptr, size_t len)
 {
 	struct memcont *ctx;
 	if (*vp != NULL) {
-		ctx = containerof(*vp, struct memcont, data);
+		ctx = HXmc_base(*vp);
 		CHECK_IDENT(ctx);
 		if (ctx->alloc < len) {
 			ctx = realloc(ctx, sizeof(struct memcont) + len);
@@ -84,9 +88,11 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcpy(hxmc_t **vp, const void *ptr, size_t len)
 
 EXPORT_SYMBOL size_t HXmc_length(const hxmc_t *vp)
 {
+	const struct memcont *ctx;
+
 	if (vp == NULL)
 		return 0;
-	struct memcont *ctx = containerof(vp, struct memcont, data);
+	ctx = HXmc_base(vp);
 	CHECK_IDENT(ctx);
 	return ctx->length;
 }
@@ -97,14 +103,15 @@ EXPORT_SYMBOL hxmc_t *HXmc_setlen(hxmc_t **vp, size_t len)
 	if (HXmc_trunc(vp, len) == NULL)
 		return NULL;
 
-	ctx = containerof(*vp, struct memcont, data);
+	ctx = HXmc_base(*vp);
 	ctx->length = len;
 	return *vp;
 }
 
 EXPORT_SYMBOL hxmc_t *HXmc_trunc(hxmc_t **vp, size_t len)
 {
-	struct memcont *ctx = containerof(*vp, struct memcont, data);
+	struct memcont *ctx = HXmc_base(*vp);
+
 	CHECK_IDENT(ctx);
 	if (len > ctx->alloc) {
 		ctx = realloc(ctx, sizeof(struct memcont) + len);
@@ -127,7 +134,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_strcat(hxmc_t **vp, const char *s)
 
 EXPORT_SYMBOL hxmc_t *HXmc_memcat(hxmc_t **vp, const void *ptr, size_t len)
 {
-	struct memcont *ctx = containerof(*vp, struct memcont, data);
+	struct memcont *ctx = HXmc_base(*vp);
 	size_t nl = ctx->length + len;
 
 	CHECK_IDENT(ctx);
@@ -175,7 +182,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_strins(hxmc_t **vp, size_t pos, const char *s)
 EXPORT_SYMBOL hxmc_t *HXmc_memins(hxmc_t **vp, size_t pos, const void *ptr,
     size_t len)
 {
-	struct memcont *ctx = containerof(*vp, struct memcont, data);
+	struct memcont *ctx = HXmc_base(*vp);
 	size_t nl = ctx->length + len;
 
 	CHECK_IDENT(ctx);
@@ -197,7 +204,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_memins(hxmc_t **vp, size_t pos, const void *ptr,
 
 EXPORT_SYMBOL hxmc_t *HXmc_memdel(hxmc_t *vp, size_t pos, size_t len)
 {
-	struct memcont *ctx = containerof(vp, struct memcont, data);
+	struct memcont *ctx = HXmc_base(vp);
 	CHECK_IDENT(ctx);
 
 	if (pos + len > ctx->length)
@@ -215,7 +222,7 @@ EXPORT_SYMBOL void HXmc_free(hxmc_t *vp)
 	struct memcont *ctx;
 	if (vp == NULL)
 		return;
-	ctx = containerof(vp, struct memcont, data);
+	ctx = HXmc_base(vp);
 	CHECK_IDENT(ctx);
 	free(ctx);
 }
