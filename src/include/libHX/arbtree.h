@@ -2,6 +2,7 @@
 #define _LIBHX_ARBTREE_H 1
 
 #include <sys/types.h>
+#include <libHX/map.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,17 +44,12 @@ struct HXbtree_node {
 };
 
 struct HXbtree {
-	/* The size argument is needed for memcmp. */
-	int (*k_compare)(const void *, const void *, size_t);
 	void *uptr;
 	struct HXbtree_node *root;
 	unsigned int items, tid;
 	unsigned char flags;
-	void *(*k_clone)(const void *, size_t);
-	void (*k_free)(void *);
-	void *(*d_clone)(const void *, size_t);
-	void (*d_free)(void *);
 	size_t key_size, data_size;
+	struct HXmap_ops ops;
 };
 
 extern struct HXbtree *HXbtree_init(unsigned int, ...);
