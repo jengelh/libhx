@@ -15,7 +15,8 @@
 #include "internal.h"
 
 #define HXMC_IDENT 0x200571AF
-#define CHECK_IDENT(c) \
+
+#define HXmc_check(c) \
 	if ((c)->id != HXMC_IDENT) \
 		fprintf(stderr, "libHX-mc error: not a hxmc object!\n");
 
@@ -60,7 +61,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcpy(hxmc_t **vp, const void *ptr, size_t len)
 	struct memcont *ctx;
 	if (*vp != NULL) {
 		ctx = HXmc_base(*vp);
-		CHECK_IDENT(ctx);
+		HXmc_check(ctx);
 		if (ctx->alloc < len) {
 			ctx = realloc(ctx, sizeof(struct memcont) + len);
 			if (ctx == NULL)
@@ -93,7 +94,7 @@ EXPORT_SYMBOL size_t HXmc_length(const hxmc_t *vp)
 	if (vp == NULL)
 		return 0;
 	ctx = HXmc_base(vp);
-	CHECK_IDENT(ctx);
+	HXmc_check(ctx);
 	return ctx->length;
 }
 
@@ -112,7 +113,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_trunc(hxmc_t **vp, size_t len)
 {
 	struct memcont *ctx = HXmc_base(*vp);
 
-	CHECK_IDENT(ctx);
+	HXmc_check(ctx);
 	if (len > ctx->alloc) {
 		ctx = realloc(ctx, sizeof(struct memcont) + len);
 		if (ctx == NULL)
@@ -137,7 +138,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcat(hxmc_t **vp, const void *ptr, size_t len)
 	struct memcont *ctx = HXmc_base(*vp);
 	size_t nl = ctx->length + len;
 
-	CHECK_IDENT(ctx);
+	HXmc_check(ctx);
 	if (nl > ctx->alloc) {
 		ctx = realloc(ctx, sizeof(struct memcont) + nl);
 		if (ctx == NULL)
@@ -185,7 +186,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_memins(hxmc_t **vp, size_t pos, const void *ptr,
 	struct memcont *ctx = HXmc_base(*vp);
 	size_t nl = ctx->length + len;
 
-	CHECK_IDENT(ctx);
+	HXmc_check(ctx);
 	if (ctx->alloc < nl) {
 		ctx = realloc(ctx, sizeof(struct memcont) + nl);
 		if (ctx == NULL)
@@ -205,7 +206,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_memins(hxmc_t **vp, size_t pos, const void *ptr,
 EXPORT_SYMBOL hxmc_t *HXmc_memdel(hxmc_t *vp, size_t pos, size_t len)
 {
 	struct memcont *ctx = HXmc_base(vp);
-	CHECK_IDENT(ctx);
+	HXmc_check(ctx);
 
 	if (pos + len > ctx->length)
 		len = ctx->length - pos;
@@ -223,6 +224,6 @@ EXPORT_SYMBOL void HXmc_free(hxmc_t *vp)
 	if (vp == NULL)
 		return;
 	ctx = HXmc_base(vp);
-	CHECK_IDENT(ctx);
+	HXmc_check(ctx);
 	free(ctx);
 }
