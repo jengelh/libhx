@@ -16,10 +16,6 @@
 
 #define HXMC_IDENT 0x200571AF
 
-#define HXmc_check(c) \
-	if ((c)->id != HXMC_IDENT) \
-		fprintf(stderr, "libHX-mc error: not a hxmc object!\n");
-
 struct memcont {
 	size_t alloc, length;
 	unsigned int id;
@@ -31,6 +27,12 @@ struct memcont {
 	 */
 	char data[1];
 };
+
+static inline void HXmc_check(const struct memcont *c)
+{
+	if (c->id != HXMC_IDENT)
+		fprintf(stderr, "libHX-mc error: not a hxmc object!\n");
+}
 
 static inline struct memcont *HXmc_base(const hxmc_t *p)
 {
