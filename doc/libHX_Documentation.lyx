@@ -93,6 +93,10 @@ Overview
 \end_layout
 
 \begin_layout Itemize
+Maps (key-value pairs)
+\end_layout
+
+\begin_layout Itemize
 Red-black binary tree with key-value pair extension (section
 \begin_inset space ~
 \end_inset
@@ -3307,6 +3311,788 @@ Data structures
 \end_layout
 
 \begin_layout Section
+Maps
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Maps"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A map, also known as associative array, is a collection of key-value pairs.
+ The underlying storage mechanism may not be an array however.
+ Each key is unique and has an associated value.
+ Keys can be any data desired; HXmap allows to specify your own key and
+ data handling functions so they can be strings, raw pointers, or complex
+ structures.
+\end_layout
+
+\begin_layout Subsection
+Map types
+\end_layout
+
+\begin_layout Itemize
+hash-based map
+\end_layout
+
+\begin_layout Subsection
+Map flags
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXMAP_NOREPLACE
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAP_NOREPLACE
+\end_layout
+
+\end_inset
+
+ If a key already exists and another add operation is attempted, the key's
+ associated value will be replaced by the new value.
+ If this flag is absent, -EEXIST is returned.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXMAP_SKEY
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAP_SKEY
+\end_layout
+
+\end_inset
+
+ Notifies the constructor that keys will be C-style strings.
+ The flag presets the 
+\family typewriter
+k_compare
+\family default
+ operation to use 
+\family typewriter
+strcmp
+\family default
+.
+ In the flag's absence, direct value comparison will be used if the key
+ size is specified as zero (e.
+\begin_inset space \thinspace{}
+\end_inset
+
+g.
+\begin_inset space \space{}
+\end_inset
+
+with the 
+\family typewriter
+HXhashmap_\SpecialChar \-
+init4
+\family default
+ function call), or 
+\family typewriter
+memcmp
+\family default
+ if the key size is non-zero.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXMAP_CKEY
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAP_CKEY
+\end_layout
+
+\end_inset
+
+ Instructs the map to make copies of keys when they are added to the map.
+ This is required when the buffer holding the key changes or goes out of
+ scope.
+ The flag presets the 
+\family typewriter
+k_clone
+\family default
+ and 
+\family typewriter
+k_free
+\family default
+ operations to 
+\family typewriter
+HX_strdup
+\family default
+ and 
+\family typewriter
+free
+\family default
+ if 
+\family typewriter
+HXMAP_SKEY
+\family default
+ was also specified, otherwise sets 
+\family typewriter
+HX_memdup
+\family default
+ and 
+\family typewriter
+free
+\family default
+.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXMAP_SDATA
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAP_SDATA
+\end_layout
+
+\end_inset
+
+ Notifies the constructor that data will be C-style strings.
+ This sets up the 
+\family typewriter
+d_clone
+\family default
+ and 
+\family typewriter
+d_free
+\family default
+ operations.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXMAP_CDATA
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAP_CDATA
+\end_layout
+
+\end_inset
+
+ Instructs the map to make copies of the data when new entries are added
+ to the map.
+ This is required when the buffer holding the data either goes out of scope,
+ or you want to keep the original contents instead of just a pointer.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXMAP_SCKEY
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAP_SCKEY
+\end_layout
+
+\end_inset
+
+ Mnemonic for the combination of 
+\family typewriter
+HXMAP_\SpecialChar \-
+SKEY
+\family default
+ OR'ed with 
+\family typewriter
+HXMAP_\SpecialChar \-
+CKEY
+\family default
+.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXMAP_SCDATA
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAP_SCDATA
+\end_layout
+
+\end_inset
+
+ Mnemonic for the combination of 
+\family typewriter
+HXMAP_\SpecialChar \-
+SDATA
+\family default
+ OR'ed with 
+\family typewriter
+HXMAP_\SpecialChar \-
+SDATA
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+HXMAP_SKEY
+\family default
+\SpecialChar \slash{}
+
+\family typewriter
+CKEY
+\family default
+\SpecialChar \slash{}
+
+\family typewriter
+SDATA
+\family default
+\SpecialChar \slash{}
+
+\family typewriter
+CDATA
+\family default
+ flags are generally sufficient to set up common maps where keys and/or
+ data are C strings or simple binary data where 
+\family typewriter
+memdup
+\family default
+/
+\family typewriter
+memcmp
+\family default
+ is enough.
+ Where flat copies are not cutting it, an extra 
+\family typewriter
+HXmap_ops
+\family default
+ structure with functions specialized in handling the keys and/or data has
+ to be used.
+\end_layout
+
+\begin_layout Subsection
+Map operations
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+struct
+\series default
+ HXmap_ops {
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+struct HXmap_ops
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+int (*
+\series default
+k_compare
+\series bold
+)
+\series default
+(
+\series bold
+const void *
+\series default
+, 
+\series bold
+const void *
+\series default
+, 
+\series bold
+size_t
+\series default
+);
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+void *(*
+\series default
+k_clone
+\series bold
+)
+\series default
+(
+\series bold
+const void *
+\series default
+, 
+\series bold
+size_t
+\series default
+);
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+void (*
+\series default
+k_free
+\series bold
+)
+\series default
+(
+\series bold
+void *
+\series default
+);
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+void *(*
+\series default
+d_clone
+\series bold
+)
+\series default
+(
+\series bold
+const void *
+\series default
+, 
+\series bold
+size_t
+\series default
+);
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+void (*
+\series default
+d_free
+\series bold
+)
+\series default
+(
+\series bold
+void *
+\series default
+);
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+unsigned long (*
+\series default
+k_hash
+\series bold
+)
+\series default
+(
+\series bold
+const void *
+\series default
+, 
+\series bold
+size_t
+\series default
+);
+\begin_inset Newline newline
+\end_inset
+
+};
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+k_compare
+\family default
+ Function to compare two keys.
+ The return value is the same as that of 
+\family typewriter
+memcmp
+\family default
+ or 
+\family typewriter
+strcmp
+\family default
+: negative values indicate that the first key is 
+\begin_inset Quotes eld
+\end_inset
+
+less than
+\begin_inset Quotes erd
+\end_inset
+
+ the second, zero indicates that both keys are equal, and positive values
+ indicate that the first key is 
+\begin_inset Quotes eld
+\end_inset
+
+greater than
+\begin_inset Quotes erd
+\end_inset
+
+ the second.
+ The size argument in third position is provided so that 
+\family typewriter
+memcmp
+\family default
+, which wants a size parameter, can directly be used without having to write
+ an own function.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+k_clone
+\family default
+ Function that will clone (duplicate) a key.
+ This is used for keys that will be added to the tree, and potentially also
+ for state-keeping during traversal of the map.
+ It is valid that this clone function simply returns the value of the pointer
+ it was actually passed; this is used by default for maps without 
+\family typewriter
+HXMAP_CKEY
+\family default
+ for example.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+k_free
+\family default
+ Function to free a key.
+ In most cases it defaults to 
+\family typewriter
+free
+\family default
+(3), but in case you are using complex structs, more cleanup may be needed.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+d_clone
+\family default
+ Same as 
+\family typewriter
+k_clone
+\family default
+, but for data.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+d_free
+\family default
+ Same as 
+\family typewriter
+k_free
+\family default
+, but for data.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+k_hash
+\family default
+ Specifies an alternate hash function.
+ Only to be used with hash-based maps.
+ Hashmaps default to using the DJB2 string hash function when 
+\family typewriter
+HXMAP_SKEY
+\family default
+ is given, or otherwise the Jenkins' lookup3 hash function.
+\end_layout
+
+\begin_layout Subsection
+Map initialization
+\end_layout
+
+\begin_layout Standard
+During initialization, you specify the underlying storage type by selecting
+ a given constructor function.
+ All further operations are done through the unified HXmap API which uses
+ a form of virtual calls internally.
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/map.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ HXmap 
+\series bold
+*
+\series default
+HXhashmap_init(
+\series bold
+unsigned int
+\series default
+ flags);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXhashmap_init
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ HXmap 
+\series bold
+*
+\series default
+HXhashmap_init4(
+\series bold
+unsigned int
+\series default
+ flags,
+\begin_inset Newline newline
+\end_inset
+
+    
+\series bold
+const struct
+\series default
+ HXmap_ops 
+\series bold
+*
+\series default
+ops, 
+\series bold
+size_t
+\series default
+ key_size, 
+\series bold
+size_t
+\series default
+ data_size);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXhashmap_init4
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+HXhashmap_\SpecialChar \-
+init
+\family default
+ and 
+\family typewriter
+HXhashmap_\SpecialChar \-
+init4
+\family default
+ create a new hash table map.
+ The latter function allows to specify the operations in detail as well
+ as key and data size, which may become necessary when using data sets which
+ have their own way of being managed.
+\end_layout
+
+\begin_layout Subsection
+Map operations
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/map.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HXmap_add(
+\series bold
+struct
+\series default
+ HXmap 
+\series bold
+*
+\series default
+, 
+\series bold
+const void *
+\series default
+key, 
+\series bold
+const void *
+\series default
+value);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmap_add
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void *
+\series default
+HXmap_get(
+\series bold
+struct
+\series default
+ HXmap 
+\series bold
+*
+\series default
+, 
+\series bold
+const void *
+\series default
+key);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmap_get
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXmap_free(
+\series bold
+struct
+\series default
+ HXmap 
+\series bold
+*
+\series default
+);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmap_free
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 ARBtree
 \begin_inset CommandInset label
 LatexCommand label
@@ -3332,7 +4118,18 @@ associative red-black tree
  Using a red-black tree as ADT allows for somewhat quick insertion and deletion
  and small memory footprint for ordered traversals.
  (Using a hash would have meant to gather all keys first and sort them instead.)
- 
+\end_layout
+
+\begin_layout Standard
+[N.
+\begin_inset space \thinspace{}
+\end_inset
+
+B.
+\begin_inset space \thinspace{}
+\end_inset
+
+: This data structure has not yet been converted to the HXmap interface.]
 \end_layout
 
 \begin_layout Subsection
