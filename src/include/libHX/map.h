@@ -66,6 +66,9 @@ struct HXmap_node {
 extern struct HXmap *HXhashmap_init(unsigned int);
 extern struct HXmap *HXhashmap_init4(unsigned int, const struct HXmap_ops *,
 	size_t, size_t);
+extern struct HXmap *HXrbtree_init(unsigned int);
+extern struct HXmap *HXrbtree_init4(unsigned int, const struct HXmap_ops *,
+	size_t, size_t);
 
 extern int HXmap_add(struct HXmap *, const void *, const void *);
 extern void *HXmap_get(const struct HXmap *, const void *);

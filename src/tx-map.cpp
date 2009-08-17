@@ -108,6 +108,8 @@ int main(void)
 {
 	printf("* HXhashmap\n");
 	test_map(HXhashmap_init(HXMAP_SCKEY | HXMAP_SCDATA));
+	printf("* RBtree\n");
+	test_map(HXrbtree_init(HXMAP_SCKEY | HXMAP_SCDATA));
 
 	return EXIT_SUCCESS;
 }

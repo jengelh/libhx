@@ -3338,6 +3338,10 @@ Map types
 hash-based map
 \end_layout
 
+\begin_layout Itemize
+red-black binary tree
+\end_layout
+
 \begin_layout Subsection
 Map flags
 \end_layout
@@ -4017,6 +4021,62 @@ HXhashmap_init4
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ HXmap 
+\series bold
+*
+\series default
+HXrbtree_init(
+\series bold
+unsigned int
+\series default
+ flags);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXrbtree_init
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ HXmap 
+\series bold
+*
+\series default
+HXrbtree_init4(
+\series bold
+unsigned int
+\series default
+ flags);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXrbtree_init4
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4034,6 +4094,20 @@ init4
  The latter function allows to specify the operations in detail as well
  as key and data size, which may become necessary when using data sets which
  have their own way of being managed.
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+HXrbtree_\SpecialChar \-
+init
+\family default
+ and 
+\family typewriter
+HXrbtree_\SpecialChar \-
+init4
+\family default
+ create a red-black binary tree to hold the map.
 \end_layout
 
 \begin_layout Subsection

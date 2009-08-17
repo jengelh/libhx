@@ -22,9 +22,11 @@
 
 /**
  * %HX_MAPTYPE_HASH:	struct HXhmap
+ * %HX_MAPTYPE_RBTREE:	red-black binary tree
  */
 enum HXmap_type {
 	HX_MAPTYPE_HASH = 1,
+	HX_MAPTYPE_RBTREE,
 };
 
 /**
@@ -85,6 +87,35 @@ struct HXhmap_trav {
 	unsigned int bk_current, tid;
 };
 
+enum {
+	S_LEFT = 0,
+	S_RIGHT = 1,
+};
+
+/**
+ * @sub:	leaves
+ * @color:	RBtree-specific node color
+ */
+struct HXrbtree_node {
+	struct HXrbtree_node *sub[2];
+	/* HXmap_node */
+	union {
+		void *key;
+		const char *const skey;
+	};
+	union {
+		void *data;
+		char *sdata;
+	};
+	unsigned char color;
+};
+
+struct HXrbtree {
+	struct HXmap_private super;
+	struct HXrbtree_node *root;
+	unsigned int tid;
+};
+
 /*
  * http://planetmath.org/encyclopedia/GoodHashTablePrimes.html
  * 23 and 3221.. added by j.eng.
@@ -116,6 +147,33 @@ static void HXhmap_free(struct HXhmap *hmap)
 	free(hmap);
 }
 
+static void HXrbtree_free_dive(const struct HXrbtree *btree,
+    struct HXrbtree_node *node)
+{
+	/*
+	 * Recursively dives into the tree and destroys elements. Note that you
+	 * shall use this when destroying a complete tree instead of iterated
+	 * deletion with HXbtree_del(). Since this functions is meant to free
+	 * it all, it does not need to care about rebalancing.
+	 */
+	if (node->sub[S_LEFT] != NULL)
+		HXrbtree_free_dive(btree, node->sub[S_LEFT]);
+	if (node->sub[S_RIGHT] != NULL)
+		HXrbtree_free_dive(btree, node->sub[S_RIGHT]);
+	if (btree->super.ops.k_free != NULL)
+		btree->super.ops.k_free(node->key);
+	if (btree->super.ops.d_free != NULL)
+		btree->super.ops.d_free(node->data);
+	free(node);
+}
+
+static void HXrbtree_free(struct HXrbtree *btree)
+{
+	if (btree->root != NULL)
+		HXrbtree_free_dive(btree, btree->root);
+	free(btree);
+}
+
 EXPORT_SYMBOL void HXmap_free(struct HXmap *xmap)
 {
 	void *vmap = xmap;
@@ -124,6 +182,8 @@ EXPORT_SYMBOL void HXmap_free(struct HXmap *xmap)
 	switch (map->type) {
 	case HX_MAPTYPE_HASH:
 		return HXhmap_free(vmap);
+	case HX_MAPTYPE_RBTREE:
+		return HXrbtree_free(vmap);
 	default:
 		break;
 	}
@@ -374,6 +434,43 @@ EXPORT_SYMBOL struct HXmap *HXhashmap_init4(unsigned int flags,
 EXPORT_SYMBOL struct HXmap *HXhashmap_init(unsigned int flags)
 {
 	return HXhashmap_init4(flags, NULL, 0, 0);
+}
+
+EXPORT_SYMBOL struct HXmap *HXrbtree_init4(unsigned int flags,
+    const struct HXmap_ops *ops, size_t key_size, size_t data_size)
+{
+	struct HXmap_private *super;
+	struct HXrbtree *btree;
+
+	BUILD_BUG_ON(offsetof(struct HXrbtree, root) +
+	             offsetof(struct HXrbtree_node, sub[0]) !=
+	             offsetof(struct HXrbtree, root));
+
+	if ((btree = calloc(1, sizeof(*btree))) == NULL)
+		return NULL;
+
+	super            = &btree->super;
+	super->type      = HX_MAPTYPE_RBTREE;
+	super->flags     = flags;
+	super->items     = 0;
+	super->key_size  = key_size;
+	super->data_size = data_size;
+	HXmap_ops_setup(super, ops);
+
+	/*
+	 * TID must not be zero, otherwise the traverser functions will not
+	 * start off correctly, since trav->tid is 0, but trav->tid must not
+	 * equal btree->transact because that would mean the traverser is in
+	 * sync with the tree.
+	 */
+	btree->tid  = 1;
+	btree->root = NULL;
+	return static_cast(void *, btree);
+}
+
+EXPORT_SYMBOL struct HXmap *HXrbtree_init(unsigned int flags)
+{
+	return HXrbtree_init4(flags, NULL, 0, 0);
 }
 
 static struct HXhmap_node *
