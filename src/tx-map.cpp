@@ -79,7 +79,7 @@ static void tmap_del(struct HXmap *map)
 	const struct HXmap_node *node;
 	void *iter;
 
-	printf("Deletion:\n");
+	printf("Deletion of %u elements:\n", map->items);
 	while (map->items != 0) {
 		/* May need to reload traverser due to deletion */
 		printf("Restarting traverser\n");

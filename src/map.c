@@ -160,7 +160,7 @@ static void *HXmap_valuecpy(const void *p, size_t len)
 	c ^= b; c -= jrot(b, 24); \
 }
 
-static unsigned long HXhash_jlookup3(const void *vkey, size_t length)
+EXPORT_SYMBOL unsigned long HXhash_jlookup3(const void *vkey, size_t length)
 {
 	static const unsigned int JHASH_GOLDEN_RATIO = 0x9e3779b9;
 	const uint8_t *key = vkey;
@@ -204,7 +204,7 @@ static unsigned long HXhash_jlookup3v(const void *p, size_t z)
 	return HXhash_jlookup3(&p, sizeof(p));
 }
 
-static unsigned long HXhash_djb2(const void *p, size_t z)
+EXPORT_SYMBOL unsigned long HXhash_djb2(const void *p, size_t z)
 {
 	const char *c = p;
 	unsigned long v = 5381;

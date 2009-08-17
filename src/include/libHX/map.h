@@ -75,6 +75,9 @@ extern const struct HXmap_node *HXmap_traverse(void *);
 extern void HXmap_travfree(void *);
 extern void HXmap_free(struct HXmap *);
 
+extern unsigned long HXhash_jlookup3(const void *, size_t);
+extern unsigned long HXhash_djb2(const void *, size_t);
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

@@ -3865,6 +3865,62 @@ HXMAP_SKEY
 \end_layout
 
 \begin_layout Subsection
+Hash functions
+\end_layout
+
+\begin_layout Standard
+libHX/map exports two hash functions that you can select for 
+\family typewriter
+struct HXmap_ops
+\family default
+'s 
+\family typewriter
+k_hash
+\family default
+ if you the default for a given flag combination is not to your liking.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXhash_jlookup3
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXhash_jlookup3
+\end_layout
+
+\end_inset
+
+ Bob Jenkins's lookup3 hash.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXhash_djb2
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXhash_djb2
+\end_layout
+
+\end_inset
+
+ DJB2 string hash.
+\end_layout
+
+\begin_layout Subsection
 Map initialization
 \end_layout
 
