@@ -30,6 +30,7 @@ enum HXmap_type {
 /**
  * @type:	actual type of map (%HX_MAPTYPE_*), used for virtual calls
  * @ops:	function pointers for key and data management
+ * @flags:	bitfield of map flags
  */
 struct HXmap_private {
 	/* from struct HXmap */
@@ -221,33 +222,33 @@ EXPORT_SYMBOL unsigned long HXhash_djb2(const void *p, size_t z)
  * user-specified functions.
  */
 static void HXmap_ops_setup(struct HXmap_private *super,
-    const struct HXmap_ops *new_ops, unsigned int flags)
+    const struct HXmap_ops *new_ops)
 {
 	struct HXmap_ops *ops = &super->ops;
 
 	ops->k_clone = HXmap_valuecpy;
 	ops->d_clone = HXmap_valuecpy;
 
-	if (flags & HXMAP_SKEY)
+	if (super->flags & HXMAP_SKEY)
 		ops->k_compare = static_cast(void *, strcmp);
 	else if (super->key_size == 0)
 		ops->k_compare = HXmap_valuecmp;
 	else
 		ops->k_compare = memcmp;
 
-	if (flags & HXMAP_CKEY) {
-		ops->k_clone = (flags & HXMAP_SKEY) ?
+	if (super->flags & HXMAP_CKEY) {
+		ops->k_clone = (super->flags & HXMAP_SKEY) ?
 		               static_cast(void *, HX_strdup) : HX_memdup;
 		ops->k_free  = free;
 	}
-	if (flags & HXMAP_CDATA) {
-		ops->d_clone = (flags & HXMAP_SDATA) ?
+	if (super->flags & HXMAP_CDATA) {
+		ops->d_clone = (super->flags & HXMAP_SDATA) ?
 		               static_cast(void *, HX_strdup) : HX_memdup;
 		ops->d_free  = free;
 	}
 
 	if (super->type == HX_MAPTYPE_HASH) {
-		if (flags & HXMAP_SKEY)
+		if (super->flags & HXMAP_SKEY)
 			ops->k_hash = HXhash_djb2;
 		else if (super->key_size != 0)
 			ops->k_hash = HXhash_jlookup3;
@@ -354,7 +355,7 @@ EXPORT_SYMBOL struct HXmap *HXhashmap_init4(unsigned int flags,
 	super->type      = HX_MAPTYPE_HASH;
 	super->key_size  = key_size;
 	super->data_size = data_size;
-	HXmap_ops_setup(super, ops, flags);
+	HXmap_ops_setup(super, ops);
 	hmap->tid = 1;
 	errno = HXhmap_layout(hmap, 0);
 	if (hmap->bk_array == NULL)
