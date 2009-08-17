@@ -567,17 +567,21 @@ static const struct HXmap_node *HXhmap_traverse(void *xtrav)
 	const struct HXhmap *hmap = trav->hmap;
 	const struct HXhmap_node *drop;
 
-	if (trav->tid != hmap->tid)
-		/*
-		 * Hashmap changed / elements may have a completely new order,
-		 * stop traversing.
-		 */
-		return NULL;
-
-	if (trav->head == NULL)
+	if (trav->head == NULL) {
 		trav->head = hmap->bk_array[trav->bk_current].next;
-	else
+	} else if (trav->tid != hmap->tid) {
+		if (trav->bk_current >= HXhash_primes[hmap->power])
+			/* bk_array shrunk underneath us, we're done */
+			return NULL;
+		/*
+		 * Reset head so that the while loop will be entered and we
+		 * advance to the next bucket.
+		 */
+		trav->head = &hmap->bk_array[trav->bk_current];
+		trav->tid  = hmap->tid;
+	} else {
 		trav->head = trav->head->next;
+	}
 
 	while (trav->head == &hmap->bk_array[trav->bk_current]) {
 		if (++trav->bk_current >= HXhash_primes[hmap->power])

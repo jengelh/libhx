@@ -15,7 +15,7 @@
 #include "internal.h"
 
 enum {
-	NUM_ENTRIES = 10,
+	NUM_ENTRIES = 25,
 };
 
 /**
@@ -83,7 +83,8 @@ static void tmap_del(struct HXmap *map)
 	while (map->items != 0) {
 		/* May need to reload traverser due to deletion */
 		printf("Restarting traverser\n");
-		iter = HXmap_travinit(map);
+		if ((iter = HXmap_travinit(map)) == NULL)
+			break;
 		while ((node = HXmap_traverse(iter)) != NULL) {
 			printf("Destroying {%s, %s}\n",
 			       node->skey, node->sdata);

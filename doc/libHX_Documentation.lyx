@@ -4448,11 +4448,10 @@ HXmap_add
 HXmap_traverse
 \family default
 .
- The insertion or deletion of an element may cause the internal data structure
- to re-layout itself.
- When this has happened, the traverser will return any more elements.
- Deletion always causes it to stop because the traverser may hold a pointer
- to a node that was just deleted.
+ Deletion of an element may cause elements to be skipped.
+ The insertion or deletion of an element may also cause the internal data
+ structure to re-layout itself.
+ When this has happened, the traverser will not return any more elements.
 \end_layout
 
 \begin_layout Section
