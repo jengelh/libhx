@@ -4067,6 +4067,38 @@ HXmap_get
 
 
 \series bold
+void *
+\series default
+HXmap_del(
+\series bold
+struct
+\series default
+ HXmap 
+\series bold
+*
+\series default
+, 
+\series bold
+const void *
+\series default
+key);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmap_del
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
 void
 \series default
  HXmap_free(
@@ -4090,6 +4122,38 @@ HXmap_free
 \end_inset
 
 
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXmap_del
+\family default
+ Remove an element from the tree and return the data value that was associated
+ with it.
+ When an error occurred, or the element was not found, 
+\family typewriter
+NULL
+\family default
+ is returned.
+ Because 
+\family typewriter
+NULL
+\family default
+ can be a valid data value, 
+\family typewriter
+errno
+\family default
+ can be checked for non-zero.
+ 
+\family typewriter
+errno
+\family default
+ will be 
+\family typewriter
+-ENOENT
+\family default
+ if the element was not found.
 \end_layout
 
 \begin_layout Subsection

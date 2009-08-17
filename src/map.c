@@ -489,6 +489,50 @@ EXPORT_SYMBOL int HXmap_add(struct HXmap *xmap,
 	}
 }
 
+static void *HXhmap_del(struct HXhmap *hmap, const void *key)
+{
+	struct HXhmap_node *drop;
+	void *value;
+
+	if ((drop = HXhmap_find(hmap, key)) == NULL) {
+		errno = ENOENT;
+		return NULL;
+	}
+
+	HXlist_del(&drop->anchor);
+	++hmap->tid;
+	--hmap->super.items;
+	if (hmap->super.items < hmap->min_load && hmap->power > 0)
+		/*
+		 * Ignore return value. If it failed, it will continue to use
+		 * the current bk_array.
+		 */
+		HXhmap_layout(hmap, hmap->power - 1);
+
+	value = drop->data;
+	if (hmap->super.ops.k_free != NULL)
+		hmap->super.ops.k_free(drop->key);
+	if (hmap->super.ops.d_free != NULL)
+		hmap->super.ops.d_free(drop->data);
+	free(drop);
+	errno = 0;
+	return value;
+}
+
+EXPORT_SYMBOL void *HXmap_del(struct HXmap *xmap, const void *key)
+{
+	void *vmap = xmap;
+	struct HXmap_private *map = vmap;
+
+	switch (map->type) {
+	case HX_MAPTYPE_HASH:
+		return HXhmap_del(vmap, key);
+	default:
+		errno = EINVAL;
+		return NULL;
+	}
+}
+
 static void *HXhmap_travinit(const struct HXhmap *hmap)
 {
 	struct HXhmap_trav *trav;

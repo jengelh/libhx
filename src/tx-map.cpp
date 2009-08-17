@@ -74,12 +74,32 @@ static void tmap_trav(struct HXmap *map)
 	HXmap_travfree(iter);
 }
 
+static void tmap_del(struct HXmap *map)
+{
+	const struct HXmap_node *node;
+	void *iter;
+
+	printf("Deletion:\n");
+	while (map->items != 0) {
+		/* May need to reload traverser due to deletion */
+		printf("Restarting traverser\n");
+		iter = HXmap_travinit(map);
+		while ((node = HXmap_traverse(iter)) != NULL) {
+			printf("Destroying {%s, %s}\n",
+			       node->skey, node->sdata);
+			HXmap_del(map, node->key);
+		}
+		HXmap_travfree(iter);
+	}
+}
+
 static void test_map(struct HXmap *map)
 {
 	tmap_add_speed(map);
 	printf("fruit=%s\n",
 	       static_cast(const char *, HXmap_get(map, "fruit")));
 	tmap_trav(map);
+	tmap_del(map);
 	HXmap_free(map);
 }
 
