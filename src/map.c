@@ -90,6 +90,10 @@ struct HXhmap_trav {
 enum {
 	S_LEFT = 0,
 	S_RIGHT = 1,
+	NODE_RED = 0,
+	NODE_BLACK,
+	/* Allows for at least 16 million objects (in a worst-case tree) */
+	BT_MAXDEP = 48,
 };
 
 /**
@@ -573,6 +577,172 @@ static int HXhmap_add(struct HXhmap *hmap, const void *key, const void *value)
 	return -(errno = saved_errno);
 }
 
+/**
+ * HXrbtree_amov - do balance (move) after addition of a node
+ * @path:	path from the root to the new node
+ * @dir:	direction vectors
+ * @depth:	current index in @path and @dir
+ * @tid:	pointer to transaction ID which may need updating
+ */
+static void HXrbtree_amov(struct HXrbtree_node **path,
+    const unsigned char *dir, unsigned int depth, unsigned int *tid)
+{
+	struct HXrbtree_node *uncle, *parent, *grandp, *newnode;
+
+	/*
+	 * The newly inserted node (or the last rebalanced node) at
+	 * @path[depth-1] is red, so the parent must not be.
+	 *
+	 * Use an iterative approach to not waste time with recursive function
+	 * calls. The @LR variable is used to handle the symmetric case without
+	 * code duplication.
+	 */
+	do {
+		unsigned int LR = dir[depth-2];
+
+		grandp = path[depth-2];
+		parent = path[depth-1];
+		uncle  = grandp->sub[!LR];
+
+		if (uncle != NULL && uncle->color == NODE_RED) {
+			/*
+			 * Case 3 (WP): Only colors have to be swapped to keep
+			 * the black height. But rebalance needs to continue.
+			 */
+			parent->color = NODE_BLACK;
+			uncle->color  = NODE_BLACK;
+			grandp->color = NODE_RED;
+			depth        -= 2;
+			continue;
+		}
+
+		/*
+		 * Case 4 (WP): New node is the right child of its parent, and
+		 * the parent is the left child of the grandparent. A left
+		 * rotate is done at the parent to transform it into a case 5.
+		 */
+		if (dir[depth-1] != LR) {
+			newnode          = parent->sub[!LR];
+			parent->sub[!LR] = newnode->sub[LR];
+			newnode->sub[LR] = parent;
+			grandp->sub[LR]  = newnode;
+			/* relabel */
+			parent  = grandp->sub[LR];
+			newnode = parent->sub[LR];
+		} else {
+			newnode = path[depth];
+		}
+
+		/*
+		 * Case 5: New node is the @LR child of its parent which is
+		 * the @LR child of the grandparent. A right rotation on
+		 * @grandp is performed.
+		 */
+		grandp->sub[LR]  = parent->sub[!LR];
+		parent->sub[!LR] = grandp;
+		path[depth-3]->sub[dir[depth-3]] = parent;
+		grandp->color    = NODE_RED;
+		parent->color    = NODE_BLACK;
+		++*tid;
+		break;
+	} while (depth >= 3 && path[depth-1]->color == NODE_RED);
+}
+
+static int HXrbtree_replace(const struct HXrbtree *btree,
+    struct HXrbtree_node *node, const void *value)
+{
+	void *old_value, *new_value;
+
+	if (!(btree->super.flags & HXMAP_NOREPLACE))
+		return -(errno = EEXIST);
+
+	new_value = btree->super.ops.d_clone(value, btree->super.data_size);
+	if (new_value == NULL && value != NULL)
+		return -errno;
+	old_value  = node->data;
+	node->data = new_value;
+	if (btree->super.ops.d_free != NULL)
+		btree->super.ops.d_free(old_value);
+	return 1;
+}
+
+static int HXrbtree_add(struct HXrbtree *btree,
+    const void *key, const void *value)
+{
+	struct HXrbtree_node *node, *path[BT_MAXDEP];
+	unsigned char dir[BT_MAXDEP];
+	unsigned int depth = 0;
+	int saved_errno;
+
+	/*
+	 * Since our struct HXrbtree_node runs without a ->parent pointer,
+	 * the path "upwards" from @node needs to be recorded somehow,
+	 * here with @path. Another array, @dir is used to speedup direction
+	 * decisions. (WP's "n->parent == grandparent(n)->left" is just slow.)
+	 */
+	path[depth]  = reinterpret_cast(struct HXrbtree_node *, &btree->root);
+	dir[depth++] = 0;
+	node = btree->root;
+
+	while (node != NULL) {
+		int res = btree->super.ops.k_compare(key,
+		          node->key, btree->super.key_size);
+		if (res == 0)
+			/*
+			 * The node already exists (found the key), overwrite
+			 * the data.
+			 */
+			return HXrbtree_replace(btree, node, value);
+
+		res          = res > 0;
+		path[depth]  = node;
+		dir[depth++] = res;
+		node         = node->sub[res];
+	}
+
+	if ((node = malloc(sizeof(struct HXrbtree_node))) == NULL)
+		return -errno;
+
+	/* New node, push data into it */
+	node->key = btree->super.ops.k_clone(key, btree->super.key_size);
+	if (node->key == NULL)
+		goto out;
+	node->data = btree->super.ops.d_clone(value, btree->super.data_size);
+	if (node->data == NULL && value != NULL)
+		goto out;
+
+	/*
+	 * Add the node to the tree. In trying not to hit a rule 2 violation
+	 * (each simple path has the same number of black nodes), it is colored
+	 * red so that below we only need to check for rule 1 violations.
+	 */
+	node->sub[S_LEFT] = node->sub[S_RIGHT] = NULL;
+	node->color = NODE_RED;
+	path[depth-1]->sub[dir[depth-1]] = node;
+	++btree->super.items;
+
+	/*
+	 * WP: [[Red-black_tree]] says:
+	 * Case 1: @node is root node - just color it black (see below).
+	 * Case 2: @parent is black - no action needed (skip).
+	 * No rebalance needed for a 2-node tree.
+	 */
+	if (depth >= 3 && path[depth-1]->color == NODE_RED)
+		HXrbtree_amov(path, dir, depth, &btree->tid);
+
+	btree->root->color = NODE_BLACK;
+	return 1;
+
+ out:
+	saved_errno = errno;
+	if (btree->super.ops.k_free != NULL)
+		btree->super.ops.k_free(node->key);
+	if (btree->super.ops.d_free != NULL)
+		btree->super.ops.d_free(node->key);
+	free(node);
+	return -(errno = saved_errno);
+}
+
 EXPORT_SYMBOL int HXmap_add(struct HXmap *xmap,
     const void *key, const void *value)
 {
@@ -582,6 +752,8 @@ EXPORT_SYMBOL int HXmap_add(struct HXmap *xmap,
 	switch (map->type) {
 	case HX_MAPTYPE_HASH:
 		return HXhmap_add(vmap, key, value);
+	case HX_MAPTYPE_RBTREE:
+		return HXrbtree_add(vmap, key, value);
 	default:
 		return -EINVAL;
 	}
