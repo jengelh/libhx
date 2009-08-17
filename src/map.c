@@ -492,6 +492,22 @@ HXhmap_find(const struct HXhmap *hmap, const void *key)
 	return NULL;
 }
 
+static struct HXrbtree_node *HXrbtree_find(const struct HXrbtree *btree,
+    const void *key)
+{
+	struct HXrbtree_node *node = btree->root;
+	int res;
+
+	while (node != NULL) {
+		if ((res = btree->super.ops.k_compare(key,
+		    node->key, btree->super.key_size)) == 0)
+			return node;
+		node = node->sub[res > 0];
+	}
+
+	return NULL;
+}
+
 EXPORT_SYMBOL void *HXmap_get(const struct HXmap *xmap, const void *key)
 {
 	const void *vmap = xmap;
@@ -503,6 +519,15 @@ EXPORT_SYMBOL void *HXmap_get(const struct HXmap *xmap, const void *key)
 		if (drop != NULL) {
 			errno = 0;
 			return drop->data;
+		}
+		errno = -ENOENT;
+		return NULL;
+	}
+	case HX_MAPTYPE_RBTREE: {
+		const struct HXrbtree_node *node = HXrbtree_find(vmap, key);
+		if (node != NULL) {
+			errno = 0;
+			return node->data;
 		}
 		errno = -ENOENT;
 		return NULL;
