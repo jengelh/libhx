@@ -15,7 +15,7 @@
 #include "internal.h"
 
 enum {
-	NUM_ENTRIES = 100000,
+	NUM_ENTRIES = 10,
 };
 
 /**
@@ -50,11 +50,36 @@ static void tmap_add_speed(struct HXmap *map)
 	       static_cast(long, delta.tv_sec), delta.tv_nsec);
 }
 
+static void tmap_trav(struct HXmap *map)
+{
+	const struct HXmap_node *node;
+	unsigned int i = (NUM_ENTRIES + 999) / 1000 * 1000;
+	char key[8], value[HXSIZEOF_Z32];
+	void *iter;
+
+	printf("Simple traversal:\n");
+	iter = HXmap_travinit(map);
+	while ((node = HXmap_traverse(iter)) != NULL)
+		printf("%s -> %s\n", node->skey, node->sdata);
+	HXmap_travfree(iter);
+
+	printf("Modification during traversal:\n");
+	iter = HXmap_travinit(map);
+	while ((node = HXmap_traverse(iter)) != NULL) {
+		printf("%s -> %s\n", node->skey, node->sdata);
+		tmap_rword(key, sizeof(key));
+		snprintf(value, sizeof(value), "%u", i++);
+		HXmap_add(map, key, value);
+	}
+	HXmap_travfree(iter);
+}
+
 static void test_map(struct HXmap *map)
 {
 	tmap_add_speed(map);
 	printf("fruit=%s\n",
 	       static_cast(const char *, HXmap_get(map, "fruit")));
+	tmap_trav(map);
 	HXmap_free(map);
 }
 

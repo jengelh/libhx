@@ -4092,6 +4092,305 @@ HXmap_free
 
 \end_layout
 
+\begin_layout Subsection
+Map traversal
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/map.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ HXmap_node {
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+struct HXmap_node
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+union
+\series default
+ {
+\begin_inset Newline newline
+\end_inset
+
+                
+\series bold
+void *
+\series default
+key;
+\begin_inset Newline newline
+\end_inset
+
+                
+\series bold
+const char *const
+\series default
+ skey;
+\begin_inset Newline newline
+\end_inset
+
+        };
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+union
+\series default
+ {
+\begin_inset Newline newline
+\end_inset
+
+                
+\series bold
+void *
+\series default
+data;
+\begin_inset Newline newline
+\end_inset
+
+                
+\series bold
+char *
+\series default
+sdata;
+\begin_inset Newline newline
+\end_inset
+
+        };
+\begin_inset Newline newline
+\end_inset
+
+};
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void *
+\series default
+HXmap_travinit(
+\series bold
+const struct
+\series default
+ HXmap 
+\series bold
+*
+\series default
+);
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+const struct
+\series default
+ HXmap_node 
+\series bold
+*
+\series default
+HXmap_traverse(
+\series bold
+void *
+\series default
+iterator);
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXmap_travfree(
+\series bold
+void *
+\series default
+iterator);
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXmap_travinit
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmap_travinit
+\end_layout
+
+\end_inset
+
+ Initializes a traverser (a.
+\begin_inset space \thinspace{}
+\end_inset
+
+k.
+\begin_inset space \thinspace{}
+\end_inset
+
+a.
+\begin_inset space \space{}
+\end_inset
+
+iterator) for the map, and returns a pointer to it.
+ 
+\family typewriter
+NULL
+\family default
+ will be returned in case of an error, such as memory allocation failure.
+ Traversers are returned even if the map has zero elements.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXmap_traverse
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmap_traverse
+\end_layout
+
+\end_inset
+
+ Returns a pointer to a 
+\family typewriter
+struct HXmap_node
+\family default
+ for the next element
+\begin_inset space ~
+\end_inset
+
+\SpecialChar \slash{}
+ key-value pair from the map, or 
+\family typewriter
+NULL
+\family default
+ if there are no more entries.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXmap_travfree
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmap_travfree
+\end_layout
+
+\end_inset
+
+ Release the memory associated with a traverser.
+\end_layout
+
+\begin_layout Standard
+WARNING: Modifying the map while a traverser is active is implementation-specifi
+c behavior! libHX generally ensures that there will be no undefined behavior
+ (e.
+\begin_inset space \thinspace{}
+\end_inset
+
+g.
+\begin_inset space \space{}
+\end_inset
+
+crashes), but there is no guarantee that elements will be returned exactly
+ once.
+ There are fundamental cases that one should be aware of:
+\end_layout
+
+\begin_layout Itemize
+An element is inserted before where the traverser is currently positioned
+ at.
+ The element may not be returned in subsequent calls to 
+\family typewriter
+HXmap_traverse
+\family default
+ on an already-active traverser.
+\end_layout
+
+\begin_layout Itemize
+Insertion or deletion may cause internal data structure to re-layout.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Traversers of ordered data structures may choose to rebuild their state.
+\end_layout
+
+\begin_layout Itemize
+Traversers of unordered data structures would run risk to return more than
+ once, or not at all.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Descriptions for different map types follow.
+\end_layout
+
+\begin_layout Description
+Hashmaps On 
+\family typewriter
+HXmap_add
+\family default
+, an element may be inserted in a position that is before where the traverser
+ is currently positioned.
+ Such elements will not be returned in the remaining calls to 
+\family typewriter
+HXmap_traverse
+\family default
+.
+ The insertion or deletion of an element may cause the internal data structure
+ to re-layout itself.
+ When this has happened, the traverser will return any more elements.
+ Deletion always causes it to stop because the traverser may hold a pointer
+ to a node that was just deleted.
+\end_layout
+
 \begin_layout Section
 ARBtree
 \begin_inset CommandInset label

@@ -10,6 +10,7 @@
  *	Incorporates Public Domain code from Bob Jenkins's lookup3 (May 2006)
  */
 #include <errno.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -45,12 +46,13 @@ struct HXmap_private {
  * @power:	index into HXhash_primes to denote number of buckets
  * @max_load:	maximum number of elements before table gets enlarged
  * @min_load:	minimum number of elements before table gets shrunk
+ * @tid:	transaction ID, used to track relayouts
  */
 struct HXhmap {
 	struct HXmap_private super;
 
 	struct HXlist_head *bk_array;
-	unsigned int power, max_load, min_load;
+	unsigned int power, max_load, min_load, tid;
 };
 
 /**
@@ -60,6 +62,7 @@ struct HXhmap {
  */
 struct HXhmap_node {
 	struct HXlist_head anchor;
+	/* HXmap_node */
 	union {
 		void *key;
 		const char *const skey;
@@ -68,6 +71,17 @@ struct HXhmap_node {
 		void *data;
 		char *sdata;
 	};
+};
+
+struct HXmap_trav {
+	enum HXmap_type type;
+};
+
+struct HXhmap_trav {
+	struct HXmap_trav super;
+	const struct HXhmap *hmap;
+	const struct HXlist_head *head;
+	unsigned int bk_current, tid;
 };
 
 /*
@@ -319,6 +333,7 @@ static int HXhmap_layout(struct HXhmap *hmap, unsigned int power)
 	hmap->min_load = (power != 0) ? HXhash_primes[power] / 4 : 0;
 	hmap->max_load = x_frac(7, 10, HXhash_primes[power]);
 	hmap->bk_array = bk_array;
+	++hmap->tid;
 	free(old_array);
 	return 1;
 }
@@ -340,6 +355,7 @@ EXPORT_SYMBOL struct HXmap *HXhashmap_init4(unsigned int flags,
 	super->key_size  = key_size;
 	super->data_size = data_size;
 	HXmap_ops_setup(super, ops, flags);
+	hmap->tid = 1;
 	errno = HXhmap_layout(hmap, 0);
 	if (hmap->bk_array == NULL)
 		goto out;
@@ -471,4 +487,87 @@ EXPORT_SYMBOL int HXmap_add(struct HXmap *xmap,
 	default:
 		return -EINVAL;
 	}
+}
+
+static void *HXhmap_travinit(const struct HXhmap *hmap)
+{
+	struct HXhmap_trav *trav;
+
+	if ((trav = malloc(sizeof(*trav))) == NULL)
+		return NULL;
+	trav->super.type = HX_MAPTYPE_HASH;
+	trav->hmap = hmap;
+	trav->head = NULL;
+	trav->bk_current = 0;
+	trav->tid = hmap->tid;
+	return trav;
+}
+
+EXPORT_SYMBOL void *HXmap_travinit(const struct HXmap *xmap)
+{
+	const void *vmap = xmap;
+	const struct HXmap_private *map = vmap;
+
+	switch (map->type) {
+	case HX_MAPTYPE_HASH:
+		return HXhmap_travinit(vmap);
+	default:
+		errno = EINVAL;
+		return NULL;
+	}
+}
+
+static const struct HXmap_node *HXhmap_traverse(void *xtrav)
+{
+	struct HXhmap_trav *trav  = xtrav;
+	const struct HXhmap *hmap = trav->hmap;
+	const struct HXhmap_node *drop;
+
+	if (trav->tid != hmap->tid)
+		/*
+		 * Hashmap changed / elements may have a completely new order,
+		 * stop traversing.
+		 */
+		return NULL;
+
+	if (trav->head == NULL)
+		trav->head = hmap->bk_array[trav->bk_current].next;
+	else
+		trav->head = trav->head->next;
+
+	while (trav->head == &hmap->bk_array[trav->bk_current]) {
+		if (++trav->bk_current >= HXhash_primes[hmap->power])
+			return false;
+		trav->head = hmap->bk_array[trav->bk_current].next;
+	}
+
+	drop = HXlist_entry(trav->head, struct HXhmap_node, anchor);
+	return static_cast(const void *, &drop->key);
+}
+
+EXPORT_SYMBOL const struct HXmap_node *HXmap_traverse(void *xtrav)
+{
+	const struct HXmap_trav *trav = xtrav;
+
+	if (xtrav == NULL)
+		return NULL;
+
+	switch (trav->type) {
+	case HX_MAPTYPE_HASH:
+		return HXhmap_traverse(xtrav);
+	default:
+		errno = EINVAL;
+		return NULL;
+	}
+}
+
+EXPORT_SYMBOL void HXmap_travfree(void *xtrav)
+{
+	if (xtrav == NULL)
+		return;
+	/*
+	 * All implementations have no further nested allocated data
+	 * at this time.
+	 */
+	free(xtrav);
 }

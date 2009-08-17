@@ -2,6 +2,9 @@
 #define _LIBHX_MAP_H 1
 
 #include <sys/types.h>
+#ifndef __cplusplus
+#	include <stdbool.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,12 +52,26 @@ struct HXmap_ops {
 	unsigned long (*k_hash)(const void *, size_t);
 };
 
+struct HXmap_node {
+	union {
+		void *key;
+		const char *const skey;
+	};
+	union {
+		void *data;
+		char *sdata;
+	};
+};
+
 extern struct HXmap *HXhashmap_init(unsigned int);
 extern struct HXmap *HXhashmap_init4(unsigned int, const struct HXmap_ops *,
 	size_t, size_t);
 
 extern int HXmap_add(struct HXmap *, const void *, const void *);
 extern void *HXmap_get(const struct HXmap *, const void *);
+extern void *HXmap_travinit(const struct HXmap *);
+extern const struct HXmap_node *HXmap_traverse(void *);
+extern void HXmap_travfree(void *);
 extern void HXmap_free(struct HXmap *);
 
 #ifdef __cplusplus
