@@ -78,6 +78,7 @@ struct HXhmap_node {
 
 struct HXmap_trav {
 	enum HXmap_type type;
+	unsigned int flags;
 };
 
 struct HXhmap_trav {
@@ -118,6 +119,17 @@ struct HXrbtree {
 	struct HXmap_private super;
 	struct HXrbtree_node *root;
 	unsigned int tid;
+};
+
+struct HXrbtrav {
+	struct HXmap_trav super;
+	unsigned int tid; /* last seen btree transaction */
+	const struct HXrbtree *tree;
+	struct HXrbtree_node *current; /* last visited node */
+	char *checkpoint;
+	struct HXrbtree_node *path[BT_MAXDEP]; /* stored path */
+	unsigned char dir[BT_MAXDEP];
+	unsigned char depth;
 };
 
 /*
@@ -1026,12 +1038,14 @@ EXPORT_SYMBOL void *HXmap_del(struct HXmap *xmap, const void *key)
 	}
 }
 
-static void *HXhmap_travinit(const struct HXhmap *hmap)
+static void *HXhmap_travinit(const struct HXhmap *hmap, unsigned int flags)
 {
 	struct HXhmap_trav *trav;
 
 	if ((trav = malloc(sizeof(*trav))) == NULL)
 		return NULL;
+	/* We cannot offer DTRAV. */
+	trav->super.flags = flags & ~HXMAP_DTRAV;
 	trav->super.type = HX_MAPTYPE_HASH;
 	trav->hmap = hmap;
 	trav->head = NULL;
@@ -1040,14 +1054,29 @@ static void *HXhmap_travinit(const struct HXhmap *hmap)
 	return trav;
 }
 
-EXPORT_SYMBOL void *HXmap_travinit(const struct HXmap *xmap)
+static void *HXrbtrav_init(const struct HXrbtree *btree, unsigned int flags)
+{
+	struct HXrbtrav *trav;
+
+	if ((trav = calloc(1, sizeof(*trav))) == NULL)
+		return NULL;
+	trav->super.flags = flags;
+	trav->super.type = HX_MAPTYPE_RBTREE;
+	trav->tree = btree;
+	return trav;
+}
+
+EXPORT_SYMBOL void *HXmap_travinit(const struct HXmap *xmap,
+    unsigned int flags)
 {
 	const void *vmap = xmap;
 	const struct HXmap_private *map = vmap;
 
 	switch (map->type) {
 	case HX_MAPTYPE_HASH:
-		return HXhmap_travinit(vmap);
+		return HXhmap_travinit(vmap, flags);
+	case HX_MAPTYPE_RBTREE:
+		return HXrbtrav_init(vmap, flags);
 	default:
 		errno = EINVAL;
 		return NULL;
@@ -1086,6 +1115,183 @@ static const struct HXmap_node *HXhmap_traverse(void *xtrav)
 	return static_cast(const void *, &drop->key);
 }
 
+static void HXrbtrav_checkpoint(struct HXrbtrav *trav,
+    const struct HXrbtree_node *node)
+{
+	const struct HXrbtree *tree = trav->tree;
+
+	if (tree->super.flags & HXMAP_DTRAV) {
+		void *old_key = trav->checkpoint;
+
+		trav->checkpoint = tree->super.ops.k_clone(node->key,
+		                   tree->super.key_size);
+		if (tree->super.ops.k_free != NULL)
+			tree->super.ops.k_free(old_key);
+	} else {
+		trav->checkpoint = node->key;
+	}
+}
+
+static struct HXrbtree_node *HXrbtrav_next(struct HXrbtrav *trav)
+{
+	if (trav->current->sub[S_RIGHT] != NULL) {
+		/* Got a right child */
+		struct HXrbtree_node *node;
+
+		trav->dir[trav->depth++] = S_RIGHT;
+		node = trav->current->sub[S_RIGHT];
+
+		/* Which might have left childs (our inorder successors!) */
+		while (node != NULL) {
+			trav->path[trav->depth] = node;
+			node = node->sub[S_LEFT];
+			trav->dir[trav->depth++] = S_LEFT;
+		}
+		trav->current = trav->path[--trav->depth];
+	} else if (trav->depth == 0) {
+		/* No right child, no more parents */
+		return trav->current = NULL;
+	} else if (trav->dir[trav->depth-1] == S_LEFT) {
+		/* We are the left child of the parent, move on to parent */
+		trav->current = trav->path[--trav->depth];
+	} else if (trav->dir[trav->depth-1] == S_RIGHT) {
+		/*
+		 * There is no right child, and we are the right child of the
+		 * parent, so move on to the next inorder node (a distant
+		 * parent). This works by walking up the path until we are the
+		 * left child of a parent.
+		 */
+		while (true) {
+			if (trav->depth == 0)
+				/* No more parents */
+				return trav->current = NULL;
+			if (trav->dir[trav->depth-1] != S_RIGHT)
+				break;
+			--trav->depth;
+		}
+		trav->current = trav->path[--trav->depth];
+	}
+
+	HXrbtrav_checkpoint(trav, trav->current);
+	return trav->current;
+}
+
+static struct HXrbtree_node *HXrbtrav_rewalk(struct HXrbtrav *trav)
+{
+	/*
+	 * When the binary tree has been distorted (or the traverser is
+	 * uninitilaized), by either addition or deletion of an object, our
+	 * path recorded so far is (probably) invalid too. rewalk() will go and
+	 * find the node we were last at.
+	 */
+	const struct HXrbtree *btree = trav->tree;
+	struct HXrbtree_node *node   = btree->root;
+	bool go_next = false;
+
+	trav->depth = 0;
+
+	if (trav->current == NULL) {
+		/* Walk down the tree to the smallest element */
+		while (node != NULL) {
+			trav->path[trav->depth] = node;
+			node = node->sub[S_LEFT];
+			trav->dir[trav->depth++] = S_LEFT;
+		}
+	} else {
+		/* Search for the specific node to rebegin traversal at. */
+		const struct HXrbtree_node *newpath[BT_MAXDEP];
+		unsigned char newdir[BT_MAXDEP];
+		int newdepth = 0, res;
+		bool found = false;
+
+		while (node != NULL) {
+			newpath[newdepth] = trav->path[trav->depth] = node;
+			res = btree->super.ops.k_compare(trav->checkpoint,
+			      node->key, btree->super.key_size);
+			if (res == 0) {
+				++trav->depth;
+				found = true;
+				break;
+			}
+			res = res > 0;
+			trav->dir[trav->depth++] = res;
+
+			/*
+			 * This (working) code gets 1st place in being totally
+			 * cryptic without comments, so here goes:
+			 *
+			 * Right turns do not need to be saved, because we do
+			 * not need to stop at that particular node again but
+			 * can go directly to the next in-order successor,
+			 * which must be a parent somewhere upwards where we
+			 * did a left turn. If we only ever did right turns,
+			 * we would be at the last node already.
+			 *
+			 * Imagine a 32-element perfect binary tree numbered
+			 * from 1..32, and walk to 21 (directions: RLRL).
+			 * The nodes stored are 24 and 22. btrav_next will
+			 * go to 22, do 23, then jump _directly_ back to 24,
+			 * omitting the redundant check at 20.
+			 */
+			if (res == S_LEFT)
+				newdir[newdepth++] = S_LEFT;
+
+			node = node->sub[res];
+		}
+
+		if (found) {
+			/*
+			 * We found the node, but which HXbtraverse() has
+			 * already returned. Advance to the next inorder node.
+			 * (Code needs to come after @current assignment.)
+			 */
+			go_next = true;
+		} else {
+			/*
+			 * If the node travp->current is actually deleted (@res
+			 * will never be 0 above), traversal re-begins at the
+			 * next inorder node, which happens to be the last node
+			 * we turned left at.
+			 */
+			memcpy(trav->path, newpath, sizeof(trav->path));
+			memcpy(trav->dir, newdir, sizeof(trav->dir));
+			trav->depth = newdepth;
+		}
+	}
+
+	if (trav->depth == 0) {
+		/* no more elements */
+		trav->current = NULL;
+	} else {
+		trav->current = trav->path[--trav->depth];
+		if (trav->current == NULL)
+			fprintf(stderr, "btrav_rewalk: problem: current==NULL\n");
+		HXrbtrav_checkpoint(trav, trav->current);
+	}
+
+	trav->tid = btree->tid;
+	if (go_next)
+		return HXrbtrav_next(trav);
+	else
+		return trav->current;
+}
+
+static const struct HXmap_node *HXrbtree_traverse(struct HXrbtrav *trav)
+{
+	const struct HXrbtree_node *node;
+
+	if (trav->tid != trav->tree->tid || trav->current == NULL)
+		/*
+		 * Every HXrbtree operation that significantly changes the
+		 * B-tree, increments @tid so we can decide here to rewalk.
+		 */
+		node = HXrbtrav_rewalk(trav);
+	else
+		node = HXrbtrav_next(trav);
+
+	return (node != NULL) ? static_cast(const void *, &node->key) : NULL;
+}
+
 EXPORT_SYMBOL const struct HXmap_node *HXmap_traverse(void *xtrav)
 {
 	const struct HXmap_trav *trav = xtrav;
@@ -1096,19 +1302,36 @@ EXPORT_SYMBOL const struct HXmap_node *HXmap_traverse(void *xtrav)
 	switch (trav->type) {
 	case HX_MAPTYPE_HASH:
 		return HXhmap_traverse(xtrav);
+	case HX_MAPTYPE_RBTREE:
+		return HXrbtree_traverse(xtrav);
 	default:
 		errno = EINVAL;
 		return NULL;
 	}
 }
 
+static void HXrbtrav_free(struct HXrbtrav *trav)
+{
+	const struct HXmap_private *super = &trav->tree->super;
+
+	if ((super->flags & HXMAP_DTRAV) && super->ops.k_free != NULL)
+		super->ops.k_free(trav->checkpoint);
+	free(trav);
+}
+
 EXPORT_SYMBOL void HXmap_travfree(void *xtrav)
 {
+	struct HXmap_trav *trav;
+
 	if (xtrav == NULL)
 		return;
-	/*
-	 * All implementations have no further nested allocated data
-	 * at this time.
-	 */
-	free(xtrav);
+	trav = xtrav;
+	switch (trav->type) {
+	case HX_MAPTYPE_RBTREE:
+		HXrbtrav_free(xtrav);
+		break;
+	default:
+		free(xtrav);
+		break;
+	}
 }

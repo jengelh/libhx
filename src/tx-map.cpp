@@ -15,7 +15,7 @@
 #include "internal.h"
 
 enum {
-	NUM_ENTRIES = 25,
+	NUM_ENTRIES = 1,
 };
 
 /**
@@ -58,13 +58,13 @@ static void tmap_trav(struct HXmap *map)
 	void *iter;
 
 	printf("Simple traversal:\n");
-	iter = HXmap_travinit(map);
+	iter = HXmap_travinit(map, 0);
 	while ((node = HXmap_traverse(iter)) != NULL)
 		printf("%s -> %s\n", node->skey, node->sdata);
 	HXmap_travfree(iter);
 
 	printf("Modification during traversal:\n");
-	iter = HXmap_travinit(map);
+	iter = HXmap_travinit(map, 0);
 	while ((node = HXmap_traverse(iter)) != NULL) {
 		printf("%s -> %s\n", node->skey, node->sdata);
 		tmap_rword(key, sizeof(key));
@@ -83,7 +83,7 @@ static void tmap_del(struct HXmap *map)
 	while (map->items != 0) {
 		/* May need to reload traverser due to deletion */
 		printf("Restarting traverser\n");
-		if ((iter = HXmap_travinit(map)) == NULL)
+		if ((iter = HXmap_travinit(map, HXMAP_DTRAV)) == NULL)
 			break;
 		while ((node = HXmap_traverse(iter)) != NULL) {
 			printf("Destroying {%s, %s}\n",
@@ -107,9 +107,9 @@ static void test_map(struct HXmap *map)
 int main(void)
 {
 	printf("* HXhashmap\n");
-	test_map(HXhashmap_init(HXMAP_SCKEY | HXMAP_SCDATA));
+	test_map(HXhashmap_init(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_DTRAV));
 	printf("* RBtree\n");
-	test_map(HXrbtree_init(HXMAP_SCKEY | HXMAP_SCDATA));
+	test_map(HXrbtree_init(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_DTRAV));
 
 	return EXIT_SUCCESS;
 }

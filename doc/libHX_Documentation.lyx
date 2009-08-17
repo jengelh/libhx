@@ -3579,6 +3579,28 @@ SDATA
 .
 \end_layout
 
+\begin_layout Description
+
+\family typewriter
+HXMAP_DTRAV
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAP_DTRAV
+\end_layout
+
+\end_inset
+
+ Enable support for deletion during traversal.
+ As it can make traversal slower, it needs to be explicitly specified for
+ cases where it is needed, to not penalize cases where it is not.
+\end_layout
+
 \begin_layout Standard
 The 
 \family typewriter
@@ -4582,6 +4604,29 @@ HXmap_traverse
  The insertion or deletion of an element may also cause the internal data
  structure to re-layout itself.
  When this has happened, the traverser will not return any more elements.
+\end_layout
+
+\begin_layout Description
+Binary
+\begin_inset space ~
+\end_inset
+
+trees Elements may be added before the traverser's position.
+ These elements will not be returned in subsequent traversion calls.
+ If the data structure changes as a result of an addition or deletion, the
+ traverser will rebuild its state and continue traversal transparently.
+ Because elements in a binary tree are ordered, that is, element positions
+ may not change with respect to another when the tree is rebalanced, there
+ is no risk of returning entries more than once.
+ Nor will elements that are sorted after the current traverser's position
+ not be returned (=
+\begin_inset space ~
+\end_inset
+
+they will be returned, because they cannot get reordered to before the traverser
+ like in a hash map).
+ The HX rbtree implementation also has proper handling for when the node
+ which is currently visiting is deleted.
 \end_layout
 
 \begin_layout Section
