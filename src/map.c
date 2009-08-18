@@ -814,6 +814,202 @@ static void *HXhmap_del(struct HXhmap *hmap, const void *key)
 	return value;
 }
 
+static unsigned int HXrbtree_del_mm(struct HXrbtree_node **path,
+    unsigned char *dir, unsigned int depth)
+{
+	/* Both subtrees exist */
+	struct HXrbtree_node *io_node, *io_parent, *orig_node = path[depth];
+	unsigned char color;
+	unsigned int spos;
+
+	io_node    = orig_node->sub[S_RIGHT];
+	dir[depth] = S_RIGHT;
+
+	if (io_node->sub[S_LEFT] == NULL) {
+		/* Right subtree node is direct inorder */
+		io_node->sub[S_LEFT] = orig_node->sub[S_LEFT];
+		color                = io_node->color;
+		io_node->color       = orig_node->color;
+		orig_node->color     = color;
+
+		path[depth-1]->sub[dir[depth-1]] = io_node;
+		path[depth++]        = io_node;
+		return depth;
+	}
+
+	/*
+	 * Walk down to the leftmost element, keep track of inorder node
+	 * and its parent.
+	 */
+	spos = depth++;
+
+	do {
+		io_parent    = io_node;
+		path[depth]  = io_parent;
+		dir[depth++] = S_LEFT;
+		io_node      = io_parent->sub[S_LEFT];
+	} while (io_node->sub[S_LEFT] != NULL);
+
+	/* move node up */
+	path[spos-1]->sub[dir[spos-1]] = path[spos] = io_node;
+	io_parent->sub[S_LEFT]         = io_node->sub[S_RIGHT];
+	io_node->sub[S_LEFT]           = orig_node->sub[S_LEFT];
+	io_node->sub[S_RIGHT]          = orig_node->sub[S_RIGHT];
+
+	color          = io_node->color;
+	io_node->color = orig_node->color;
+
+	/*
+	 * The nodes (@io_node and @orig_node) have been swapped. While
+	 * @orig_node has no pointers to it, it still exists and decisions are
+	 * made upon its properties in HXbtree_del() and btree_dmov() until it
+	 * is freed later. Hence we need to keep the color.
+	 */
+	orig_node->color = color;
+	return depth;
+}
+
+static void HXrbtree_dmov(struct HXrbtree_node **path, unsigned char *dir,
+    unsigned int depth)
+{
+	struct HXrbtree_node *w, *x;
+
+	while (true) {
+		unsigned char LR = dir[depth - 1];
+		x = path[depth - 1]->sub[LR];
+
+		if (x != NULL && x->color == NODE_RED) {
+			/* (WP) "delete_one_child" */
+			x->color = NODE_BLACK;
+			break;
+		}
+
+		if (depth < 2)
+			/* Case 1 */
+			break;
+
+		/* @w is the sibling of @x (the current node). */
+		w = path[depth - 1]->sub[!LR];
+		if (w->color == NODE_RED) {
+			/*
+			 * Case 2. @w is of color red. In order to collapse
+			 * cases, a left rotate is performed at @x's parent and
+			 * colors are swapped to make @w a black node.
+			 */
+			w->color = NODE_BLACK;
+			path[depth - 1]->color = NODE_RED;
+			path[depth - 1]->sub[!LR] = w->sub[LR];
+			w->sub[LR] = path[depth - 1];
+			path[depth - 2]->sub[dir[depth - 2]] = w;
+			path[depth] = path[depth - 1];
+			dir[depth]  = LR;
+			path[depth - 1] = w;
+			w = path[++depth - 1]->sub[!LR];
+		}
+
+		if ((w->sub[LR] == NULL || w->sub[LR]->color == NODE_BLACK) &&
+		   (w->sub[!LR] == NULL || w->sub[!LR]->color == NODE_BLACK)) {
+			/* Case 3/4: @w has no red children. */
+			w->color = NODE_RED;
+			--depth;
+			continue;
+		}
+
+		if (w->sub[!LR] == NULL || w->sub[!LR]->color == NODE_BLACK) {
+			/* Case 5 */
+			struct HXrbtree_node *y = w->sub[LR];
+			y->color = NODE_BLACK;
+			w->color = NODE_RED;
+			w->sub[LR] = y->sub[!LR];
+			y->sub[!LR] = w;
+			w = path[depth - 1]->sub[!LR] = y;
+		}
+
+		/* Case 6 */
+		w->color = path[depth - 1]->color;
+		path[depth - 1]->color = NODE_BLACK;
+		w->sub[!LR]->color = NODE_BLACK;
+		path[depth - 1]->sub[!LR] = w->sub[LR];
+		w->sub[LR] = path[depth - 1];
+		path[depth - 2]->sub[dir[depth - 2]] = w;
+		break;
+	}
+}
+
+static void *HXrbtree_del(struct HXrbtree *btree, const void *key)
+{
+	struct HXrbtree_node *path[BT_MAXDEP], *node;
+	unsigned char dir[BT_MAXDEP];
+	unsigned int depth = 0;
+	void *itemptr;
+
+	if (btree->root == NULL)
+		return NULL;
+
+	path[depth]  = reinterpret_cast(struct HXrbtree_node *, &btree->root);
+	dir[depth++] = 0;
+	node         = btree->root;
+
+	while (node != NULL) {
+		int res = btree->super.ops.k_compare(key,
+		          node->key, btree->super.key_size);
+		if (res == 0)
+			break;
+		res          = res > 0;
+		path[depth]  = node;
+		dir[depth++] = res;
+		node         = node->sub[res];
+	}
+
+	if (node == NULL) {
+		errno = ENOENT;
+		return NULL;
+	}
+
+	/*
+	 * Return the data for the node. But it is not going to be useful
+	 * if ARBtree was directed to copy it (because it will be released
+	 * below.)
+	 */
+	itemptr = node->data;
+	/* Removal of the node from the tree */
+	--btree->super.items;
+	++btree->tid;
+
+	path[depth] = node;
+	if (node->sub[S_RIGHT] == NULL)
+		/* Simple case: No right subtree, replace by left subtree. */
+		path[depth-1]->sub[dir[depth-1]] = node->sub[S_LEFT];
+	else if (node->sub[S_LEFT] == NULL)
+		/* Simple case: No left subtree, replace by right subtree. */
+		path[depth-1]->sub[dir[depth-1]] = node->sub[S_RIGHT];
+	else
+		/*
+		 * Find minimum/maximum element in right/left subtree and
+		 * do appropriate deletion while updating @path and @depth.
+		 */
+		depth = HXrbtree_del_mm(path, dir, depth);
+
+	/*
+	 * Deleting a red node does not violate either of the rules, so it is
+	 * not necessary to rebalance in such a case.
+	 */
+	if (node->color == NODE_BLACK)
+		HXrbtree_dmov(path, dir, depth);
+
+	if (btree->super.ops.k_free != NULL)
+		btree->super.ops.k_free(node->key);
+	if (btree->super.ops.d_free != NULL)
+		btree->super.ops.d_free(node->data);
+	free(node);
+	errno = 0;
+	/*
+	 * In case %HXBT_CDATA was specified, the @itemptr value will be
+	 * useless in most cases as it points to freed memory.
+	 */
+	return itemptr;
+}
+
 EXPORT_SYMBOL void *HXmap_del(struct HXmap *xmap, const void *key)
 {
 	void *vmap = xmap;
@@ -822,6 +1018,8 @@ EXPORT_SYMBOL void *HXmap_del(struct HXmap *xmap, const void *key)
 	switch (map->type) {
 	case HX_MAPTYPE_HASH:
 		return HXhmap_del(vmap, key);
+	case HX_MAPTYPE_RBTREE:
+		return HXrbtree_del(vmap, key);
 	default:
 		errno = EINVAL;
 		return NULL;
