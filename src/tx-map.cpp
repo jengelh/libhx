@@ -2,10 +2,12 @@
  *	This program is in the Public Domain
  */
 #ifdef __cplusplus
+#	include <cstdarg>
 #	include <cstdio>
 #	include <cstdlib>
 #	include <ctime>
 #else
+#	include <stdarg.h>
 #	include <stdio.h>
 #	include <stdlib.h>
 #	include <time.h>
@@ -14,9 +16,30 @@
 #include <libHX/misc.h>
 #include "internal.h"
 
-enum {
-	NUM_ENTRIES = 1,
-};
+static unsigned int tmap_indent = 0;
+
+static inline void tmap_ipush(void)
+{
+	++tmap_indent;
+}
+
+static inline void tmap_ipop(void)
+{
+	if (tmap_indent > 0)
+		--tmap_indent;
+}
+
+static void tmap_printf(const char *fmt, ...)
+{
+	unsigned int i;
+	va_list args;
+
+	for (i = 0; i < tmap_indent; ++i)
+		printf("\t");
+	va_start(args, fmt);
+	vprintf(fmt, args);
+	va_end(args);
+}
 
 /**
  * tmap_rword - create random word
@@ -34,82 +57,127 @@ static void tmap_add_speed(struct HXmap *map)
 {
 	char key[8], value[HXSIZEOF_Z32];
 	struct timespec start, stop, delta;
-	unsigned int i;
+	unsigned int i = 0;
 
+	tmap_printf("Timing add operation\n");
 	key[sizeof(key)-1] = '\0';
 	clock_gettime(CLOCK_REALTIME, &start);
-	for (i = 0; i < NUM_ENTRIES; ++i) {
+	do {
 		tmap_rword(key, sizeof(key));
-		snprintf(value, sizeof(value), "%u", i);
+		snprintf(value, sizeof(value), "%u", i++);
+		HXmap_add(map, key, value);
+		clock_gettime(CLOCK_REALTIME, &stop);
+		HX_diff_timespec(&delta, &stop, &start);
+	} while (!(delta.tv_sec >= 1 || map->items >= 1000000));
+	tmap_ipush();
+	tmap_printf("%u elements in %ld.%09ld "
+		"(plus time measurement overhead)\n",
+		map->items, static_cast(long, delta.tv_sec), delta.tv_nsec);
+	tmap_ipop();
+}
+
+static void tmap_add_rand(struct HXmap *map, unsigned int num)
+{
+	char key[8], value[HXSIZEOF_Z32];
+
+	while (num-- > 0) {
+		tmap_rword(key, sizeof(key));
+		snprintf(value, sizeof(value), "%u", num);
 		HXmap_add(map, key, value);
 	}
-	HXmap_add(map, "fruit", "apple");
-	clock_gettime(CLOCK_REALTIME, &stop);
-	HX_diff_timespec(&delta, &stop, &start);
-	printf("Raw add speed: %ld.%09ld\n",
-	       static_cast(long, delta.tv_sec), delta.tv_nsec);
 }
 
 static void tmap_trav(struct HXmap *map)
 {
 	const struct HXmap_node *node;
-	unsigned int i = (NUM_ENTRIES + 999) / 1000 * 1000;
+	unsigned int i = ~(~0U >> 1);
 	char key[8], value[HXSIZEOF_Z32];
 	void *iter;
 
-	printf("Simple traversal:\n");
+	tmap_printf("Simple traversal:\n");
+	tmap_ipush();
 	iter = HXmap_travinit(map, 0);
 	while ((node = HXmap_traverse(iter)) != NULL)
-		printf("%s -> %s\n", node->skey, node->sdata);
+		tmap_printf("%s -> %s\n", node->skey, node->sdata);
+	tmap_ipop();
 	HXmap_travfree(iter);
 
-	printf("Modification during traversal:\n");
+	tmap_printf("Add modification during traversal:\n");
+	tmap_ipush();
 	iter = HXmap_travinit(map, 0);
 	while ((node = HXmap_traverse(iter)) != NULL) {
-		printf("%s -> %s\n", node->skey, node->sdata);
+		tmap_printf("%s -> %s\n", node->skey, node->sdata);
 		tmap_rword(key, sizeof(key));
 		snprintf(value, sizeof(value), "%u", i++);
 		HXmap_add(map, key, value);
 	}
+	tmap_ipop();
 	HXmap_travfree(iter);
 }
 
-static void tmap_del(struct HXmap *map)
+static void tmap_del(struct HXmap *map, bool verbose)
 {
 	const struct HXmap_node *node;
 	void *iter;
 
-	printf("Deletion of %u elements:\n", map->items);
+	tmap_printf("Deletion of %u elements, with traversal:\n", map->items);
+	tmap_ipush();
 	while (map->items != 0) {
 		/* May need to reload traverser due to deletion */
-		printf("Restarting traverser\n");
+		if (verbose)
+			tmap_printf("Restarting traverser\n");
 		if ((iter = HXmap_travinit(map, HXMAP_DTRAV)) == NULL)
 			break;
+		tmap_ipush();
 		while ((node = HXmap_traverse(iter)) != NULL) {
-			printf("Destroying {%s, %s}\n",
-			       node->skey, node->sdata);
+			if (verbose)
+				tmap_printf("Destroying {%s, %s}\n",
+					node->skey, node->sdata);
 			HXmap_del(map, node->key);
 		}
+		tmap_ipop();
 		HXmap_travfree(iter);
 	}
+	tmap_ipop();
 }
 
-static void test_map(struct HXmap *map)
+static void tmap_test(struct HXmap *(*create_map)(unsigned int),
+    unsigned int flags)
 {
+	struct HXmap *map;
+
+	map = (*create_map)(flags);
 	tmap_add_speed(map);
-	printf("fruit=%s\n",
+
+	tmap_printf("Element retrieval:\n");
+	HXmap_add(map, "fruit", "apple");
+	tmap_printf("fruit=%s\n",
 	       static_cast(const char *, HXmap_get(map, "fruit")));
+	tmap_del(map, false);
+
+	tmap_add_rand(map, 2);
 	tmap_trav(map);
-	tmap_del(map);
+	tmap_del(map, true);
 	HXmap_free(map);
+}
+
+static struct HXmap *tmap_create_hashmap(unsigned int flags)
+{
+	return HXhashmap_init(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_DTRAV);
+}
+
+static struct HXmap *tmap_create_rbtree(unsigned int flags)
+{
+	return HXrbtree_init(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_DTRAV);
 }
 
 int main(void)
 {
-	printf("* HXhashmap\n");
-	test_map(HXhashmap_init(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_DTRAV));
-	printf("* RBtree\n");
-	test_map(HXrbtree_init(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_DTRAV));
+	tmap_printf("* HXhashmap\n");
+	tmap_test(tmap_create_hashmap, 0);
+
+	tmap_printf("\n* RBtree\n");
+	tmap_test(tmap_create_rbtree, 0);
 
 	return EXIT_SUCCESS;
 }
