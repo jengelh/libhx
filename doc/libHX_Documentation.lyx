@@ -4274,6 +4274,38 @@ HXmap_free
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ HXmap_node 
+\series bold
+*
+\series default
+HXmap_keysvalues(
+\series bold
+const struct
+\series default
+ HXmap 
+\series bold
+*
+\series default
+);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmap_keysvalues
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -4306,6 +4338,26 @@ errno
 -ENOENT
 \family default
  if the element was not found.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXmap_keysvalues
+\family default
+ Returns all key-value-pairs in an array of the size as many items were
+ in the map (
+\family typewriter
+map->items
+\family default
+) at the time it was called.
+ The memory must be freed using 
+\family typewriter
+free
+\family default
+(3) when it is no longer needed.
+ The order elements in the array follows the traverser notes (see below),
+ unless otherwise specified.
 \end_layout
 
 \begin_layout Subsection

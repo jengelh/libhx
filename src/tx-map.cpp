@@ -87,6 +87,24 @@ static void tmap_add_rand(struct HXmap *map, unsigned int num)
 	}
 }
 
+static void tmap_flat(const struct HXmap *map)
+{
+	struct HXmap_node *nodes;
+	unsigned int i;
+
+	tmap_printf("Retrieving flattened list of %u elements:\n", map->items);
+	tmap_ipush();
+	nodes = HXmap_keysvalues(map);
+	if (nodes == NULL) {
+		perror("HXmap_keysvalues");
+		abort();
+	}
+	for (i = 0; i < map->items; ++i)
+		tmap_printf("%u. %s -> %s\n", i, nodes[i].key, nodes[i].data);
+	tmap_ipop();
+	free(nodes);
+}
+
 static void tmap_trav(struct HXmap *map)
 {
 	const struct HXmap_node *node;
@@ -156,6 +174,7 @@ static void tmap_test(struct HXmap *(*create_map)(unsigned int),
 	tmap_del(map, false);
 
 	tmap_add_rand(map, 2);
+	tmap_flat(map);
 	tmap_trav(map);
 	tmap_del(map, true);
 	HXmap_free(map);

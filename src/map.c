@@ -1038,6 +1038,62 @@ EXPORT_SYMBOL void *HXmap_del(struct HXmap *xmap, const void *key)
 	}
 }
 
+static void HXhmap_keysvalues(const struct HXhmap *hmap,
+    struct HXmap_node *array)
+{
+	const struct HXhmap_node *node;
+	unsigned int i;
+
+	for (i = 0; i < HXhash_primes[hmap->power]; ++i)
+		HXlist_for_each_entry(node, &hmap->bk_array[i], anchor) {
+			array->key  = node->key;
+			array->data = node->data;
+			++array;
+		}
+}
+
+static struct HXmap_node *HXrbtree_keysvalues(const struct HXrbtree_node *node,
+    struct HXmap_node *array)
+{
+	if (node->sub[0] != NULL)
+		array = HXrbtree_keysvalues(node->sub[0], array);
+	array->key  = node->key;
+	array->data = node->data;
+	++array;
+	if (node->sub[1] != NULL)
+		array = HXrbtree_keysvalues(node->sub[1], array);
+	return array;
+}
+
+EXPORT_SYMBOL struct HXmap_node *HXmap_keysvalues(const struct HXmap *xmap)
+{
+	const void *vmap = xmap;
+	const struct HXmap_private *map = vmap;
+	struct HXmap_node *array;
+
+	switch (map->type) {
+	case HX_MAPTYPE_HASH:
+	case HX_MAPTYPE_RBTREE:
+		break;
+	default:
+		errno = EINVAL;
+		return NULL;
+	}
+
+	if ((array = malloc(sizeof(*array) * map->items)) == NULL)
+		return NULL;
+
+	switch (map->type) {
+	case HX_MAPTYPE_HASH:
+		HXhmap_keysvalues(vmap, array);
+		break;
+	case HX_MAPTYPE_RBTREE:
+		HXrbtree_keysvalues(((struct HXrbtree *)vmap)->root, array);
+		break;
+	}
+	return array;
+}
+
 static void *HXhmap_travinit(const struct HXhmap *hmap, unsigned int flags)
 {
 	struct HXhmap_trav *trav;
