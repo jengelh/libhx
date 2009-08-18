@@ -489,8 +489,8 @@ EXPORT_SYMBOL struct HXmap *HXrbtree_init(unsigned int flags)
 	return HXrbtree_init4(flags, NULL, 0, 0);
 }
 
-static struct HXhmap_node *
-HXhmap_find(const struct HXhmap *hmap, const void *key)
+static struct HXhmap_node *HXhmap_find(const struct HXhmap *hmap,
+    const void *key)
 {
 	struct HXhmap_node *drop;
 	unsigned int bk_idx;
@@ -504,7 +504,7 @@ HXhmap_find(const struct HXhmap *hmap, const void *key)
 	return NULL;
 }
 
-static struct HXrbtree_node *HXrbtree_find(const struct HXrbtree *btree,
+static const struct HXmap_node *HXrbtree_find(const struct HXrbtree *btree,
     const void *key)
 {
 	struct HXrbtree_node *node = btree->root;
@@ -513,41 +513,44 @@ static struct HXrbtree_node *HXrbtree_find(const struct HXrbtree *btree,
 	while (node != NULL) {
 		if ((res = btree->super.ops.k_compare(key,
 		    node->key, btree->super.key_size)) == 0)
-			return node;
+			return static_cast(const void *, &node->key);
 		node = node->sub[res > 0];
 	}
 
 	return NULL;
 }
 
-EXPORT_SYMBOL void *HXmap_get(const struct HXmap *xmap, const void *key)
+EXPORT_SYMBOL const struct HXmap_node *
+HXmap_find(const struct HXmap *xmap, const void *key)
 {
 	const void *vmap = xmap;
 	const struct HXmap_private *map = vmap;
 
 	switch (map->type) {
 	case HX_MAPTYPE_HASH: {
-		const struct HXhmap_node *drop = HXhmap_find(vmap, key);
-		if (drop != NULL) {
-			errno = 0;
-			return drop->data;
-		}
-		errno = -ENOENT;
-		return NULL;
+		const struct HXhmap_node *node = HXhmap_find(vmap, key);
+		if (node == NULL)
+			return NULL;
+		return static_cast(const void *, &node->key);
 	}
-	case HX_MAPTYPE_RBTREE: {
-		const struct HXrbtree_node *node = HXrbtree_find(vmap, key);
-		if (node != NULL) {
-			errno = 0;
-			return node->data;
-		}
-		errno = -ENOENT;
-		return NULL;
-	}
+	case HX_MAPTYPE_RBTREE:
+		return HXrbtree_find(vmap, key);
 	default:
 		errno = EINVAL;
 		return NULL;
 	}
+}
+
+EXPORT_SYMBOL void *HXmap_get(const struct HXmap *map, const void *key)
+{
+	const struct HXmap_node *node;
+
+	if ((node = HXmap_find(map, key)) == NULL) {
+		errno = ENOENT;
+		return NULL;
+	}
+	errno = 0;
+	return node->data;
 }
 
 /**

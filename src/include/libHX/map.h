@@ -79,6 +79,7 @@ extern struct HXmap *HXrbtree_init4(unsigned int, const struct HXmap_ops *,
 	size_t, size_t);
 
 extern int HXmap_add(struct HXmap *, const void *, const void *);
+extern const struct HXmap_node *HXmap_find(const struct HXmap *, const void *);
 extern void *HXmap_get(const struct HXmap *, const void *);
 extern void *HXmap_del(struct HXmap *, const void *);
 extern struct HXmap_node *HXmap_keysvalues(const struct HXmap *);
