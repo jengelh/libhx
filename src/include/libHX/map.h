@@ -86,6 +86,8 @@ extern struct HXmap_node *HXmap_keysvalues(const struct HXmap *);
 extern void *HXmap_travinit(const struct HXmap *, unsigned int);
 extern const struct HXmap_node *HXmap_traverse(void *);
 extern void HXmap_travfree(void *);
+extern void HXmap_qfe(const struct HXmap *,
+	bool (*)(const struct HXmap_node *, void *), void *);
 extern void HXmap_free(struct HXmap *);
 
 extern unsigned long HXhash_jlookup3(const void *, size_t);

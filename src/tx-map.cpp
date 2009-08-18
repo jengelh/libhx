@@ -76,13 +76,18 @@ static void tmap_add_speed(struct HXmap *map)
 	tmap_ipop();
 }
 
+static bool tmap_each_fn(const struct HXmap_node *node, void *arg)
+{
+	return true;
+}
+
 static void tmap_trav_speed(struct HXmap *map)
 {
 	struct timespec start, stop, delta;
 	const struct HXmap_node *node;
 	void *iter;
 
-	tmap_printf("Timing open traversal\n");
+	tmap_printf("Timing traversal\n");
 	tmap_ipush();
 	iter = HXmap_travinit(map, 0);
 	clock_gettime(CLOCK_REALTIME, &start);
@@ -92,6 +97,13 @@ static void tmap_trav_speed(struct HXmap *map)
 	HX_diff_timespec(&delta, &stop, &start);
 	HXmap_travfree(iter);
 	tmap_printf("Open traversal of %u nodes: %ld.%09lds\n",
+		map->items, static_cast(long, delta.tv_sec), delta.tv_nsec);
+
+	clock_gettime(CLOCK_REALTIME, &start);
+	HXmap_qfe(map, tmap_each_fn, NULL);
+	clock_gettime(CLOCK_REALTIME, &stop);
+	HX_diff_timespec(&delta, &stop, &start);
+	tmap_printf("QFE traversal of %u nodes: %ld.%09lds\n",
 		map->items, static_cast(long, delta.tv_sec), delta.tv_nsec);
 	tmap_ipop();
 }

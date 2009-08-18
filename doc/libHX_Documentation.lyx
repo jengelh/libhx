@@ -4751,6 +4751,50 @@ void
 void *
 \series default
 iterator);
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXmap_qfe(
+\series bold
+const struct
+\series default
+ HXmap 
+\series bold
+*
+\series default
+, 
+\series bold
+bool (*
+\series default
+fn
+\series bold
+)
+\series default
+(
+\series bold
+const struct
+\series default
+ HXmap_node 
+\series bold
+*
+\series default
+,
+\begin_inset Newline newline
+\end_inset
+
+     
+\series bold
+void *
+\series default
+arg), 
+\series bold
+void *
+\series default
+arg);
 \end_layout
 
 \begin_layout Description
@@ -4842,6 +4886,52 @@ HXmap_travfree
 \end_inset
 
  Release the memory associated with a traverser.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXmap_qfe
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmap_qfe
+\end_layout
+
+\end_inset
+
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+quick foreach
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Iterates over all map elements in the fastest possible manner, but has
+ the restriction that no modifications to the map are allowed.
+ Furthermore, a separate function to handle each visited node, is required.
+ (Hence this is also called 
+\begin_inset Quotes eld
+\end_inset
+
+closed traversal
+\begin_inset Quotes erd
+\end_inset
+
+, because one cannot access the stack frame of the original function which
+ called 
+\family typewriter
+HXmap_qfe
+\family default
+.) The user-defined function returns a bool which indicates whether traversal
+ shall continue or not.
 \end_layout
 
 \begin_layout Standard

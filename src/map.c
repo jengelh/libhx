@@ -132,6 +132,8 @@ struct HXrbtrav {
 	unsigned char depth;
 };
 
+typedef bool (*qfe_fn_t)(const struct HXmap_node *, void *);
+
 /*
  * http://planetmath.org/encyclopedia/GoodHashTablePrimes.html
  * 23 and 3221.. added by j.eng.
@@ -1392,5 +1394,49 @@ EXPORT_SYMBOL void HXmap_travfree(void *xtrav)
 	default:
 		free(xtrav);
 		break;
+	}
+}
+
+static void HXhmap_qfe(const struct HXhmap *hmap, qfe_fn_t fn, void *arg)
+{
+	const struct HXhmap_node *hnode;
+	unsigned int i;
+
+	for (i = 0; i < HXhash_primes[hmap->power]; ++i)
+		HXlist_for_each_entry(hnode, &hmap->bk_array[i], anchor)
+			if (!(*fn)(static_cast(const void *, &hnode->key), arg))
+				return;
+}
+
+static void HXrbtree_qfe(const struct HXrbtree_node *node,
+    qfe_fn_t fn, void *arg)
+{
+	if (node->sub[S_LEFT] != NULL)
+		HXrbtree_qfe(node->sub[S_LEFT], fn, arg);
+	if (!(*fn)(static_cast(const void *, &node->key), arg))
+		return;
+	if (node->sub[S_RIGHT] != NULL)
+		HXrbtree_qfe(node->sub[S_RIGHT], fn, arg);
+}
+
+EXPORT_SYMBOL void HXmap_qfe(const struct HXmap *xmap, qfe_fn_t fn, void *arg)
+{
+	const void *vmap = xmap;
+	const struct HXmap_private *map = vmap;
+
+	switch (map->type) {
+	case HX_MAPTYPE_HASH:
+		HXhmap_qfe(vmap, fn, arg);
+		errno = 0;
+		break;
+	case HX_MAPTYPE_RBTREE: {
+		const struct HXrbtree *tree = vmap;
+		if (tree->root != NULL)
+			HXrbtree_qfe(tree->root, fn, arg);
+		errno = 0;
+		break;
+	}
+	default:
+		errno = EINVAL;
 	}
 }
