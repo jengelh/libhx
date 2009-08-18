@@ -76,6 +76,26 @@ static void tmap_add_speed(struct HXmap *map)
 	tmap_ipop();
 }
 
+static void tmap_trav_speed(struct HXmap *map)
+{
+	struct timespec start, stop, delta;
+	const struct HXmap_node *node;
+	void *iter;
+
+	tmap_printf("Timing open traversal\n");
+	tmap_ipush();
+	iter = HXmap_travinit(map, 0);
+	clock_gettime(CLOCK_REALTIME, &start);
+	while ((node = HXmap_traverse(iter)) != NULL)
+		;
+	clock_gettime(CLOCK_REALTIME, &stop);
+	HX_diff_timespec(&delta, &stop, &start);
+	HXmap_travfree(iter);
+	tmap_printf("Open traversal of %u nodes: %ld.%09lds\n",
+		map->items, static_cast(long, delta.tv_sec), delta.tv_nsec);
+	tmap_ipop();
+}
+
 static void tmap_add_rand(struct HXmap *map, unsigned int num)
 {
 	char key[8], value[HXSIZEOF_Z32];
@@ -166,6 +186,7 @@ static void tmap_test(struct HXmap *(*create_map)(unsigned int),
 
 	map = (*create_map)(flags);
 	tmap_add_speed(map);
+	tmap_trav_speed(map);
 
 	tmap_printf("Element retrieval:\n");
 	HXmap_add(map, "fruit", "apple");
