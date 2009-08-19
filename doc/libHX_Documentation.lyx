@@ -2482,6 +2482,46 @@ containerof
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+size_t
+\series default
+ HXsizeof_member(struct_type, member);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXsizeof_member
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+output_type
+\series default
+ HXtypeof_member(struct_type, member);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXtypeof_member
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2603,6 +2643,31 @@ struct
 \end_inset
 
 }
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+HXsizeof_member
+\family default
+ and 
+\family typewriter
+HXtypeof_member
+\family default
+ are convenient shortcuts to get the size or type of a named member in a
+ given struct:
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+char
+\series default
+ padding[HXsizeof_member(
+\series bold
+struct
+\series default
+ foo, baz)];
 \end_layout
 
 \begin_layout Subsection

@@ -2,6 +2,10 @@
 #define _LIBHX_DEFS_H 1
 
 #ifdef __cplusplus
+#	define HXsizeof_member(type, member) \
+		sizeof(static_cast<type *>(NULL)->member)
+#	define HXtypeof_member(type, member) \
+		typeof(static_cast<type *>(NULL)->member)
 #	if defined(__GNUC__) && __GNUC__ >= 4 && !defined(offsetof)
 		/*
 		 * This is here so most programs can skip inclusion
@@ -54,6 +58,8 @@ static inline new_type signed_cast(unsigned char *expr)
 	return reinterpret_cast<new_type>(expr);
 }
 #else
+#	define HXsizeof_member(type, member) sizeof(((type *)NULL)->member)
+#	define HXtypeof_member(type, member) typeof(((type *)NULL)->member)
 	/* N.B. signed_cast<> does not exist in C++. */
 #	define __signed_cast_compatible(a, b) \
 		__builtin_choose_expr( \

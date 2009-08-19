@@ -6,6 +6,7 @@ Changes:
 - rand: use faster modulo-based variant for numbers within RAND_MAX range
 - rand: use libc rand() almost exclusively, only use /dev/urandom for seed
 Enhancements:
+- defs: add HXsizeof_member and HXtypeof_member
 - time: add time delta functions (HX_diff_timeval/HX_diff_timespec)
 
 
