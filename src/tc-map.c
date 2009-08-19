@@ -98,7 +98,7 @@ static bool tmap_each_fn(const struct HXmap_node *node, void *arg)
 
 static void tmap_trav_speed(struct HXmap *map)
 {
-	struct timeval start, stop, delta;
+	struct timeval start, stop, delta, delta2;
 	const struct HXmap_node *node;
 	void *iter;
 
@@ -120,6 +120,24 @@ static void tmap_trav_speed(struct HXmap *map)
 	tmap_time(&stop);
 	HX_diff_timeval(&delta, &stop, &start);
 	tmap_printf("QFE traversal of %u nodes: %ld.%06lds\n",
+		map->items, static_cast(long, delta.tv_sec),
+		static_cast(long, delta.tv_usec));
+	tmap_ipop();
+
+	tmap_printf("MAP test 2a: Timing lookup\n");
+	tmap_ipush();
+	iter = HXmap_travinit(map, 0);
+	tmap_time(&start);
+	while ((node = HXmap_traverse(iter)) != NULL)
+		HXmap_find(map, node->key);
+	tmap_time(&stop);
+	HX_diff_timeval(&delta2, &stop, &start);
+	HXmap_travfree(iter);
+	/* delta2 includes traversal time */
+	start = delta;
+	stop  = delta2;
+	HX_diff_timeval(&delta, &stop, &start);
+	tmap_printf("Lookup of %u nodes: %ld.%06lds\n",
 		map->items, static_cast(long, delta.tv_sec),
 		static_cast(long, delta.tv_usec));
 	tmap_ipop();
@@ -216,11 +234,6 @@ static void tmap_test(struct HXmap *(*create_map)(unsigned int),
 	map = (*create_map)(flags);
 	tmap_add_speed(map);
 	tmap_trav_speed(map);
-
-	tmap_printf("Element retrieval:\n");
-	HXmap_add(map, "fruit", "apple");
-	tmap_printf("fruit=%s\n",
-	       static_cast(const char *, HXmap_get(map, "fruit")));
 	tmap_flush(map, false);
 
 	tmap_add_rand(map, 2);
