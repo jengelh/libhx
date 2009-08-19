@@ -1,6 +1,8 @@
 /*
  *	This program is in the Public Domain
  */
+#include <sys/resource.h>
+#include <sys/time.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -46,6 +48,13 @@ static void tmap_printf(const char *fmt, ...)
 	va_end(args);
 }
 
+static void tmap_time(struct timeval *tv)
+{
+	struct rusage r;
+	if (getrusage(RUSAGE_SELF, &r) == 0)
+		*tv = r.ru_utime;
+}
+
 /**
  * tmap_rword - create random word
  * @dest:	char buffer
@@ -61,23 +70,24 @@ static inline void tmap_rword(char *dest, unsigned int length)
 static void tmap_add_speed(struct HXmap *map)
 {
 	char key[8], value[HXSIZEOF_Z32];
-	struct timespec start, stop, delta;
+	struct timeval start, stop, delta;
 	unsigned int i = 0;
 
-	tmap_printf("Timing add operation\n");
+	tmap_printf("MAP test 1: Timing add operation\n");
 	key[sizeof(key)-1] = '\0';
-	clock_gettime(CLOCK_REALTIME, &start);
+	tmap_time(&start);
 	do {
 		tmap_rword(key, sizeof(key));
 		snprintf(value, sizeof(value), "%u", i++);
 		HXmap_add(map, key, value);
-		clock_gettime(CLOCK_REALTIME, &stop);
-		HX_diff_timespec(&delta, &stop, &start);
+		tmap_time(&stop);
+		HX_diff_timeval(&delta, &stop, &start);
 	} while (!(delta.tv_sec >= 1 || map->items >= 1000000));
 	tmap_ipush();
-	tmap_printf("%u elements in %ld.%09ld "
+	tmap_printf("%u elements in %ld.%06ld "
 		"(plus time measurement overhead)\n",
-		map->items, static_cast(long, delta.tv_sec), delta.tv_nsec);
+		map->items, static_cast(long, delta.tv_sec),
+		static_cast(long, delta.tv_usec));
 	tmap_ipop();
 }
 
@@ -88,28 +98,30 @@ static bool tmap_each_fn(const struct HXmap_node *node, void *arg)
 
 static void tmap_trav_speed(struct HXmap *map)
 {
-	struct timespec start, stop, delta;
+	struct timeval start, stop, delta;
 	const struct HXmap_node *node;
 	void *iter;
 
-	tmap_printf("Timing traversal\n");
+	tmap_printf("MAP test 2: Timing traversal\n");
 	tmap_ipush();
 	iter = HXmap_travinit(map, 0);
-	clock_gettime(CLOCK_REALTIME, &start);
+	tmap_time(&start);
 	while ((node = HXmap_traverse(iter)) != NULL)
 		;
-	clock_gettime(CLOCK_REALTIME, &stop);
-	HX_diff_timespec(&delta, &stop, &start);
+	tmap_time(&stop);
+	HX_diff_timeval(&delta, &stop, &start);
 	HXmap_travfree(iter);
-	tmap_printf("Open traversal of %u nodes: %ld.%09lds\n",
-		map->items, static_cast(long, delta.tv_sec), delta.tv_nsec);
+	tmap_printf("Open traversal of %u nodes: %ld.%06lds\n",
+		map->items, static_cast(long, delta.tv_sec),
+		static_cast(long, delta.tv_usec));
 
-	clock_gettime(CLOCK_REALTIME, &start);
+	tmap_time(&start);
 	HXmap_qfe(map, tmap_each_fn, NULL);
-	clock_gettime(CLOCK_REALTIME, &stop);
-	HX_diff_timespec(&delta, &stop, &start);
-	tmap_printf("QFE traversal of %u nodes: %ld.%09lds\n",
-		map->items, static_cast(long, delta.tv_sec), delta.tv_nsec);
+	tmap_time(&stop);
+	HX_diff_timeval(&delta, &stop, &start);
+	tmap_printf("QFE traversal of %u nodes: %ld.%06lds\n",
+		map->items, static_cast(long, delta.tv_sec),
+		static_cast(long, delta.tv_usec));
 	tmap_ipop();
 }
 
@@ -170,12 +182,12 @@ static void tmap_trav(struct HXmap *map)
 	HXmap_travfree(iter);
 }
 
-static void tmap_del(struct HXmap *map, bool verbose)
+static void tmap_flush(struct HXmap *map, bool verbose)
 {
 	const struct HXmap_node *node;
 	void *iter;
 
-	tmap_printf("Deletion of %u elements, with traversal:\n", map->items);
+	tmap_printf("Flushing %u elements (with traversal)\n", map->items);
 	tmap_ipush();
 	while (map->items != 0) {
 		/* May need to reload traverser due to deletion */
@@ -209,12 +221,12 @@ static void tmap_test(struct HXmap *(*create_map)(unsigned int),
 	HXmap_add(map, "fruit", "apple");
 	tmap_printf("fruit=%s\n",
 	       static_cast(const char *, HXmap_get(map, "fruit")));
-	tmap_del(map, false);
+	tmap_flush(map, false);
 
 	tmap_add_rand(map, 2);
 	tmap_flat(map);
 	tmap_trav(map);
-	tmap_del(map, true);
+	tmap_flush(map, true);
 	HXmap_free(map);
 }
 
