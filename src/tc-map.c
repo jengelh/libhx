@@ -21,7 +21,7 @@ union HXpoly {
 	struct HXrbtree *rbt;
 };
 
-typedef struct HXmap *(*hxmap_ctor_fn_t)(unsigned int,
+typedef struct HXmap *(*map_create4_fn_t)(unsigned int,
 	const struct HXmap_ops *, size_t, size_t);
 
 static unsigned int tmap_indent = 0;
@@ -235,12 +235,11 @@ static void tmap_trav(struct HXmap *map)
 	HXmap_travfree(iter);
 }
 
-static void tmap_test(struct HXmap *(*create_map)(unsigned int),
-    unsigned int flags)
+static void tmap_generic_tests(map_create4_fn_t ctor)
 {
 	struct HXmap *map;
 
-	map = (*create_map)(flags);
+	map = (*ctor)(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_NOREPLACE, NULL, 0, 0);
 	tmap_add_speed(map);
 	tmap_trav_speed(map);
 	tmap_flush(map, false);
@@ -250,16 +249,6 @@ static void tmap_test(struct HXmap *(*create_map)(unsigned int),
 	tmap_trav(map);
 	tmap_flush(map, true);
 	HXmap_free(map);
-}
-
-static struct HXmap *tmap_create_hashmap(unsigned int flags)
-{
-	return HXhashmap_init(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_NOREPLACE);
-}
-
-static struct HXmap *tmap_create_rbtree(unsigned int flags)
-{
-	return HXrbtree_init(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_NOREPLACE);
 }
 
 static int tmap_strtolcmp(const void *a, const void *b, size_t z)
@@ -544,11 +533,11 @@ static void tmap_rbt_test_1(void)
 int main(void)
 {
 	tmap_printf("* HXhashmap\n");
-	tmap_test(tmap_create_hashmap, 0);
+	tmap_generic_tests(HXhashmap_init4);
 	tmap_hmap_test_1();
 
 	tmap_printf("\n* RBtree\n");
-	tmap_test(tmap_create_rbtree, 0);
+	tmap_generic_tests(HXrbtree_init4);
 	tmap_rbt_test_1();
 
 	return EXIT_SUCCESS;
