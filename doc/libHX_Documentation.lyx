@@ -5063,14 +5063,14 @@ The implementation has a theoretical minimum on the maximum number of nodes,
 .
  A worst-case tree with this many elements already has a height of 48 (
 \family typewriter
-BT_MAXDEP
+RBT_MAXDEP
 \family default
 ), which is the maximum height currently supported.
  The larger the height is that HXrbtree is supposed to handle, the more
  memory (linear increase) it needs.
  All functions that build or keep a path reserve memory for 
 \family typewriter
-BT_MAXDEP
+RBT_MAXDEP
 \family default
  nodes; on x86_64 this is 9 bytes per 
 \begin_inset Formula $\langle$
