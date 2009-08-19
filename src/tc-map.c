@@ -75,7 +75,8 @@ static void tmap_add_rand(struct HXmap *map, unsigned int num)
 	while (num-- > 0) {
 		tmap_rword(key, sizeof(key));
 		snprintf(value, sizeof(value), "%u", num);
-		HXmap_add(map, key, value);
+		if (HXmap_add(map, key, value) == -EEXIST)
+			++num;
 	}
 }
 
@@ -253,12 +254,12 @@ static void tmap_test(struct HXmap *(*create_map)(unsigned int),
 
 static struct HXmap *tmap_create_hashmap(unsigned int flags)
 {
-	return HXhashmap_init(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_DTRAV);
+	return HXhashmap_init(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_NOREPLACE);
 }
 
 static struct HXmap *tmap_create_rbtree(unsigned int flags)
 {
-	return HXrbtree_init(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_DTRAV);
+	return HXrbtree_init(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_NOREPLACE);
 }
 
 static int tmap_strtolcmp(const void *a, const void *b, size_t z)
