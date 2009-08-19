@@ -56,6 +56,17 @@ static void tmap_time(struct timeval *tv)
 		*tv = r.ru_utime;
 }
 
+static unsigned int tmap_smart_rand(unsigned int *left, unsigned int *right)
+{
+	unsigned int z = HX_irand(*left, *right);
+
+	if (z == *left)
+		++*left;
+	else if (z == *right - 1)
+		--*right;
+	return z;
+}
+
 /**
  * tmap_rword - create random word
  * @dest:	char buffer
@@ -476,11 +487,9 @@ static void rbt_height_check(const struct HXrbtree *tree)
 	max = 2 * log(tree->super.items + 1) / log(2);
 	avg = log((pow(2, min) + pow(2, max)) / 2) / log(2);
 	tmap_ipush();
-	tmap_printf("Item count: %u\n", tree->super.items);
-	tmap_printf("Minimum height: %f\n", min);
-	tmap_printf("Average height: %f\n", avg);
-	tmap_printf("Maximum height: %f\n", max);
-	tmap_printf("Current height: %u\n", rbt_tree_height(tree->root));
+	tmap_printf("%u items; height %u; min/avg/max %.2f/%.2f/%.2f\n",
+		tree->super.items, rbt_tree_height(tree->root),
+		min, avg, max);
 	tmap_ipop();
 }
 
@@ -528,6 +537,133 @@ static void tmap_rbt_test_1(void)
 	 *   / \      /  \
 	 *  2   6   10    14
 	 */
+	HXmap_free(u.map);
+}
+
+/**
+ * rbt_no_2red_children - verify rbtree rule
+ * @node:	subtree to verify
+ *
+ * Verify that there are no red nodes with red children.
+ */
+static bool rbt_no_2red_children(const struct HXrbtree_node *node)
+{
+	if (node->sub[RBT_LEFT] != NULL) {
+		if (node->color == RBT_RED &&
+		    node->sub[RBT_LEFT]->color == RBT_RED)
+			return false;
+		if (!rbt_no_2red_children(node->sub[RBT_LEFT]))
+			return false;
+	}
+	if (node->sub[RBT_RIGHT] != NULL) {
+		if (node->color == RBT_RED &&
+		    node->sub[RBT_RIGHT]->color == RBT_RED)
+			return false;
+		if (!rbt_no_2red_children(node->sub[RBT_RIGHT]))
+			return false;
+	}
+	return true;
+}
+
+/**
+ * rbt_black_height - calculate the black height of a tree
+ * @node:	subtree to find the black height for
+ *
+ * Returns the black height, or -1 if the black height is not consistent.
+ */
+static int rbt_black_height(const struct HXrbtree_node *node)
+{
+	int lh = 0, rh = 0;
+
+	if (node->sub[RBT_LEFT] != NULL)
+		if ((lh = rbt_black_height(node->sub[RBT_LEFT])) == -1)
+			return -1;
+	if (node->sub[RBT_RIGHT] != NULL)
+		if ((rh = rbt_black_height(node->sub[RBT_RIGHT])) == -1)
+			return -1;
+	if (node->sub[RBT_LEFT] != NULL && node->sub[RBT_RIGHT] != NULL)
+		if (lh != rh)
+			return -1;
+	if (node->sub[RBT_LEFT] != NULL)
+		return lh + (node->color == RBT_BLACK);
+	else
+		return rh + (node->color == RBT_BLACK);
+}
+
+static bool rbt_verify_tree(const struct HXrbtree_node *root)
+{
+	/* Root is black */
+	if (root->color != RBT_BLACK) {
+		tmap_printf("Root is not black\n");
+		return false;
+	}
+	/* A red node may not have any red children */
+	if (!rbt_no_2red_children(root)) {
+		tmap_printf("Red node may not have red children violated\n");
+		return false;
+	}
+	/* Black height must be consistent */
+	if (rbt_black_height(root) < 0) {
+		tmap_printf("Black height violated\n");
+		return false;
+	}
+	return true;
+}
+
+/**
+ * rbt_peel_tree - slowly destroy tree and check characteristics
+ * @tree:	the object to disseminate
+ * @range:	original number of elements in the tree
+ */
+static void rbt_peel_tree(union HXpoly u, unsigned int range)
+{
+	unsigned int left = 1;
+
+	while (u.map->items != 0) {
+		unsigned long number = tmap_smart_rand(&left, &range);
+
+		HXmap_del(u.map, reinterpret_cast(const void *, number));
+		if (errno == -ENOENT)
+			continue;
+		if (u.map->items == 0)
+			break;
+		if (!rbt_verify_tree(u.rbt->root))
+			return;
+	}
+}
+
+static void tmap_rbt_test_7(void)
+{
+	unsigned int i, elems, order, left, right;
+	union HXpoly u;
+	int ret;
+
+	tmap_printf("RBT test 7: AMOV/DMOV\n");
+	tmap_ipush();
+	u.map = HXrbtree_init(0);
+	for (order = 2; order <= 10; ++order) {
+		elems = (1 << order) - 1;
+		tmap_printf("Tree of order %u [e=%u]\n", order, elems);
+
+		/* Build a random tree */
+		left  = 1;
+		right = elems + 1;
+		for (i = 0; i < elems; ++i) {
+			unsigned long z = tmap_smart_rand(&left, &right);
+
+			ret = HXmap_add(u.map,
+			      reinterpret_cast(const void *, z), NULL);
+			if (ret == -EEXIST)
+				--i;
+			if (!rbt_verify_tree(u.rbt->root))
+				tmap_printf("Verification failed\n");
+		}
+		/* Dismantle. */
+		rbt_height_check(u.rbt);
+		rbt_peel_tree(u, elems + 1);
+	}
+	tmap_ipop();
+	HXmap_free(u.map);
 }
 
 int main(void)
@@ -539,6 +675,7 @@ int main(void)
 	tmap_printf("\n* RBtree\n");
 	tmap_generic_tests(HXrbtree_init4);
 	tmap_rbt_test_1();
+	tmap_rbt_test_7();
 
 	return EXIT_SUCCESS;
 }
