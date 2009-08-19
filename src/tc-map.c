@@ -3,6 +3,7 @@
  */
 #include <sys/resource.h>
 #include <sys/time.h>
+#include <errno.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -67,25 +68,69 @@ static inline void tmap_rword(char *dest, unsigned int length)
 	*dest = '\0';
 }
 
-static void tmap_add_speed(struct HXmap *map)
+static void tmap_add_rand(struct HXmap *map, unsigned int num)
 {
 	char key[8], value[HXSIZEOF_Z32];
+
+	while (num-- > 0) {
+		tmap_rword(key, sizeof(key));
+		snprintf(value, sizeof(value), "%u", num);
+		HXmap_add(map, key, value);
+	}
+}
+
+static void tmap_flush(struct HXmap *map, bool verbose)
+{
+	const struct HXmap_node *node;
+	void *iter;
+
+	tmap_printf("Flushing %u elements (with traversal)\n", map->items);
+	tmap_ipush();
+	while (map->items != 0) {
+		/* May need to reload traverser due to deletion */
+		if (verbose)
+			tmap_printf("Restarting traverser\n");
+		if ((iter = HXmap_travinit(map, HXMAP_DTRAV)) == NULL)
+			break;
+		tmap_ipush();
+		while ((node = HXmap_traverse(iter)) != NULL) {
+			if (verbose)
+				tmap_printf("Destroying {%s, %s}\n",
+					node->skey, node->sdata);
+			HXmap_del(map, node->key);
+		}
+		tmap_ipop();
+		HXmap_travfree(iter);
+	}
+	tmap_ipop();
+}
+
+static void tmap_add_speed(struct HXmap *map)
+{
 	struct timeval start, stop, delta;
-	unsigned int i = 0;
+	unsigned int threshold;
 
 	tmap_printf("MAP test 1: Timing add operation\n");
-	key[sizeof(key)-1] = '\0';
+	tmap_ipush();
 	tmap_time(&start);
 	do {
-		tmap_rword(key, sizeof(key));
-		snprintf(value, sizeof(value), "%u", i++);
-		HXmap_add(map, key, value);
+		tmap_add_rand(map, 1);
 		tmap_time(&stop);
 		HX_diff_timeval(&delta, &stop, &start);
 	} while (!(delta.tv_sec >= 1 || map->items >= 1000000));
-	tmap_ipush();
 	tmap_printf("%u elements in %ld.%06ld "
 		"(plus time measurement overhead)\n",
+		map->items, static_cast(long, delta.tv_sec),
+		static_cast(long, delta.tv_usec));
+	threshold = map->items;
+	tmap_flush(map, false);
+
+	tmap_time(&start);
+	tmap_add_rand(map, threshold);
+	tmap_time(&stop);
+	HX_diff_timeval(&delta, &stop, &start);
+	tmap_printf("%u elements in %ld.%06ld "
+		"(w/o overhead)\n",
 		map->items, static_cast(long, delta.tv_sec),
 		static_cast(long, delta.tv_usec));
 	tmap_ipop();
@@ -143,17 +188,6 @@ static void tmap_trav_speed(struct HXmap *map)
 	tmap_ipop();
 }
 
-static void tmap_add_rand(struct HXmap *map, unsigned int num)
-{
-	char key[8], value[HXSIZEOF_Z32];
-
-	while (num-- > 0) {
-		tmap_rword(key, sizeof(key));
-		snprintf(value, sizeof(value), "%u", num);
-		HXmap_add(map, key, value);
-	}
-}
-
 static void tmap_flat(const struct HXmap *map)
 {
 	struct HXmap_node *nodes;
@@ -198,32 +232,6 @@ static void tmap_trav(struct HXmap *map)
 	}
 	tmap_ipop();
 	HXmap_travfree(iter);
-}
-
-static void tmap_flush(struct HXmap *map, bool verbose)
-{
-	const struct HXmap_node *node;
-	void *iter;
-
-	tmap_printf("Flushing %u elements (with traversal)\n", map->items);
-	tmap_ipush();
-	while (map->items != 0) {
-		/* May need to reload traverser due to deletion */
-		if (verbose)
-			tmap_printf("Restarting traverser\n");
-		if ((iter = HXmap_travinit(map, HXMAP_DTRAV)) == NULL)
-			break;
-		tmap_ipush();
-		while ((node = HXmap_traverse(iter)) != NULL) {
-			if (verbose)
-				tmap_printf("Destroying {%s, %s}\n",
-					node->skey, node->sdata);
-			HXmap_del(map, node->key);
-		}
-		tmap_ipop();
-		HXmap_travfree(iter);
-	}
-	tmap_ipop();
 }
 
 static void tmap_test(struct HXmap *(*create_map)(unsigned int),
