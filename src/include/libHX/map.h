@@ -91,6 +91,7 @@ extern void HXmap_qfe(const struct HXmap *,
 extern void HXmap_free(struct HXmap *);
 
 extern unsigned long HXhash_jlookup3(const void *, size_t);
+extern unsigned long HXhash_jlookup3s(const void *, size_t);
 extern unsigned long HXhash_djb2(const void *, size_t);
 
 #ifdef __cplusplus

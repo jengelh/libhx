@@ -121,6 +121,8 @@ struct HXrbtrav {
 
 typedef bool (*qfe_fn_t)(const struct HXmap_node *, void *);
 
+extern const unsigned int HXhash_primes[];
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

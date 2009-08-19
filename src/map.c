@@ -25,7 +25,7 @@
  * http://planetmath.org/encyclopedia/GoodHashTablePrimes.html
  * 23 and 3221.. added by j.eng.
  */
-static const unsigned int HXhash_primes[] = {
+EXPORT_SYMBOL const unsigned int HXhash_primes[] = {
 	23, 53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593, 49157,
 	98317, 196613, 393241, 786433, 1572869, 3145739, 6291469, 12582917,
 	25165843, 50331653, 100663319, 201326611, 402653189, 805306457,
@@ -168,6 +168,11 @@ EXPORT_SYMBOL unsigned long HXhash_jlookup3(const void *vkey, size_t length)
 static unsigned long HXhash_jlookup3v(const void *p, size_t z)
 {
 	return HXhash_jlookup3(&p, sizeof(p));
+}
+
+EXPORT_SYMBOL unsigned long HXhash_jlookup3s(const void *p, size_t z)
+{
+	return HXhash_jlookup3(p, strlen(p));
 }
 
 EXPORT_SYMBOL unsigned long HXhash_djb2(const void *p, size_t z)
