@@ -6,10 +6,11 @@ AM_CFLAGS        = ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${srcdir}/inclu
 AM_CXXFLAGS      = ${regular_CXXFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${srcdir}/include
 
 lib_LTLIBRARIES  = libHX.la
-libHX_la_SOURCES = arbtree.c deque.c dir.c dl.c format.c mc.c misc.c opt.c \
+libHX_la_SOURCES = deque.c dir.c dl.c format.c map.c \
+                   mc.c misc.c opt.c \
                    rand.c string.c time.c ${mingw32_extra} ${proc_sources}
 libHX_la_LIBADD  = ${regular_LIBS}
-libHX_la_LDFLAGS = -version-info 22:0:4
+libHX_la_LDFLAGS = -version-info 22:0:0
 
 if MINGW32
 mingw32_extra    = ux-file.c ux-mmap.c
@@ -18,13 +19,13 @@ if B_PROC
 proc_sources     = proc.c
 endif
 
-noinst_PROGRAMS    = tc-compile tc-arbtree tc-cast tc-deque tc-dir tc-list \
-                     tc-misc tc-option tc-proc tc-rand tc-string tc-time
-tc_arbtree_LDADD   = libHX.la -lm
+noinst_PROGRAMS    = tc-compile tc-cast tc-deque tc-dir tc-list \
+                     tc-map tc-misc tc-option tc-proc tc-rand tc-string tc-time
 tc_cast_LDADD      = -lm
 tc_compile_LDADD   = libHX.la
 tc_dir_LDADD       = libHX.la
 tc_list_LDADD      = libHX.la
+tc_map_LDADD       = libHX.la -lm -lrt
 tc_misc_LDADD      = libHX.la
 tc_option_LDADD    = libHX.la
 tc_proc_LDADD      = libHX.la
@@ -33,10 +34,8 @@ tc_string_LDADD    = libHX.la
 tc_time_LDADD      = libHX.la -lrt
 
 if HAVE_CXX
-noinst_PROGRAMS   += tx-compile tx-arbtree tx-cast tx-deque tx-dir tx-list \
+noinst_PROGRAMS   += tx-compile tx-cast tx-deque tx-dir tx-list \
                      tx-misc tx-option tx-proc tx-rand tx-string tx-time
-tx_arbtree_SOURCES = tx-arbtree.cpp
-tx_arbtree_LDADD   = libHX.la -lm
 tx_cast_SOURCES    = tx-cast.cpp
 tx_cast_LDADD      = -lm
 tx_compile_SOURCES = tx-compile.cpp

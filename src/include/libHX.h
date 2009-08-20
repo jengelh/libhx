@@ -10,12 +10,12 @@
  * unless the implementation really went away.
  */
 
-#include <libHX/arbtree.h>
 #include <libHX/clist.h>
 #include <libHX/ctype_helper.h>
 #include <libHX/defs.h>
 #include <libHX/deque.h>
 #include <libHX/list.h>
+#include <libHX/map.h>
 #include <libHX/misc.h>
 #include <libHX/option.h>
 #include <libHX/proc.h>

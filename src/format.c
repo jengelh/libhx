@@ -10,9 +10,9 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <libHX/arbtree.h>
 #include <libHX/ctype_helper.h>
 #include <libHX/deque.h>
+#include <libHX/map.h>
 #include <libHX/option.h>
 #include <libHX/string.h>
 #include "internal.h"
@@ -64,21 +64,35 @@ static const struct modifier_info modifier_list[] = {
 #undef E
 };
 
-static inline struct HXformat_map *fmt_export(const struct HXbtree *t)
+static inline struct HXformat_map *fmt_export(const struct HXmap *t)
 {
 	return const_cast1(void *, static_cast(const void *, t));
 }
 
-static inline struct HXbtree *fmt_import(const struct HXformat_map *t)
+static inline struct HXmap *fmt_import(const struct HXformat_map *t)
 {
 	return const_cast1(void *, static_cast(const void *, t));
 }
 
-//-----------------------------------------------------------------------------
+static void fmt_entry_free(void *e)
+{
+	struct fmt_entry *entry = e;
+
+	if (entry->type == (HXTYPE_STRING | HXFORMAT_IMMED))
+		free(const_cast1(void *, entry->ptr));
+	free(entry);
+}
+
+static const struct HXmap_ops fmt_entry_ops = {
+	.d_free = fmt_entry_free,
+};
+
 EXPORT_SYMBOL struct HXformat_map *HXformat_init(void)
 {
-	struct HXbtree *table;
-	table = HXbtree_init(HXBT_MAP | HXBT_CKEY | HXBT_SCMP | HXBT_CID);
+	struct HXmap *table;
+
+	table = HXhashmap_init4(HXMAP_SCKEY, &fmt_entry_ops,
+	        0, sizeof(struct fmt_entry));
 	if (table == NULL)
 		return NULL;
 	return fmt_export(table);
@@ -86,28 +100,15 @@ EXPORT_SYMBOL struct HXformat_map *HXformat_init(void)
 
 EXPORT_SYMBOL void HXformat_free(struct HXformat_map *ftable)
 {
-	struct HXbtree *table = fmt_import(ftable);
-	const struct HXbtree_node *node;
-	struct fmt_entry *entry;
-	void *trav = HXbtrav_init(table);
-
-	while ((node = HXbtraverse(trav)) != NULL) {
-		entry = node->data;
-		if (entry->type == (HXTYPE_STRING | HXFORMAT_IMMED))
-			free(const_cast1(void *, entry->ptr));
-		free(entry);
-	}
-
-	HXbtrav_free(trav);
-	HXbtree_free(table);
+	HXmap_free(fmt_import(ftable));
 }
 
 EXPORT_SYMBOL int HXformat_add(struct HXformat_map *ftable, const char *key,
     const void *ptr, unsigned int ptr_type)
 {
-	struct HXbtree *table = fmt_import(ftable);
+	struct HXmap *table = fmt_import(ftable);
 	struct fmt_entry *entry;
-	void *ret;
+	int ret;
 
 	if (strpbrk(key, "\t\n\v ") != NULL || strlen(key) > MAX_KEY_SIZE) {
 		fprintf(stderr, "%s: Bogus key \"%s\"\n", __func__, key);
@@ -127,10 +128,10 @@ EXPORT_SYMBOL int HXformat_add(struct HXformat_map *ftable, const char *key,
 		entry->ptr = ptr;
 	}
 
-	ret = HXbtree_add(table, key, entry);
-	if (ret == NULL) {
+	ret = HXmap_add(table, key, entry);
+	if (ret <= 0) {
 		free(entry);
-		return -errno;
+		return ret;
 	}
 
 	return 1;
@@ -139,7 +140,7 @@ EXPORT_SYMBOL int HXformat_add(struct HXformat_map *ftable, const char *key,
 EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
     hxmc_t **resultp, const char *fmt)
 {
-	const struct HXbtree *table = fmt_import(ftable);
+	const struct HXmap *table = fmt_import(ftable);
 	hxmc_t *key, *out = HXmc_meminit(NULL, 0);
 	const struct fmt_entry *entry;
 	struct modifier *mod;
@@ -167,7 +168,7 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
 			goto out;
 
 		key = HXformat_read_key(&current);
-		if ((entry = HXbtree_get(table, key)) == NULL) {
+		if ((entry = HXmap_get(table, key)) == NULL) {
 			HXmc_strcat(&out, "%(");
 			HXmc_strcat(&out, key);
 			HXmc_strcat(&out, ")");
