@@ -9,7 +9,6 @@ A=b;C="d" ; E = "F;" ;
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <libHX/arbtree.h>
 #include <libHX/option.h>
 #include <libHX.h>
 
