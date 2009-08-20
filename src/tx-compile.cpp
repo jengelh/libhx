@@ -5,7 +5,6 @@
 #	include <cstdlib>
 #endif
 #include <libHX.h>
-#include <libHX/clist.h>
 #include <libHX/defs.h>
 #include <libHX/list.h>
 #include <libHX/ctype_helper.h>

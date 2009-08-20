@@ -4,6 +4,7 @@ Changes:
 - automatically skip building testcases if C++ compiler not available
   (reminder: libHX itself does not require a C++ compiler)
 - arbtree: HXbtree was removed in favor of the new HXmap
+- clist: clist.h moved into list.h
 - format: HXformat_* now uses struct HXformat_map,
   so that it does not tie itself to HXbtree
 - mc: fix an alignment-induced overallocation

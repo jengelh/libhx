@@ -9,7 +9,7 @@
 #	include <stdio.h>
 #	include <stdlib.h>
 #endif
-#include <libHX/clist.h>
+#include <libHX/list.h>
 #include <libHX/misc.h>
 
 struct text_object {
