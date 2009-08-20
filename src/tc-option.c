@@ -15,7 +15,7 @@ A=b;C="d" ; E = "F;" ;
 
 static void t_format(int argc)
 {
-	struct HXbtree *fmt = HXformat_init();
+	struct HXformat_map *fmt = HXformat_init();
 	HXformat_add(fmt, "USER", "jengelh", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ARGC", &argc, HXTYPE_INT);
 	HXformat_add(fmt, "ARGK", (const void *)(long)argc, HXTYPE_INT | HXFORMAT_IMMED);
