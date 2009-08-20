@@ -95,7 +95,7 @@ static struct HXoption table[] = {
 int main(int argc, const char **argv)
 {
 	t_format(argc);
-	t_shconfig((argc >= 2) ? argv[1] : "t-option.c");
+	t_shconfig((argc >= 2) ? argv[1] : "tc-option.c");
 
 	printf("Return value of HX_getopt: %d\n",
 	       HX_getopt(table, &argc, &argv, HXOPT_USAGEONERR));

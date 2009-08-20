@@ -142,7 +142,7 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
 	const struct HXbtree *table = fmt_import(ftable);
 	hxmc_t *key, *out = HXmc_meminit(NULL, 0);
 	const struct fmt_entry *entry;
-	const struct modifier *mod;
+	struct modifier *mod;
 	const char *last, *current;
 	struct HXdeque *dq;
 	int ret = 0;
@@ -175,9 +175,10 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
 			HXformat_transform(&out, dq, entry);
 		}
 
-		while ((mod = HXdeque_shift(dq)) != NULL)
-			if (mod->arg != NULL)
-				HXmc_free(mod->arg);
+		while ((mod = HXdeque_shift(dq)) != NULL) {
+			HXmc_free(mod->arg);
+			free(mod);
+		}
 
 		HXmc_free(key);
 		last = current + 1; /* closing parenthesis */
@@ -321,7 +322,7 @@ static void HXformat_transform(hxmc_t **out, struct HXdeque *dq,
 
 	static const char *const tf[] = {"false", "true"};
 	char buf[sizeof("18446744073709551616")-1];
-	const struct modifier *mod;
+	struct modifier *mod;
 	hxmc_t *wp = NULL;
 
 	*buf = '\0';
@@ -372,8 +373,11 @@ static void HXformat_transform(hxmc_t **out, struct HXdeque *dq,
 	if (*buf != '\0')
 		HXmc_strcpy(&wp, buf);
 
-	while ((mod = HXdeque_shift(dq)) != NULL)
+	while ((mod = HXdeque_shift(dq)) != NULL) {
 		mod->transform(&wp, mod->arg);
+		HXmc_free(mod->arg);
+		free(mod);
+	}
 
 	HXmc_strcat(out, wp);
 	HXmc_free(wp);

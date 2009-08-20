@@ -11,6 +11,8 @@ Changes:
 Enhancements:
 - defs: add HXsizeof_member and HXtypeof_member
 - time: add time delta functions (HX_diff_timeval/HX_diff_timespec)
+Fixes:
+- format: memory leaks fixes in HXformat
 
 
 libHX 2.9 (July 11 2009)
