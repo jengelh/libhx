@@ -382,7 +382,7 @@ status open
 
 \begin_layout Plain Layout
 
-git://libhx.git.sf.net/gitroot/libhx
+git://libhx.git.sf.net/gitroot/libhx/libhx
 \end_layout
 
 \end_inset
@@ -436,7 +436,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://freshmeat.net/projects/libHX/
+http://freshmeat.net/projects/libhx/
 \end_layout
 
 \end_inset
@@ -980,7 +980,7 @@ Tree with numeric keys
 \begin_inset Newline newline
 \end_inset
 
-tree = HXbtree_init(HXBT_ICMP);
+tree = HXhashmap_init(0);
 \begin_inset Newline newline
 \end_inset
 
@@ -992,7 +992,7 @@ for
 \begin_inset Newline newline
 \end_inset
 
-        HXbtree_add(tree, 
+        HXmap_add(tree, 
 \series bold
 reinterpret_cast
 \series default
@@ -1004,7 +1004,7 @@ void *
 \begin_inset Newline newline
 \end_inset
 
-                    
+                  
 \series bold
 static_cast
 \series default
@@ -11580,8 +11580,8 @@ HXformat_add
 \family typewriter
 HXformat_init
 \family default
- will allocate and set up a simple string-to-string map HXbtree that is
- used for the underlying storage, and returns it.
+ will allocate and set up a simple string-to-string map that is used for
+ the underlying storage, and returns it.
 \end_layout
 
 \begin_layout Standard
@@ -11595,11 +11595,10 @@ HXformat_free
 \begin_layout Standard
 
 \family typewriter
-HXbtree_add
+HXformat_add
 \family default
  is used to add substitution entries.
- Even though a string data-based HXbtree is used, one can specify other
- types such as numeral types.
+ One can also specify other types such as numeral types.
  
 \family typewriter
 ptr_type

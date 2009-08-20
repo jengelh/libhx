@@ -58,7 +58,7 @@ static void HXrbtree_free_dive(const struct HXrbtree *btree,
 	/*
 	 * Recursively dives into the tree and destroys elements. Note that you
 	 * shall use this when destroying a complete tree instead of iterated
-	 * deletion with HXbtree_del(). Since this functions is meant to free
+	 * deletion with HXrbtree_del(). Since this functions is meant to free
 	 * it all, it does not need to care about rebalancing.
 	 */
 	if (node->sub[RBT_LEFT] != NULL)
@@ -771,7 +771,7 @@ static unsigned int HXrbtree_del_mm(struct HXrbtree_node **path,
 	/*
 	 * The nodes (@io_node and @orig_node) have been swapped. While
 	 * @orig_node has no pointers to it, it still exists and decisions are
-	 * made upon its properties in HXbtree_del() and btree_dmov() until it
+	 * made upon its properties in HXrbtree_del() and btree_dmov() until it
 	 * is freed later. Hence we need to keep the color.
 	 */
 	orig_node->color = color;

@@ -17,7 +17,6 @@ extern "C" {
 typedef char hxmc_t;
 #endif
 
-struct HXbtree;
 struct HXformat_map;
 struct HXoption;
 

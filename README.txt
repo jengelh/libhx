@@ -2,14 +2,13 @@
 
 libHX
 
-A general-purpose library for typical low-level operations.
+A general-purpose library for everyday coding tasks.
 
-  • rbtree with key-value pair extension (HXbtree_*)
+  • maps (HXmap_*)
 
     Originally created to provide a data structure like Perl's associative
-    arrays. Uses an rbtree as underlying engine for somewhat quick insertion
-    and deletion and small memory footprint for ordered traversals. (Using a
-    hash would have meant to gather all keys first and sort them.)
+    arrays. Multiple models and underlying storage data structures are
+    available (unordered hash-based map, ordered rbtree).
 
   • deques (HXdeque_*, HXlist_*, HXclist_*)
 
@@ -34,7 +33,7 @@ A general-purpose library for typical low-level operations.
     configuration provide it — without having to worry about argument
     evaluation problems. Positional and optional arguments are simply free.
 
-  • memory containers, auto-sizing string ops (hmc_*)
+  • memory containers, auto-sizing string ops (HXmc_*)
 
     At the cost of slightly increased number memory allocations as you work
     with the buffers, the hmc collection of functions provide scripting-level
@@ -52,10 +51,6 @@ A general-purpose library for typical low-level operations.
 
     Parsers shconfig files. Their format is a subset of shell code. Files in /
     etc/sysconfig are commonly shconfig-style.
-
-  • random number gathering (HXrand_*)
-
-    Conveniently use /dev/urandom when it is available.
 
   • common string operations
 
