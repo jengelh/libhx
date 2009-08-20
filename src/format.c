@@ -1,6 +1,6 @@
 /*
  *	libHX/format.c
- *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2007 - 2008
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2007 - 2009
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -64,18 +64,29 @@ static const struct modifier_info modifier_list[] = {
 #undef E
 };
 
+static inline struct HXformat_map *fmt_export(const struct HXbtree *t)
+{
+	return const_cast1(void *, static_cast(const void *, t));
+}
+
+static inline struct HXbtree *fmt_import(const struct HXformat_map *t)
+{
+	return const_cast1(void *, static_cast(const void *, t));
+}
+
 //-----------------------------------------------------------------------------
-EXPORT_SYMBOL struct HXbtree *HXformat_init(void)
+EXPORT_SYMBOL struct HXformat_map *HXformat_init(void)
 {
 	struct HXbtree *table;
 	table = HXbtree_init(HXBT_MAP | HXBT_CKEY | HXBT_SCMP | HXBT_CID);
 	if (table == NULL)
 		return NULL;
-	return table;
+	return fmt_export(table);
 }
 
-EXPORT_SYMBOL void HXformat_free(struct HXbtree *table)
+EXPORT_SYMBOL void HXformat_free(struct HXformat_map *ftable)
 {
+	struct HXbtree *table = fmt_import(ftable);
 	const struct HXbtree_node *node;
 	struct fmt_entry *entry;
 	void *trav = HXbtrav_init(table);
@@ -91,9 +102,10 @@ EXPORT_SYMBOL void HXformat_free(struct HXbtree *table)
 	HXbtree_free(table);
 }
 
-EXPORT_SYMBOL int HXformat_add(struct HXbtree *table, const char *key,
+EXPORT_SYMBOL int HXformat_add(struct HXformat_map *ftable, const char *key,
     const void *ptr, unsigned int ptr_type)
 {
+	struct HXbtree *table = fmt_import(ftable);
 	struct fmt_entry *entry;
 	void *ret;
 
@@ -124,9 +136,10 @@ EXPORT_SYMBOL int HXformat_add(struct HXbtree *table, const char *key,
 	return 1;
 }
 
-EXPORT_SYMBOL int HXformat_aprintf(const struct HXbtree *table,
+EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
     hxmc_t **resultp, const char *fmt)
 {
+	const struct HXbtree *table = fmt_import(ftable);
 	hxmc_t *key, *out = HXmc_meminit(NULL, 0);
 	const struct fmt_entry *entry;
 	const struct modifier *mod;
@@ -181,13 +194,13 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXbtree *table,
 	return ret;
 }
 
-EXPORT_SYMBOL int HXformat_fprintf(const struct HXbtree *table, FILE *filp,
-    const char *fmt)
+EXPORT_SYMBOL int HXformat_fprintf(const struct HXformat_map *ftable,
+    FILE *filp, const char *fmt)
 {
 	hxmc_t *str;
 	int ret;
 
-	if ((ret = HXformat_aprintf(table, &str, fmt)) <= 0)
+	if ((ret = HXformat_aprintf(ftable, &str, fmt)) <= 0)
 		return ret;
 	errno = 0;
 	if (fputs(str, filp) < 0)
@@ -196,13 +209,13 @@ EXPORT_SYMBOL int HXformat_fprintf(const struct HXbtree *table, FILE *filp,
 	return ret;
 }
 
-EXPORT_SYMBOL int HXformat_sprintf(const struct HXbtree *table, char *dest,
-    size_t size, const char *fmt)
+EXPORT_SYMBOL int HXformat_sprintf(const struct HXformat_map *ftable,
+    char *dest, size_t size, const char *fmt)
 {
 	hxmc_t *str;
 	int ret;
 
-	if ((ret = HXformat_aprintf(table, &str, fmt)) < 0)
+	if ((ret = HXformat_aprintf(ftable, &str, fmt)) < 0)
 		return ret;
 	if (ret == 0) {
 		*dest = '\0';

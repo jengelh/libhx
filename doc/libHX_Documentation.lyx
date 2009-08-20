@@ -11744,7 +11744,7 @@ libHX/option.h
 \series bold
 struct
 \series default
- HXbtree 
+ HXformat_map 
 \series bold
 *
 \series default
@@ -11778,7 +11778,7 @@ void
 \series bold
 struct
 \series default
- HXbtree 
+ HXformat_map 
 \series bold
 *
 \series default
@@ -11808,7 +11808,7 @@ int
 \series bold
 struct
 \series default
- HXbtree 
+ HXformat_map 
 \series bold
 *
 \series default
@@ -12379,7 +12379,7 @@ int
 \series bold
 struct
 \series default
- HXbtree 
+ HXformat_map 
 \series bold
 *
 \series default
@@ -12415,7 +12415,7 @@ int
 \series bold
 struct
 \series default
- HXbtree 
+ HXformat_map 
 \series bold
 *
 \series default
@@ -12457,7 +12457,7 @@ int
 \series bold
 struct
 \series default
- HXbtree 
+ HXformat_map 
 \series bold
 *
 \series default
@@ -12496,8 +12496,11 @@ HXformat_aprintf
 template
 \family default
  using the given table.
- This will produce a string in a HX memory container (hxmc_t), and the pointer
- is put into 
+ This will produce a string in a HX memory container (
+\family typewriter
+hxmc_t
+\family default
+), and the pointer is put into 
 \family typewriter
 *dest
 \family default
@@ -12602,7 +12605,7 @@ char
 \series bold
 struct
 \series default
- HXbtree 
+ HXformat_map 
 \series bold
 *
 \series default

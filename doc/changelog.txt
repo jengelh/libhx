@@ -3,6 +3,8 @@
 Changes:
 - automatically skip building testcases if C++ compiler not available
   (reminder: libHX itself does not require a C++ compiler)
+- format: HXformat_* now uses struct HXformat_map,
+  so that it does not tie itself to HXbtree
 - mc: fix an alignment-induced overallocation
 - rand: use faster modulo-based variant for numbers within RAND_MAX range
 - rand: use libc rand() almost exclusively, only use /dev/urandom for seed
