@@ -3,6 +3,7 @@
 Changes:
 - automatically skip building testcases if C++ compiler not available
   (reminder: libHX itself does not require a C++ compiler)
+- arbtree: HXbtree was removed in favor of the new HXmap
 - format: HXformat_* now uses struct HXformat_map,
   so that it does not tie itself to HXbtree
 - mc: fix an alignment-induced overallocation
@@ -10,6 +11,7 @@ Changes:
 - rand: use libc rand() almost exclusively, only use /dev/urandom for seed
 Enhancements:
 - defs: add HXsizeof_member and HXtypeof_member
+- map: new map API, with hash-based maps and classic rbtree-based maps
 - time: add time delta functions (HX_diff_timeval/HX_diff_timespec)
 Fixes:
 - format: memory leaks fixes in HXformat

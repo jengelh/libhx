@@ -10,7 +10,6 @@
  * unless the implementation really went away.
  */
 
-#include <libHX/arbtree.h>
 #include <libHX/clist.h>
 #include <libHX/ctype_helper.h>
 #include <libHX/defs.h>
