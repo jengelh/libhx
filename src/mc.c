@@ -71,7 +71,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcpy(hxmc_t **vp, const void *ptr, size_t len)
 			ctx->alloc = len;
 		}
 	} else {
-		ctx = malloc(sizeof(struct memcont) + len);
+		ctx = malloc(__HXmc_request(len));
 		if (ctx == NULL)
 			return NULL;
 		ctx->id    = HXMC_IDENT;
