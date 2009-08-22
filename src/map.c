@@ -85,9 +85,9 @@ EXPORT_SYMBOL void HXmap_free(struct HXmap *xmap)
 	const struct HXmap_private *map = vmap;
 
 	switch (map->type) {
-	case HX_MAPTYPE_HASH:
+	case HXMAPT_HASH:
 		return HXhmap_free(vmap);
-	case HX_MAPTYPE_RBTREE:
+	case HXMAPT_RBTREE:
 		return HXrbtree_free(vmap);
 	default:
 		break;
@@ -217,7 +217,7 @@ static void HXmap_ops_setup(struct HXmap_private *super,
 		ops->d_free  = free;
 	}
 
-	if (super->type == HX_MAPTYPE_HASH) {
+	if (super->type == HXMAPT_HASH) {
 		if (super->flags & HXMAP_SKEY)
 			ops->k_hash = HXhash_djb2;
 		else if (super->key_size != 0)
@@ -240,7 +240,7 @@ static void HXmap_ops_setup(struct HXmap_private *super,
 		ops->d_clone   = new_ops->d_clone;
 	if (new_ops->d_free != NULL)
 		ops->d_free    = new_ops->d_free;
-	if (super->type == HX_MAPTYPE_HASH && new_ops->k_hash != NULL)
+	if (super->type == HXMAPT_HASH && new_ops->k_hash != NULL)
 		ops->k_hash    = new_ops->k_hash;
 }
 
@@ -309,7 +309,7 @@ static int HXhmap_layout(struct HXhmap *hmap, unsigned int power)
 	return 1;
 }
 
-EXPORT_SYMBOL struct HXmap *HXhashmap_init4(unsigned int flags,
+static struct HXmap *HXhashmap_init4(unsigned int flags,
     const struct HXmap_ops *ops, size_t key_size, size_t data_size)
 {
 	struct HXmap_private *super;
@@ -322,7 +322,7 @@ EXPORT_SYMBOL struct HXmap *HXhashmap_init4(unsigned int flags,
 	super            = &hmap->super;
 	super->flags     = flags;
 	super->items     = 0;
-	super->type      = HX_MAPTYPE_HASH;
+	super->type      = HXMAPT_HASH;
 	super->key_size  = key_size;
 	super->data_size = data_size;
 	HXmap_ops_setup(super, ops);
@@ -341,12 +341,7 @@ EXPORT_SYMBOL struct HXmap *HXhashmap_init4(unsigned int flags,
 	return NULL;
 }
 
-EXPORT_SYMBOL struct HXmap *HXhashmap_init(unsigned int flags)
-{
-	return HXhashmap_init4(flags, NULL, 0, 0);
-}
-
-EXPORT_SYMBOL struct HXmap *HXrbtree_init4(unsigned int flags,
+static struct HXmap *HXrbtree_init4(unsigned int flags,
     const struct HXmap_ops *ops, size_t key_size, size_t data_size)
 {
 	struct HXmap_private *super;
@@ -360,7 +355,7 @@ EXPORT_SYMBOL struct HXmap *HXrbtree_init4(unsigned int flags,
 		return NULL;
 
 	super            = &btree->super;
-	super->type      = HX_MAPTYPE_RBTREE;
+	super->type      = HXMAPT_RBTREE;
 	super->flags     = flags;
 	super->items     = 0;
 	super->key_size  = key_size;
@@ -378,9 +373,25 @@ EXPORT_SYMBOL struct HXmap *HXrbtree_init4(unsigned int flags,
 	return static_cast(void *, btree);
 }
 
-EXPORT_SYMBOL struct HXmap *HXrbtree_init(unsigned int flags)
+EXPORT_SYMBOL struct HXmap *HXmap_init5(enum HXmap_type type,
+    unsigned int flags, const struct HXmap_ops *ops, size_t key_size,
+    size_t data_size)
 {
-	return HXrbtree_init4(flags, NULL, 0, 0);
+	switch (type) {
+	case HXMAPT_HASH:
+		return HXhashmap_init4(flags, ops, key_size, data_size);
+	case HXMAPT_RBTREE:
+		return HXrbtree_init4(flags, ops, key_size, data_size);
+	default:
+		errno = -ENOENT;
+		return NULL;
+	}
+}
+
+EXPORT_SYMBOL struct HXmap *HXmap_init(enum HXmap_type type,
+    unsigned int flags)
+{
+	return HXmap_init5(type, flags, NULL, 0, 0);
 }
 
 static struct HXhmap_node *HXhmap_find(const struct HXhmap *hmap,
@@ -421,13 +432,13 @@ HXmap_find(const struct HXmap *xmap, const void *key)
 	const struct HXmap_private *map = vmap;
 
 	switch (map->type) {
-	case HX_MAPTYPE_HASH: {
+	case HXMAPT_HASH: {
 		const struct HXhmap_node *node = HXhmap_find(vmap, key);
 		if (node == NULL)
 			return NULL;
 		return static_cast(const void *, &node->key);
 	}
-	case HX_MAPTYPE_RBTREE:
+	case HXMAPT_RBTREE:
 		return HXrbtree_find(vmap, key);
 	default:
 		errno = EINVAL;
@@ -684,9 +695,9 @@ EXPORT_SYMBOL int HXmap_add(struct HXmap *xmap,
 	struct HXmap_private *map = vmap;
 
 	switch (map->type) {
-	case HX_MAPTYPE_HASH:
+	case HXMAPT_HASH:
 		return HXhmap_add(vmap, key, value);
-	case HX_MAPTYPE_RBTREE:
+	case HXMAPT_RBTREE:
 		return HXrbtree_add(vmap, key, value);
 	default:
 		return -EINVAL;
@@ -925,9 +936,9 @@ EXPORT_SYMBOL void *HXmap_del(struct HXmap *xmap, const void *key)
 	struct HXmap_private *map = vmap;
 
 	switch (map->type) {
-	case HX_MAPTYPE_HASH:
+	case HXMAPT_HASH:
 		return HXhmap_del(vmap, key);
-	case HX_MAPTYPE_RBTREE:
+	case HXMAPT_RBTREE:
 		return HXrbtree_del(vmap, key);
 	default:
 		errno = EINVAL;
@@ -969,8 +980,8 @@ EXPORT_SYMBOL struct HXmap_node *HXmap_keysvalues(const struct HXmap *xmap)
 	struct HXmap_node *array;
 
 	switch (map->type) {
-	case HX_MAPTYPE_HASH:
-	case HX_MAPTYPE_RBTREE:
+	case HXMAPT_HASH:
+	case HXMAPT_RBTREE:
 		break;
 	default:
 		errno = EINVAL;
@@ -981,10 +992,10 @@ EXPORT_SYMBOL struct HXmap_node *HXmap_keysvalues(const struct HXmap *xmap)
 		return NULL;
 
 	switch (map->type) {
-	case HX_MAPTYPE_HASH:
+	case HXMAPT_HASH:
 		HXhmap_keysvalues(vmap, array);
 		break;
-	case HX_MAPTYPE_RBTREE:
+	case HXMAPT_RBTREE:
 		HXrbtree_keysvalues(((struct HXrbtree *)vmap)->root, array);
 		break;
 	}
@@ -999,7 +1010,7 @@ static void *HXhmap_travinit(const struct HXhmap *hmap, unsigned int flags)
 		return NULL;
 	/* We cannot offer DTRAV. */
 	trav->super.flags = flags & ~HXMAP_DTRAV;
-	trav->super.type = HX_MAPTYPE_HASH;
+	trav->super.type = HXMAPT_HASH;
 	trav->hmap = hmap;
 	trav->head = NULL;
 	trav->bk_current = 0;
@@ -1014,7 +1025,7 @@ static void *HXrbtrav_init(const struct HXrbtree *btree, unsigned int flags)
 	if ((trav = calloc(1, sizeof(*trav))) == NULL)
 		return NULL;
 	trav->super.flags = flags;
-	trav->super.type = HX_MAPTYPE_RBTREE;
+	trav->super.type = HXMAPT_RBTREE;
 	trav->tree = btree;
 	return trav;
 }
@@ -1026,9 +1037,9 @@ EXPORT_SYMBOL struct HXmap_trav *HXmap_travinit(const struct HXmap *xmap,
 	const struct HXmap_private *map = vmap;
 
 	switch (map->type) {
-	case HX_MAPTYPE_HASH:
+	case HXMAPT_HASH:
 		return HXhmap_travinit(vmap, flags);
-	case HX_MAPTYPE_RBTREE:
+	case HXMAPT_RBTREE:
 		return HXrbtrav_init(vmap, flags);
 	default:
 		errno = EINVAL;
@@ -1252,9 +1263,9 @@ EXPORT_SYMBOL const struct HXmap_node *HXmap_traverse(struct HXmap_trav *trav)
 		return NULL;
 
 	switch (trav->type) {
-	case HX_MAPTYPE_HASH:
+	case HXMAPT_HASH:
 		return HXhmap_traverse(xtrav);
-	case HX_MAPTYPE_RBTREE:
+	case HXMAPT_RBTREE:
 		return HXrbtree_traverse(xtrav);
 	default:
 		errno = EINVAL;
@@ -1278,7 +1289,7 @@ EXPORT_SYMBOL void HXmap_travfree(struct HXmap_trav *trav)
 	if (xtrav == NULL)
 		return;
 	switch (trav->type) {
-	case HX_MAPTYPE_RBTREE:
+	case HXMAPT_RBTREE:
 		HXrbtrav_free(xtrav);
 		break;
 	default:
@@ -1315,11 +1326,11 @@ EXPORT_SYMBOL void HXmap_qfe(const struct HXmap *xmap, qfe_fn_t fn, void *arg)
 	const struct HXmap_private *map = vmap;
 
 	switch (map->type) {
-	case HX_MAPTYPE_HASH:
+	case HXMAPT_HASH:
 		HXhmap_qfe(vmap, fn, arg);
 		errno = 0;
 		break;
-	case HX_MAPTYPE_RBTREE: {
+	case HXMAPT_RBTREE: {
 		const struct HXrbtree *tree = vmap;
 		if (tree->root != NULL)
 			HXrbtree_qfe(tree->root, fn, arg);

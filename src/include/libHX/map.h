@@ -11,6 +11,24 @@ extern "C" {
 #endif
 
 /**
+ * Abstract:
+ * %HXMAPT_DEFAULT:	whatever is fast and maps k-v, without preference
+ * %HXMAPT_ORDERED:	anything ordered, no further preference
+ *
+ * Specific:
+ * %HXMAPT_HASH:	map based on hash
+ * %HXMAPT_RBTREE:	map based on red-black binary tree
+ */
+enum HXmap_type {
+	HXMAPT_HASH = 1,
+	HXMAPT_RBTREE,
+
+	/* aliases - assignments may change */
+	HXMAPT_DEFAULT = HXMAPT_HASH,
+	HXMAPT_ORDERED = HXMAPT_RBTREE,
+};
+
+/**
  * Flags changable at runtime:
  * %HXMAP_NOREPLACE:	Calling HXmap_add() for an already existing key will
  * 			throw an error (no-overwrite semantics)
@@ -71,12 +89,9 @@ struct HXmap_node {
 	};
 };
 
-extern struct HXmap *HXhashmap_init(unsigned int);
-extern struct HXmap *HXhashmap_init4(unsigned int, const struct HXmap_ops *,
-	size_t, size_t);
-extern struct HXmap *HXrbtree_init(unsigned int);
-extern struct HXmap *HXrbtree_init4(unsigned int, const struct HXmap_ops *,
-	size_t, size_t);
+extern struct HXmap *HXmap_init(enum HXmap_type, unsigned int);
+extern struct HXmap *HXmap_init5(enum HXmap_type, unsigned int,
+	const struct HXmap_ops *, size_t, size_t);
 
 extern int HXmap_add(struct HXmap *, const void *, const void *);
 extern const struct HXmap_node *HXmap_find(const struct HXmap *, const void *);

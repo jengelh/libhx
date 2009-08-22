@@ -246,11 +246,12 @@ static void tmap_trav(struct HXmap *map)
 	HXmap_travfree(iter);
 }
 
-static void tmap_generic_tests(map_create4_fn_t ctor)
+static void tmap_generic_tests(enum HXmap_type type)
 {
 	struct HXmap *map;
 
-	map = (*ctor)(HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_NOREPLACE, NULL, 0, 0);
+	map = HXmap_init5(type, HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_NOREPLACE,
+	      NULL, 0, 0);
 	tmap_add_speed(map);
 	tmap_trav_speed(map);
 	tmap_flush(map, false);
@@ -378,7 +379,8 @@ static void tmap_hmap_test_1(void)
 	tmap_printf("HMAP test 1A: Distribution in hashmaps\n");
 	tmap_ipush();
 	for (power = 1; power <= max_power; ++power) {
-		u.map = HXhashmap_init4(HXMAP_SCKEY, &tmap_nstr_ops, 0, 0);
+		u.map = HXmap_init5(HXMAPT_HASH, HXMAP_SCKEY,
+		        &tmap_nstr_ops, 0, 0);
 		tmap_new_perfect_tree(u.map, power, 2);
 		tmap_printf("DJB2, ints, %u items/%u buckets, agglomeration: %d%%\n",
 			u.map->items, HXhash_primes[u.hmap->power],
@@ -386,7 +388,8 @@ static void tmap_hmap_test_1(void)
 		HXmap_free(u.map);
 	}
 	for (power = 1; power <= max_power; ++power) {
-		u.map = HXhashmap_init4(HXMAP_SCKEY, &tmap_nstr_l3_ops, 0, 0);
+		u.map = HXmap_init5(HXMAPT_HASH, HXMAP_SCKEY,
+		        &tmap_nstr_l3_ops, 0, 0);
 		tmap_new_perfect_tree(u.map, power, 2);
 		tmap_printf("L3, ints, %u items/%u buckets, agglomeration: %d%%\n",
 			u.map->items, HXhash_primes[u.hmap->power],
@@ -394,7 +397,7 @@ static void tmap_hmap_test_1(void)
 		HXmap_free(u.map);
 	}
 
-	u.map = HXhashmap_init4(HXMAP_SCKEY, &tmap_words_ops, 0, 0);
+	u.map = HXmap_init5(HXMAPT_HASH, HXMAP_SCKEY, &tmap_words_ops, 0, 0);
 	while (u.map->items < 1 << max_power) {
 		/* Fill up just right up to the maximum load */
 		tmap_add_rand(u.map, u.hmap->max_load - u.map->items);
@@ -406,7 +409,8 @@ static void tmap_hmap_test_1(void)
 	}
 	HXmap_free(u.map);
 
-	u.map = HXhashmap_init4(HXMAP_SCKEY, &tmap_words_l3_ops, 0, 0);
+	u.map = HXmap_init5(HXMAPT_HASH, HXMAP_SCKEY,
+	        &tmap_words_l3_ops, 0, 0);
 	while (u.map->items < 1 << max_power) {
 		/* Fill up just right up to the maximum load */
 		tmap_add_rand(u.map, u.hmap->max_load - u.map->items);
@@ -465,7 +469,7 @@ static struct HXmap *rbt_new_perfect_tree(unsigned int height,
     unsigned int mult)
 {
 	struct HXmap *tree =
-		HXrbtree_init4(HXMAP_SCKEY, &tmap_nstr_ops, 0, 0);
+		HXmap_init5(HXMAPT_RBTREE, HXMAP_SCKEY, &tmap_nstr_ops, 0, 0);
 	tmap_new_perfect_tree(tree, height, mult);
 	return tree;
 }
@@ -640,7 +644,7 @@ static void tmap_rbt_test_7(void)
 
 	tmap_printf("RBT test 7: AMOV/DMOV\n");
 	tmap_ipush();
-	u.map = HXrbtree_init(0);
+	u.map = HXmap_init(HXMAPT_RBTREE, 0);
 	for (order = 2; order <= 10; ++order) {
 		elems = (1 << order) - 1;
 		tmap_printf("Tree of order %u [e=%u]\n", order, elems);
@@ -669,11 +673,11 @@ static void tmap_rbt_test_7(void)
 int main(void)
 {
 	tmap_printf("* HXhashmap\n");
-	tmap_generic_tests(HXhashmap_init4);
+	tmap_generic_tests(HXMAPT_HASH);
 	tmap_hmap_test_1();
 
 	tmap_printf("\n* RBtree\n");
-	tmap_generic_tests(HXrbtree_init4);
+	tmap_generic_tests(HXMAPT_RBTREE);
 	tmap_rbt_test_1();
 	tmap_rbt_test_7();
 

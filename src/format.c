@@ -91,7 +91,7 @@ EXPORT_SYMBOL struct HXformat_map *HXformat_init(void)
 {
 	struct HXmap *table;
 
-	table = HXhashmap_init4(HXMAP_SCKEY, &fmt_entry_ops,
+	table = HXmap_init5(HXMAPT_DEFAULT, HXMAP_SCKEY, &fmt_entry_ops,
 	        0, sizeof(struct fmt_entry));
 	if (table == NULL)
 		return NULL;

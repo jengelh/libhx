@@ -8,15 +8,6 @@ extern "C" {
 #endif
 
 /**
- * %HX_MAPTYPE_HASH:	struct HXhmap
- * %HX_MAPTYPE_RBTREE:	red-black binary tree
- */
-enum HXmap_type {
-	HX_MAPTYPE_HASH = 1,
-	HX_MAPTYPE_RBTREE,
-};
-
-/**
  * @type:	actual type of map (%HX_MAPTYPE_*), used for virtual calls
  * @ops:	function pointers for key and data management
  * @flags:	bitfield of map flags

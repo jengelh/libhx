@@ -3638,12 +3638,74 @@ During initialization, you specify the underlying storage type by selecting
 \end_layout
 
 \begin_layout Standard
-libHX provides two map types.
- Each has its distinct characteristics.
+Currently, there are two distinct map types in libHX.
+ There are a handful of selectable symbols, though.
+ Abstract types are:
 \end_layout
 
-\begin_layout Itemize
-hash-based map
+\begin_layout Description
+
+\family typewriter
+HXMAPT_DEFAULT
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAPT_DEFAULT
+\end_layout
+
+\end_inset
+
+ No further preferences; selects any map type that the libHX maintainer
+ deemed fast.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXMAPT_ORDERED
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAPT_ORDERED
+\end_layout
+
+\end_inset
+
+ The map type shall be of a type that provides ordered traversal.
+\end_layout
+
+\begin_layout Standard
+Specific types include:
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXMAPT_HASH
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_MAPT_HASH
+\end_layout
+
+\end_inset
+
+ Hash-based map
 \begin_inset space ~
 \end_inset
 
@@ -3654,8 +3716,24 @@ hash-based map
  insertion, lookup and deletion; unordered
 \end_layout
 
-\begin_layout Itemize
-red-black binary tree
+\begin_layout Description
+
+\family typewriter
+HXMAPT_RBTREE
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_MAPT_RBTREE
+\end_layout
+
+\end_inset
+
+ Red-black binary tree
 \begin_inset space ~
 \end_inset
 
@@ -3675,7 +3753,11 @@ struct
 \series bold
 *
 \series default
-HXhashmap_init(
+HXmap_init(
+\series bold
+unsigned int
+\series default
+ type, 
 \series bold
 unsigned int
 \series default
@@ -3686,7 +3768,7 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-HXhashmap_init
+HXmap_init
 \end_layout
 
 \end_inset
@@ -3703,7 +3785,11 @@ struct
 \series bold
 *
 \series default
-HXhashmap_init4(
+HXmap_init5(
+\series bold
+unsigned int
+\series default
+ type, 
 \series bold
 unsigned int
 \series default
@@ -3734,63 +3820,7 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-HXhashmap_init4
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-struct
-\series default
- HXmap 
-\series bold
-*
-\series default
-HXrbtree_init(
-\series bold
-unsigned int
-\series default
- flags);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-HXrbtree_init
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-struct
-\series default
- HXmap 
-\series bold
-*
-\series default
-HXrbtree_init4(
-\series bold
-unsigned int
-\series default
- flags);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-HXrbtree_init4
+HXmap_init5
 \end_layout
 
 \end_inset
@@ -3805,9 +3835,9 @@ Both the
 \family default
  and 
 \family typewriter
-*_init4
+*_init5
 \family default
- create a new hash table; the latter function allows to specify the operations
+ create a new table; the latter function allows to specify the operations
  in detail as well as key and data size, which may become necessary when
  using data sets which have their own way of being managed.
  The 
@@ -5239,7 +5269,7 @@ static const struct
 \begin_inset Newline newline
 \end_inset
 
-map = HXrbtree_init4(HXBT_SKEY, &icase, 0, 
+HXmap_init5(HXMAPT_RBTREE, HXMAP_SKEY, &icase, 0, 
 \shape italic
 dsize
 \shape default
@@ -5271,7 +5301,7 @@ void *
 \end_layout
 
 \begin_layout LyX-Code
-map = HXrbtree_init4(HXBT_SKEY, &icase, 0, 
+HXmap_init5(HXMAPT_RBTREE, HXMAP_SKEY, &icase, 0, 
 \shape italic
 dsize
 \shape default
@@ -5377,7 +5407,7 @@ static const struct
 \begin_inset Newline newline
 \end_inset
 
-map = HXrbtree_init4(HXMAP_SKEY, &rev, 0, 
+HXmap_init5(HXMAPT_RBTREE, HXMAP_SKEY, &rev, 0, 
 \shape italic
 dsize
 \shape default
@@ -5608,11 +5638,15 @@ static const struct
 \begin_inset Newline newline
 \end_inset
 
-HXrbtree_init4(
+HXmap_init5(HXMAPT_RBTREE, 
 \shape italic
 flags
 \shape default
-, &package_ops, 
+, &package_ops,
+\begin_inset Newline newline
+\end_inset
+
+            
 \series bold
 sizeof
 \series default
