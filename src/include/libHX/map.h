@@ -40,7 +40,7 @@ enum {
 	HXMAP_DTRAV     = 1 << 0,
 };
 
-struct HXhmap;
+struct HXmap_trav;
 
 /**
  * @items:	number of items in the map
@@ -83,9 +83,9 @@ extern const struct HXmap_node *HXmap_find(const struct HXmap *, const void *);
 extern void *HXmap_get(const struct HXmap *, const void *);
 extern void *HXmap_del(struct HXmap *, const void *);
 extern struct HXmap_node *HXmap_keysvalues(const struct HXmap *);
-extern void *HXmap_travinit(const struct HXmap *, unsigned int);
-extern const struct HXmap_node *HXmap_traverse(void *);
-extern void HXmap_travfree(void *);
+extern struct HXmap_trav *HXmap_travinit(const struct HXmap *, unsigned int);
+extern const struct HXmap_node *HXmap_traverse(struct HXmap_trav *);
+extern void HXmap_travfree(struct HXmap_trav *);
 extern void HXmap_qfe(const struct HXmap *,
 	bool (*)(const struct HXmap_node *, void *), void *);
 extern void HXmap_free(struct HXmap *);

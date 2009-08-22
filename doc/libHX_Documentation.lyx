@@ -4777,7 +4777,11 @@ Map traversal
 \begin_layout LyX-Code
 
 \series bold
-void *
+struct
+\series default
+ HXmap_trav 
+\series bold
+*
 \series default
 HXmap_travinit(
 \series bold
@@ -4801,7 +4805,11 @@ const struct
 \series default
 HXmap_traverse(
 \series bold
-void *
+struct
+\series default
+ HXmap_trav 
+\series bold
+*
 \series default
 iterator);
 \begin_inset Newline newline
@@ -4813,7 +4821,11 @@ void
 \series default
  HXmap_travfree(
 \series bold
-void *
+struct
+\series default
+ HXmap_trav 
+\series bold
+*
 \series default
 iterator);
 \begin_inset Newline newline

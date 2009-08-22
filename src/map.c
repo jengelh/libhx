@@ -1019,7 +1019,7 @@ static void *HXrbtrav_init(const struct HXrbtree *btree, unsigned int flags)
 	return trav;
 }
 
-EXPORT_SYMBOL void *HXmap_travinit(const struct HXmap *xmap,
+EXPORT_SYMBOL struct HXmap_trav *HXmap_travinit(const struct HXmap *xmap,
     unsigned int flags)
 {
 	const void *vmap = xmap;
@@ -1036,9 +1036,8 @@ EXPORT_SYMBOL void *HXmap_travinit(const struct HXmap *xmap,
 	}
 }
 
-static const struct HXmap_node *HXhmap_traverse(void *xtrav)
+static const struct HXmap_node *HXhmap_traverse(struct HXhmap_trav *trav)
 {
-	struct HXhmap_trav *trav  = xtrav;
 	const struct HXhmap *hmap = trav->hmap;
 	const struct HXhmap_node *drop;
 
@@ -1245,9 +1244,9 @@ static const struct HXmap_node *HXrbtree_traverse(struct HXrbtrav *trav)
 	return (node != NULL) ? static_cast(const void *, &node->key) : NULL;
 }
 
-EXPORT_SYMBOL const struct HXmap_node *HXmap_traverse(void *xtrav)
+EXPORT_SYMBOL const struct HXmap_node *HXmap_traverse(struct HXmap_trav *trav)
 {
-	const struct HXmap_trav *trav = xtrav;
+	void *xtrav = trav;
 
 	if (xtrav == NULL)
 		return NULL;
@@ -1272,13 +1271,12 @@ static void HXrbtrav_free(struct HXrbtrav *trav)
 	free(trav);
 }
 
-EXPORT_SYMBOL void HXmap_travfree(void *xtrav)
+EXPORT_SYMBOL void HXmap_travfree(struct HXmap_trav *trav)
 {
-	struct HXmap_trav *trav;
+	void *xtrav = trav;
 
 	if (xtrav == NULL)
 		return;
-	trav = xtrav;
 	switch (trav->type) {
 	case HX_MAPTYPE_RBTREE:
 		HXrbtrav_free(xtrav);

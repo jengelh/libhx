@@ -94,7 +94,7 @@ static void tmap_add_rand(struct HXmap *map, unsigned int num)
 static void tmap_flush(struct HXmap *map, bool verbose)
 {
 	const struct HXmap_node *node;
-	void *iter;
+	struct HXmap_trav *iter;
 
 	tmap_printf("Flushing %u elements (with traversal)\n", map->items);
 	tmap_ipush();
@@ -157,7 +157,7 @@ static void tmap_trav_speed(struct HXmap *map)
 {
 	struct timeval start, stop, delta, delta2;
 	const struct HXmap_node *node;
-	void *iter;
+	struct HXmap_trav *iter;
 
 	tmap_printf("MAP test 2: Timing traversal\n");
 	tmap_ipush();
@@ -223,7 +223,7 @@ static void tmap_trav(struct HXmap *map)
 	const struct HXmap_node *node;
 	unsigned int i = ~(~0U >> 1);
 	char key[8], value[HXSIZEOF_Z32];
-	void *iter;
+	struct HXmap_trav *iter;
 
 	tmap_printf("Simple traversal:\n");
 	tmap_ipush();
