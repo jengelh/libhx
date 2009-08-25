@@ -694,6 +694,12 @@ EXPORT_SYMBOL int HXmap_add(struct HXmap *xmap,
 	void *vmap = xmap;
 	struct HXmap_private *map = vmap;
 
+	if ((map->flags & HXMAP_SINGULAR) && value != NULL) {
+		fprintf(stderr, "libHX-map: adding value!=NULL "
+		        "into a set not allowed\n");
+		return -EINVAL;
+	}
+
 	switch (map->type) {
 	case HXMAPT_HASH:
 		return HXhmap_add(vmap, key, value);

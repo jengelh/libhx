@@ -4090,6 +4090,55 @@ SDATA
 .
 \end_layout
 
+\begin_layout Description
+
+\family typewriter
+HXMAP_SINGULAR
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAP_SINGULAR
+\end_layout
+
+\end_inset
+
+ Specifies that the 
+\begin_inset Quotes eld
+\end_inset
+
+map
+\begin_inset Quotes erd
+\end_inset
+
+ is only used as a set, i.
+\begin_inset space \thinspace{}
+\end_inset
+
+e.
+\begin_inset space \space{}
+\end_inset
+
+it does not store any values, only keys.
+ Henceforth, the 
+\family typewriter
+value
+\family default
+ argument to 
+\family typewriter
+HXmap_add
+\family default
+ must always be 
+\family typewriter
+NULL
+\family default
+.
+\end_layout
+
 \begin_layout Subsection
 Key-data operations
 \end_layout
@@ -4651,6 +4700,38 @@ dds a new node to the tree using the given key and data.
 -errno
 \family default
  will be returned.
+\begin_inset Newline newline
+\end_inset
+
+When 
+\family typewriter
+HXMAP_SINGULAR
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAP_SINGULAR
+\end_layout
+
+\end_inset
+
+ is in effect, 
+\family typewriter
+value
+\family default
+ must be 
+\family typewriter
+NULL
+\family default
+, or 
+\family typewriter
+-EINVAL
+\family default
+ is returned.
 \end_layout
 
 \begin_layout Description

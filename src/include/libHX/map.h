@@ -34,6 +34,7 @@ enum HXmap_type {
  * 			throw an error (no-overwrite semantics)
  *
  * Initialization-time flags only:
+ * %HXMAP_SINGULAR:	Instead of an associative map, provide a set
  * %HXMAP_SKEY:		Key will be a C-style string (sets ops->k_*)
  * %HXMAP_CKEY:		Make a copy of the key on HXmap_add
  * %HXMAP_SDATA:	Data will be a C-style string (presets ops->d_*)
@@ -41,6 +42,7 @@ enum HXmap_type {
  */
 enum {
 	HXMAP_NOREPLACE = 1 << 0,
+	HXMAP_SINGULAR  = 1 << 27,
 	HXMAP_SKEY      = 1 << 28,
 	HXMAP_CKEY      = 1 << 29,
 	HXMAP_SDATA     = 1 << 30,
