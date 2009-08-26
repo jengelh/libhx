@@ -336,7 +336,7 @@ static void tmap_new_perfect_tree(struct HXmap *map,
  * Compute an "agglomeration" index that models the lack of distributedness
  * in hash maps. Range is 0-100%.
  */
-static unsigned int hmap_agg_index(const struct HXhmap *hmap, bool verbose)
+static double hmap_agg_index(const struct HXhmap *hmap, bool verbose)
 {
 	const struct HXhmap_node *hnode;
 	unsigned int i;
@@ -364,7 +364,7 @@ static unsigned int hmap_agg_index(const struct HXhmap *hmap, bool verbose)
 	f -= HXhash_primes[hmap->power] - hmap->super.items;
 	/* It's f/(2(e-1)) */
 	/* Now return % */
-	return 50 * f / (hmap->super.items - 1);
+	return static_cast(double, 50 * f) / (hmap->super.items - 1);
 }
 
 /**
@@ -388,7 +388,7 @@ static void tmap_hmap_test_1a(const char *map_type,
 		        &intstr_ops, 0, 0);
 		tmap_new_perfect_tree(u.map, power, 2);
 		tmap_printf("%s, intstr, %u items/%u buckets, "
-			"agglomeration: %d%%\n", map_type,
+			"agglomeration: %.2f%%\n", map_type,
 			u.map->items, HXhash_primes[u.hmap->power],
 			hmap_agg_index(u.hmap, false));
 		HXmap_free(u.map);
@@ -399,7 +399,7 @@ static void tmap_hmap_test_1a(const char *map_type,
 		/* Fill up just right up to the maximum load */
 		tmap_add_rand(u.map, u.hmap->max_load - u.map->items);
 		tmap_printf("%s, words, %u items/%u buckets, "
-			"agglomeration: %d%%\n", map_type,
+			"agglomeration: %.2f%%\n", map_type,
 			u.map->items, HXhash_primes[u.hmap->power],
 			hmap_agg_index(u.hmap, false));
 		/* trigger resize */
