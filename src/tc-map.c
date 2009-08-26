@@ -368,60 +368,57 @@ static unsigned int hmap_agg_index(const struct HXhmap *hmap, bool verbose)
 }
 
 /**
+ * Test one hash function with different keys and check agglomeration index.
+ */
+static void tmap_hmap_test_1a(const char *map_type,
+    unsigned long (*hash_fn)(const void *, size_t), unsigned int max_power)
+{
+	struct HXmap_ops intstr_ops = {
+		.k_compare = tmap_strtolcmp,
+		.k_hash    = hash_fn,
+	};
+	struct HXmap_ops words_ops = {
+		.k_hash    = hash_fn,
+	};
+	unsigned int power;
+	union HXpoly u;
+
+	for (power = 1; power <= max_power; ++power) {
+		u.map = HXmap_init5(HXMAPT_HASH, HXMAP_SCKEY,
+		        &intstr_ops, 0, 0);
+		tmap_new_perfect_tree(u.map, power, 2);
+		tmap_printf("%s, intstr, %u items/%u buckets, "
+			"agglomeration: %d%%\n", map_type,
+			u.map->items, HXhash_primes[u.hmap->power],
+			hmap_agg_index(u.hmap, false));
+		HXmap_free(u.map);
+	}
+
+	u.map = HXmap_init5(HXMAPT_HASH, HXMAP_SCKEY, &words_ops, 0, 0);
+	while (u.map->items < 1 << max_power) {
+		/* Fill up just right up to the maximum load */
+		tmap_add_rand(u.map, u.hmap->max_load - u.map->items);
+		tmap_printf("%s, words, %u items/%u buckets, "
+			"agglomeration: %d%%\n", map_type,
+			u.map->items, HXhash_primes[u.hmap->power],
+			hmap_agg_index(u.hmap, false));
+		/* trigger resize */
+		tmap_add_rand(u.map, 1);
+	}
+	HXmap_free(u.map);
+}
+
+/**
  * tmap_hmap_test_1 - test distributedness of elements
  */
 static void tmap_hmap_test_1(void)
 {
 	static const unsigned int max_power = 15;
-	union HXpoly u;
-	unsigned int power;
 
-	tmap_printf("HMAP test 1A: Distribution in hashmaps\n");
+	tmap_printf("HMAP test 1A: Hashmap distribution\n");
 	tmap_ipush();
-	for (power = 1; power <= max_power; ++power) {
-		u.map = HXmap_init5(HXMAPT_HASH, HXMAP_SCKEY,
-		        &tmap_nstr_ops, 0, 0);
-		tmap_new_perfect_tree(u.map, power, 2);
-		tmap_printf("DJB2, ints, %u items/%u buckets, agglomeration: %d%%\n",
-			u.map->items, HXhash_primes[u.hmap->power],
-			hmap_agg_index(u.hmap, false));
-		HXmap_free(u.map);
-	}
-	for (power = 1; power <= max_power; ++power) {
-		u.map = HXmap_init5(HXMAPT_HASH, HXMAP_SCKEY,
-		        &tmap_nstr_l3_ops, 0, 0);
-		tmap_new_perfect_tree(u.map, power, 2);
-		tmap_printf("L3, ints, %u items/%u buckets, agglomeration: %d%%\n",
-			u.map->items, HXhash_primes[u.hmap->power],
-			hmap_agg_index(u.hmap, false));
-		HXmap_free(u.map);
-	}
-
-	u.map = HXmap_init5(HXMAPT_HASH, HXMAP_SCKEY, &tmap_words_ops, 0, 0);
-	while (u.map->items < 1 << max_power) {
-		/* Fill up just right up to the maximum load */
-		tmap_add_rand(u.map, u.hmap->max_load - u.map->items);
-		tmap_printf("DJB2, strs, %u items/%u buckets, agglomeration: %d%%\n",
-			u.map->items, HXhash_primes[u.hmap->power],
-			hmap_agg_index(u.hmap, false));
-		/* trigger resize */
-		tmap_add_rand(u.map, 1);
-	}
-	HXmap_free(u.map);
-
-	u.map = HXmap_init5(HXMAPT_HASH, HXMAP_SCKEY,
-	        &tmap_words_l3_ops, 0, 0);
-	while (u.map->items < 1 << max_power) {
-		/* Fill up just right up to the maximum load */
-		tmap_add_rand(u.map, u.hmap->max_load - u.map->items);
-		tmap_printf("L3, strs, %u items/%u buckets, agglomeration: %d%%\n",
-			u.map->items, HXhash_primes[u.hmap->power],
-			hmap_agg_index(u.hmap, false));
-		/* trigger resize */
-		tmap_add_rand(u.map, 1);
-	}
-	HXmap_free(u.map);
-
+	tmap_hmap_test_1a("DJB2", HXhash_djb2, max_power);
+	tmap_hmap_test_1a("JL3", HXhash_jlookup3s, max_power);
 	tmap_ipop();
 }
 
