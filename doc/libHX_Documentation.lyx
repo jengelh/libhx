@@ -729,23 +729,6 @@ version
 .
 \end_layout
 
-\begin_layout Section
-To-Do
-\end_layout
-
-\begin_layout Itemize
-A hash map a.
-\begin_inset space \thinspace{}
-\end_inset
-
-k.
-\begin_inset space \thinspace{}
-\end_inset
-
-a.
- key-value pairs where the key is hashed.
-\end_layout
-
 \begin_layout Standard
 \begin_inset Newpage clearpage
 \end_inset
@@ -5277,7 +5260,7 @@ status open
 \begin_layout Plain Layout
 Not always of course.
  Linux kernels are often configured to use an 8K stack because some components
- still use a lot of stack space, but eve 8K is still damn good.
+ still use a lot of stack space, but even 8K is still damn good.
 \end_layout
 
 \end_inset
