@@ -246,12 +246,15 @@ static void tmap_trav(struct HXmap *map)
 	HXmap_travfree(iter);
 }
 
-static void tmap_generic_tests(enum HXmap_type type)
+static void tmap_generic_tests(enum HXmap_type type,
+    unsigned long (*hash_fn)(const void *, size_t), const char *hash_name)
 {
+	struct HXmap_ops ops = {.k_hash = hash_fn};
 	struct HXmap *map;
 
+	tmap_printf("Using hash %s\n", hash_name);
 	map = HXmap_init5(type, HXMAP_SCKEY | HXMAP_SCDATA | HXMAP_NOREPLACE,
-	      NULL, 0, 0);
+	      &ops, 0, 0);
 	tmap_add_speed(map);
 	tmap_trav_speed(map);
 	tmap_flush(map, false);
@@ -674,11 +677,12 @@ static void tmap_rbt_test_7(void)
 int main(void)
 {
 	tmap_printf("* HXhashmap\n");
-	tmap_generic_tests(HXMAPT_HASH);
+	tmap_generic_tests(HXMAPT_HASH, HXhash_djb2, "DJB2");
+	tmap_generic_tests(HXMAPT_HASH, HXhash_jlookup3s, "JL3");
 	tmap_hmap_test_1();
 
 	tmap_printf("\n* RBtree\n");
-	tmap_generic_tests(HXMAPT_RBTREE);
+	tmap_generic_tests(HXMAPT_RBTREE, NULL, "<NONE>");
 	tmap_rbt_test_1();
 	tmap_rbt_test_7();
 
