@@ -502,7 +502,7 @@ static int HXhmap_add(struct HXhmap *hmap, const void *key, const void *value)
 		return -errno;
 	HXlist_init(&drop->anchor);
 	drop->key = hmap->super.ops.k_clone(key, hmap->super.key_size);
-	if (drop->key == NULL)
+	if (drop->key == NULL && key != NULL)
 		goto out;
 	drop->data = hmap->super.ops.d_clone(value, hmap->super.data_size);
 	if (drop->data == NULL && value != NULL)
@@ -650,7 +650,7 @@ static int HXrbtree_add(struct HXrbtree *btree,
 
 	/* New node, push data into it */
 	node->key = btree->super.ops.k_clone(key, btree->super.key_size);
-	if (node->key == NULL)
+	if (node->key == NULL && key != NULL)
 		goto out;
 	node->data = btree->super.ops.d_clone(value, btree->super.data_size);
 	if (node->data == NULL && value != NULL)
