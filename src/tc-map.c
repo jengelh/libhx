@@ -404,6 +404,10 @@ static void tmap_hmap_test_1a(const char *map_type,
 			hmap_agg_index(u.hmap, false));
 		/* trigger resize */
 		tmap_add_rand(u.map, 1);
+		tmap_printf("%s, words, %u items/%u buckets, "
+			"agglomeration: %.2f%%\n", map_type,
+			u.map->items, HXhash_primes[u.hmap->power],
+			hmap_agg_index(u.hmap, false));
 	}
 	HXmap_free(u.map);
 }
