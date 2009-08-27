@@ -1,7 +1,7 @@
 
-Name:		libHX18
+Name:		libHX22
 %define lname	libHX
-Version:	2.9
+Version:	3.0
 Release:	0
 Group:		System/Libraries
 URL:		http://libhx.sf.net/
@@ -12,19 +12,19 @@ BuildRoot:	%_tmppath/%name-%version-build
 BuildRequires:	gcc-c++
 # no, libxml2-devel is NOT required because nothing
 # that requires it is going to be compiled.
+# gcc-c++ is pretty optional; its absence does not omit anything
 
 %description
 A library for:
-- rbtree with key-value pair extension ("maps")
-- deques (double-ended queues) (Stacks (LIFO) / Queues (FIFOs))
+- hash/rbtree-based maps/sets
+- double-ended queues (stacks/fifos/lists)
 - platform-independent opendir-style directory access
 - platform-independent dlopen-style shared library access
 - auto-storage strings with direct access
 - command line option (argv) parser
 - shconfig-style config file parser
-- platform-independent random number generator with transparent
-  /dev/urandom support
 - various string, memory and zvec ops
+- more
 
 %package -n libHX-devel
 Group:		Development/Libraries/C and C++
@@ -33,16 +33,15 @@ Requires:	%name = %version
 
 %description -n libHX-devel
 A library for:
-- rbtree with key-value pair extension
-- deques (double-ended queues) (Stacks (LIFO) / Queues (FIFOs))
-- platform independent opendir-style directory access
-- platform independent dlopen-style shared library access
+- hash/rbtree-based maps/sets
+- double-ended queues (stacks/fifos/lists)
+- platform-independent opendir-style directory access
+- platform-independent dlopen-style shared library access
 - auto-storage strings with direct access
 - command line option (argv) parser
 - shconfig-style config file parser
-- platform independent random number generator with transparent
-  /dev/urandom support
 - various string, memory and zvec ops
+- more
 
 %prep
 %setup -n %lname-%version
@@ -58,13 +57,11 @@ mkdir "$b";
 make install DESTDIR="$b" docdir="%_docdir/%lname";
 rm -f "$b/%_libdir/%lname.la";
 mkdir -p "$b/%_docdir/%lname";
-install -pm0644 doc/* "$b/%_docdir/%lname/";
+install -pm0644 doc/*.txt "$b/%_docdir/%lname/";
 
-%post
-%run_ldconfig
+%post -p /sbin/ldconfig
 
-%postun
-%run_ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
@@ -75,5 +72,6 @@ install -pm0644 doc/* "$b/%_docdir/%lname/";
 %_libdir/%{lname}*.so
 %_libdir/pkgconfig/*
 %_includedir/*
-%docdir %_docdir/%lname
-%doc %_docdir/%lname/*
+%doc %_docdir/%lname
+
+%changelog

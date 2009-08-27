@@ -7,8 +7,8 @@ A general-purpose library for everyday coding tasks.
   • maps (HXmap_*)
 
     Originally created to provide a data structure like Perl's associative
-    arrays. Multiple models and underlying storage data structures are
-    available (unordered hash-based map, ordered rbtree).
+    arrays. Different map types and characteristics are available, such as
+    hash-based or traditional rbtree.
 
   • deques (HXdeque_*, HXlist_*, HXclist_*)
 
@@ -60,4 +60,4 @@ A general-purpose library for everyday coding tasks.
 Resources
 
   • libHX GIT repository (gitweb) — http://libhx.git.sf.net/
-  • libHX clone URL — git://libhx.git.sf.net/gitroot/libhx
+  • libHX clone URL — git://libhx.git.sf.net/gitroot/libhx/libhx
