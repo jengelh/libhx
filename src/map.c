@@ -96,7 +96,12 @@ EXPORT_SYMBOL void HXmap_free(struct HXmap *xmap)
 
 static int HXmap_valuecmp(const void *pa, const void *pb, size_t len)
 {
-	return pa - pb;
+	/*
+	 * Cannot use "pa - pb" as that could underflow. 
+	 * Also, while "return (pa > pb) - (pa < pb)" does not use a branch,
+	 * it compiles to more instructions and seems to be slower on x86.
+	 */
+	return (pa > pb) ? 1 : (pa < pb) ? -1 : 0;
 }
 
 static void *HXmap_valuecpy(const void *p, size_t len)
