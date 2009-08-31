@@ -1,5 +1,7 @@
 
 
+libHX 3.0.1 (August 31 2009)
+============================
 Fixes:
 - map: avoid underflow in value-based tree comparison
 
