@@ -69,6 +69,15 @@ static void t_path(void)
 	}
 }
 
+static void t_strcpy(void)
+{
+	hxmc_t *vp = NULL;
+
+	HXmc_strcpy(&vp, NULL);
+	if (vp != NULL)
+		abort();
+}
+
 static void t_strncat(void)
 {
 	char data[5] = "DATA";
@@ -151,6 +160,7 @@ int main(int argc, const char **argv)
 
 	t_mc();
 	t_path();
+	t_strcpy();
 	t_strncat();
 	t_strsep();
 	t_split();

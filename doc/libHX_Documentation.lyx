@@ -11540,6 +11540,39 @@ HXmc_strins
 
 \end_layout
 
+\begin_layout Description
+
+\family typewriter
+HXmc_strcpy
+\family default
+ Copies the string pointed to by 
+\family typewriter
+s
+\family default
+ into the memory container given by 
+\family typewriter
+mc
+\family default
+.
+ If 
+\family typewriter
+mc
+\family default
+ is 
+\family typewriter
+NULL
+\family default
+, the memory container will be deallocated, that is, 
+\family typewriter
+*mc
+\family default
+ becomes 
+\family typewriter
+NULL
+\family default
+.
+\end_layout
+
 \begin_layout Subsubsection
 From auxiliary sources
 \end_layout

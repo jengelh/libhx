@@ -53,8 +53,11 @@ EXPORT_SYMBOL hxmc_t *HXmc_meminit(const void *ptr, size_t len)
 
 EXPORT_SYMBOL hxmc_t *HXmc_strcpy(hxmc_t **vp, const char *s)
 {
-	if (s == NULL)
-		return HXmc_memcpy(vp, NULL, 0);
+	if (s == NULL) {
+		HXmc_free(*vp);
+		*vp = NULL;
+		return NULL;
+	}
 	return HXmc_memcpy(vp, s, strlen(s));
 }
 
