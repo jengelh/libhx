@@ -2,9 +2,11 @@
 #define _LIBHX_MISC_H 1
 
 #ifndef __cplusplus
+#	include <limits.h>
 #	include <stdarg.h>
 #	include <stdio.h>
 #else
+#	include <climits>
 #	include <cstdarg>
 #	include <cstdio>
 #endif
@@ -12,6 +14,22 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*
+ *	BITMAP.H
+ */
+#define __HXbitmap_bpq(type) \
+	(sizeof(type) * CHAR_BIT)
+#define HXbitmap_size(type, bits) \
+	((bits + __HXbitmap_bpq(type) - 1) / __HXbitmap_bpq(type))
+#define __HXbitmap_quant(map, bit) \
+	((map)[bit / __HXbitmap_bpq(*(map))])
+#define HXbitmap_set(map, bit) \
+	((void)(__HXbitmap_quant(map, bit) |= (1 << (bit % __HXbitmap_bpq(map)))))
+#define HXbitmap_clear(map, bit) \
+	((void)(__HXbitmap_quant(map, bit) &= ~(1 << (bit % __HXbitmap_bpq(map)))))
+#define HXbitmap_test(map, bit) \
+	((bool)(__HXbitmap_quant(map, bit) & (1 << (bit % __HXbitmap_bpq(map)))))
 
 struct stat;
 struct timespec;

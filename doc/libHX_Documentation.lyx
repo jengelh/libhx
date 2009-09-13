@@ -1,4 +1,4 @@
-#LyX 1.6.3 created this file. For more info see http://www.lyx.org/
+#LyX 1.6.4.1 created this file. For more info see http://www.lyx.org/
 \lyxformat 345
 \begin_document
 \begin_header
@@ -3336,6 +3336,291 @@ a
 b
 \family default
 .
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Bitmaps
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/misc.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+size_t
+\series default
+ HXbitmap_size(
+\series bold
+type
+\series default
+ array, 
+\series bold
+unsigned int
+\series default
+ bits);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXbitmap_size
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXbitmap_set(
+\series bold
+type *
+\series default
+bmap, 
+\series bold
+unsigned int
+\series default
+ bit);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXbitmap_set
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXbitmap_clear(
+\series bold
+type *
+\series default
+bmap, 
+\series bold
+unsigned int
+\series default
+ bit);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXbitmap_clear
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+bool
+\series default
+ HXbitmap_test(
+\series bold
+type *
+\series default
+bmap, 
+\series bold
+unsigned int
+\series default
+ bit);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXbitmap_test
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+All of these four are implemented as macros, so they can be used with any
+ integer type that is desired to be used.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXbitmap_size
+\family default
+ Returns the amount of 
+\begin_inset Quotes eld
+\end_inset
+
+type
+\begin_inset Quotes erd
+\end_inset
+
+-based integers that would be needed to hold an array of the requested amount
+ of bits.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXbitmap_set
+\family default
+ Set the specific bit in the bitmap.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXbitmap_clear
+\family default
+ Clear the specific bit in this bitmap.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXbitmap_test
+\family default
+ Test for the specific bit and returns 
+\family typewriter
+true
+\family default
+ if it is set, otherwise 
+\family typewriter
+false
+\family default
+.
+\end_layout
+
+\begin_layout Subsubsection
+Example
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <stdlib.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#include
+\series default
+ <string.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#include
+\series default
+ <libHX/misc.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ main(
+\series bold
+void
+\series default
+)
+\begin_inset Newline newline
+\end_inset
+
+{
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+unsigned long
+\series default
+ bitmap
+\series bold
+[
+\series default
+HXbitmap_size(
+\series bold
+unsigned long
+\series default
+, 128)
+\series bold
+]
+\series default
+;
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+        memset(bitmap, 0, sizeof(bitmap));
+\begin_inset Newline newline
+\end_inset
+
+        HXbitmap_set(bitmap, 49);
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+return
+\series default
+ HXbitmap_get(bitmap, HX_irand(0, 128)) ?
+\begin_inset Newline newline
+\end_inset
+
+               EXIT_SUCCESS : EXIT_FAILURE;
+\begin_inset Newline newline
+\end_inset
+
+}
 \end_layout
 
 \begin_layout Standard

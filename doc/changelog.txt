@@ -1,5 +1,9 @@
 
 
+Enhancements:
+- added HXbitmap_* functions
+
+
 libHX 3.0.1 (August 31 2009)
 ============================
 Fixes:

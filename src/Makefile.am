@@ -10,7 +10,7 @@ libHX_la_SOURCES = deque.c dir.c dl.c format.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c ${mingw32_extra} ${proc_sources}
 libHX_la_LIBADD  = ${regular_LIBS}
-libHX_la_LDFLAGS = -version-info 22:1:0
+libHX_la_LDFLAGS = -version-info 22:2:0
 
 if MINGW32
 mingw32_extra    = ux-file.c ux-mmap.c
