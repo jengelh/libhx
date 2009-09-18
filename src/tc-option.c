@@ -52,6 +52,7 @@ static long opt_klong = 0;
 static double opt_kdbl = 0;
 static int opt_kflag = 0, opt_kint = 0;
 static int opt_dst = 0;
+static hxmc_t *opt_mcstr = NULL;
 
 static void opt_cbf(const struct HXoptcb *cbi)
 {
@@ -67,6 +68,8 @@ static struct HXoption table[] = {
 	 .ptr = &opt_kflag, .help = "Callback function for flags"},
 	{.ln = "long", .sh = 'L', .type = HXTYPE_LONG, .cb = opt_cbf,
 	 .ptr = &opt_klong, .help = "Callback function for integers"},
+	{.sh = 'P', .type = HXTYPE_MCSTR, .ptr = &opt_mcstr,
+	 .help = "Any string"},
 	{.ln = "str", .sh = 'S', .type = HXTYPE_STRING, .cb = opt_cbf,
 	 .ptr = &opt_kstr, .help = "Callback function for strings"},
 	{.ln = "either", .type = HXTYPE_VAL, .cb = opt_cbf, .ptr = &opt_dst,
@@ -103,5 +106,6 @@ int main(int argc, const char **argv)
 	       opt_kdbl, opt_kint, opt_klong, opt_kstr);
 	printf("Verbosity level: %d\n", opt_v);
 	printf("Mask: 0x%08X\n", opt_mask);
+	printf("mcstr: >%s<\n", opt_mcstr);
 	return EXIT_SUCCESS;
 }

@@ -1,6 +1,10 @@
 
 
 Enhancements:
+- opt: add HXTYPE_MCSTR for storing into hxmc_t *s
+
+
+Enhancements:
 - added HXbitmap_* functions
 Fixes:
 - mc: HXmc_strcpy produced a zero-length string when NULL was copied

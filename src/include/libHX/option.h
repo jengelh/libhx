@@ -76,6 +76,7 @@ enum {
 	HXTYPE_INT16,
 	HXTYPE_INT32,
 	HXTYPE_INT64,
+	HXTYPE_MCSTR, /* put into hxmc_t */
 
 	/* .type extra flags */
 	/* argument is optional */

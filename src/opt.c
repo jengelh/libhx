@@ -1,6 +1,6 @@
 /*
  *	libHX/opt.c
- *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2008
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2009
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -654,6 +654,11 @@ static void do_assign(struct HXoptcb *cbi)
 		break;
 	case HXTYPE_STRDQ:
 		HXdeque_push(opt->ptr, HX_strdup(cbi->data));
+		CALL_CB;
+		break;
+	case HXTYPE_MCSTR:
+		if (opt->ptr != NULL)
+			HXmc_strcpy(opt->ptr, cbi->data);
 		CALL_CB;
 		break;
 	default:
