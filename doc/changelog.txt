@@ -1,10 +1,14 @@
 
 
+HEAD
+====
 Enhancements:
 - opt: add HXTYPE_MCSTR for storing into hxmc_t *s
 - string: add HX_strquote
 
 
+libHX 3.1 (September 13 2009)
+=============================
 Enhancements:
 - added HXbitmap_* functions
 Fixes:
