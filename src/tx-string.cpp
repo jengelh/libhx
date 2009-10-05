@@ -144,6 +144,15 @@ static void t_split(void)
 	free(a1);
 }
 
+static void t_quote(void)
+{
+	char *fm = NULL;
+	printf("%s\n", HX_strquote("\"Good\" ol' \\'escaped\\' strings", HXQUOTE_SQUOTE, &fm));
+	printf("%s\n", HX_strquote("\"Good\" ol' \\'escaped\\' strings", HXQUOTE_DQUOTE, &fm));
+	printf("%s\n", HX_strquote("<p style=\"height: 1;\">Foo &amp; \"bar\"</p>", HXQUOTE_HTML, &fm));
+	free(fm);
+}
+
 int main(int argc, const char **argv)
 {
 	hxmc_t *tx = NULL;
@@ -164,5 +173,6 @@ int main(int argc, const char **argv)
 	t_strncat();
 	t_strsep();
 	t_split();
+	t_quote();
 	return EXIT_SUCCESS;
 }

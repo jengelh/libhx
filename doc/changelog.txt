@@ -2,6 +2,7 @@
 
 Enhancements:
 - opt: add HXTYPE_MCSTR for storing into hxmc_t *s
+- string: add HX_strquote
 
 
 Enhancements:

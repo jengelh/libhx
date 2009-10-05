@@ -348,6 +348,158 @@ EXPORT_SYMBOL char *HX_strsep2(char **wp, const char *str)
 	return ret;
 }
 
+static const char *const HX_quote_chars[] = {
+	[HXQUOTE_SQUOTE] = "'\\",
+	[HXQUOTE_DQUOTE] = "\"\\",
+	[HXQUOTE_HTML]   = "\"&<>",
+};
+
+static size_t HX_qsize_backslash(const char *s, const char *qchars)
+{
+	const char *p = s;
+	size_t n = strlen(s);
+
+	while ((p = strpbrk(p, qchars)) != NULL) {
+		++n;
+		++p;
+	}
+	return n;
+}
+
+static char *HX_quote_backslash(char *dest, const char *src, const char *qc)
+{
+	char *ret = dest;
+	size_t len;
+
+	while (*src != '\0') {
+		len = strcspn(src, qc);
+		if (len > 0) {
+			memcpy(dest, src, len);
+			dest += len;
+			src  += len;
+			if (*src == '\0')
+				break;
+		}
+		*dest++ = '\\';
+		*dest++ = *src++;
+	}
+
+	*dest = '\0';
+	return ret;
+}
+
+static size_t HX_qsize_html(const char *s)
+{
+	const char *p = s;
+	size_t n = strlen(s);
+
+	while ((p = strpbrk(p, HX_quote_chars[HXQUOTE_HTML])) != NULL) {
+		switch (*p) {
+		/* minus 2: \0 and the original char */
+		case '"':
+			n += sizeof("&quot;") - 2;
+			break;
+		case '&':
+			n += sizeof("&amp;") - 2;
+			break;
+		case '<':
+		case '>':
+			n += sizeof("&lt;") - 2;
+			break;
+		}
+		++p;
+	}
+	return n;
+}
+
+static char *HX_quote_html(char *dest, const char *src)
+{
+#define put(s) do { \
+	memcpy(dest, (s), sizeof(s) - 1); \
+	dest += sizeof(s) - 1; \
+} while (false);
+
+	char *ret = dest;
+
+	while (*src != '\0') {
+		size_t len = strcspn(src, HX_quote_chars[HXQUOTE_HTML]);
+		if (len > 0) {
+			memcpy(dest, src, len);
+			dest += len;
+			src  += len;
+			if (*src == '\0')
+				break;
+		}
+		switch (*src++) {
+		case '"': put("&quot;"); break;
+		case '&': put("&amp;"); break;
+		case '<': put("&lt;"); break;
+		case '>': put("&gt;"); break;
+		}
+	}
+	*dest = '\0';
+	return ret;
+#undef put
+}
+
+/**
+ * HX_quoted_size -
+ * @s:		string to analyze
+ * @type:	quoting method
+ *
+ * Returns the size of the string @s when quoted.
+ */
+static size_t HX_quoted_size(const char *s, unsigned int type)
+{
+	switch (type) {
+	case HXQUOTE_SQUOTE:
+	case HXQUOTE_DQUOTE:
+		return HX_qsize_backslash(s, HX_quote_chars[type]);
+	case HXQUOTE_HTML:
+		return HX_qsize_html(s);
+	default:
+		return strlen(s);
+	}
+}
+
+EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
+    char **free_me)
+{
+	bool do_quote;
+	char *tmp;
+
+	do_quote = type >= _HXQUOTE_MAX || (type < _HXQUOTE_MAX &&
+	           strpbrk(src, HX_quote_chars[type]) != NULL);
+
+	/*
+	 * free_me == NULL implies that we always allocate, even if
+	 * there is nothing to quote.
+	 */
+	if (free_me != NULL) {
+		free(*free_me);
+		*free_me = NULL;
+		if (!do_quote)
+			return const_cast1(char *, src);
+	} else {
+		if (!do_quote)
+			return HX_strdup(src);
+		free_me = &tmp;
+	}
+
+	*free_me = malloc(HX_quoted_size(src, type) + 1);
+	if (*free_me == NULL)
+		return NULL;
+
+	switch (type) {
+	case HXQUOTE_SQUOTE:
+	case HXQUOTE_DQUOTE:
+		return HX_quote_backslash(*free_me, src, HX_quote_chars[type]);
+	case HXQUOTE_HTML:
+		return HX_quote_html(*free_me, src);
+	}
+	return NULL;
+}
+
 EXPORT_SYMBOL char *HX_strupper(char *expr)
 {
 	char *orig = expr;

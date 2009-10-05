@@ -16,6 +16,13 @@
 extern "C" {
 #endif
 
+enum {
+	HXQUOTE_SQUOTE = 1,
+	HXQUOTE_DQUOTE,
+	HXQUOTE_HTML,
+	_HXQUOTE_MAX,
+};
+
 #ifndef __libhx_internal_hxmc_t_defined
 #define __libhx_internal_hxmc_t_defined 1
 typedef char hxmc_t;
@@ -56,6 +63,7 @@ extern char *HX_strclone(char **, const char *);
 extern char *HX_strlower(char *);
 extern size_t HX_strltrim(char *);
 extern char *HX_strmid(const char *, long, long);
+extern char *HX_strquote(const char *, unsigned int, char **);
 extern size_t HX_strrcspn(const char *, const char *);
 extern char *HX_strrev(char *);
 extern size_t HX_strrtrim(char *);
