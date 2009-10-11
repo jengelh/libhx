@@ -1,7 +1,7 @@
 
 Name:		libHX22
 %define lname	libHX
-Version:	3.1
+Version:	3.2
 Release:	0
 Group:		System/Libraries
 URL:		http://libhx.sf.net/

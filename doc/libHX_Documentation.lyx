@@ -56,11 +56,18 @@
 \begin_body
 
 \begin_layout Title
-libHX 3.0
+libHX 3.2
 \begin_inset Newline newline
 \end_inset
 
 Documentation
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
