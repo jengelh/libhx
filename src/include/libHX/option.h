@@ -139,6 +139,7 @@ extern void HX_getopt_help_cb(const struct HXoptcb *);
 extern void HX_getopt_usage(const struct HXoptcb *, FILE *);
 extern void HX_getopt_usage_cb(const struct HXoptcb *);
 extern int HX_shconfig(const char *, const struct HXoption *);
+extern struct HXmap *HX_shconfig_map(const char *);
 extern int HX_shconfig_pv(const char **, const char *,
 	const struct HXoption *, unsigned int);
 extern void HX_shconfig_free(const struct HXoption *);

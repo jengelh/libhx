@@ -16,6 +16,7 @@
 #include <string.h>
 #include <libHX/ctype_helper.h>
 #include <libHX/deque.h>
+#include <libHX/map.h>
 #include <libHX/misc.h>
 #include <libHX/option.h>
 #include <libHX/string.h>
@@ -547,6 +548,34 @@ EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
 	HXmc_free(ln);
 	fclose(fp);
 	return 1;
+}
+
+static void HX_shconf_assignmp(void *map, const char *key, const char *value)
+{
+	HXmap_add(map, key, value);
+}
+
+EXPORT_SYMBOL struct HXmap *HX_shconfig_map(const char *file)
+{
+	struct HXmap *map;
+	hxmc_t *ln = NULL;
+	FILE *fp;
+
+	map = HXmap_init(HXMAPT_DEFAULT, HXMAP_SCKEY | HXMAP_SCDATA);
+	if (map == NULL)
+		return NULL;
+
+	if ((fp = fopen(file, "r")) == NULL) {
+		free(map);
+		return NULL;
+	}
+
+	while (HX_getl(&ln, fp) != NULL)
+		HX_shconf_break(map, ln, HX_shconf_assignmp);
+
+	HXmc_free(ln);
+	fclose(fp);
+	return map;
 }
 
 EXPORT_SYMBOL int HX_shconfig_pv(const char **path, const char *file,

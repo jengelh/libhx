@@ -46,6 +46,21 @@ static void t_shconfig(const char *file)
 		printf("A => >%s<\n" "C => >%s<\n" "E => >%s<\n", A, C, E);
 }
 
+static void t_shconfig2(const char *file)
+{
+	const struct HXmap_node *node;
+	struct HXmap_trav *trav;
+	struct HXmap *map;
+
+	map = HX_shconfig_map(file);
+	if (map == NULL)
+		abort();
+	trav = HXmap_travinit(map, 0);
+	while ((node = HXmap_traverse(trav)) != NULL)
+		printf("\t%s -> %s\n", node->skey, node->sdata);
+	HXmap_travfree(trav);
+}
+
 static int opt_v = 0, opt_mask = 0;
 static char *opt_kstr = NULL;
 static long opt_klong = 0;
@@ -98,6 +113,7 @@ int main(int argc, const char **argv)
 {
 	t_format(argc);
 	t_shconfig((argc >= 2) ? argv[1] : "tc-option.c");
+	t_shconfig2((argc >= 2) ? argv[1] : "tc-option.c");
 
 	printf("Return value of HX_getopt: %d\n",
 	       HX_getopt(table, &argc, &argv, HXOPT_USAGEONERR));

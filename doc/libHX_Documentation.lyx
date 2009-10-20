@@ -1,4 +1,4 @@
-#LyX 1.6.4.1 created this file. For more info see http://www.lyx.org/
+#LyX 1.6.4 created this file. For more info see http://www.lyx.org/
 \lyxformat 345
 \begin_document
 \begin_header
@@ -17966,6 +17966,34 @@ HX_shconfig_pv
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ HXmap 
+\series bold
+*
+\series default
+HX_shconfig_map(
+\series bold
+const char *
+\series default
+file);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_shconfig_map
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -18096,6 +18124,15 @@ SHCONF_\SpecialChar \-
 ONE
 \family default
  flag.
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+HX_shconfig_map
+\family default
+ will return all entries from the file in a HXmap, usable for parsing arbitrary
+ keys without having to specify any static key table.
 \end_layout
 
 \begin_layout Description
