@@ -489,27 +489,19 @@ EXPORT_SYMBOL void HX_getopt_usage_cb(const struct HXoptcb *cbi)
 }
 
 //-----------------------------------------------------------------------------
-EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
+static void HX_shconf_break(void *ptr, char *line,
+    void (*cb)(void *, const char *, const char *))
 {
-	struct HXoptcb cbi = {.table = table, .match_sh = '\0'};
-	char *reparse = NULL;
-	hxmc_t *ln = NULL;
-	FILE *fp;
+	char *lp = line, *key, *val, *w;
+	HX_chomp(line);
 
-	if ((fp = fopen(file, "r")) == NULL)
-		return -errno;
-
-	while (HX_getl(&ln, fp) != NULL) {
-		char *lp = ln, *key, *val, *w;
-		HX_chomp(ln);
-
- reparse_point:
+	while (lp != NULL) {
 		key = lp;
 		/* Next entry if comment, empty line or no value */
 		if (*lp == '#' || *lp == '\0')
-			continue;
+			return;
 		if ((val = strchr(lp, '=')) == NULL)
-			continue;
+			return;
 		while (HX_isspace(*key))
 			++key;
 
@@ -522,19 +514,35 @@ EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
 			++val;
 
 		/* Handle escape codes and quotes, and assign to TAB entry */
-		reparse = shell_unescape(val);
-		if ((cbi.current = lookup_long(table, key)) == NULL)
-			continue;
-
-		cbi.match_ln = key;
-		cbi.data     = val;
-		do_assign(&cbi);
-
-		if (reparse != NULL) {
-			lp = reparse;
-			goto reparse_point;
-		}
+		lp = shell_unescape(val);
+		(*cb)(ptr, key, val);
 	}
+}
+
+static void HX_shconf_assign(void *table, const char *key, const char *value)
+{
+	struct HXoptcb cbi = {.table = table, .match_sh = '\0'};
+
+	if ((cbi.current = lookup_long(table, key)) == NULL)
+		return;
+
+	cbi.match_ln = key;
+	cbi.data     = value;
+	do_assign(&cbi);
+}
+
+EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)
+{
+	hxmc_t *ln = NULL;
+	FILE *fp;
+
+	if ((fp = fopen(file, "r")) == NULL)
+		return -errno;
+
+	while (HX_getl(&ln, fp) != NULL)
+		HX_shconf_break(const_cast(void *,
+			static_cast(const void *, table)), ln,
+			HX_shconf_assign);
 
 	HXmc_free(ln);
 	fclose(fp);
