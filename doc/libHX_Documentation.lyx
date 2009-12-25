@@ -565,12 +565,12 @@ GNU C Compiler 3.3.5 or newer.
 \end_layout
 
 \begin_layout Itemize
-approximately 80
+approximately 80--160
 \begin_inset space ~
 \end_inset
 
-KB of disk space on Linux for the shared library and header files; somewhat
- more for *BSD.
+KB of disk space on Linux for the shared library (depends on platform) and
+ header files.
 \end_layout
 
 \begin_layout Standard
