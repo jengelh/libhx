@@ -1,5 +1,5 @@
 /*
- *	libHX - process management
+ *	Process management
  *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2008 - 2009
  *
  *	This file is part of libHX. libHX is free software; you can

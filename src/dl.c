@@ -1,4 +1,5 @@
 /*
+ *	Shared library handling
  *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2007 - 2009
  *
  *	This file is part of libHX. libHX is free software; you can

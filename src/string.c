@@ -1,5 +1,5 @@
 /*
- *	libHX/string.c
+ *	C-string functions
  *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can

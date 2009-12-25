@@ -1,4 +1,5 @@
 /*
+ *	Miscellaneous functions
  *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2009
  *
  *	This file is part of libHX. libHX is free software; you can

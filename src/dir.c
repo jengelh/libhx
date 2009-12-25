@@ -1,5 +1,5 @@
 /*
- *	libHX/dir.c
+ *	File and directory handling
  *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can

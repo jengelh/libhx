@@ -1,5 +1,5 @@
 /*
- *	libHX/rand.c
+ *	Random numbers
  *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2003 - 2008
  *
  *	This file is part of libHX. libHX is free software; you can
