@@ -212,7 +212,7 @@ EXPORT_SYMBOL char *HX_strbchr(const char *start, const char *now, char d)
 	/* Find the last occurrence of @d within @start and @now. */
 	while (now >= start)
 		if (*now-- == d)
-			return (char *)++now;
+			return const_cast1(char *, ++now);
 	return NULL;
 }
 
