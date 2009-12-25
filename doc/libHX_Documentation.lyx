@@ -18189,6 +18189,16 @@ Example
 Per-setting-override
 \end_layout
 
+\begin_layout Standard
+This example sources key-value pairs from a configuration file in a system
+ location (
+\family typewriter
+/etc
+\family default
+) first, before overriding specific keys with new values from the file in
+ the home directory.
+\end_layout
+
 \begin_layout LyX-Code
 
 \series bold
@@ -18263,6 +18273,24 @@ HX_shconfig(paths, "test.cf", options_table, 0);
 
 \begin_layout Subsubsection
 Per-file-override
+\end_layout
+
+\begin_layout Standard
+This particular example reads from the file in the home directory first
+ (if it exists), but stops after it has been successfull, so any subsequent
+ locations listed in the 
+\family typewriter
+paths
+\family default
+ variable are not read.
+ This has the effect that the file from the home directory has the highest
+ priority too like in the previous example, but without any keys from the
+ system files.
+ Note the 
+\family typewriter
+SHCONF_ONE
+\family default
+ flag.
 \end_layout
 
 \begin_layout LyX-Code
