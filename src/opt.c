@@ -277,8 +277,8 @@ static inline char *shell_unescape(char *o)
 					quot = *i++;
 					continue;
 				case '\\':
-					if (*++i == '\\')
-						*o++ = *i;
+					if (*++i != '\0')
+						*o++ = *i++;
 					continue;
 				case ';':
 					*o = '\0';
