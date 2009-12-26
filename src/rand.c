@@ -78,7 +78,7 @@ EXPORT_SYMBOL double HX_drand(double lo, double hi)
 {
 	double delta = hi - lo;
 
-	return static_cast(double, HX_rand()) * delta / RAND_MAX + lo;
+	return static_cast(double, rand()) * delta / RAND_MAX + lo;
 }
 
 EXPORT_SYMBOL unsigned int HX_irand(unsigned int lo, unsigned int hi)
@@ -89,5 +89,5 @@ EXPORT_SYMBOL unsigned int HX_irand(unsigned int lo, unsigned int hi)
 		return HX_rand() % delta + lo;
 	else
 		return static_cast(unsigned int,
-		       static_cast(double, HX_rand()) * delta / RAND_MAX) + lo;
+		       static_cast(double, rand()) * delta / RAND_MAX) + lo;
 }
