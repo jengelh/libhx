@@ -323,22 +323,22 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
 	hxmc_t *key, *out = HXmc_meminit(NULL, 0);
 	const struct fmt_entry *entry;
 	struct modifier *mod;
-	const char *last, *current;
+	const char *current;
 	struct HXdeque *dq;
 	int ret = 0;
 
-	last = current = fmt;
+	current = fmt;
 	if ((dq = HXdeque_init()) == NULL)
 		return -errno;
 
-	while ((current = HX_strchr0(last, '%')) != NULL) {
-		if (current - last > 0)
-			HXmc_memcat(&out, last, current - last);
+	while ((current = HX_strchr0(fmt, '%')) != NULL) {
+		if (current - fmt > 0)
+			HXmc_memcat(&out, fmt, current - fmt);
 		if (*current == '\0')
 			break;
 		if (*(current+1) != '(' /* ) */) {
 			HXmc_memcat(&out, current, 2);
-			last = current + 2;
+			fmt = current + 2;
 			continue;
 		}
 
@@ -361,7 +361,7 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
 		}
 
 		HXmc_free(key);
-		last = current + 1; /* closing parenthesis */
+		fmt = current + 1; /* closing parenthesis */
 	}
 
 	HXdeque_free(dq);
