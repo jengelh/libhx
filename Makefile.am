@@ -10,8 +10,8 @@ pkgconfig_DATA   = libHX.pc
 ${pkgconfig_DATA}: ${top_builddir}/config.status
 
 tmpdir := $(shell mktemp -dtu)
-packer  = bzip2
-packext = .tar.bz2
+packer  = xz
+packext = .tar.xz
 
 .PHONY: tarball
 tarball:
