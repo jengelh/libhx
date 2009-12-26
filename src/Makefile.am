@@ -19,7 +19,7 @@ if B_PROC
 proc_sources     = proc.c
 endif
 
-noinst_PROGRAMS    = tc-compile tc-cast tc-deque tc-dir tc-list \
+check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-list \
                      tc-map tc-misc tc-option tc-proc tc-rand tc-string tc-time
 tc_cast_LDADD      = -lm
 tc_compile_LDADD   = libHX.la
@@ -34,7 +34,7 @@ tc_string_LDADD    = libHX.la
 tc_time_LDADD      = libHX.la -lrt
 
 if HAVE_CXX
-noinst_PROGRAMS   += tx-compile tx-cast tx-deque tx-dir tx-list \
+check_PROGRAMS    += tx-compile tx-cast tx-deque tx-dir tx-list \
                      tx-misc tx-option tx-proc tx-rand tx-string tx-time
 tx_cast_SOURCES    = tx-cast.cpp
 tx_cast_LDADD      = -lm
