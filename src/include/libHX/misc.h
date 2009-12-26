@@ -84,6 +84,7 @@ extern void HX_zvecfree(char **);
  */
 extern int HX_rand(void);
 extern unsigned int HX_irand(unsigned int, unsigned int);
+extern double HX_drand(double, double);
 
 /*
  *	INLINE FUNCTIONS

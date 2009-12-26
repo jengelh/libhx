@@ -3,6 +3,7 @@
 HEAD
 ====
 - shconfig: add HX_shconfig_map to return all entries of a shconfig file
+- rand: add HX_drand ('double'-type bounds and return value)
 
 
 libHX 3.2 (October 11 2009)

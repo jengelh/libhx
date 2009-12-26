@@ -18419,6 +18419,34 @@ HX_irand
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+double
+\series default
+ HX_drand(
+\series bold
+double
+\series default
+ min, 
+\series bold
+double
+\series default
+ max);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_drand
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -18426,36 +18454,7 @@ HX_irand
 \family typewriter
 HX_rand
 \family default
- Retrieve the next random number, with 
-\begin_inset Formula $0\le n<2^{b-1}$
-\end_inset
-
- where 
-\begin_inset Formula $b$
-\end_inset
-
- is the number of bits in an 
-\begin_inset Quotes eld
-\end_inset
-
-
-\family typewriter
-int
-\family default
-
-\begin_inset Quotes erd
-\end_inset
-
-.
- This is different than libc's 
-\family typewriter
-rand
-\family default
- which returns a number 
-\begin_inset Formula $0\le n\le\texttt{RAND\_MAX}$
-\end_inset
-
-.
+ Retrieve the next random number.
 \end_layout
 
 \begin_layout Description
@@ -18467,7 +18466,19 @@ HX_irand
 \begin_inset Formula $\textit{min}\le n<\textit{max}$
 \end_inset
 
-.
+, where min and max are unsigned integers.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_drand
+\family default
+ Retrieve the next random number and fold it so that 
+\begin_inset Formula $\textit{min}\le n<\textit{max}$
+\end_inset
+
+, where min and max are double-precision floating point numbers.
 \end_layout
 
 \begin_layout Subsection
