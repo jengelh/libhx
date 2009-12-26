@@ -337,7 +337,7 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
 		if (*current == '\0')
 			break;
 		if (*(current+1) != '(' /* ) */) {
-			HXmc_strcat(&out, "%");
+			HXmc_memcat(&out, current, 2);
 			last = current + 2;
 			continue;
 		}

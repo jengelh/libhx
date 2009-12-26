@@ -28,6 +28,7 @@ static void t_format(int argc)
 	HXformat_fprintf(fmt, stdout, ">%(ifnempty=\"zero is not empty\" ZERO)<\n");
 	HXformat_fprintf(fmt, stdout, ">%(ifempty=\"one is empty\" ONE)<\n");
 	HXformat_fprintf(fmt, stdout, ">%(ifnempty=\"one is not empty\" ONE)<\n");
+	HXformat_fprintf(fmt, stdout, "%%(NOEXPANSION) %NOEXPANSION\n");
 	HXformat_free(fmt);
 }
 
