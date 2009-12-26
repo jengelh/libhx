@@ -48,9 +48,27 @@ struct HXdir {
 #endif
 };
 
-static int mkdir_gen(const char *);
+static int mkdir_gen(const char *d)
+{
+	struct stat sb;
+	if (lstat(d, &sb) < 0) {
+#if defined(_WIN32)
+		if (mkdir(d) < 0)
+#else
+		if (mkdir(d, 0777) < 0) /* use umask() for permissions */
+#endif
+			return -errno;
+	} else {
+#if defined(_WIN32)
+		if ((sb.st_mode & S_IFDIR) != S_IFDIR)
+#else
+		if (!S_ISDIR(sb.st_mode))
+#endif
+			return -errno;
+	}
+	return 1;
+}
 
-//-----------------------------------------------------------------------------
 EXPORT_SYMBOL void *HXdir_open(const char *s)
 {
 	struct HXdir *d;
@@ -301,26 +319,4 @@ EXPORT_SYMBOL int HX_rrmdir(const char *dir)
 	HXdir_close(ptr);
 	HXmc_free(fn);
 	return ret;
-}
-
-//-----------------------------------------------------------------------------
-static int mkdir_gen(const char *d)
-{
-	struct stat sb;
-	if (lstat(d, &sb) < 0) {
-#if defined(_WIN32)
-		if (mkdir(d) < 0)
-#else
-		if (mkdir(d, 0777) < 0) /* use umask() for permissions */
-#endif
-			return -errno;
-	} else {
-#if defined(_WIN32)
-		if ((sb.st_mode & S_IFDIR) != S_IFDIR)
-#else
-		if (!S_ISDIR(sb.st_mode))
-#endif
-			return -errno;
-	}
-	return 1;
 }

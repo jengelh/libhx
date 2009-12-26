@@ -36,22 +36,44 @@ struct modifier {
 	hxmc_t *arg;
 };
 
-/* Functions */
-static inline char *HX_strchr0(const char *, char);
-static const char *HXformat_read_modifier_arg(const char *, struct modifier *);
-static int HXformat_read_one_modifier(const char **, struct HXdeque *);
-static int HXformat_read_modifiers(const char **, struct HXdeque *);
-static hxmc_t *HXformat_read_key(const char **);
-static void HXformat_transform(hxmc_t **, struct HXdeque *,
-	const struct fmt_entry *);
-static void HXformat_xfrm_after(hxmc_t **, const char *);
-static void HXformat_xfrm_before(hxmc_t **, const char *);
-static void HXformat_xfrm_ifempty(hxmc_t **, const char *);
-static void HXformat_xfrm_ifnempty(hxmc_t **, const char *);
-static void HXformat_xfrm_lower(hxmc_t **, const char *);
-static void HXformat_xfrm_upper(hxmc_t **, const char *);
+static void HXformat_xfrm_after(hxmc_t **x, const char *arg)
+{
+	if (**x != '\0')
+		HXmc_strcat(x, arg);
+}
 
-/* Variables */
+static void HXformat_xfrm_before(hxmc_t **x, const char *arg)
+{
+	if (**x != '\0')
+		HXmc_strpcat(x, arg);
+}
+
+static void HXformat_xfrm_ifempty(hxmc_t **val, const char *repl)
+{
+	if (**val == '\0' && repl != NULL)
+		HXmc_strcpy(val, repl);
+	else
+		HXmc_trunc(val, 0);
+}
+
+static void HXformat_xfrm_ifnempty(hxmc_t **val, const char *repl)
+{
+	if (**val != '\0' && repl != NULL)
+		HXmc_strcpy(val, repl);
+	else
+		HXmc_trunc(val, 0);
+}
+
+static void HXformat_xfrm_lower(hxmc_t **x, const char *arg)
+{
+	HX_strlower(*x);
+}
+
+static void HXformat_xfrm_upper(hxmc_t **x, const char *arg)
+{
+	HX_strupper(*x);
+}
+
 static const struct modifier_info modifier_list[] = {
 #define E(s) (s), sizeof(s)-1
 	{HXformat_xfrm_after,    E("after=\""),    1},
@@ -137,161 +159,12 @@ EXPORT_SYMBOL int HXformat_add(struct HXformat_map *ftable, const char *key,
 	return 1;
 }
 
-EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
-    hxmc_t **resultp, const char *fmt)
-{
-	const struct HXmap *table = fmt_import(ftable);
-	hxmc_t *key, *out = HXmc_meminit(NULL, 0);
-	const struct fmt_entry *entry;
-	struct modifier *mod;
-	const char *last, *current;
-	struct HXdeque *dq;
-	int ret = 0;
-
-	last = current = fmt;
-	if ((dq = HXdeque_init()) == NULL)
-		return -errno;
-
-	while ((current = HX_strchr0(last, '%')) != NULL) {
-		if (current - last > 0)
-			HXmc_memcat(&out, last, current - last);
-		if (*current == '\0')
-			break;
-		if (*(current+1) != '(' /* ) */) {
-			HXmc_strcat(&out, "%");
-			last = current + 2;
-			continue;
-		}
-
-		current += 2; /* skip % and opening parenthesis */
-		if (HXformat_read_modifiers(&current, dq) < 0)
-			goto out;
-
-		key = HXformat_read_key(&current);
-		if ((entry = HXmap_get(table, key)) == NULL) {
-			HXmc_strcat(&out, "%(");
-			HXmc_strcat(&out, key);
-			HXmc_strcat(&out, ")");
-		} else {
-			HXformat_transform(&out, dq, entry);
-		}
-
-		while ((mod = HXdeque_shift(dq)) != NULL) {
-			HXmc_free(mod->arg);
-			free(mod);
-		}
-
-		HXmc_free(key);
-		last = current + 1; /* closing parenthesis */
-	}
-
-	HXdeque_free(dq);
-	*resultp = out;
-	return strlen(out);
-
- out:
-	ret = -errno;
-	HXmc_free(out);
-	HXdeque_free(dq);
-	return ret;
-}
-
-EXPORT_SYMBOL int HXformat_fprintf(const struct HXformat_map *ftable,
-    FILE *filp, const char *fmt)
-{
-	hxmc_t *str;
-	int ret;
-
-	if ((ret = HXformat_aprintf(ftable, &str, fmt)) <= 0)
-		return ret;
-	errno = 0;
-	if (fputs(str, filp) < 0)
-		ret = -errno;
-	HXmc_free(str);
-	return ret;
-}
-
-EXPORT_SYMBOL int HXformat_sprintf(const struct HXformat_map *ftable,
-    char *dest, size_t size, const char *fmt)
-{
-	hxmc_t *str;
-	int ret;
-
-	if ((ret = HXformat_aprintf(ftable, &str, fmt)) < 0)
-		return ret;
-	if (ret == 0) {
-		*dest = '\0';
-		return 0;
-	}
-	strncpy(dest, str, size);
-	HXmc_free(str);
-	return strlen(dest);
-}
-
-//-----------------------------------------------------------------------------
 static inline char *HX_strchr0(const char *s, char c)
 {
 	char *ret = strchr(s, c);
 	if (ret != NULL)
 		return ret;
 	return const_cast1(char *, &s[strlen(s)]);
-}
-
-static const char *HXformat_read_modifier_arg(const char *data,
-    struct modifier *m)
-{
-	const char *quote = strchr(data, '\"');
-	const char *brace = strchr(data, /* ( */ ')');
-
-	if (quote == NULL || (brace != NULL && quote > brace)) {
-		fprintf(stderr, "%s: Malformed %%() specifier\n", __func__);
-		return data;
-	}
-
-	m->arg = NULL;
-	HXmc_memcpy(&m->arg, data, quote - data);
-	return quote + 1;
-}
-
-static int HXformat_read_one_modifier(const char **pcurrent,
-    struct HXdeque *dq)
-{
-	const struct modifier_info *mod_ptr = modifier_list;
-	const char *curr = *pcurrent;
-	struct modifier mnew, *mnew_ptr;
-
-	while (mod_ptr->name != NULL) {
-		if (strncmp(mod_ptr->name, curr, mod_ptr->length) != 0) {
-			++mod_ptr;
-			continue;
-		}
-
-		curr += mod_ptr->length;
-		mnew.transform = mod_ptr->transform;
-		if (mod_ptr->has_arg)
-			curr = HXformat_read_modifier_arg(curr, &mnew);
-		else
-			mnew.arg = NULL;
-
-		while (HX_isspace(*curr))
-			++curr;
-
-		if ((mnew_ptr = HX_memdup(&mnew, sizeof(mnew))) == NULL)
-			return -errno;
-		HXdeque_unshift(dq, mnew_ptr);
-		*pcurrent = curr;
-		return 1;
-	}
-
-	return 0;
-}
-
-static int HXformat_read_modifiers(const char **current, struct HXdeque *dq)
-{
-	int ret;
-	while ((ret = HXformat_read_one_modifier(current, dq)) > 0)
-		/* noop */;
-	return ret;
 }
 
 static hxmc_t *HXformat_read_key(const char **pptr)
@@ -386,40 +259,150 @@ static void HXformat_transform(hxmc_t **out, struct HXdeque *dq,
 #undef PTR
 }
 
-static void HXformat_xfrm_after(hxmc_t **x, const char *arg)
+static const char *HXformat_read_modifier_arg(const char *data,
+    struct modifier *m)
 {
-	if (**x != '\0')
-		HXmc_strcat(x, arg);
+	const char *quote = strchr(data, '\"');
+	const char *brace = strchr(data, /* ( */ ')');
+
+	if (quote == NULL || (brace != NULL && quote > brace)) {
+		fprintf(stderr, "%s: Malformed %%() specifier\n", __func__);
+		return data;
+	}
+
+	m->arg = NULL;
+	HXmc_memcpy(&m->arg, data, quote - data);
+	return quote + 1;
 }
 
-static void HXformat_xfrm_before(hxmc_t **x, const char *arg)
+static int HXformat_read_one_modifier(const char **pcurrent,
+    struct HXdeque *dq)
 {
-	if (**x != '\0')
-		HXmc_strpcat(x, arg);
+	const struct modifier_info *mod_ptr = modifier_list;
+	const char *curr = *pcurrent;
+	struct modifier mnew, *mnew_ptr;
+
+	while (mod_ptr->name != NULL) {
+		if (strncmp(mod_ptr->name, curr, mod_ptr->length) != 0) {
+			++mod_ptr;
+			continue;
+		}
+
+		curr += mod_ptr->length;
+		mnew.transform = mod_ptr->transform;
+		if (mod_ptr->has_arg)
+			curr = HXformat_read_modifier_arg(curr, &mnew);
+		else
+			mnew.arg = NULL;
+
+		while (HX_isspace(*curr))
+			++curr;
+
+		if ((mnew_ptr = HX_memdup(&mnew, sizeof(mnew))) == NULL)
+			return -errno;
+		HXdeque_unshift(dq, mnew_ptr);
+		*pcurrent = curr;
+		return 1;
+	}
+
+	return 0;
 }
 
-static void HXformat_xfrm_ifempty(hxmc_t **val, const char *repl)
+static int HXformat_read_modifiers(const char **current, struct HXdeque *dq)
 {
-	if (**val == '\0' && repl != NULL)
-		HXmc_strcpy(val, repl);
-	else
-		HXmc_trunc(val, 0);
+	int ret;
+	while ((ret = HXformat_read_one_modifier(current, dq)) > 0)
+		/* noop */;
+	return ret;
 }
 
-static void HXformat_xfrm_ifnempty(hxmc_t **val, const char *repl)
+EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
+    hxmc_t **resultp, const char *fmt)
 {
-	if (**val != '\0' && repl != NULL)
-		HXmc_strcpy(val, repl);
-	else
-		HXmc_trunc(val, 0);
+	const struct HXmap *table = fmt_import(ftable);
+	hxmc_t *key, *out = HXmc_meminit(NULL, 0);
+	const struct fmt_entry *entry;
+	struct modifier *mod;
+	const char *last, *current;
+	struct HXdeque *dq;
+	int ret = 0;
+
+	last = current = fmt;
+	if ((dq = HXdeque_init()) == NULL)
+		return -errno;
+
+	while ((current = HX_strchr0(last, '%')) != NULL) {
+		if (current - last > 0)
+			HXmc_memcat(&out, last, current - last);
+		if (*current == '\0')
+			break;
+		if (*(current+1) != '(' /* ) */) {
+			HXmc_strcat(&out, "%");
+			last = current + 2;
+			continue;
+		}
+
+		current += 2; /* skip % and opening parenthesis */
+		if (HXformat_read_modifiers(&current, dq) < 0)
+			goto out;
+
+		key = HXformat_read_key(&current);
+		if ((entry = HXmap_get(table, key)) == NULL) {
+			HXmc_strcat(&out, "%(");
+			HXmc_strcat(&out, key);
+			HXmc_strcat(&out, ")");
+		} else {
+			HXformat_transform(&out, dq, entry);
+		}
+
+		while ((mod = HXdeque_shift(dq)) != NULL) {
+			HXmc_free(mod->arg);
+			free(mod);
+		}
+
+		HXmc_free(key);
+		last = current + 1; /* closing parenthesis */
+	}
+
+	HXdeque_free(dq);
+	*resultp = out;
+	return strlen(out);
+
+ out:
+	ret = -errno;
+	HXmc_free(out);
+	HXdeque_free(dq);
+	return ret;
 }
 
-static void HXformat_xfrm_lower(hxmc_t **x, const char *arg)
+EXPORT_SYMBOL int HXformat_fprintf(const struct HXformat_map *ftable,
+    FILE *filp, const char *fmt)
 {
-	HX_strlower(*x);
+	hxmc_t *str;
+	int ret;
+
+	if ((ret = HXformat_aprintf(ftable, &str, fmt)) <= 0)
+		return ret;
+	errno = 0;
+	if (fputs(str, filp) < 0)
+		ret = -errno;
+	HXmc_free(str);
+	return ret;
 }
 
-static void HXformat_xfrm_upper(hxmc_t **x, const char *arg)
+EXPORT_SYMBOL int HXformat_sprintf(const struct HXformat_map *ftable,
+    char *dest, size_t size, const char *fmt)
 {
-	HX_strupper(*x);
+	hxmc_t *str;
+	int ret;
+
+	if ((ret = HXformat_aprintf(ftable, &str, fmt)) < 0)
+		return ret;
+	if (ret == 0) {
+		*dest = '\0';
+		return 0;
+	}
+	strncpy(dest, str, size);
+	HXmc_free(str);
+	return strlen(dest);
 }

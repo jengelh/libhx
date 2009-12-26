@@ -14,10 +14,30 @@
 #include <libHX/deque.h>
 #include "internal.h"
 
-static inline void HXdeque_add(struct HXdeque_node *, struct HXdeque_node *);
-static inline void HXdeque_drop(struct HXdeque *, struct HXdeque_node *);
+static inline void HXdeque_add(struct HXdeque_node *af,
+    struct HXdeque_node *nd)
+{
+	struct HXdeque *parent = af->parent;
+	nd->next   = af->next;
+	nd->prev   = af;
+	af->next   = nd;
+	nd->parent = parent;
+	if (parent->last == af)
+		parent->last = nd;
+}
 
-//-----------------------------------------------------------------------------
+static inline void HXdeque_drop(struct HXdeque *parent,
+    struct HXdeque_node *node)
+{
+	struct HXdeque_node *left = node->prev, *right = node->next;
+
+	if (left == NULL) parent->first = right;
+	else              left->next = right;
+
+	if (right == NULL) parent->last = left;
+	else               right->prev = left;
+}
+
 EXPORT_SYMBOL struct HXdeque *HXdeque_init(void)
 {
 	struct HXdeque *dq;
@@ -158,29 +178,4 @@ EXPORT_SYMBOL void **HXdeque_to_vec(const struct HXdeque *dq, unsigned int *num)
 	if (num != NULL)
 		*num = dq->items;
 	return ret;
-}
-
-//-----------------------------------------------------------------------------
-static inline void HXdeque_add(struct HXdeque_node *af,
-    struct HXdeque_node *nd)
-{
-	struct HXdeque *parent = af->parent;
-	nd->next   = af->next;
-	nd->prev   = af;
-	af->next   = nd;
-	nd->parent = parent;
-	if (parent->last == af)
-		parent->last = nd;
-}
-
-static inline void HXdeque_drop(struct HXdeque *parent,
-    struct HXdeque_node *node)
-{
-	struct HXdeque_node *left = node->prev, *right = node->next;
-
-	if (left == NULL) parent->first = right;
-	else              left->next = right;
-
-	if (right == NULL) parent->last = left;
-	else               right->prev = left;
 }

@@ -50,6 +50,8 @@
 	break; \
 }
 
+#define SCREEN_WIDTH 80 /* fine, popt also has it hardcoded */
+
 enum {
 	E_SUCCESS = 0,
 	E_LONG_UNKNOWN,
@@ -75,16 +77,232 @@ enum {
 	HXOPT_TYPEMASK = 0x1F, /* 5 bits */
 };
 
-/* Functions */
-static inline const struct HXoption *lookup_long(const struct HXoption *, const char *);
-static inline const struct HXoption *lookup_short(const struct HXoption *, char);
-static void do_assign(struct HXoptcb *);
-static void opt_to_text(const struct HXoption *, char *, size_t, unsigned int);
-static void print_indent(const char *, unsigned int, FILE *);
-static inline char *shell_unescape(char *);
-static inline bool takes_void(unsigned int);
+static void do_assign(struct HXoptcb *cbi)
+{
+	const struct HXoption *opt = cbi->current;
 
-//-----------------------------------------------------------------------------
+	switch (opt->type & HXOPT_TYPEMASK) {
+	case HXTYPE_NONE: {
+		int *p;
+		if ((p = opt->ptr) != NULL) {
+			p = opt->ptr;
+			if (opt->type & HXOPT_INC)      ++*p;
+			else if (opt->type & HXOPT_DEC) --*p;
+			else                            *p = 1;
+		}
+		cbi->data_long = 1;
+		CALL_CB;
+		break;
+	}
+	case HXTYPE_VAL:
+		*static_cast(int *, opt->ptr) = cbi->data_long = opt->val;
+		CALL_CB;
+		break;
+	case HXTYPE_SVAL:
+		*reinterpret_cast(const char **, opt->ptr) =
+			cbi->data = opt->sval;
+		CALL_CB;
+		break;
+	case HXTYPE_BOOL: {
+		int *p;
+		if ((p = opt->ptr) != NULL)
+			*p = strcasecmp(cbi->data, "yes") == 0 ||
+			     strcasecmp(cbi->data, "on") == 0 ||
+			     strcasecmp(cbi->data, "true") == 0 ||
+			     (HX_isdigit(*cbi->data) &&
+			     strtoul(cbi->data, NULL, 0) != 0);
+		break;
+	}
+	case HXTYPE_BYTE:
+		*static_cast(unsigned char *, opt->ptr) = *cbi->data;
+		CALL_CB;
+		break;
+
+	NTYPE_U(HXTYPE_UCHAR,  unsigned char)
+	NTYPE_S(HXTYPE_CHAR,   char)
+	NTYPE_U(HXTYPE_USHORT, unsigned short);
+	NTYPE_S(HXTYPE_SHORT,  short);
+	NTYPE_U(HXTYPE_UINT,   unsigned int);
+	NTYPE_S(HXTYPE_INT,    int);
+	NTYPE_U(HXTYPE_ULONG,  unsigned long);
+	NTYPE_S(HXTYPE_LONG,   long);
+	NTYPE_U(HXTYPE_UINT8,  uint8_t);
+	NTYPE_S(HXTYPE_INT8,   int8_t);
+	NTYPE_U(HXTYPE_UINT16, uint16_t);
+	NTYPE_S(HXTYPE_INT16,  int16_t);
+	NTYPE_U(HXTYPE_UINT32, uint32_t);
+	NTYPE_S(HXTYPE_INT32,  int32_t);
+#ifndef _MSC_VER
+	NTYPE(HXTYPE_ULLONG,   unsigned long long, strtoull);
+	NTYPE(HXTYPE_LLONG,    long long, strtoll);
+	NTYPE(HXTYPE_UINT64,   uint64_t, strtoull);
+	NTYPE(HXTYPE_INT64,    int64_t, strtoll);
+#endif
+	case HXTYPE_FLOAT:
+		cbi->data_dbl = strtod(cbi->data, NULL);
+		if (opt->ptr != NULL)
+			*static_cast(float *, opt->ptr) = cbi->data_dbl;
+		CALL_CB;
+		break;
+	case HXTYPE_DOUBLE:
+		cbi->data_dbl = strtod(cbi->data, NULL);
+		if (opt->ptr != NULL)
+			*static_cast(double *, opt->ptr) = cbi->data_dbl;
+		CALL_CB;
+		break;
+	case HXTYPE_STRING:
+		if (opt->ptr != NULL)
+			*static_cast(char **, opt->ptr) = HX_strdup(cbi->data);
+		CALL_CB;
+		break;
+	case HXTYPE_STRDQ:
+		HXdeque_push(opt->ptr, HX_strdup(cbi->data));
+		CALL_CB;
+		break;
+	case HXTYPE_MCSTR:
+		if (opt->ptr != NULL)
+			HXmc_strcpy(opt->ptr, cbi->data);
+		CALL_CB;
+		break;
+	default:
+		fprintf(stderr, "libHX-opt: illegal type %d\n",
+		        opt->type & HXOPT_TYPEMASK);
+		break;
+	} /* switch */
+}
+
+static inline const struct HXoption *lookup_short(const struct HXoption *table,
+    char opt)
+{
+	while (table->ln != NULL || table->sh != '\0') {
+		if (table->sh == opt)
+			return table;
+		++table;
+	}
+	return NULL;
+}
+
+static inline const struct HXoption *lookup_long(const struct HXoption *table,
+    const char *key)
+{
+	while (table->ln != NULL || table->sh != '\0') {
+		if (table->ln != NULL && strcmp(table->ln, key) == 0)
+			return table;
+		++table;
+	}
+	return NULL;
+}
+
+static inline bool takes_void(unsigned int t)
+{
+	t &= HXOPT_TYPEMASK;
+	return t == HXTYPE_NONE || t == HXTYPE_VAL || t == HXTYPE_SVAL;
+}
+
+static void opt_to_text(const struct HXoption *opt, char *buf, size_t len,
+    unsigned int flags)
+{
+	const char *alt, *htyp = (opt->htyp != NULL) ? opt->htyp : "ARG";
+	size_t i = 0;
+	char equ;
+
+	if (flags & W_SPACE)   buf[i++] = ' ';
+	if (flags & W_BRACKET) buf[i++] = '['; /* ] */
+	if (flags & W_ALT) {
+		alt = "|";
+		equ = (flags & W_EQUAL) ? '=' : ' ';
+	} else {
+		alt = ", ";
+		equ = '=';
+	}
+
+	if (opt->ln == NULL) {
+		buf[i++] = '-';
+		buf[i++] = opt->sh;
+		if (!takes_void(opt->type))
+			i += snprintf(buf + i, len - i, " %s", htyp);
+	} else {
+		if (opt->sh == '\0') {
+			if (takes_void(opt->type))
+				i += snprintf(buf + i, len - i,
+				     "--%s", opt->ln);
+			else
+				i += snprintf(buf + i, len - i,
+				     "--%s=%s", opt->ln, htyp);
+		} else {
+			if (takes_void(opt->type))
+				i += snprintf(buf + i, len - i, "-%c%s--%s",
+				     opt->sh, alt, opt->ln);
+			else
+				i += snprintf(buf + i, len - i, "-%c%s--%s%c%s",
+				     opt->sh, alt, opt->ln, equ, htyp);
+		}
+	}
+
+	if (flags & W_BRACKET)
+		buf[i++] = ']';
+	buf[i] = '\0';
+}
+
+static void print_indent(const char *msg, unsigned int ind, FILE *fp)
+{
+	size_t rest = SCREEN_WIDTH - ind;
+	char *p;
+
+	while (true) {
+		if (strlen(msg) < rest) {
+			fprintf(fp, "%s", msg);
+			break;
+		}
+		if ((p = HX_strbchr(msg, msg + rest, ' ')) == NULL) {
+			fprintf(fp, "%s", msg);
+			break;
+		}
+		fprintf(fp, "%.*s\n%*s", static_cast(unsigned int, p - msg),
+		        msg, ind, "");
+		msg  = p + 1;
+		rest = SCREEN_WIDTH - ind;
+	}
+	fprintf(fp, "\n");
+}
+
+static inline char *shell_unescape(char *o)
+{
+	char *i = o, quot = '\0';
+	while (*i != '\0') {
+		if (quot == '\0') {
+			switch (*i) {
+				case '"':
+				case '\'':
+					quot = *i++;
+					continue;
+				case '\\':
+					if (*++i == '\\')
+						*o++ = *i;
+					continue;
+				case ';':
+					*o = '\0';
+					return i + 1;
+				default:
+					*o++ = *i++;
+					continue;
+			}
+		}
+		if (*i == quot) {
+			quot = 0;
+			++i;
+			continue;
+		} else if (*i == '\\') {
+			*o++ = *++i;
+			++i;
+			continue;
+		}
+		*o++ = *i++;
+	}
+	*o = '\0';
+	return NULL;
+}
+
 EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
     const char ***argv, unsigned int flags)
 {
@@ -379,7 +597,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	return 1;
 }
 
-#define SCREEN_WIDTH 80 /* fine, popt also has it hardcoded */
 EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
 {
 	FILE *fp = (nfp == NULL) ? stderr : nfp;
@@ -489,7 +706,6 @@ EXPORT_SYMBOL void HX_getopt_usage_cb(const struct HXoptcb *cbi)
 	exit(EXIT_SUCCESS);
 }
 
-//-----------------------------------------------------------------------------
 static void HX_shconf_break(void *ptr, char *line,
     void (*cb)(void *, const char *, const char *))
 {
@@ -608,231 +824,4 @@ EXPORT_SYMBOL void HX_shconfig_free(const struct HXoption *table)
 			free(*ptr);
 		++table;
 	}
-}
-
-//-----------------------------------------------------------------------------
-static void do_assign(struct HXoptcb *cbi)
-{
-	const struct HXoption *opt = cbi->current;
-
-	switch (opt->type & HXOPT_TYPEMASK) {
-	case HXTYPE_NONE: {
-		int *p;
-		if ((p = opt->ptr) != NULL) {
-			p = opt->ptr;
-			if (opt->type & HXOPT_INC)      ++*p;
-			else if (opt->type & HXOPT_DEC) --*p;
-			else                            *p = 1;
-		}
-		cbi->data_long = 1;
-		CALL_CB;
-		break;
-	}
-	case HXTYPE_VAL:
-		*static_cast(int *, opt->ptr) = cbi->data_long = opt->val;
-		CALL_CB;
-		break;
-	case HXTYPE_SVAL:
-		*reinterpret_cast(const char **, opt->ptr) =
-			cbi->data = opt->sval;
-		CALL_CB;
-		break;
-	case HXTYPE_BOOL: {
-		int *p;
-		if ((p = opt->ptr) != NULL)
-			*p = strcasecmp(cbi->data, "yes") == 0 ||
-			     strcasecmp(cbi->data, "on") == 0 ||
-			     strcasecmp(cbi->data, "true") == 0 ||
-			     (HX_isdigit(*cbi->data) &&
-			     strtoul(cbi->data, NULL, 0) != 0);
-		break;
-	}
-	case HXTYPE_BYTE:
-		*static_cast(unsigned char *, opt->ptr) = *cbi->data;
-		CALL_CB;
-		break;
-
-	NTYPE_U(HXTYPE_UCHAR,  unsigned char)
-	NTYPE_S(HXTYPE_CHAR,   char)
-	NTYPE_U(HXTYPE_USHORT, unsigned short);
-	NTYPE_S(HXTYPE_SHORT,  short);
-	NTYPE_U(HXTYPE_UINT,   unsigned int);
-	NTYPE_S(HXTYPE_INT,    int);
-	NTYPE_U(HXTYPE_ULONG,  unsigned long);
-	NTYPE_S(HXTYPE_LONG,   long);
-	NTYPE_U(HXTYPE_UINT8,  uint8_t);
-	NTYPE_S(HXTYPE_INT8,   int8_t);
-	NTYPE_U(HXTYPE_UINT16, uint16_t);
-	NTYPE_S(HXTYPE_INT16,  int16_t);
-	NTYPE_U(HXTYPE_UINT32, uint32_t);
-	NTYPE_S(HXTYPE_INT32,  int32_t);
-#ifndef _MSC_VER
-	NTYPE(HXTYPE_ULLONG,   unsigned long long, strtoull);
-	NTYPE(HXTYPE_LLONG,    long long, strtoll);
-	NTYPE(HXTYPE_UINT64,   uint64_t, strtoull);
-	NTYPE(HXTYPE_INT64,    int64_t, strtoll);
-#endif
-	case HXTYPE_FLOAT:
-		cbi->data_dbl = strtod(cbi->data, NULL);
-		if (opt->ptr != NULL)
-			*static_cast(float *, opt->ptr) = cbi->data_dbl;
-		CALL_CB;
-		break;
-	case HXTYPE_DOUBLE:
-		cbi->data_dbl = strtod(cbi->data, NULL);
-		if (opt->ptr != NULL)
-			*static_cast(double *, opt->ptr) = cbi->data_dbl;
-		CALL_CB;
-		break;
-	case HXTYPE_STRING:
-		if (opt->ptr != NULL)
-			*static_cast(char **, opt->ptr) = HX_strdup(cbi->data);
-		CALL_CB;
-		break;
-	case HXTYPE_STRDQ:
-		HXdeque_push(opt->ptr, HX_strdup(cbi->data));
-		CALL_CB;
-		break;
-	case HXTYPE_MCSTR:
-		if (opt->ptr != NULL)
-			HXmc_strcpy(opt->ptr, cbi->data);
-		CALL_CB;
-		break;
-	default:
-		fprintf(stderr, "libHX-opt: illegal type %d\n",
-		        opt->type & HXOPT_TYPEMASK);
-		break;
-	} /* switch */
-}
-
-static inline const struct HXoption *lookup_short(const struct HXoption *table,
-    char opt)
-{
-	while (table->ln != NULL || table->sh != '\0') {
-		if (table->sh == opt)
-			return table;
-		++table;
-	}
-	return NULL;
-}
-
-static inline const struct HXoption *lookup_long(const struct HXoption *table,
-    const char *key)
-{
-	while (table->ln != NULL || table->sh != '\0') {
-		if (table->ln != NULL && strcmp(table->ln, key) == 0)
-			return table;
-		++table;
-	}
-	return NULL;
-}
-
-static void opt_to_text(const struct HXoption *opt, char *buf, size_t len,
-    unsigned int flags)
-{
-	const char *alt, *htyp = (opt->htyp != NULL) ? opt->htyp : "ARG";
-	size_t i = 0;
-	char equ;
-
-	if (flags & W_SPACE)   buf[i++] = ' ';
-	if (flags & W_BRACKET) buf[i++] = '['; /* ] */
-	if (flags & W_ALT) {
-		alt = "|";
-		equ = (flags & W_EQUAL) ? '=' : ' ';
-	} else {
-		alt = ", ";
-		equ = '=';
-	}
-
-	if (opt->ln == NULL) {
-		buf[i++] = '-';
-		buf[i++] = opt->sh;
-		if (!takes_void(opt->type))
-			i += snprintf(buf + i, len - i, " %s", htyp);
-	} else {
-		if (opt->sh == '\0') {
-			if (takes_void(opt->type))
-				i += snprintf(buf + i, len - i,
-				     "--%s", opt->ln);
-			else
-				i += snprintf(buf + i, len - i,
-				     "--%s=%s", opt->ln, htyp);
-		} else {
-			if (takes_void(opt->type))
-				i += snprintf(buf + i, len - i, "-%c%s--%s",
-				     opt->sh, alt, opt->ln);
-			else
-				i += snprintf(buf + i, len - i, "-%c%s--%s%c%s",
-				     opt->sh, alt, opt->ln, equ, htyp);
-		}
-	}
-
-	if (flags & W_BRACKET)
-		buf[i++] = ']';
-	buf[i] = '\0';
-}
-
-static void print_indent(const char *msg, unsigned int ind, FILE *fp)
-{
-	size_t rest = SCREEN_WIDTH - ind;
-	char *p;
-
-	while (true) {
-		if (strlen(msg) < rest) {
-			fprintf(fp, "%s", msg);
-			break;
-		}
-		if ((p = HX_strbchr(msg, msg + rest, ' ')) == NULL) {
-			fprintf(fp, "%s", msg);
-			break;
-		}
-		fprintf(fp, "%.*s\n%*s", static_cast(unsigned int, p - msg),
-		        msg, ind, "");
-		msg  = p + 1;
-		rest = SCREEN_WIDTH - ind;
-	}
-	fprintf(fp, "\n");
-}
-
-static inline char *shell_unescape(char *o)
-{
-	char *i = o, quot = '\0';
-	while (*i != '\0') {
-		if (quot == '\0') {
-			switch (*i) {
-				case '"':
-				case '\'':
-					quot = *i++;
-					continue;
-				case '\\':
-					if (*++i == '\\')
-						*o++ = *i;
-					continue;
-				case ';':
-					*o = '\0';
-					return i + 1;
-				default:
-					*o++ = *i++;
-					continue;
-			}
-		}
-		if (*i == quot) {
-			quot = 0;
-			++i;
-			continue;
-		} else if (*i == '\\') {
-			*o++ = *++i;
-			++i;
-			continue;
-		}
-		*o++ = *i++;
-	}
-	*o = '\0';
-	return NULL;
-}
-
-static inline bool takes_void(unsigned int t)
-{
-	t &= HXOPT_TYPEMASK;
-	return t == HXTYPE_NONE || t == HXTYPE_VAL || t == HXTYPE_SVAL;
 }
