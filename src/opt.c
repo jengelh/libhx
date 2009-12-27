@@ -293,8 +293,8 @@ static inline char *shell_unescape(char *o)
 			++i;
 			continue;
 		} else if (*i == '\\') {
-			*o++ = *++i;
-			++i;
+			if (*++i != '\0')
+				*o++ = *i++;
 			continue;
 		}
 		*o++ = *i++;
