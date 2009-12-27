@@ -11,6 +11,7 @@
 
 #include "config.h"
 #include <libHX/defs.h>
+#include <libHX/string.h>
 
 #ifdef __cplusplus
 	/* Only for our dual C/C++ testsuites */
@@ -40,5 +41,7 @@
 
 #define MAXFNLEN 256  /* max length for filename buffer */
 #define MAXLNLEN 1024 /* max length for usual line */
+
+extern hxmc_t *HXparse_dequote_fmt(const char *, const char *, const char **);
 
 #endif /* LIBHX_INTERNAL_H */

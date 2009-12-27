@@ -262,10 +262,18 @@ static void print_indent(const char *msg, unsigned int ind, FILE *fp)
 	fprintf(fp, "\n");
 }
 
-static inline char *shell_unescape(char *o)
+/**
+ * HXparse_deshell_int - shell-style argument unescape
+ * @o:		input/output string
+ * @end:	terminating characters
+ *
+ * Unescapes a quoted argument, in-place.
+ * Returns a pointer to one position after the termination character.
+ */
+static char *HXparse_dequote_int(char *o, const char *end)
 {
-	char *i = o, quot = '\0';
-	while (*i != '\0') {
+	char *i, quot = '\0';
+	for (i = o; *i != '\0'; ) {
 		if (quot == '\0') {
 			switch (*i) {
 				case '"':
@@ -276,16 +284,13 @@ static inline char *shell_unescape(char *o)
 					if (*++i != '\0')
 						*o++ = *i++;
 					continue;
-				case ';':
-				case ' ':
-				case '\t':
-				case '\n':
-					*o = '\0';
-					return i + 1;
-				default:
-					*o++ = *i++;
-					continue;
 			}
+			if (end != NULL && strchr(end, *i) != NULL) {
+				*o = '\0';
+				return i + 1;
+			}
+			*o++ = *i++;
+			continue;
 		}
 		if (*i == quot) {
 			quot = 0;
@@ -300,6 +305,74 @@ static inline char *shell_unescape(char *o)
 	}
 	*o = '\0';
 	return NULL;
+}
+
+/**
+ * HXparse_dequote_fmt
+ * @s:		Input string
+ * @end:	Terminating characters. May be %NULL.
+ * @pptr:	Return pointer
+ *
+ * Dequote a string @s until @end, and return an allocated string that will
+ * contain the result, or %NULL on error. @*pptr will then point to the
+ * terminating character.
+ * Nested %() are honored.
+ *
+ * (This function is used from format.c. It is here in opt.c to call
+ * HXparse_dequote_int.)
+ */
+hxmc_t *HXparse_dequote_fmt(const char *s, const char *end, const char **pptr)
+{
+	unsigned int level = 0; /* nesting */
+	const char *i;
+	char quot = '\0';
+	hxmc_t *tmp;
+
+	/* Search for end */
+	for (i = s; *i != '\0'; ) {
+		if (quot == '\0') {
+			switch (*i) {
+				case '"':
+				case '\'':
+					quot = *i++;
+					continue;
+				case '\\':
+					if (i[1] != '\0')
+						++i;
+					continue;
+			}
+			if (i[0] == '%' && i[1] == '(' /* ) */) {
+				++level;
+				i += 2;
+				continue;
+			}
+			if (level == 0 && end != NULL &&
+			    strchr(end, *i) != NULL)
+				break;
+			if (i[0] == /* ( */ ')' && level > 0)
+				--level;
+			++i;
+			continue;
+		}
+		if (*i == quot) {
+			quot = 0;
+			++i;
+			continue;
+		} else if (*i == '\\') {
+			if (*++i != '\0')
+				++i;
+			continue;
+		}
+		++i;
+	}
+
+	if (pptr != NULL)
+		*pptr = i;
+	tmp = HXmc_meminit(s, i - s);
+	if (tmp == NULL)
+		return NULL;
+	HXparse_dequote_int(tmp, NULL);
+	return tmp;
 }
 
 EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
@@ -718,7 +791,7 @@ static void HX_shconf_break(void *ptr, char *line,
 		val = lp;
 
 		/* Handle escape codes and quotes, and assign to TAB entry */
-		lp = shell_unescape(val);
+		lp = HXparse_dequote_int(val, "\t\n ;");
 		(*cb)(ptr, key, val);
 	}
 }
