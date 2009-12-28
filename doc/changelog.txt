@@ -2,6 +2,12 @@
 
 HEAD
 ====
+Bug fixes:
+- format: fix incorrect copying of non-expanded % strings
+- shconfig: fix incorrect parsing of "\'"
+- shconfig: fix incorrect processing of "\"\\\0BCD"
+- shconfig: be more strict with syntax
+Enhancements:
 - shconfig: add HX_shconfig_map to return all entries of a shconfig file
 - rand: add HX_drand ('double'-type bounds and return value)
 - rand: avoid some function call overhead in HX_irand

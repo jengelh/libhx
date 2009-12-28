@@ -1,5 +1,5 @@
 /*
-A=b;C="d" ; E = "F;" ;
+A=b;C="d" ; E="F;" ; F= G=Z
 */
 /*
  *	option parser test program
@@ -28,6 +28,7 @@ static void t_format(int argc)
 	HXformat_fprintf(fmt, stdout, ">%(ifnempty=\"zero is not empty\" ZERO)<\n");
 	HXformat_fprintf(fmt, stdout, ">%(ifempty=\"one is empty\" ONE)<\n");
 	HXformat_fprintf(fmt, stdout, ">%(ifnempty=\"one is not empty\" ONE)<\n");
+	HXformat_fprintf(fmt, stdout, "%%(NOEXPANSION) %NOEXPANSION\n");
 	HXformat_free(fmt);
 }
 
@@ -42,8 +43,6 @@ static void t_shconfig(const char *file)
 	};
 	if (HX_shconfig(file, opt_tab) < 0)
 		fprintf(stderr, "Read error %s: %s\n", file, strerror(errno));
-	else
-		printf("A => >%s<\n" "C => >%s<\n" "E => >%s<\n", A, C, E);
 }
 
 static void t_shconfig2(const char *file)
@@ -57,7 +56,7 @@ static void t_shconfig2(const char *file)
 		abort();
 	trav = HXmap_travinit(map, 0);
 	while ((node = HXmap_traverse(trav)) != NULL)
-		printf("\t%s -> %s\n", node->skey, node->sdata);
+		printf("\t\"%s\" -> \"%s\"\n", node->skey, node->sdata);
 	HXmap_travfree(trav);
 }
 

@@ -277,10 +277,13 @@ static inline char *shell_unescape(char *o)
 					quot = *i++;
 					continue;
 				case '\\':
-					if (*++i == '\\')
-						*o++ = *i;
+					if (*++i != '\0')
+						*o++ = *i++;
 					continue;
 				case ';':
+				case ' ':
+				case '\t':
+				case '\n':
 					*o = '\0';
 					return i + 1;
 				default:
@@ -293,8 +296,8 @@ static inline char *shell_unescape(char *o)
 			++i;
 			continue;
 		} else if (*i == '\\') {
-			*o++ = *++i;
-			++i;
+			if (*++i != '\0')
+				*o++ = *i++;
 			continue;
 		}
 		*o++ = *i++;
@@ -709,26 +712,26 @@ EXPORT_SYMBOL void HX_getopt_usage_cb(const struct HXoptcb *cbi)
 static void HX_shconf_break(void *ptr, char *line,
     void (*cb)(void *, const char *, const char *))
 {
-	char *lp = line, *key, *val, *w;
+	char *lp = line, *key, *val;
 	HX_chomp(line);
 
 	while (lp != NULL) {
-		key = lp;
+		while (HX_isspace(*lp) || *lp == ';')
+			++lp;
 		/* Next entry if comment, empty line or no value */
 		if (*lp == '#' || *lp == '\0')
 			return;
-		if ((val = strchr(lp, '=')) == NULL)
+		if (!HX_isalpha(*lp) && *lp != '_')
+			/* Variables ought to start with [A-Z_] */
 			return;
-		while (HX_isspace(*key))
-			++key;
-
-		/* Skip any whitespace directly before and after '=' */
-		if ((w = strchr(key, ' ')) != NULL && w < val)
-			*w = '\0';
-
-		*val++ = '\0';
-		while (HX_isspace(*val))
-			++val;
+		key = lp;
+		while (HX_isalnum(*lp) || *lp == '_')
+			++lp;
+		if (*lp != '=')
+			/* Variable name contained something not in [A-Z0-9_] */
+			return;
+		*lp++ = '\0';
+		val = lp;
 
 		/* Handle escape codes and quotes, and assign to TAB entry */
 		lp = shell_unescape(val);
