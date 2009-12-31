@@ -232,10 +232,10 @@ EXPORT_SYMBOL char *HX_strclone(char **pa, const char *pb)
 	return *pa;
 }
 
-EXPORT_SYMBOL char *HX_strlower(char *expr)
+EXPORT_SYMBOL char *HX_strlower(char *orig)
 {
-	char *orig;
-	for (orig = expr; *expr != '\0'; ++expr)
+	char *expr;
+	for (expr = orig; *expr != '\0'; ++expr)
 		*expr = HX_tolower(*expr);
 	return orig;
 }
@@ -498,10 +498,10 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 	return NULL;
 }
 
-EXPORT_SYMBOL char *HX_strupper(char *expr)
+EXPORT_SYMBOL char *HX_strupper(char *orig)
 {
-	char *orig;
-	for (orig = expr; *expr != '\0'; ++expr)
+	char *expr;
+	for (expr = orig; *expr != '\0'; ++expr)
 		*expr = HX_toupper(*expr);
 	return orig;
 }
