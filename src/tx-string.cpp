@@ -84,7 +84,7 @@ static void t_strncat(void)
 
 	if (snprintf(data, sizeof(data), "12345678") >= 
 	    static_cast(ssize_t, sizeof(data)))
-		printf("Not enoguh space\n");
+		printf("Not enough space\n");
 	printf("String: >%s<\n", data);
 
 	HX_strlcat(data, "pqrstuv__", 2);
