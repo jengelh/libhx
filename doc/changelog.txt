@@ -8,6 +8,7 @@ Bug fixes:
 - shconfig: fix incorrect processing of "\"\\\0BCD"
 - shconfig: be more strict with syntax
 Enhancements:
+- deque: add HXdeque_genocide2
 - mc: add HXmc_zvecfree
 - shconfig: add HX_shconfig_map to return all entries of a shconfig file
 - rand: add HX_drand ('double'-type bounds and return value)
