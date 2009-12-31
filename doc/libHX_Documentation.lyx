@@ -11409,6 +11409,30 @@ HXmc_free
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXmc_zvecfree(hxmc_t 
+\series bold
+**
+\series default
+s);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmc_zvecfree
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -11417,6 +11441,19 @@ HXmc_free
 HXmc_free
 \family default
  Frees the hxmc object.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXmc_zvecfree
+\family default
+ Frees all hxmc objects in the NULL-terminated array, and finally frees
+ the array itself, similar to 
+\family typewriter
+HX_zvecfree
+\family default
+.
 \end_layout
 
 \begin_layout Subsection

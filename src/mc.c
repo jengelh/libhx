@@ -232,3 +232,11 @@ EXPORT_SYMBOL void HXmc_free(hxmc_t *vp)
 	HXmc_check(ctx);
 	free(ctx);
 }
+
+EXPORT_SYMBOL void HXmc_zvecfree(hxmc_t **args)
+{
+	hxmc_t **travp;
+	for (travp = args; *travp != NULL; ++travp)
+		HXmc_free(*travp);
+	free(args);
+}

@@ -46,6 +46,7 @@ extern hxmc_t *HXmc_strins(hxmc_t **, size_t, const char *);
 extern hxmc_t *HXmc_memins(hxmc_t **, size_t, const void *, size_t);
 extern hxmc_t *HXmc_memdel(hxmc_t *, size_t, size_t);
 extern void HXmc_free(hxmc_t *);
+extern void HXmc_zvecfree(hxmc_t **);
 
 /*
  *	STRING.C
