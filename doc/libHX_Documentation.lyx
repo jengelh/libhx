@@ -11387,6 +11387,38 @@ len
 ).
 \end_layout
 
+\begin_layout LyX-Code
+
+\series bold
+void
+\series default
+ HXmc_free(hxmc_t 
+\series bold
+*
+\series default
+s);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmc_free
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXmc_free
+\family default
+ Frees the hxmc object.
+\end_layout
+
 \begin_layout Subsection
 Data manipulation
 \end_layout
