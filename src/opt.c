@@ -174,22 +174,18 @@ static void do_assign(struct HXoptcb *cbi)
 static inline const struct HXoption *lookup_short(const struct HXoption *table,
     char opt)
 {
-	while (table->ln != NULL || table->sh != '\0') {
+	for (; table->ln != NULL || table->sh != '\0'; ++table)
 		if (table->sh == opt)
 			return table;
-		++table;
-	}
 	return NULL;
 }
 
 static inline const struct HXoption *lookup_long(const struct HXoption *table,
     const char *key)
 {
-	while (table->ln != NULL || table->sh != '\0') {
+	for (; table->ln != NULL || table->sh != '\0'; ++table)
 		if (table->ln != NULL && strcmp(table->ln, key) == 0)
 			return table;
-		++table;
-	}
 	return NULL;
 }
 
@@ -610,26 +606,22 @@ EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
 	HX_getopt_usage(cbi, nfp);
 
 	/* Find maximum indent */
-	travp = cbi->table;
-	while (travp->ln != NULL || travp->sh != '\0') {
+	for (travp = cbi->table; travp->ln != NULL || travp->sh != '\0'; ++travp) {
 		size_t tl;
 
 		opt_to_text(travp, tmp, sizeof(tmp), W_EQUAL);
 		if ((tl = strlen(tmp)) > tw)
 			tw = tl;
-		++travp;
 	}
 
 	/* Print table */
-	travp = cbi->table;
-	while (travp->ln != NULL || travp->sh != '\0') {
+	for (travp = cbi->table; travp->ln != NULL || travp->sh != '\0'; ++travp) {
 		opt_to_text(travp, tmp, sizeof(tmp), W_NONE);
 		fprintf(fp, "  %-*s    ", static_cast(int, tw), tmp);
 		if (travp->help == NULL)
 			fprintf(fp, "\n");
 		else
 			print_indent(travp->help, tw + 6, fp);
-		++travp;
 	}
 }
 
@@ -654,13 +646,10 @@ EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 		fprintf(fp, "\n     ");
 		wd = 6;
 	}
-	travp = cbi->table;
-	while (travp->ln != NULL || travp->sh != '\0') {
+	for (travp = cbi->table; travp->ln != NULL || travp->sh != '\0'; ++travp) {
 		if (!(travp->ln == NULL && travp->sh != '\0' &&
-		    takes_void(travp->type))) {
-			++travp;
+		    takes_void(travp->type)))
 			continue;
-		}
 		if (*tmp == '\0') {
 			snprintf(tmp, sizeof(tmp), " [-"); /* ] */
 			tw = 3;
@@ -673,7 +662,6 @@ EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 			wd   = 6;
 			*tmp = '\0';
 		}
-		++travp;
 	}
 	if (*tmp != '\0') {
 		tmp[tw++] = ']';
@@ -682,13 +670,10 @@ EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 	}
 
 	/* Any other args */
-	travp = cbi->table;
-	while (travp->ln != NULL || travp->sh != '\0') {
+	for (travp = cbi->table; travp->ln != NULL || travp->sh != '\0'; ++travp) {
 		if (travp->ln == NULL && travp->sh != '\0' &&
-		    takes_void(travp->type)) {
-			++travp;
+		    takes_void(travp->type))
 			continue;
-		}
 
 		opt_to_text(travp, tmp, sizeof(tmp),
 		            W_SPACE | W_BRACKET | W_ALT);
@@ -697,7 +682,6 @@ EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 			wd = 6;
 		}
 		wd += fprintf(fp, "%s", tmp);
-		++travp;
 	}
 
 	fprintf(fp, "\n");
@@ -803,7 +787,7 @@ EXPORT_SYMBOL int HX_shconfig_pv(const char **path, const char *file,
 	char buf[MAXFNLEN];
 	int ret = 0;
 
-	while (*path != NULL) {
+	for (; *path != NULL; ++path) {
 		int v;
 		snprintf(buf, sizeof(buf), "%s/%s", *path, file);
 		v = HX_shconfig(buf, table);
@@ -812,7 +796,6 @@ EXPORT_SYMBOL int HX_shconfig_pv(const char **path, const char *file,
 			if (flags & SHCONF_ONE)
 				break;
 		}
-		++path;
 	}
 
 	return ret;
@@ -820,11 +803,10 @@ EXPORT_SYMBOL int HX_shconfig_pv(const char **path, const char *file,
 
 EXPORT_SYMBOL void HX_shconfig_free(const struct HXoption *table)
 {
-	while (table->ln != NULL) {
+	for (; table->ln != NULL; ++table) {
 		char **ptr = table->ptr;
 		if (table->type == HXTYPE_STRING &&
 		    ptr != NULL && *ptr != NULL)
 			free(*ptr);
-		++table;
 	}
 }

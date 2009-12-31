@@ -121,11 +121,10 @@ EXPORT_SYMBOL void *HXdeque_del(struct HXdeque_node *node)
 
 EXPORT_SYMBOL void HXdeque_free(struct HXdeque *dq)
 {
-	struct HXdeque_node *node = dq->first;
-	while (node != NULL) {
-		struct HXdeque_node *next = node->next;
+	struct HXdeque_node *node, *next;
+	for (node = dq->first; node != NULL; node = next) {
+		next = node->next;
 		free(node);
-		node = next;
 	}
 	free(dq);
 }
@@ -151,12 +150,11 @@ EXPORT_SYMBOL void *HXdeque_get(struct HXdeque *dq, const void *ptr)
 
 EXPORT_SYMBOL void HXdeque_genocide(struct HXdeque *dq)
 {
-	struct HXdeque_node *trav = dq->first;
-	while (trav != NULL) {
-		struct HXdeque_node *next = trav->next;
+	struct HXdeque_node *trav, *next;
+	for (trav = dq->first; trav != NULL; trav = next) {
+		next = trav->next;
 		free(trav->ptr);
 		free(trav);
-		trav = next;
 	}
 	free(dq);
 }

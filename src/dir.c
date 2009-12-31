@@ -244,11 +244,9 @@ EXPORT_SYMBOL int HX_mkdir(const char *idir)
 	{
 		char *p = dir;
 		HX_strlcpy(dir, idir, sizeof(dir));
-		while (*p != '\0') {
+		for (; *p != '\0'; ++p)
 			if (*p == '\\')
 				*p = '/';
-			++p;
-		}
 		if (HX_isalpha(dir[0]) && dir[1] == ':')
 			i = 2;
 	}
