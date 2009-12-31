@@ -6329,9 +6329,49 @@ HXdeque_genocide
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXdeque_genocide2(
+\series bold
+struct
+\series default
+ HXdeque 
+\series bold
+*
+\series default
+dq, 
+\series bold
+void (*
+\series default
+xfree
+\series bold
+)
+\series default
+(
+\series bold
+void *
+\series default
+));
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXdeque_genocide2
 \end_layout
 
-\begin_layout LyX-Code
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
 
 \series bold
 void **
@@ -6382,7 +6422,8 @@ HXdeque_free
 \family typewriter
 HXdeque_genocide
 \family default
- is a variant that will not only destroy the list, but also calls 
+ is a variant that will not only destroy the list, but also calls a freeing
+ function 
 \family typewriter
 free()
 \family default
@@ -6392,7 +6433,7 @@ free()
 \family typewriter
 malloc
 \family default
- , 
+, 
 \family typewriter
 calloc
 \family default
@@ -6405,6 +6446,23 @@ realloc
  
 \family typewriter
 HXdeque_del
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+A generic variant is available with 
+\family typewriter
+HXdeque_genocide2
+\family default
+, which takes a pointer to an appropriate freeing function.
+ 
+\family typewriter
+HXdeque_genocide
+\family default
+ is thus equivalent to 
+\family typewriter
+HXdeque_genocide2(dq, free)
 \family default
 .
 \end_layout
@@ -11385,6 +11443,75 @@ len
 len
 \family default
 ).
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+void
+\series default
+ HXmc_free(hxmc_t 
+\series bold
+*
+\series default
+s);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmc_free
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HXmc_zvecfree(hxmc_t 
+\series bold
+**
+\series default
+s);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXmc_zvecfree
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXmc_free
+\family default
+ Frees the hxmc object.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXmc_zvecfree
+\family default
+ Frees all hxmc objects in the NULL-terminated array, and finally frees
+ the array itself, similar to 
+\family typewriter
+HX_zvecfree
+\family default
+.
 \end_layout
 
 \begin_layout Subsection

@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <libHX/deque.h>
+#include <libHX/string.h>
 #include "internal.h"
 
 static inline void HXdeque_add(struct HXdeque_node *af,
@@ -148,12 +149,12 @@ EXPORT_SYMBOL void *HXdeque_get(struct HXdeque *dq, const void *ptr)
 	return NULL;
 }
 
-EXPORT_SYMBOL void HXdeque_genocide(struct HXdeque *dq)
+EXPORT_SYMBOL void HXdeque_genocide2(struct HXdeque *dq, void (*xfree)(void *))
 {
 	struct HXdeque_node *trav, *next;
 	for (trav = dq->first; trav != NULL; trav = next) {
 		next = trav->next;
-		free(trav->ptr);
+		xfree(trav->ptr);
 		free(trav);
 	}
 	free(dq);
