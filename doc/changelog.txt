@@ -4,6 +4,7 @@ HEAD
 ====
 Bug fixes:
 - format: fix incorrect copying of non-expanded % strings
+- proc: avoid calling close(-1) to not trip up valgrind
 - shconfig: fix incorrect parsing of "\'"
 - shconfig: fix incorrect processing of "\"\\\0BCD"
 - shconfig: be more strict with syntax

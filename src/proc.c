@@ -132,7 +132,8 @@ EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 	}
 	if ((ret = HXproc_build_pipes(proc, pipes)) <= 0) {
 		saved_errno = errno;
-		close(nullfd);
+		if (nullfd >= 0)
+			close(nullfd);
 		errno = saved_errno;
 		return ret;
 	}
@@ -144,7 +145,8 @@ EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 		if (proc->p_ops != NULL && proc->p_ops->p_complete != NULL)
 			proc->p_ops->p_complete(proc->p_data);
 		HXproc_close_pipes(pipes);
-		close(nullfd);
+		if (nullfd >= 0)
+			close(nullfd);
 		return -(errno = saved_errno);
 	} else if (proc->p_pid == 0) {
 		const char *prog = *argv;
@@ -191,7 +193,8 @@ EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 			dup2(proc->p_stderr, STDERR_FILENO);
 			close(proc->p_stderr);
 		}
-		close(nullfd);
+		if (nullfd >= 0)
+			close(nullfd);
 		if (proc->p_flags & HXPROC_A0)
 			++argv;
 		if (proc->p_flags & HXPROC_EXECV)
