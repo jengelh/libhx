@@ -12,23 +12,32 @@ A=b;C="d" ; E="F;" ; F= G=Z
 #include <libHX/option.h>
 #include <libHX.h>
 
+static const char *const fmt_strings[] = {
+	"/%(HOME)/%(lower USER)/%(ARGC).%(ARGK)\n",
+	">%(ZERO)<\n",
+	">%(before=\"-o\" ZERO)<\n\n",
+	">%(ifempty=\"zero is empty\" ZERO)<\n",
+	">%(ifnempty=\"zero is not empty\" ZERO)<\n",
+	">%(ifempty=\"one is empty\" ONE)<\n",
+	">%(ifnempty=\"one is not empty\" ONE)<\n",
+	"%%(NOEXPANSION) %NOEXPANSION\n",
+	NULL,
+};
+
 static void t_format(int argc)
 {
 	struct HXformat_map *fmt = HXformat_init();
+	const char *const *s;
+
 	HXformat_add(fmt, "USER", "jengelh", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ARGC", &argc, HXTYPE_INT);
 	HXformat_add(fmt, "ARGK", (const void *)(long)argc, HXTYPE_INT | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ZERO", "", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ONE", "1", HXTYPE_STRING | HXFORMAT_IMMED);
 	++argc;
-	HXformat_fprintf(fmt, stdout, "/%(HOME)/%(lower USER)/%(ARGC).%(ARGK)\n");
-	HXformat_fprintf(fmt, stdout, ">%(ZERO)<\n");
-	HXformat_fprintf(fmt, stdout, ">%(before=\"-o\" ZERO)<\n\n");
-	HXformat_fprintf(fmt, stdout, ">%(ifempty=\"zero is empty\" ZERO)<\n");
-	HXformat_fprintf(fmt, stdout, ">%(ifnempty=\"zero is not empty\" ZERO)<\n");
-	HXformat_fprintf(fmt, stdout, ">%(ifempty=\"one is empty\" ONE)<\n");
-	HXformat_fprintf(fmt, stdout, ">%(ifnempty=\"one is not empty\" ONE)<\n");
-	HXformat_fprintf(fmt, stdout, "%%(NOEXPANSION) %NOEXPANSION\n");
+	printf("# HXformat\n");
+	for (s = fmt_strings; *s != '\0'; ++s)
+		HXformat_fprintf(fmt, stdout, *s);
 	HXformat_free(fmt);
 }
 
