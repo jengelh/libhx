@@ -2,6 +2,10 @@
 
 HEAD
 ====
+
+
+libHX 3.3 (January 20 2010)
+===========================
 Bug fixes:
 - format: fix incorrect copying of non-expanded % strings
 - proc: avoid calling close(-1) to not trip up valgrind

@@ -1,18 +1,18 @@
 
 Name:		libHX22
 %define lname	libHX
-Version:	3.2
+Version:	3.3
 Release:	0
 Group:		System/Libraries
 URL:		http://libhx.sf.net/
 Summary:	Library for commonly needed tasks in C
 License:	LGPL2+
-Source:		http://downloads.sf.net/libhx/libHX-%version.tar.bz2
+Source:		http://downloads.sf.net/libhx/libHX-%version.tar.xz
 BuildRoot:	%_tmppath/%name-%version-build
-BuildRequires:	gcc-c++
+BuildRequires:	gcc-c++ xz
 # no, libxml2-devel is NOT required because nothing
 # that requires it is going to be compiled.
-# gcc-c++ is pretty optional; its absence does not omit anything
+# gcc-c++ is pretty optional and only used for make check
 
 %description
 A library for:
@@ -47,17 +47,23 @@ A library for:
 %setup -n %lname-%version
 
 %build
+if [ ! -e configure ]; then
+	./autogen.sh
+fi;
 %configure
-make %{?jobs:-j%jobs};
+make %{?_smp_mflags}
 
 %install
-b="%buildroot";
-rm -Rf "$b";
-mkdir "$b";
-make install DESTDIR="$b" docdir="%_docdir/%lname";
-rm -f "$b/%_libdir/%lname.la";
-mkdir -p "$b/%_docdir/%lname";
-install -pm0644 doc/*.txt "$b/%_docdir/%lname/";
+b="%buildroot"
+rm -Rf "$b"
+mkdir "$b"
+make install DESTDIR="$b" docdir="%_docdir/%lname"
+rm -f "$b/%_libdir/%lname.la"
+mkdir -p "$b/%_docdir/%lname"
+install -pm0644 doc/*.txt "$b/%_docdir/%lname/"
+
+%check
+make check
 
 %post -p /sbin/ldconfig
 

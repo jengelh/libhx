@@ -29,7 +29,7 @@ typedef char hxmc_t;
 #endif
 
 /*
- *	HMC.C
+ *	MC.C
  */
 extern hxmc_t *HXmc_strinit(const char *);
 extern hxmc_t *HXmc_meminit(const void *, size_t);
