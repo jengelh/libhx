@@ -13150,6 +13150,122 @@ HXformat_fprintf
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HXformat2_aprintf(
+\series bold
+struct
+\series default
+ HXformat_map 
+\series bold
+*
+\series default
+table, hxmc_t 
+\series bold
+**
+\series default
+dest, 
+\series bold
+const char *
+\series default
+template);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXformat2_aprintf
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HXformat2_sprintf(
+\series bold
+struct
+\series default
+ HXformat_map 
+\series bold
+*
+\series default
+table, 
+\series bold
+char *
+\series default
+dest, 
+\series bold
+size_t
+\series default
+ size, 
+\series bold
+const char *
+\series default
+template);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HXformat2_sprintf
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HXformat2_fprintf(
+\series bold
+struct
+\series default
+ HXformat_map 
+\series bold
+*
+\series default
+table, FILE 
+\series bold
+*
+\series default
+filp, 
+\series bold
+const char *
+\series default
+template);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\size normal
+\color none
+HXformat2_fprintf
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -13228,6 +13344,184 @@ sprintf
 \family default
  does.
  On error, negative errno is returned.
+\end_layout
+
+\begin_layout Standard
+The HXformat2 function family has the same call syntax and parameters, but
+ recognizes make-style like functions and recursive expansion, described
+ below.
+\end_layout
+
+\begin_layout Subsection
+Functions
+\end_layout
+
+\begin_layout Standard
+To expand a variable, one uses a syntax like 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+%(NAME)
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+ in the format string.
+ Recursive expansion like 
+\begin_inset Quotes eld
+\end_inset
+
+%(%(USER))
+\begin_inset Quotes erd
+\end_inset
+
+ is supported; assuming 
+\family typewriter
+%(USER)
+\family default
+ would expand to 
+\begin_inset Quotes eld
+\end_inset
+
+linux
+\begin_inset Quotes erd
+\end_inset
+
+, HXformat would try to resolve 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+%(linux)
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+ next.
+ Besides these variable substitutions, HXformat2 also provides function
+ calls whose syntax is 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+%(nameOfFunction parameters[,...])
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Parameters can be any text, including variables.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+%(env
+\family default
+ 
+\shape italic
+variable
+\family typewriter
+\shape default
+)
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+The 
+\family typewriter
+env
+\family default
+ function expands to the string that is stored in the environmental variable
+ by the given name.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+%(if 
+\family default
+\shape italic
+condition
+\family typewriter
+\shape default
+,[
+\family default
+\shape italic
+then
+\family typewriter
+\shape default
+][,[
+\family default
+\shape italic
+else
+\family typewriter
+\shape default
+]])
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+If the condition parameter expands to a string of non-zero length, the function
+ expands to the 
+\begin_inset Quotes eld
+\end_inset
+
+then
+\begin_inset Quotes erd
+\end_inset
+
+ block, otherwise the 
+\begin_inset Quotes eld
+\end_inset
+
+else
+\begin_inset Quotes erd
+\end_inset
+
+ block.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+%(lower 
+\family default
+\shape italic
+text
+\family typewriter
+\shape default
+)
+\family default
+, 
+\family typewriter
+%(upper 
+\family default
+\shape italic
+text
+\family typewriter
+\shape default
+)
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+Lowercases or uppercases the supplied argument.
+\end_layout
+
+\begin_layout Standard
+Historical note: HXformat1 also supported functions, but only on a very
+ limited and inflexible level.
 \end_layout
 
 \begin_layout Subsection

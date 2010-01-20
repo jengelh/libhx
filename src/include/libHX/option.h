@@ -33,6 +33,12 @@ extern int HXformat_sprintf(const struct HXformat_map *,
 	char *, size_t, const char *);
 extern int HXformat_fprintf(const struct HXformat_map *,
 	FILE *, const char *);
+extern int HXformat2_aprintf(const struct HXformat_map *,
+	hxmc_t **, const char *);
+extern int HXformat2_sprintf(const struct HXformat_map *,
+	char *, size_t, const char *);
+extern int HXformat2_fprintf(const struct HXformat_map *,
+	FILE *, const char *);
 
 /*
  *	OPT.C
