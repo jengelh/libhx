@@ -3,7 +3,7 @@ AC_INIT([libHX], [3.3])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_PROG_INSTALL
-AM_INIT_AUTOMAKE([-Wall -Wno-override])
+AM_INIT_AUTOMAKE([-Wall -Wno-override foreign subdir-objects])
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
