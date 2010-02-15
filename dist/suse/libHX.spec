@@ -5,7 +5,7 @@ Version:	3.3
 Release:	0
 Group:		System/Libraries
 URL:		http://libhx.sf.net/
-Summary:	Library for commonly needed tasks in C
+Summary:	Useful collection of routines for C and C++ programming
 License:	LGPL2+
 Source:		http://downloads.sf.net/libhx/libHX-%version.tar.xz
 BuildRoot:	%_tmppath/%name-%version-build
@@ -28,7 +28,7 @@ A library for:
 
 %package -n libHX-devel
 Group:		Development/Libraries/C and C++
-Summary:	Development files for libHX
+Summary:	Useful collection of routines for C and C++ programming
 Requires:	%name = %version
 
 %description -n libHX-devel
