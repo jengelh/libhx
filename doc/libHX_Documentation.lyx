@@ -8612,6 +8612,46 @@ libHX/string.h
 
 
 \series bold
+void *
+\series default
+HX_memmem(
+\series bold
+const void *
+\series default
+haystack, 
+\series bold
+size_t
+\series default
+ hsize,
+\begin_inset Newline newline
+\end_inset
+
+                
+\series bold
+const void *
+\series default
+needle, 
+\series bold
+size_t
+\series default
+ nsize);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_memmem
+\end_layout
+
+\end_inset
+
+
+\series bold
+
+\begin_inset Newline newline
+\end_inset
+
 char *
 \series default
 HX_strbchr(
@@ -8667,6 +8707,47 @@ HX_strccspn
 \end_inset
 
 
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_memmem
+\family default
+ Analogous to 
+\family typewriter
+strstr
+\family default
+(3), 
+\family typewriter
+memmem
+\family default
+ tries to locate the memory block pointed to by 
+\family typewriter
+needle
+\family default
+ (which is of length 
+\family typewriter
+nsize
+\family default
+) in the block pointed to by 
+\family typewriter
+haystack
+\family default
+ (which is of size 
+\family typewriter
+hsize
+\family default
+).
+ It returns a pointer to the first occurrence in 
+\family typewriter
+haystack
+\family default
+, or 
+\family typewriter
+NULL
+\family default
+ when it was not found.
 \end_layout
 
 \begin_layout Description

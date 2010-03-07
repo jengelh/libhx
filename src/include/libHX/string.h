@@ -56,6 +56,7 @@ extern char *HX_basename_exact(const char *);
 extern char *HX_chomp(char *);
 extern char *HX_dirname(const char *);
 extern hxmc_t *HX_getl(hxmc_t **, FILE *);
+extern void *HX_memmem(const void *, size_t, const void *, size_t);
 extern char **HX_split(const char *, const char *, int *, int);
 extern char **HX_split4(char *, const char *, int *, int);
 extern int HX_split5(char *, const char *, int, char **);

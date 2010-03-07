@@ -112,6 +112,19 @@ EXPORT_SYMBOL hxmc_t *HX_getl(hxmc_t **ptr, FILE *fp)
 	return *ptr;
 }
 
+EXPORT_SYMBOL void *HX_memmem(const void *space, size_t spacesize,
+    const void *point, size_t pointsize)
+{
+	size_t i;
+
+	if (pointsize > spacesize)
+		return NULL;
+	for (i = 0; i <= spacesize - pointsize; ++i)
+		if (memcmp(space + i, point, pointsize) == 0)
+			return const_cast1(void *, space + i);
+	return NULL;
+}
+
 EXPORT_SYMBOL char **HX_split(const char *str, const char *delim,
     int *cp, int max)
 {
