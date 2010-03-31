@@ -9,6 +9,7 @@ A=b;C="d" ; E="F;" ; F= G=Z
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <libHX/init.h>
 #include <libHX/map.h>
 #include <libHX/option.h>
