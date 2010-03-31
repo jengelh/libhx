@@ -37,7 +37,7 @@ if HAVE_CXX
 check_PROGRAMS    += tx-compile tx-cast tx-deque tx-dir tx-list \
                      tx-misc tx-option tx-proc tx-rand tx-string tx-time
 tx_cast_SOURCES    = tx-cast.cpp
-tx_cast_LDADD      = -lm
+tx_cast_LDADD      = libHX.la -lm
 tx_compile_SOURCES = tx-compile.cpp
 tx_compile_LDADD   = libHX.la
 tx_deque_SOURCES   = tx-deque.cpp
