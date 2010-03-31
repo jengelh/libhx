@@ -12,6 +12,7 @@
 #	include <cstdlib>
 #endif
 #include <libHX/defs.h>
+#include <libHX/init.h>
 #include <libHX/misc.h>
 #include <libHX/string.h>
 #include "internal.h"
@@ -157,8 +158,12 @@ int main(int argc, const char **argv)
 {
 	hxmc_t *tx = NULL;
 	const char *file = (argc >= 2) ? argv[1] : "tx-string.c";
-	FILE *fp = fopen(file, "r");
+	FILE *fp;
 
+	if (HX_init() <= 0)
+		abort();
+
+	fp = fopen(file, "r");
 	if (fp == NULL) {
 		fprintf(stderr, "Cannot open %s: %s\n", file, strerror(errno));
 	} else {
@@ -174,5 +179,6 @@ int main(int argc, const char **argv)
 	t_strsep();
 	t_split();
 	t_quote();
+	HX_exit();
 	return EXIT_SUCCESS;
 }

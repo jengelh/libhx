@@ -824,6 +824,89 @@ HXmap_
 \end_layout
 
 \begin_layout Section
+Initialization
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/init.h>
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HX_init(
+\series bold
+void
+\series default
+);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX_init
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+void
+\series default
+ HX_exit(
+\series bold
+void
+\series default
+);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX_exit
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Before using the library's functions, 
+\family typewriter
+HX_init
+\family default
+ must be called.
+ This function will initialize any needed state libHX needs for itself,
+ if any.
+ It is designed to be invoked multiple times, such as for example, from
+ different libraries linking to libHX itself, and will refcount.
+ On success, >0 is returned.
+ If there was an error, it will return a negative error code or zero.
+ 
+\family typewriter
+HX_exit
+\family default
+ is the logical counterpart of notifying that the library is no longer used.
+\end_layout
+
+\begin_layout Section
 Type-checking casts
 \end_layout
 

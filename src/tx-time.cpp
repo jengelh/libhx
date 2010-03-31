@@ -7,6 +7,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <libHX/defs.h>
+#include <libHX/init.h>
 #include <libHX/misc.h>
 #include "internal.h"
 
@@ -16,6 +17,9 @@ int main(int argc, const char **argv)
 {
 	struct timeval  m_past, m_future, m_delta;
 	struct timespec n_past, n_future, n_delta;
+
+	if (HX_init() <= 0)
+		abort();
 
 	if (argc >= 2)
 		sleep_amt = strtoul(argv[1], NULL, 0);
@@ -54,5 +58,6 @@ int main(int argc, const char **argv)
 	       static_cast(long, n_delta.tv_sec),
 	       static_cast(long, n_delta.tv_nsec));
 
+	HX_exit();
 	return EXIT_SUCCESS;
 }

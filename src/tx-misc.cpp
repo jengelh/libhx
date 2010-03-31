@@ -7,6 +7,7 @@
 #	include <cstdlib>
 #endif
 #include <sys/stat.h>
+#include <libHX/init.h>
 #include <libHX/misc.h>
 
 int main(int argc, const char **argv)
@@ -14,6 +15,8 @@ int main(int argc, const char **argv)
 	unsigned int n;
 	struct stat sa, sb;
 
+	if (HX_init() <= 0)
+		abort();
 	printf("%d\n", HX_ffs(0));
 	for (n = 1; ; n <<= 1) {
 		printf("%08x = %d\n", n, HX_ffs(n));
@@ -34,5 +37,6 @@ int main(int argc, const char **argv)
 		printf("Difference: %ld\n", HX_time_compare(&sa, &sb, 'm'));
 	}
 
+	HX_exit();
 	return EXIT_SUCCESS;
 }

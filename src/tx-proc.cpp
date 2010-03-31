@@ -11,6 +11,7 @@
 #	include <string.h>
 #endif
 #include <unistd.h>
+#include <libHX/init.h>
 #include <libHX/proc.h>
 #include <libHX/string.h>
 
@@ -49,6 +50,9 @@ static void t_async1(void)
 
 int main(void)
 {
+	if (HX_init() <= 0)
+		abort();
+
 	/* let it fail - test verbosity */
 	HXproc_run_sync(t_args1 + 2, HXPROC_VERBOSE);
 	HXproc_run_sync(t_args1 + 3, HXPROC_VERBOSE);
@@ -57,5 +61,6 @@ int main(void)
 
 	t_async1();
 	HXproc_run_sync(t_args3, HXPROC_NULL_STDIN);
+	HX_exit();
 	return EXIT_SUCCESS;
 }

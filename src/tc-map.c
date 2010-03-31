@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <libHX/init.h>
 #include <libHX/map.h>
 #include <libHX/misc.h>
 #include <libHX/string.h>
@@ -676,6 +677,8 @@ static void tmap_rbt_test_7(void)
 
 int main(void)
 {
+	if (HX_init() <= 0)
+		abort();
 	tmap_printf("* HXhashmap\n");
 	tmap_generic_tests(HXMAPT_HASH, HXhash_djb2, "DJB2");
 	tmap_generic_tests(HXMAPT_HASH, HXhash_jlookup3s, "JL3");
@@ -686,5 +689,6 @@ int main(void)
 	tmap_rbt_test_1();
 	tmap_rbt_test_7();
 
+	HX_exit();
 	return EXIT_SUCCESS;
 }

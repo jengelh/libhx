@@ -9,8 +9,9 @@ A=b;C="d" ; E="F;" ; F= G=Z
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <libHX/init.h>
+#include <libHX/map.h>
 #include <libHX/option.h>
-#include <libHX.h>
 
 static const char *const fmt_strings[] = {
 	"/%(HOME)/%(lower USER)/%(ARGC).%(ARGK)\n",
@@ -149,6 +150,8 @@ static struct HXoption table[] = {
 
 int main(int argc, const char **argv)
 {
+	if (HX_init() <= 0)
+		abort();
 	t_format(argc);
 	t_shconfig((argc >= 2) ? argv[1] : "tc-option.c");
 	t_shconfig2((argc >= 2) ? argv[1] : "tc-option.c");
@@ -161,5 +164,6 @@ int main(int argc, const char **argv)
 	printf("Verbosity level: %d\n", opt_v);
 	printf("Mask: 0x%08X\n", opt_mask);
 	printf("mcstr: >%s<\n", opt_mcstr);
+	HX_exit();
 	return EXIT_SUCCESS;
 }

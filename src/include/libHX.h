@@ -14,6 +14,7 @@
 #include <libHX/defs.h>
 #include <libHX/deque.h>
 #include <libHX/list.h>
+#include <libHX/init.h>
 #include <libHX/map.h>
 #include <libHX/misc.h>
 #include <libHX/option.h>

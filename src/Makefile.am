@@ -21,7 +21,7 @@ endif
 
 check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-list \
                      tc-map tc-misc tc-option tc-proc tc-rand tc-string tc-time
-tc_cast_LDADD      = -lm
+tc_cast_LDADD      = libHX.la -lm
 tc_compile_LDADD   = libHX.la
 tc_dir_LDADD       = libHX.la
 tc_list_LDADD      = libHX.la

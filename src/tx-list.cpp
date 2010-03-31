@@ -10,6 +10,7 @@
 #	include <stdlib.h>
 #endif
 #include <libHX/list.h>
+#include <libHX/init.h>
 #include <libHX/misc.h>
 
 struct text_object {
@@ -104,6 +105,8 @@ int main(int argc, const char **argv)
 {
 	unsigned int max = 10;
 
+	if (HX_init() <= 0)
+		abort();
 	if (argc >= 2)
 		max = strtoul(argv[1], NULL, 0);
 
@@ -111,5 +114,6 @@ int main(int argc, const char **argv)
 	l_traverse();
 	l_dump(HX_rand() & 1);
 	l_empty();
+	HX_exit();
 	return EXIT_SUCCESS;
 }

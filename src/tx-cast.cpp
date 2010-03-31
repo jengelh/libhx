@@ -5,7 +5,9 @@
  */
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <libHX/defs.h>
+#include <libHX/init.h>
 #include "internal.h"
 #define UNUSED __attribute__((unused))
 
@@ -75,6 +77,8 @@ static void c_constA(void)
 
 int main(void)
 {
+	if (HX_init() <= 0)
+		abort();
 	c_signed();
 	c_reinterpret();
 	c_static();
@@ -82,5 +86,6 @@ int main(void)
 	c_const2();
 	c_const3();
 	c_constA();
+	HX_exit();
 	return 0;
 }

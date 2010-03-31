@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -20,6 +21,7 @@
 #ifdef HAVE_GETTIMEOFDAY
 #	include <sys/time.h>
 #endif
+#include <libHX/init.h>
 #include <libHX/misc.h>
 #include "internal.h"
 
@@ -63,6 +65,29 @@ static __attribute__((constructor)) void HXrand_init(void)
 	if (ret != sizeof(seed))
 		seed = HXrand_obtain_seed();
 	srand(seed);
+}
+
+static pthread_mutex_t HX_init_lock = PTHREAD_MUTEX_INITIALIZER;
+static unsigned int HX_use_count;
+
+EXPORT_SYMBOL int HX_init(void)
+{
+	pthread_mutex_lock(&HX_init_lock);
+	if (HX_use_count == 0)
+		HXrand_init();
+	++HX_use_count;
+	pthread_mutex_unlock(&HX_init_lock);
+	return 1;
+}
+
+EXPORT_SYMBOL void HX_exit(void)
+{
+	pthread_mutex_lock(&HX_init_lock);
+	if (HX_use_count == 0)
+		fprintf(stderr, "%s: reference count is already zero!\n", __func__);
+	else
+		--HX_use_count;
+	pthread_mutex_unlock(&HX_init_lock);
 }
 
 EXPORT_SYMBOL int HX_rand(void)
