@@ -63,12 +63,6 @@ extern const char *HX_dlerror(void);
 /*
  *	MISC.C
  */
-enum {
-	HX_FSYSTEM_ARGV  = 1 << 0,
-	HX_FSYSTEM_EXEC  = 1 << 1,
-	HX_FSYSTEM_ARGV1 = 1 << 2,
-};
-
 extern int HX_ffs(unsigned long);
 extern int HX_fls(unsigned long);
 extern void HX_hexdump(FILE *, const void *, unsigned int);
