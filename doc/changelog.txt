@@ -4,6 +4,8 @@ HEAD
 ====
 Changes:
 - add explicit initialize/deinitialize functions HX_init, HX_exit
+Enhancements:
+- add the HX_memmem function
 
 
 libHX 3.3 (January 20 2010)
