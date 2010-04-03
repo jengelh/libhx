@@ -7862,11 +7862,7 @@ HXlist_empty
  Tests whether the list is empty.
  Note: For clists, you could also use 
 \family typewriter
-clist->items
-\begin_inset space ~
-\end_inset
-
-== 0
+clist->items == 0
 \family default
 .
 \end_layout
@@ -8637,6 +8633,7 @@ This however does not mean that HXlist is the better solution over HXdeque
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status open
@@ -8750,7 +8747,7 @@ reference "sec:list"
 
  time.
  This is also why all operations always require the list head.
- For traversal of clists, use the corresponding HXlist macro.
+ For traversal of clists, use the corresponding HXlist macros.
 \end_layout
 
 \begin_layout Subsection
@@ -10248,7 +10245,11 @@ HXQUOTE_HTML
 \family typewriter
 &
 \family default
-' and '"' by their respective HTML entities 
+' and '
+\family typewriter
+"
+\family default
+' by their respective HTML entities 
 \family typewriter
 &lt;
 \family default
@@ -10445,7 +10446,11 @@ s,
 \series bold
 const char *
 \series default
-delimiters, 
+delimiters,
+\begin_inset Newline newline
+\end_inset
+
+                
 \series bold
 size_t *
 \series default
