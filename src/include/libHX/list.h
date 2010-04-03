@@ -4,6 +4,7 @@
 #ifdef __cplusplus
 #	include <cstddef>
 #else
+#	include <stdbool.h>
 #	include <stddef.h>
 #endif
 #include <libHX/defs.h>
@@ -36,7 +37,7 @@ static inline void __HXlist_add(struct HXlist_head *nu,
 	prev->next = nu;
 }
 
-static inline void HXlist_add(struct HXlist_head *head, 
+static inline void HXlist_add(struct HXlist_head *head,
     struct HXlist_head *entry)
 {
 	__HXlist_add(entry, head, head->next);
@@ -54,6 +55,11 @@ static inline void HXlist_del(struct HXlist_head *entry)
 	entry->next->prev = entry->prev;
 	entry->next = NULL;
 	entry->prev = NULL;
+}
+
+static inline bool HXlist_empty(const struct HXlist_head *head)
+{
+	return head->next == head;
 }
 
 #define HXlist_for_each(pos, head) \

@@ -93,12 +93,16 @@ static void l_empty(void)
 		success = false;
 
 	printf("Zero traversal: %s\n", fstr[success]);
+	printf("The list is indeed%s empty\n",
+	       HXlist_empty(&lh) ? "" : " NOT");
 
 	HXclist_push(&clh, &lh);
 	HXlist_for_each_entry(pos, &clh, list)
 		++count;
 
 	printf("One traversal: %s\n", fstr[count == 1]);
+	printf("The list is indeed%s empty\n",
+	       HXlist_empty(&lh) ? "" : " NOT");
 }
 
 int main(int argc, const char **argv)

@@ -7589,7 +7589,7 @@ All fields considered private
 \begin_inset Newline newline
 \end_inset
 
-}
+};
 \begin_inset Newline newline
 \end_inset
 
@@ -7754,6 +7754,34 @@ HXlist_del
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+bool
+\series default
+ HXlist_empty(
+\series bold
+const struct
+\series default
+ HXlist_head 
+\series bold
+*
+\series default
+list);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXlist_empty
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -7824,6 +7852,23 @@ elem
 HXlist_del
 \family default
  Deletes the given element from the list.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXlist_empty
+\family default
+ Tests whether the list is empty.
+ Note: For clists, you could also use 
+\family typewriter
+clist->items
+\begin_inset space ~
+\end_inset
+
+== 0
+\family default
+.
 \end_layout
 
 \begin_layout Subsection
