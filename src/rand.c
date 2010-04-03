@@ -70,6 +70,13 @@ static __attribute__((constructor)) void HXrand_init(void)
 static pthread_mutex_t HX_init_lock = PTHREAD_MUTEX_INITIALIZER;
 static unsigned int HX_use_count;
 
+static void __attribute__((constructor)) HX_ident(void)
+{
+	if (getenv("LIBHX_IDENTIFY") != NULL)
+		fprintf(stderr, PACKAGE_NAME " " PACKAGE_VERSION " "
+		        __DATE__ " " __TIME__ "\n");
+}
+
 EXPORT_SYMBOL int HX_init(void)
 {
 	pthread_mutex_lock(&HX_init_lock);

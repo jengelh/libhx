@@ -2,6 +2,10 @@
 
 HEAD
 ====
+
+
+libHX 3.4 (April 03 2010)
+=========================
 Changes:
 - add explicit initialize/deinitialize functions HX_init, HX_exit
 Enhancements:

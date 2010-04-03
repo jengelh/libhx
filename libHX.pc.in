@@ -5,7 +5,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name:		libHX
-Description:	Library for commonly needed tasks in C
+Description:	Useful collection of routines for C and C++ programming
 Version:	@PACKAGE_VERSION@
 Cflags:		-I${includedir}
 Libs:		-L${libdir} -lHX
