@@ -7872,6 +7872,485 @@ clist->items
 \end_layout
 
 \begin_layout Subsection
+Traversal
+\end_layout
+
+\begin_layout Standard
+Traversal is implemented using macros that expand to for() statements which
+ can syntactically be used like them, i.
+\begin_inset space \thinspace{}
+\end_inset
+
+e.
+\begin_inset space \space{}
+\end_inset
+
+curly braces may be omitted if only a single statement is in the body of
+ the loop.
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+head
+\family default
+ parameter specifies the list head (
+\family typewriter
+struct HXlist_head
+\family default
+), 
+\family typewriter
+pos
+\family default
+ specifies an iterator, also of type 
+\family typewriter
+struct HXlist_head
+\family default
+.
+ Lists can either be traversed in forward direction, or, using the 
+\family typewriter
+_prev
+\family default
+ variants, in reverse direction.
+ The 
+\family typewriter
+_safe
+\family default
+ variants use a temporary 
+\family typewriter
+n
+\family default
+ to hold the next object in the list, which is needed when pos itself is
+ going to be inaccessible at the end of the block, through, for example,
+ freeing its encompassing object.
+\end_layout
+
+\begin_layout LyX-Code
+HXlist_for_each(pos, head)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXlist_for_each
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+HXlist_for_each_prev(pos, head)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXlist_for_each_prev
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+HXlist_for_each_safe(pos, n, head)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXlist_for_each_safe
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+HXlist_for_each_prev_safe(pos, n, head)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXlist_for_each_prev_safe
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXlist_for_each
+\family default
+ Forward iteration over the list heads.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXlist_for_each_prev
+\family default
+ Reverse iteration over the list heads.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXlist_for_each_safe
+\family default
+ Forward iteration over the list heads that is safe against freeing 
+\family typewriter
+pos
+\family default
+.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXlist_for_each_prev_safe
+\family default
+ Reverse iteration over the list heads that is safe against freeing 
+\family typewriter
+pos
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+_entry
+\family default
+ variants use an iterator 
+\family typewriter
+pos
+\family default
+ of the type of the encompassing object (e.
+\begin_inset space \thinspace{}
+\end_inset
+
+g.
+\begin_inset space \space{}
+\end_inset
+
+
+\family typewriter
+struct item
+\family default
+ in below's example), so that the manual 
+\family typewriter
+HXlist_entry
+\family default
+ invocation is not needed.
+ 
+\family typewriter
+member
+\family default
+ is the name of the list structure embedded into the item.
+\end_layout
+
+\begin_layout LyX-Code
+HXlist_for_each_entry(pos, head, member)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXlist_for_each_entry
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+HXlist_for_each_entry_rev(pos, head, member)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXlist_for_each_entry_rev
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+HXlist_for_each_entry_safe(pos, n, head, member)
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXlist_for_each_entry_safe
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXlist_for_each_entry
+\family default
+ Forward iteration over the list elements.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXlist_for_each_entry_rev
+\family default
+ Reverse iteration over the list elements.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXlist_for_each_entry_safe
+\family default
+ Forward iteration over the list elements that is safe against freeing 
+\family typewriter
+pos
+\family default
+.
+\end_layout
+
+\begin_layout Subsection
+Examples
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+struct
+\series default
+ item {
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+struct
+\series default
+ HXlist_head anchor;
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+char
+\series default
+ name
+\series bold
+[
+\series default
+32
+\series bold
+]
+\series default
+;
+\begin_inset Newline newline
+\end_inset
+
+};
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ HXlist_head 
+\series bold
+*
+\series default
+e;
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ item 
+\series bold
+*
+\series default
+i, 
+\series bold
+*
+\series default
+j;
+\begin_inset Newline newline
+\end_inset
+
+HXLIST_HEAD(list);
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+i = malloc(
+\series bold
+sizeof
+\series default
+(
+\series bold
+*
+\series default
+i));
+\begin_inset Newline newline
+\end_inset
+
+HXlist_init(&e->anchor);
+\begin_inset Newline newline
+\end_inset
+
+strcpy(i->name, "foo");
+\begin_inset Newline newline
+\end_inset
+
+HXlist_add_tail(&list, &i->anchor);
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+i = malloc(
+\series bold
+sizeof
+\series default
+(
+\series bold
+*
+\series default
+i));
+\begin_inset Newline newline
+\end_inset
+
+HXlist_init(&e->anchor);
+\begin_inset Newline newline
+\end_inset
+
+strcpy(i->name, "bar");
+\begin_inset Newline newline
+\end_inset
+
+HXlist_add_tail(&list, &i->anchor);
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+HXlist_for_each(e, &list) {
+\begin_inset Newline newline
+\end_inset
+
+        i = HXlist_entry(e, 
+\series bold
+typeof
+\series default
+(
+\series bold
+*
+\series default
+i), anchor);
+\begin_inset Newline newline
+\end_inset
+
+        printf("e=%p i=%p name=%s
+\backslash
+n", e, i, i->name);
+\begin_inset Newline newline
+\end_inset
+
+}
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+HXlist_for_each_entry(i, &list, anchor)
+\begin_inset Newline newline
+\end_inset
+
+        printf("i=%p name=%s
+\backslash
+n", i, i->name);
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+HXlist_for_each_entry_rev(i, &list, anchor)
+\begin_inset Newline newline
+\end_inset
+
+        printf("i=%p name=%s
+\backslash
+n", i, i->name);
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+HXlist_for_each_entry_safe(i, j, &list, anchor) {
+\begin_inset Newline newline
+\end_inset
+
+        printf("i=%p name=%s
+\backslash
+n", i, i->name);
+\begin_inset Newline newline
+\end_inset
+
+        free(i);
+\begin_inset Newline newline
+\end_inset
+
+}
+\end_layout
+
+\begin_layout Subsection
 When to use HXdeque/HXlist
 \end_layout
 
