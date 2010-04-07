@@ -12954,7 +12954,11 @@ n", num, user);
 \begin_inset Quotes eld
 \end_inset
 
+
+\family typewriter
 %s
+\family default
+
 \begin_inset Quotes erd
 \end_inset
 
@@ -12962,7 +12966,11 @@ n", num, user);
 \begin_inset Quotes eld
 \end_inset
 
+
+\family typewriter
 %1$s
+\family default
+
 \begin_inset Quotes erd
 \end_inset
 
@@ -14067,7 +14075,11 @@ To expand a variable, one uses a syntax like
 \begin_inset Quotes eld
 \end_inset
 
+
+\family typewriter
 %(%(USER))
+\family default
+
 \begin_inset Quotes erd
 \end_inset
 
@@ -14223,6 +14235,7 @@ Examples
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status open
