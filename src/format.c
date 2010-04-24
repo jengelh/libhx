@@ -72,7 +72,8 @@ EXPORT_SYMBOL int HXformat_add(struct HXformat_map *ftable, const char *key,
 	struct fmt_entry *entry;
 	int ret;
 
-	if (strpbrk(key, "\t\n\v ") != NULL || strlen(key) > MAX_KEY_SIZE) {
+	if (strpbrk(key, "\t\n\v ") != NULL || strlen(key) > MAX_KEY_SIZE ||
+	    *key == '\0') {
 		fprintf(stderr, "%s: Bogus key \"%s\"\n", __func__, key);
 		return -EINVAL;
 	}

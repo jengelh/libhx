@@ -4,6 +4,7 @@ HEAD
 ====
 Changes:
 - format1: removed older formatter in favor of format2
+- format2: add check for empty key
 
 
 libHX 3.4 (April 03 2010)
