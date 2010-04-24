@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Changes:
+- format1: removed older formatter in favor of format2
 
 
 libHX 3.4 (April 03 2010)

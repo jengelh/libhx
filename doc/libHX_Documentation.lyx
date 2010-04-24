@@ -13742,122 +13742,6 @@ Invoking the formatter
 \series bold
 int
 \series default
- HXformat_aprintf(
-\series bold
-struct
-\series default
- HXformat_map 
-\series bold
-*
-\series default
-table, hxmc_t 
-\series bold
-**
-\series default
-dest, 
-\series bold
-const char *
-\series default
-template);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-HXformat_aprintf
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-int
-\series default
- HXformat_sprintf(
-\series bold
-struct
-\series default
- HXformat_map 
-\series bold
-*
-\series default
-table, 
-\series bold
-char *
-\series default
-dest, 
-\series bold
-size_t
-\series default
- size, 
-\series bold
-const char *
-\series default
-template);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-\size normal
-\color none
-HXformat_sprintf
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-int
-\series default
- HXformat_fprintf(
-\series bold
-struct
-\series default
- HXformat_map 
-\series bold
-*
-\series default
-table, FILE 
-\series bold
-*
-\series default
-filp, 
-\series bold
-const char *
-\series default
-template);
-\begin_inset Index
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-\size normal
-\color none
-HXformat_fprintf
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-int
-\series default
  HXformat2_aprintf(
 \series bold
 struct
@@ -13972,7 +13856,7 @@ HXformat2_fprintf
 \begin_layout Description
 
 \family typewriter
-HXformat_aprintf
+HXformat2_aprintf
 \family default
  Substitute placeholders in 
 \family typewriter
@@ -13995,7 +13879,7 @@ hxmc_t
 \begin_layout Description
 
 \family typewriter
-HXformat_sprintf
+HXformat2_sprintf
 \family default
  Do substitution and store the expanded result in the buffer 
 \family typewriter
@@ -14011,7 +13895,7 @@ size
 \begin_layout Description
 
 \family typewriter
-HXformat_fprintf
+HXformat2_fprintf
 \family default
  Do substituion and directly output the expansion to the given stdio stream.
 \end_layout
@@ -14027,7 +13911,7 @@ On success, the length of the expanded string is returned, excluding the
 .
  While 
 \family typewriter
-HXformat_sprintf
+HXformat2_sprintf
 \family default
  will not write more than 
 \family typewriter
@@ -14048,9 +13932,8 @@ sprintf
 \end_layout
 
 \begin_layout Standard
-The HXformat2 function family has the same call syntax and parameters, but
- recognizes make-style like functions and recursive expansion, described
- below.
+The HXformat2 function family recognizes make-style like functions and recursive
+ expansion, described below.
 \end_layout
 
 \begin_layout Subsection
@@ -14279,11 +14162,11 @@ table = HXformat_init();
 \begin_inset Newline newline
 \end_inset
 
-HXformat_add(table, "%(GREETING1)", b, HXTYPE_STRING);
+HXformat2_add(table, "%(GREETING1)", b, HXTYPE_STRING);
 \begin_inset Newline newline
 \end_inset
 
-HXformat_add(table, "%(GREETING2)", &c, HXTYPE_STRP);
+HXformat2_add(table, "%(GREETING2)", &c, HXTYPE_STRP);
 \begin_inset Newline newline
 \end_inset
 
@@ -14301,13 +14184,13 @@ sizeof
 \begin_inset Newline newline
 \end_inset
 
-HXformat_aprintf(...);
+HXformat2_aprintf(...);
 \end_layout
 
 \begin_layout Plain Layout
 Upon calling 
 \family typewriter
-HXformat_*printf
+HXformat2_*printf
 \family default
 , 
 \family typewriter
