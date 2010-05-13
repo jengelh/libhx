@@ -5491,6 +5491,30 @@ HXmap_travinit
 \begin_layout Description
 
 \family typewriter
+HXMAP_NOFLAGS
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAP_NOFLAGS
+\end_layout
+
+\end_inset
+
+ A mnemonic for no flags, and is defined to be 
+\family typewriter
+0
+\family default
+.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
 HXMAP_DTRAV
 \family default
 

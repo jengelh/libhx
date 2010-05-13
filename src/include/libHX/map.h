@@ -54,9 +54,11 @@ enum {
 
 /**
  * Flags for the traverser
+ * %HXMAP_NOFLAGS:	Mnemonic for no flags
  * %HXMAP_DTRAV:	Support deletion of elements while traversing
  */
 enum {
+	HXMAP_NOFLAGS   = 0,
 	HXMAP_DTRAV     = 1 << 0,
 };
 

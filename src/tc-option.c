@@ -81,7 +81,7 @@ static void t_shconfig2(const char *file)
 	map = HX_shconfig_map(file);
 	if (map == NULL)
 		abort();
-	trav = HXmap_travinit(map, 0);
+	trav = HXmap_travinit(map, HXMAP_NOFLAGS);
 	while ((node = HXmap_traverse(trav)) != NULL)
 		printf("\t\"%s\" -> \"%s\"\n", node->skey, node->sdata);
 	HXmap_travfree(trav);

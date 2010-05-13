@@ -162,7 +162,7 @@ static void tmap_trav_speed(struct HXmap *map)
 
 	tmap_printf("MAP test 2: Timing traversal\n");
 	tmap_ipush();
-	iter = HXmap_travinit(map, 0);
+	iter = HXmap_travinit(map, HXMAP_NOFLAGS);
 	tmap_time(&start);
 	while ((node = HXmap_traverse(iter)) != NULL)
 		;
@@ -184,7 +184,7 @@ static void tmap_trav_speed(struct HXmap *map)
 
 	tmap_printf("MAP test 2a: Timing lookup\n");
 	tmap_ipush();
-	iter = HXmap_travinit(map, 0);
+	iter = HXmap_travinit(map, HXMAP_NOFLAGS);
 	tmap_time(&start);
 	while ((node = HXmap_traverse(iter)) != NULL)
 		HXmap_find(map, node->key);
@@ -228,7 +228,7 @@ static void tmap_trav(struct HXmap *map)
 
 	tmap_printf("Simple traversal:\n");
 	tmap_ipush();
-	iter = HXmap_travinit(map, 0);
+	iter = HXmap_travinit(map, HXMAP_NOFLAGS);
 	while ((node = HXmap_traverse(iter)) != NULL)
 		tmap_printf("%s -> %s\n", node->skey, node->sdata);
 	tmap_ipop();
@@ -236,7 +236,7 @@ static void tmap_trav(struct HXmap *map)
 
 	tmap_printf("Add modification during traversal:\n");
 	tmap_ipush();
-	iter = HXmap_travinit(map, 0);
+	iter = HXmap_travinit(map, HXMAP_NOFLAGS);
 	while ((node = HXmap_traverse(iter)) != NULL) {
 		tmap_printf("%s -> %s\n", node->skey, node->sdata);
 		tmap_rword(key, sizeof(key));
