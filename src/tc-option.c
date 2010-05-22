@@ -14,18 +14,6 @@ A=b;C="d" ; E="F;" ; F= G=Z
 #include <libHX/map.h>
 #include <libHX/option.h>
 
-static const char *const fmt_strings[] = {
-	"/%(HOME)/%(lower USER)/%(ARGC).%(ARGK)\n",
-	">%(ZERO)<\n",
-	">%(before=\"-o\" ZERO)<\n\n",
-	">%(ifempty=\"zero is empty\" ZERO)<\n",
-	">%(ifnempty=\"zero is not empty\" ZERO)<\n",
-	">%(ifempty=\"one is empty\" ONE)<\n",
-	">%(ifnempty=\"one is not empty\" ONE)<\n",
-	"%%(NOEXPANSION) %NOEXPANSION\n",
-	NULL,
-};
-
 static const char *const fmt2_strings[] = {
 	"HOME=%(env HOME)\n",
 	"USER=%(upper %(lower %(env USER)))\n",
@@ -43,7 +31,8 @@ static const char *const fmt2_strings[] = {
 	"quote-1: %(echo \"A,B\")\n"
 	"quote-2: %(echo %(echo A,B),%(echo C,D))\n",
 	"quote-3: %(echo \"A)B\")\n",
-	"unclosed: %(echo \"%(echo A\",B)\n",
+	"unclosed-1: %(echo \"%(echo A\",B)\n",
+	"unclosed-2: %(if X,Y,Z" /* ) */
 	"if-1: %(if %(ZERO),,\"zero is empty\")\n",
 	"if-2: %(if %(ZERO),\"zero is not empty\")\n",
 	"if-3: %(if %(ONE),,\"one is empty\")\n",
@@ -64,9 +53,6 @@ static void t_format(int argc)
 	HXformat_add(fmt, "ZERO", "", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ONE", "1", HXTYPE_STRING | HXFORMAT_IMMED);
 	++argc;
-	printf("# HXformat\n");
-	for (s = fmt_strings; *s != '\0'; ++s)
-		HXformat_fprintf(fmt, stdout, *s);
 	printf("# HXformat2\n");
 	for (s = fmt2_strings; *s != '\0'; ++s)
 		HXformat2_fprintf(fmt, stdout, *s);
