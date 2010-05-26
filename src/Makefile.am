@@ -19,12 +19,14 @@ if B_PROC
 proc_sources     = proc.c
 endif
 
-check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-list \
+check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-list tc-list2 \
                      tc-map tc-misc tc-option tc-proc tc-rand tc-string tc-time
 tc_cast_LDADD      = libHX.la -lm
 tc_compile_LDADD   = libHX.la
 tc_dir_LDADD       = libHX.la
 tc_list_LDADD      = libHX.la
+tc_list2_LDADD     = libHX.la
+tc_list2_CFLAGS    = ${AM_CFLAGS} -O2 -fstrict-aliasing
 tc_map_LDADD       = libHX.la -lm -lrt
 tc_misc_LDADD      = libHX.la
 tc_option_LDADD    = libHX.la
@@ -34,7 +36,7 @@ tc_string_LDADD    = libHX.la
 tc_time_LDADD      = libHX.la -lrt
 
 if HAVE_CXX
-check_PROGRAMS    += tx-compile tx-cast tx-deque tx-dir tx-list \
+check_PROGRAMS    += tx-compile tx-cast tx-deque tx-dir tx-list tx-list2 \
                      tx-misc tx-option tx-proc tx-rand tx-string tx-time
 tx_cast_SOURCES    = tx-cast.cpp
 tx_cast_LDADD      = libHX.la -lm
@@ -45,6 +47,9 @@ tx_dir_SOURCES     = tx-dir.cpp
 tx_dir_LDADD       = libHX.la
 tx_list_SOURCES    = tx-list.cpp
 tx_list_LDADD      = libHX.la
+tx_list2_SOURCES   = tx-list2.cpp
+tx_list2_CXXFLAGS  = ${AM_CXXFLAGS} -O2 -fstrict-aliasing
+tx_list2_LDADD     = libHX.la
 tx_misc_SOURCES    = tx-misc.cpp
 tx_misc_LDADD      = libHX.la
 tx_option_SOURCES  = tx-option.cpp
