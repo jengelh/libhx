@@ -157,7 +157,7 @@ static void t_quote(void)
 int main(int argc, const char **argv)
 {
 	hxmc_t *tx = NULL;
-	const char *file = (argc >= 2) ? argv[1] : "tx-string.c";
+	const char *file = (argc >= 2) ? argv[1] : "tx-string.cpp";
 	FILE *fp;
 
 	if (HX_init() <= 0)
