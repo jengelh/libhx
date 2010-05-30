@@ -37,37 +37,32 @@ static void t_mc(void)
 
 static void t_path(void)
 {
-	static const char *const d1[] =
-		{"/", "//", "etc//foo/", "//etc//foo//", NULL};
-	static const char *const d2[] =
-		{"/", "/.", "//", "etc/foo", "etc//foo", "//etc//foo", NULL};
-	static const char *const d3[] =
-		{"/usr/lib", "/usr/", "usr", "/", ".", "..", NULL};
+	static const char *const paths[] = {
+		".", "..", "/", "//", "/.", "/./", "/./.",
+		"/mnt", "//mnt", "/mnt/", "//mnt/", "//mnt//", "//mnt//root",
+		"/mnt/.", "/mnt/./", "mnt", "mnt/", "mnt/root", "mnt/root/",
+		"mnt//root", NULL
+	};
 	const char *const *iter;
-	char *item1, *item2;
+	char *item;
 
 	printf("# dirname\n");
-	for (iter = d1; *iter != NULL; ++iter) {
-		item1 = HX_dirname(*iter);
-		printf("%s\n", item1);
-		free(item1);
+	for (iter = paths; *iter != NULL; ++iter) {
+		item = HX_dirname(*iter);
+		printf("\t%s -> %s\n", *iter, item);
+		free(item);
 	}
 
-	printf("# basename\n");
-	for (iter = d2; *iter != NULL; ++iter) {
-		item2 = HX_basename_exact(*iter);
-		printf("%s\n", item2);
-		free(item2);
+	printf("# basename_exact\n");
+	for (iter = paths; *iter != NULL; ++iter) {
+		item = HX_basename_exact(*iter);
+		printf("\t%s -> %s\n", *iter, item);
+		free(item);
 	}
 
-	printf("# dirname.3 testcase\n");
-	for (iter = d3; *iter != NULL; ++iter) {
-		item1 = HX_dirname(*iter);
-		item2 = HX_basename_exact(*iter);
-		printf("\"%s\" -> \"%s\" -> \"%s\"\n", *iter, item1, item2);
-		free(item1);
-		free(item2);
-	}
+	printf("# basename_fast\n");
+	for (iter = paths; *iter != NULL; ++iter)
+		printf("\t%s -> %s\n", *iter, HX_basename(*iter));
 }
 
 static void t_strcpy(void)
@@ -157,7 +152,7 @@ static void t_quote(void)
 int main(int argc, const char **argv)
 {
 	hxmc_t *tx = NULL;
-	const char *file = (argc >= 2) ? argv[1] : "tx-string.c";
+	const char *file = (argc >= 2) ? argv[1] : "tx-string.cpp";
 	FILE *fp;
 
 	if (HX_init() <= 0)

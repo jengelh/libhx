@@ -5,6 +5,9 @@ HEAD
 Changes:
 - format1: removed older formatter in favor of format2
 - format2: add check for empty key
+- string: HX_basename (the fast variant) now recognizes the root directory
+- string: HX_basename now returns the trailing component with slashes
+  instead of everything after the last slash (which may have been nothing)
 
 
 libHX 3.4 (April 03 2010)

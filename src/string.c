@@ -24,7 +24,11 @@ static inline unsigned int min_uint(unsigned int a, unsigned int b)
 EXPORT_SYMBOL char *HX_basename(const char *s)
 {
 	const char *p;
-	if ((p = strrchr(s, '/')) != NULL)
+	for (p = s + strlen(s) - 1; p >= s && *p == '/'; --p)
+		;
+	if (p < s)
+		return const_cast1(char *, s + strlen(s) - 1);
+	if ((p = HX_strbchr(s, p, '/')) != NULL)
 		return const_cast1(char *, p + 1);
 	return const_cast1(char *, s);
 }
@@ -222,7 +226,7 @@ EXPORT_SYMBOL int HX_split5(char *s, const char *delim, int max, char **stk)
 
 EXPORT_SYMBOL char *HX_strbchr(const char *start, const char *now, char d)
 {
-	/* Find the last occurrence of @d within @start and @now. */
+	/* Find the last occurrence of @d within @start and (including) @now. */
 	while (now >= start)
 		if (*now-- == d)
 			return const_cast1(char *, ++now);
