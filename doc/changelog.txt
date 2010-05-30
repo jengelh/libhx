@@ -5,6 +5,7 @@ HEAD
 Changes:
 - format1: removed older formatter in favor of format2
 - format2: add check for empty key
+- string: HX_basename (the fast variant) now recognizes the root directory
 
 
 libHX 3.4 (April 03 2010)

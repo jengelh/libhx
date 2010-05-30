@@ -24,6 +24,10 @@ static inline unsigned int min_uint(unsigned int a, unsigned int b)
 EXPORT_SYMBOL char *HX_basename(const char *s)
 {
 	const char *p;
+	for (p = s + strlen(s) - 1; p >= s && *p == '/'; --p)
+		;
+	if (p < s)
+		return const_cast1(char *, s + strlen(s) - 1);
 	if ((p = strrchr(s, '/')) != NULL)
 		return const_cast1(char *, p + 1);
 	return const_cast1(char *, s);
