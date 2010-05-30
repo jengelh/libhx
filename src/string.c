@@ -226,7 +226,7 @@ EXPORT_SYMBOL int HX_split5(char *s, const char *delim, int max, char **stk)
 
 EXPORT_SYMBOL char *HX_strbchr(const char *start, const char *now, char d)
 {
-	/* Find the last occurrence of @d within @start and @now. */
+	/* Find the last occurrence of @d within @start and (including) @now. */
 	while (now >= start)
 		if (*now-- == d)
 			return const_cast1(char *, ++now);
