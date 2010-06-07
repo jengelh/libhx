@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Fixed:
+- strict-aliasing violation in containerof has been worked around
 Changes:
 - format1: removed older formatter in favor of format2
 - format2: add check for empty key

@@ -2,6 +2,22 @@
 #define _LIBHX_DEFS_H 1
 
 #ifdef __cplusplus
+#	include <cstddef>	/* size_t */
+#else
+#	include <stddef.h>
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern void *HX_containerof(const void *, size_t);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+#ifdef __cplusplus
 #	define HXsizeof_member(type, member) \
 		sizeof(static_cast<type *>(NULL)->member)
 #	define HXtypeof_member(type, member) \
@@ -19,7 +35,7 @@
 #	endif
 #	ifndef containerof
 #		define containerof(var, type, member) reinterpret_cast<type *>( \
-			reinterpret_cast<char *>(var) - offsetof(type, member))
+			HX_containerof((var), offsetof(type, member)))
 #	endif
 
 template<typename new_type>
@@ -135,7 +151,7 @@ static inline new_type signed_cast(unsigned char *expr)
 #	endif
 #	ifndef containerof
 #		define containerof(var, type, member) reinterpret_cast(type *, \
-			reinterpret_cast(char *, var) - offsetof(type, member))
+			HX_containerof((var), offsetof(type, member)))
 #	endif
 #endif
 
