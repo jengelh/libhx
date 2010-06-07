@@ -28,11 +28,11 @@ static const char *const fmt2_strings[] = {
 	"recursive-var: <%(%(USER))>\n",
 	"recursive-func: <%(%(env USER))>\n",
 	"ignore-escape: %(echo A\\,B) %(echo A\\)B)\n",
-	"quote-1: %(echo \"A,B\")\n"
-	"quote-2: %(echo %(echo A,B),%(echo C,D))\n",
+	"quote-1: %(echo \"A,B\")\n",
+	"quote-2: %(echo %(echo A,B),%(echo C,D),%(echo E F))\n",
 	"quote-3: %(echo \"A)B\")\n",
 	"unclosed-1: %(echo \"%(echo A\",B)\n",
-	"unclosed-2: %(if X,Y,Z" /* ) */
+	"unclosed-2: %(if X,Y,Z", /* ) */
 	"if-1: %(if %(ZERO),,\"zero is empty\")\n",
 	"if-2: %(if %(ZERO),\"zero is not empty\")\n",
 	"if-3: %(if %(ONE),,\"one is empty\")\n",

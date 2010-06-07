@@ -13992,7 +13992,7 @@ linux
 
 
 \family typewriter
-%(nameOfFunction parameters[,...])
+%(nameOfFunction parameters[...])
 \family default
 
 \begin_inset Quotes erd
@@ -14000,6 +14000,8 @@ linux
 
 .
  Parameters can be any text, including variables.
+ Paramters are separated from another by a delimiter specific to each function.
+ See this list for details:
 \end_layout
 
 \begin_layout Itemize
@@ -14071,6 +14073,7 @@ else
 \end_inset
 
  block.
+ The delimiter used is a comma.
 \end_layout
 
 \begin_layout Itemize
@@ -14099,6 +14102,18 @@ text
 \end_inset
 
 Lowercases or uppercases the supplied argument.
+ As these functions are meant to take only one argument, there is no delimiter
+ defined that would need escaping if multiple arguments were supposed to
+ be passed.
+ 
+\family typewriter
+%(lower a,b)
+\family default
+ is equivalent to 
+\family typewriter
+%(lower "a,b")
+\family default
+.
 \end_layout
 
 \begin_layout Standard

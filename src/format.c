@@ -124,6 +124,7 @@ static inline char *HX_strchr0(const char *s, char c)
 struct HXformat2_fd {
 	const char *name;
 	hxmc_t *(*proc)(int, const char *const *);
+	const char *delim;
 };
 
 /*
@@ -206,11 +207,11 @@ static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv)
 
 static const struct HXformat2_fd HXformat2_fmap[] = {
 	/* Need to be alphabetically sorted */
-	{"echo",	HXformat2_echo},
-	{"env",		HXformat2_env},
-	{"if",		HXformat2_if},
-	{"lower",	HXformat2_lower},
-	{"upper",	HXformat2_upper},
+	{"echo",	HXformat2_echo,		S_CLOSE},
+	{"env",		HXformat2_env,		S_CLOSE " ,"},
+	{"if",		HXformat2_if,		S_CLOSE ","}, /* no sp: ok */
+	{"lower",	HXformat2_lower,	S_CLOSE " ,"},
+	{"upper",	HXformat2_upper,	S_CLOSE " ,"},
 };
 
 static int HXformat2_fmap_compare(const void *pa, const void *pb)
@@ -235,20 +236,23 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 	const struct HXformat2_fd *entry;
 	hxmc_t *ret, *ret2, **argv;
 	struct HXdeque *dq;
-	const char *s;
+	const char *s, *delim;
 	int err;
 
 	dq = HXdeque_init();
 	if (dq == NULL)
 		return NULL;
 
+	entry = bsearch(name, HXformat2_fmap, ARRAY_SIZE(HXformat2_fmap),
+	        sizeof(*HXformat2_fmap), HXformat2_fmap_compare);
+	delim = (entry != NULL) ? entry->delim : S_CLOSE;
 	if (**pptr == C_CLOSE)
 		++*pptr;
 	else for (s = *pptr; *s != '\0'; s = ++*pptr) {
 		while (HX_isspace(*s))
 			++s;
 		*pptr = s;
-		ret = HXparse_dequote_fmt(s, "," S_CLOSE, pptr);
+		ret = HXparse_dequote_fmt(s, delim, pptr);
 		if (ret == NULL)
 			goto out;
 		if (strstr(ret, "%" S_OPEN) != NULL) {
@@ -275,8 +279,6 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 		goto out;
 
 	ret = &HXformat2_nexp;
-	entry = bsearch(name, HXformat2_fmap, ARRAY_SIZE(HXformat2_fmap),
-	        sizeof(*HXformat2_fmap), HXformat2_fmap_compare);
 	/* Unknown functions are silently expanded to nothing, like make. */
 	if (entry != NULL)
 		ret = entry->proc(dq->items,
