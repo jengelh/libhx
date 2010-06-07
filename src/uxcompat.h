@@ -1,12 +1,12 @@
 #ifndef _LIBHX_UXCOMPAT_H
 #define _LIBHX_UXCOMPAT_H 1
 
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <sys/stat.h>
-#include <sys/types.h>
 
 #ifndef ENOSYS
 #	define ENOSYS 38 /* Function not implemented */
