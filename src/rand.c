@@ -9,9 +9,9 @@
  */
 #include "config.h"
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

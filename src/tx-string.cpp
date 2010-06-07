@@ -4,10 +4,12 @@
  */
 #ifndef __cplusplus
 #	include <errno.h>
+#	include <stddef.h>
 #	include <stdio.h>
 #	include <stdlib.h>
 #else
 #	include <cerrno>
+#	include <cstddef>
 #	include <cstdio>
 #	include <cstdlib>
 #endif

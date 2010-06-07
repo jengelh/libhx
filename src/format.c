@@ -8,6 +8,7 @@
  *	Foundation; either version 2.1 or 3 of the License.
  */
 #include <errno.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <libHX/ctype_helper.h>

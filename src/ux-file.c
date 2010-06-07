@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <stddef.h>
 #include "internal.h"
 
 EXPORT_SYMBOL int chown(const char *path, long uid, long gid)

@@ -35,7 +35,6 @@ EXPORT_SYMBOL int HXproc_wait(struct HXproc *p)
 
 #else /* HAVE_FORK, HAVE_PIPE, HAVE_EXECVE */
 
-#include <sys/types.h>
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <errno.h>

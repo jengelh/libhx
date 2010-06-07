@@ -7,9 +7,9 @@
  *	Lesser General Public License as published by the Free Software
  *	Foundation; either version 2.1 or 3 of the License.
  */
-#include <sys/types.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
