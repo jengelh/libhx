@@ -21,6 +21,11 @@
 
 /* Definitions */
 #define MAX_KEY_SIZE 256
+/* To make it easier on the highlighter */
+#define C_OPEN  '('
+#define C_CLOSE ')'
+#define S_OPEN  "("
+#define S_CLOSE ")"
 
 struct fmt_entry {
 	const void *ptr;
@@ -237,16 +242,16 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 	if (dq == NULL)
 		return NULL;
 
-	if (**pptr == /* ( */ ')')
+	if (**pptr == C_CLOSE)
 		++*pptr;
 	else for (s = *pptr; *s != '\0'; s = ++*pptr) {
 		while (HX_isspace(*s))
 			++s;
 		*pptr = s;
-		ret = HXparse_dequote_fmt(s, /* ( */ ",)", pptr);
+		ret = HXparse_dequote_fmt(s, "," S_CLOSE, pptr);
 		if (ret == NULL)
 			goto out;
-		if (strstr(ret, "%(" /* ) */) != NULL) {
+		if (strstr(ret, "%" S_OPEN) != NULL) {
 			ret2 = NULL;
 			err = HXformat2_aprintf(fmt_export(table), &ret2, ret);
 			if (ret2 == NULL)
@@ -258,7 +263,7 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 			goto out2;
 		if (**pptr == '\0')
 			break;
-		if (**pptr == /* ( */ ')') {
+		if (**pptr == C_CLOSE) {
 			++*pptr;
 			break;
 		}
@@ -377,19 +382,19 @@ static hxmc_t *HXformat2_xany(const char **pptr, const struct HXmap *table)
 	 * Some shortcuts for cases that always expand to nothing.
 	 * %() and %( ).
 	 */
-	if (*s == /* ( */ ')') {
+	if (*s == C_CLOSE) {
 		++*pptr;
 		return &HXformat2_nexp;
 	} else if (HX_isspace(*s)) {
 		while (HX_isspace(*s))
 			++s;
-		HXmc_free(HXparse_dequote_fmt(s, /* ( */ ")", pptr));
+		HXmc_free(HXparse_dequote_fmt(s, S_CLOSE, pptr));
 		++*pptr;
 		return &HXformat2_nexp;
 	}
 
 	/* Long parsing */
-	name = HXparse_dequote_fmt(s, /* ( */ ") \t\n\f\v\r", pptr);
+	name = HXparse_dequote_fmt(s, S_CLOSE " \t\n\f\v\r", pptr);
 	if (name == NULL)
 		return NULL;
 	s = *pptr;
@@ -398,7 +403,7 @@ static hxmc_t *HXformat2_xany(const char **pptr, const struct HXmap *table)
 		        "unterminated variable reference / "
 		        "missing closing parenthesis.\n");
 		return NULL;
-	} else if (*s == /* ( */ ')') {
+	} else if (*s == C_CLOSE) {
 		/* Closing parenthesis - variable */
 		const struct fmt_entry *entry;
 		hxmc_t *new_name = NULL;
@@ -446,7 +451,7 @@ EXPORT_SYMBOL int HXformat2_aprintf(const struct HXformat_map *ftable,
 			HXmc_memcat(&out, fmt, current - fmt);
 		if (*current == '\0')
 			break;
-		if (current[1] != '(' /* ) */) {
+		if (current[1] != C_OPEN) {
 			HXmc_memcat(&out, current, 2);
 			fmt = current + 2;
 			continue;

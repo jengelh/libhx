@@ -23,6 +23,8 @@
 #include "internal.h"
 
 /* Definitions */
+#define C_OPEN  '('
+#define C_CLOSE ')'
 #define CALL_CB \
 	if (opt->cb != NULL) \
 		opt->cb(cbi);
@@ -341,7 +343,7 @@ hxmc_t *HXparse_dequote_fmt(const char *s, const char *end, const char **pptr)
 						++i;
 					continue;
 			}
-			if (i[0] == '%' && i[1] == '(' /* ) */) {
+			if (i[0] == '%' && i[1] == C_OPEN) {
 				++level;
 				i += 2;
 				continue;
@@ -349,7 +351,7 @@ hxmc_t *HXparse_dequote_fmt(const char *s, const char *end, const char **pptr)
 			if (level == 0 && end != NULL &&
 			    strchr(end, *i) != NULL)
 				break;
-			if (i[0] == /* ( */ ')' && level > 0)
+			if (i[0] == C_CLOSE && level > 0)
 				--level;
 			++i;
 			continue;
