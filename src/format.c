@@ -200,13 +200,20 @@ static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv)
 }
 
 static const struct HXformat2_fd HXformat2_fmap[] = {
+	/* Need to be alphabetically sorted */
 	{"echo",	HXformat2_echo},
 	{"env",		HXformat2_env},
 	{"if",		HXformat2_if},
 	{"lower",	HXformat2_lower},
 	{"upper",	HXformat2_upper},
-	{NULL},
 };
+
+static int HXformat2_fmap_compare(const void *pa, const void *pb)
+{
+	const char *a_name = pa;
+	const struct HXformat2_fd *b = pb;
+	return strcmp(a_name, b->name);
+}
 
 /**
  * HXformat2_xcall - expand function call (gather args)
@@ -263,12 +270,12 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 		goto out;
 
 	ret = &HXformat2_nexp;
-	for (entry = HXformat2_fmap; entry->name != NULL; ++entry)
-		if (strcmp(name, entry->name) == 0) {
-			ret = entry->proc(dq->items,
-			      const_cast2(const hxmc_t *const *, argv));
-			break;
-		}
+	entry = bsearch(name, HXformat2_fmap, ARRAY_SIZE(HXformat2_fmap),
+	        sizeof(*HXformat2_fmap), HXformat2_fmap_compare);
+	/* Unknown functions are silently expanded to nothing, like make. */
+	if (entry != NULL)
+		ret = entry->proc(dq->items,
+		      const_cast2(const hxmc_t *const *, argv));
 	/*
 	 * Pointers in argv are shared with those in dq.
 	 * Free only the outer shell of one.
