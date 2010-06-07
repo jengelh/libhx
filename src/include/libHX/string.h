@@ -1,12 +1,13 @@
 #ifndef _LIBHX_STRING_H
 #define _LIBHX_STRING_H 1
 
-#include <sys/types.h>
 #ifdef __cplusplus
+#	include <cstddef>
 #	include <cstdio>
 #	include <cstdlib>
 #	include <cstring>
 #else
+#	include <stddef.h>
 #	include <stdio.h>
 #	include <stdlib.h>
 #	include <string.h>

@@ -1,8 +1,12 @@
 #ifndef _LIBHX_UXCOMPAT_H
 #define _LIBHX_UXCOMPAT_H 1
 
+#ifdef __cplusplus
+#	include <cstddef>
+#else
+#	include <stddef.h>
+#endif
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,9 +1,11 @@
 #ifndef _LIBHX_MAP_H
 #define _LIBHX_MAP_H 1
 
-#include <sys/types.h>
-#ifndef __cplusplus
+#ifdef __cplusplus
+#	include <cstddef>
+#else
 #	include <stdbool.h>
+#	include <stddef.h>
 #endif
 
 #ifdef __cplusplus

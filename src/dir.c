@@ -8,7 +8,6 @@
  *	Foundation; either version 2.1 or 3 of the License.
  */
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>

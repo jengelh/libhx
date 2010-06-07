@@ -2,11 +2,12 @@
 #define _LIBHX_OPTION_H 1
 
 #ifdef __cplusplus
+#	include <cstddef>
 #	include <cstdio>
 #else
+#	include <stddef.h>
 #	include <stdio.h>
 #endif
-#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {
