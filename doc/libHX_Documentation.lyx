@@ -100,14 +100,18 @@ Overview
 \end_layout
 
 \begin_layout Itemize
-Maps (key-value pairs)
+Maps (key-value pairs) (section
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:maps"
 
 \end_inset
 
-
+)
 \begin_inset Newline newline
 \end_inset
 
@@ -324,7 +328,8 @@ configuration
 
  files with key-value pairs, as usually foudn in 
 \family typewriter
-/etc/sysconfig
+/etc\SpecialChar \slash{}
+sysconfig
 \family default
 .
 \end_layout
@@ -583,7 +588,8 @@ A C++ compiler is only needed if you want to build the C++ test programs
 No external libraries are needed for compilation of libHX.
  Helper files, like 
 \family typewriter
-libxml_helper.h
+libxml_\SpecialChar \-
+helper.h
 \family default
 , may reference their include files, but they are not used during compilation.
 \end_layout
@@ -1225,6 +1231,8 @@ From
 
 \series bold
 c*
+\series default
+section
 \end_layout
 
 \end_inset
@@ -2620,9 +2628,14 @@ cstddef
 defs.h
 \family default
 .
- defs.h will use GCC's 
+ 
 \family typewriter
-__builtin_offsetof
+defs.h
+\family default
+ will use GCC's 
+\family typewriter
+__builtin_\SpecialChar \-
+offsetof
 \family default
  if available, which does some extra sanity checks in C++ mode.
 \end_layout
@@ -2641,8 +2654,11 @@ offsetof
 \family typewriter
 containerof
 \family default
- will return a pointer to the struct in which ptr is contained as the given
- member.
+ will return a pointer to the struct in which 
+\family typewriter
+ptr
+\family default
+ is contained as the given member.
 \end_layout
 
 \begin_layout LyX-Code
@@ -2667,9 +2683,9 @@ int
 int
 \series default
  baz;
-\end_layout
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout LyX-Code
 };
 \begin_inset Newline newline
 \end_inset
@@ -2862,7 +2878,7 @@ UNIX file modes
 \series bold
 #define
 \series default
- S_IRUGO (S_IRUSR | S_IRGRP | S_IROTH)
+ S_IRUGO   (S_IRUSR | S_IRGRP | S_IROTH)
 \begin_inset Index
 status open
 
@@ -2882,7 +2898,7 @@ S_IRUGO
 \series bold
 #define
 \series default
- S_IWUGO (S_IWUSR | S_IWGRP | S_IWOTH)
+ S_IWUGO   (S_IWUSR | S_IWGRP | S_IWOTH)
 \begin_inset Index
 status open
 
@@ -2902,7 +2918,7 @@ S_IWUGO
 \series bold
 #define
 \series default
- S_IXUGO (S_IXUSR | S_IXGRP | S_IXOTH)
+ S_IXUGO   (S_IXUSR | S_IXGRP | S_IXOTH)
 \begin_inset Index
 status open
 
@@ -7543,7 +7559,9 @@ List head (next,prev pointers) inlined into the data block
 \begin_layout Standard
 At first glance, an inline list does not look much different from 
 \family typewriter
-struct classic_direct_data
+struct classic_\SpecialChar \-
+direct_\SpecialChar \-
+data
 \family default
 , it is mostly a viewpoint decision which struct is in the foreground.
 \end_layout
@@ -19808,7 +19826,9 @@ bool
 When creating a new process with the intent of running it asynchronously
  (using 
 \family typewriter
-HXproc_run_async
+HXproc_\SpecialChar \-
+run_\SpecialChar \-
+async
 \family default
 ), the first three fields must be filled in by the user.
 \end_layout
