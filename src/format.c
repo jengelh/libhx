@@ -11,12 +11,8 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <libHX/ctype_helper.h>
-#include <libHX/deque.h>
-#include <libHX/map.h>
-#include <libHX/misc.h>
-#include <libHX/option.h>
-#include <libHX/string.h>
+#include <unistd.h>
+#include <libHX.h>
 #include "internal.h"
 
 /* Definitions */
@@ -194,6 +190,37 @@ static hxmc_t *HXformat2_lower(int argc, const hxmc_t *const *argv)
 	return ret;
 }
 
+static hxmc_t *HXformat2_exec(int argc, const hxmc_t *const *argv)
+{
+	struct HXproc proc = {
+		.p_flags = HXPROC_STDOUT | HXPROC_VERBOSE,
+	};
+	hxmc_t *slurp, *complete = NULL;
+	ssize_t ret;
+
+	slurp = HXmc_meminit(NULL, BUFSIZ);
+	if (slurp == NULL)
+		return NULL;
+	complete = HXmc_meminit(NULL, BUFSIZ);
+	if (complete == NULL)
+		goto out;
+
+	ret = HXproc_run_async(argv, &proc);
+	if (ret < 0)
+		goto out;
+	while ((ret = read(proc.p_stdout, slurp, BUFSIZ)) > 0)
+		if (HXmc_memcat(&complete, slurp, ret) == NULL)
+			break;
+	close(proc.p_stdout);
+	HXproc_wait(&proc);
+	HXmc_free(slurp);
+	return complete;
+ out:
+	HXmc_free(complete);
+	HXmc_free(slurp);
+	return &HXformat2_nexp;
+}
+
 static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv)
 {
 	hxmc_t *ret;
@@ -209,6 +236,7 @@ static const struct HXformat2_fd HXformat2_fmap[] = {
 	/* Need to be alphabetically sorted */
 	{"echo",	HXformat2_echo,		S_CLOSE},
 	{"env",		HXformat2_env,		S_CLOSE " ,"},
+	{"exec",	HXformat2_exec,		S_CLOSE " "},
 	{"if",		HXformat2_if,		S_CLOSE ","}, /* no sp: ok */
 	{"lower",	HXformat2_lower,	S_CLOSE " ,"},
 	{"upper",	HXformat2_upper,	S_CLOSE " ,"},

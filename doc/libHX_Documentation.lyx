@@ -14031,6 +14031,36 @@ env
 \begin_layout Itemize
 
 \family typewriter
+%(exec 
+\family default
+\shape italic
+command
+\family typewriter
+\shape default
+ [
+\family default
+\shape italic
+args
+\family typewriter
+\shape default
+...])
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+The 
+\family typewriter
+exec
+\family default
+ function expands to the standard output of the command.
+ The command is directly run without shell invocation, so no special character
+ expansion (wildcards, etc.) takes place.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
 %(if 
 \family default
 \shape italic
