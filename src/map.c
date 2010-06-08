@@ -305,6 +305,11 @@ static int HXhmap_layout(struct HXhmap *hmap, unsigned int power)
 	if (hmap->bk_array != NULL) {
 		HXhmap_move(bk_array, bk_number, hmap);
 		old_array = hmap->bk_array;
+		/*
+		 * It is ok to increment the TID this late. @map->bk_array is
+		 * only emptied, and the new @bk_array is not yet visible to
+		 * traversers, so no elements appear twice.
+		 */
 		++hmap->tid;
 	}
 	hmap->power    = power;
