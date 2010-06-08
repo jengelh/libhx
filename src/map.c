@@ -305,12 +305,12 @@ static int HXhmap_layout(struct HXhmap *hmap, unsigned int power)
 	if (hmap->bk_array != NULL) {
 		HXhmap_move(bk_array, bk_number, hmap);
 		old_array = hmap->bk_array;
+		++hmap->tid;
 	}
 	hmap->power    = power;
 	hmap->min_load = (power != 0) ? HXhash_primes[power] / 4 : 0;
 	hmap->max_load = x_frac(7, 10, HXhash_primes[power]);
 	hmap->bk_array = bk_array;
-	++hmap->tid;
 	free(old_array);
 	return 1;
 }
