@@ -14152,6 +14152,34 @@ Lowercases or uppercases the supplied argument.
 .
 \end_layout
 
+\begin_layout Itemize
+
+\family typewriter
+%(shell command [args...])
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+Similar to 
+\family typewriter
+%(exec)
+\family default
+, but invokes the shell inbetween (i.
+\begin_inset space \thinspace{}
+\end_inset
+
+e.
+\begin_inset space \space{}
+\end_inset
+
+`
+\family typewriter
+sh -c 'command...'
+\family default
+`) such that special characters, redirection, and so on can be used.
+\end_layout
+
 \begin_layout Standard
 Historical note: HXformat1 also supported functions, but only on a very
  limited and inflexible level.

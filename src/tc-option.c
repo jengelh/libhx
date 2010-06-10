@@ -43,6 +43,7 @@ static const char *const fmt2_strings[] = {
 	"if-4: %(if %(ONE),\"one is not empty\")\n",
 	"if-5: %(if %(ONE),-o%(ONE))\n",
 	"exec-1: %(exec uname -s)\n",
+	"exec-2: %(shell uname -s)\n",
 	NULL,
 };
 

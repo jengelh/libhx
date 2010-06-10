@@ -190,7 +190,7 @@ static hxmc_t *HXformat2_lower(int argc, const hxmc_t *const *argv)
 	return ret;
 }
 
-static hxmc_t *HXformat2_exec(int argc, const hxmc_t *const *argv)
+static hxmc_t *HXformat2_exec1(const hxmc_t *const *argv, bool shell)
 {
 	struct HXproc proc = {
 		.p_flags = HXPROC_NULL_STDIN | HXPROC_STDOUT | HXPROC_VERBOSE,
@@ -221,6 +221,17 @@ static hxmc_t *HXformat2_exec(int argc, const hxmc_t *const *argv)
 	return &HXformat2_nexp;
 }
 
+static hxmc_t *HXformat2_exec(int argc, const hxmc_t *const *argv)
+{
+	return HXformat2_exec1(argv, false);
+}
+
+static hxmc_t *HXformat2_shell(int argc, const hxmc_t *const *argv)
+{
+	const char *cmd[] = {"/bin/sh", "-c", argv[0], NULL};
+	return HXformat2_exec1(cmd, true);
+}
+
 static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv)
 {
 	hxmc_t *ret;
@@ -239,6 +250,7 @@ static const struct HXformat2_fd HXformat2_fmap[] = {
 	{"exec",	HXformat2_exec,		S_CLOSE " "},
 	{"if",		HXformat2_if,		S_CLOSE ","}, /* no sp: ok */
 	{"lower",	HXformat2_lower,	S_CLOSE " ,"},
+	{"shell",	HXformat2_shell,	S_CLOSE},
 	{"upper",	HXformat2_upper,	S_CLOSE " ,"},
 };
 
