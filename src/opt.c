@@ -342,11 +342,10 @@ hxmc_t *HXparse_dequote_fmt(const char *s, const char *end, const char **pptr)
 					if (i[1] != '\0')
 						i += 2;
 					continue;
-			}
-			if (i[0] == '%' && i[1] == C_OPEN) {
-				++level;
-				i += 2;
-				continue;
+				case C_OPEN:
+					++level;
+					++i;
+					continue;
 			}
 			if (level == 0 && end != NULL &&
 			    strchr(end, *i) != NULL)
