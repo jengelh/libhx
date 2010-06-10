@@ -193,7 +193,7 @@ static hxmc_t *HXformat2_lower(int argc, const hxmc_t *const *argv)
 static hxmc_t *HXformat2_exec(int argc, const hxmc_t *const *argv)
 {
 	struct HXproc proc = {
-		.p_flags = HXPROC_STDOUT | HXPROC_VERBOSE,
+		.p_flags = HXPROC_NULL_STDIN | HXPROC_STDOUT | HXPROC_VERBOSE,
 	};
 	hxmc_t *slurp, *complete = NULL;
 	ssize_t ret;

@@ -14056,6 +14056,12 @@ exec
  function expands to the standard output of the command.
  The command is directly run without shell invocation, so no special character
  expansion (wildcards, etc.) takes place.
+ stdin is set to 
+\family typewriter
+/dev\SpecialChar \slash{}
+null
+\family default
+.
 \end_layout
 
 \begin_layout Itemize
