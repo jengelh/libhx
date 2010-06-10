@@ -8,6 +8,7 @@ Fixed:
 Enhancements:
 - format2: add the %(exec) function
 - format2: add the %(shell) function
+- format2: security feature for %(exec) and %(shell)
 Changes:
 - format1: removed older formatter in favor of format2
 - format2: add check for empty key

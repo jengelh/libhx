@@ -52,6 +52,7 @@ static void t_format(int argc)
 	struct HXformat_map *fmt = HXformat_init();
 	const char *const *s;
 
+	HXformat_add(fmt, "/libhx/exec", NULL, HXFORMAT_IMMED);
 	HXformat_add(fmt, "jengelh", "1337", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "USER", "jengelh", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ARGC", &argc, HXTYPE_INT);

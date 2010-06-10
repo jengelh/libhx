@@ -1,6 +1,6 @@
 /*
  *	String placeholder expansion
- *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2007 - 2009
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2007 - 2010
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -8,6 +8,7 @@
  *	Foundation; either version 2.1 or 3 of the License.
  */
 #include <errno.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -121,6 +122,7 @@ struct HXformat2_fd {
 	const char *name;
 	hxmc_t *(*proc)(int, const char *const *);
 	const char *delim;
+	bool (*check)(const struct HXmap *);
 };
 
 /*
@@ -190,6 +192,11 @@ static hxmc_t *HXformat2_lower(int argc, const hxmc_t *const *argv)
 	return ret;
 }
 
+static bool HXformat2_execchk(const struct HXmap *table)
+{
+	return HXmap_find(table, "/libhx/exec") != NULL;
+}
+
 static hxmc_t *HXformat2_exec1(const hxmc_t *const *argv, bool shell)
 {
 	struct HXproc proc = {
@@ -247,10 +254,10 @@ static const struct HXformat2_fd HXformat2_fmap[] = {
 	/* Need to be alphabetically sorted */
 	{"echo",	HXformat2_echo,		S_CLOSE " ,"},
 	{"env",		HXformat2_env,		S_CLOSE " ,"},
-	{"exec",	HXformat2_exec,		S_CLOSE " "},
+	{"exec",	HXformat2_exec,		S_CLOSE " ", HXformat2_execchk},
 	{"if",		HXformat2_if,		S_CLOSE ","}, /* no sp: ok */
 	{"lower",	HXformat2_lower,	S_CLOSE " ,"},
-	{"shell",	HXformat2_shell,	S_CLOSE},
+	{"shell",	HXformat2_shell,	S_CLOSE, HXformat2_execchk},
 	{"upper",	HXformat2_upper,	S_CLOSE " ,"},
 };
 
@@ -320,7 +327,7 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 
 	ret = &HXformat2_nexp;
 	/* Unknown functions are silently expanded to nothing, like make. */
-	if (entry != NULL)
+	if (entry != NULL && (entry->check == NULL || entry->check(table)))
 		ret = entry->proc(dq->items,
 		      const_cast2(const hxmc_t *const *, argv));
 	/*

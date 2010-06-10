@@ -14062,6 +14062,39 @@ exec
 null
 \family default
 .
+ To be able to use this function
+\begin_inset space ~
+\end_inset
+
+--- as it is relevant to security
+\begin_inset space ~
+\end_inset
+
+--- the fmt table needs to have a key called 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+/libhx/exec
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+.
+ See example
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:hxformat-exec"
+
+\end_inset
+
+ for details.
 \end_layout
 
 \begin_layout Itemize
@@ -14303,6 +14336,59 @@ name "fig:hxformat-immediate-deferred"
 \end_inset
 
 Immediate and deferred resolution
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout LyX-Code
+
+\series bold
+struct
+\series default
+ HXformat_map 
+\series bold
+*
+\series default
+table = HXformat_init();
+\begin_inset Newline newline
+\end_inset
+
+HXformat_add(table, "/libhx/exec", NULL, HXTYPE_IMMED);
+\begin_inset Newline newline
+\end_inset
+
+HXformat2_aprintf(table, &result, "%(exec uname -s)");
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:hxformat-exec"
+
+\end_inset
+
+Using the 
+\family typewriter
+%(exec)
+\family default
+ function
 \end_layout
 
 \end_inset
