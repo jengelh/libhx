@@ -4,6 +4,7 @@ HEAD
 ====
 Fixed:
 - strict-aliasing violation in containerof has been worked around
+- format2: failure to skip escaped char in "%(echo foo\ bar)" was corrected
 Enhancements:
 - format2: add the %(exec) function
 Changes:

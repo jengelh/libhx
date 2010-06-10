@@ -234,7 +234,7 @@ static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv)
 
 static const struct HXformat2_fd HXformat2_fmap[] = {
 	/* Need to be alphabetically sorted */
-	{"echo",	HXformat2_echo,		S_CLOSE},
+	{"echo",	HXformat2_echo,		S_CLOSE " ,"},
 	{"env",		HXformat2_env,		S_CLOSE " ,"},
 	{"exec",	HXformat2_exec,		S_CLOSE " "},
 	{"if",		HXformat2_if,		S_CLOSE ","}, /* no sp: ok */

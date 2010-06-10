@@ -340,7 +340,7 @@ hxmc_t *HXparse_dequote_fmt(const char *s, const char *end, const char **pptr)
 					continue;
 				case '\\':
 					if (i[1] != '\0')
-						++i;
+						i += 2;
 					continue;
 			}
 			if (i[0] == '%' && i[1] == C_OPEN) {

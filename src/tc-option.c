@@ -31,6 +31,7 @@ static const char *const fmt2_strings[] = {
 	"quote-1: %(echo \"A,B\")\n",
 	"quote-2: %(echo %(echo A,B),%(echo C,D),%(echo E F))\n",
 	"quote-3: %(echo \"A)B\")\n",
+	"quote-4: %(echo foo bar) %(echo foo\\ bar)\n",
 	"unclosed-1: %(echo \"%(echo A\",B)\n",
 	"unclosed-2: %(if X,Y,Z", /* ) */
 	"if-1: %(if %(ZERO),,\"zero is empty\")\n",
