@@ -239,6 +239,22 @@ static hxmc_t *HXformat2_shell(int argc, const hxmc_t *const *argv)
 	return HXformat2_exec1(cmd, true);
 }
 
+static hxmc_t *HXformat2_snl(int argc, const hxmc_t *const *argv)
+{
+	hxmc_t *s;
+	char *p;
+
+	if (argc == 0)
+		return &HXformat2_nexp;
+	p = s = HXmc_strinit(*argv);
+	if (s == NULL)
+		return NULL;
+	HX_chomp(s);
+	while ((p = strchr(p, '\n')) != NULL)
+		*p++ = ' ';
+	return s;
+}
+
 static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv)
 {
 	hxmc_t *ret;
@@ -258,6 +274,7 @@ static const struct HXformat2_fd HXformat2_fmap[] = {
 	{"if",		HXformat2_if,		S_CLOSE ","}, /* no sp: ok */
 	{"lower",	HXformat2_lower,	S_CLOSE " ,"},
 	{"shell",	HXformat2_shell,	S_CLOSE, HXformat2_execchk},
+	{"snl",		HXformat2_snl,		S_CLOSE},
 	{"upper",	HXformat2_upper,	S_CLOSE " ,"},
 };
 

@@ -14213,6 +14213,29 @@ sh -c 'command...'
 `) such that special characters, redirection, and so on can be used.
 \end_layout
 
+\begin_layout Itemize
+
+\family typewriter
+%(snl 
+\family default
+\shape italic
+text
+\family typewriter
+\shape default
+)
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+Strips trailing newlines from text and replaces any other newline by a space.
+ What happens implicity in Makefiles' 
+\family typewriter
+$(shell ...)
+\family default
+ statements usually is explicitly separate in libHX.
+\end_layout
+
 \begin_layout Standard
 Historical note: HXformat1 also supported functions, but only on a very
  limited and inflexible level.

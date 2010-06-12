@@ -24,6 +24,7 @@ static const char *const fmt2_strings[] = {
 	"empty-4: <%(echo )>\n",
 	"empty-5: <%(echo %())>\n",
 	"empty-6: <%(echo %( ))>\n",
+	"empty-7: <%(snl )>\n",
 	"basic: <%(ZERO)> <%(ONE)>\n",
 	"recursive-var: <%(%(USER))>\n",
 	"recursive-func: <%(%(env USER))>\n",
@@ -44,6 +45,7 @@ static const char *const fmt2_strings[] = {
 	"if-5: %(if %(ONE),-o%(ONE))\n",
 	"exec-1: %(exec uname -s)\n",
 	"exec-2: %(shell uname -s)\n",
+	"exec-3: %(snl %(shell uname -s))\n",
 	NULL,
 };
 
