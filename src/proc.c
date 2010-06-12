@@ -113,6 +113,9 @@ EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 	int pipes[3][2], nullfd = -1, ret, saved_errno;
 	unsigned int t;
 
+	if (argv == NULL || *argv == NULL)
+		return -EFAULT;
+
 	proc->p_stdin = proc->p_stdout = proc->p_stderr = -1;
 
 	t  = (proc->p_flags & (HXPROC_STDIN | HXPROC_NULL_STDIN)) ==
