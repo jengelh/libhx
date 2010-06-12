@@ -14015,11 +14015,11 @@ variable
 \family typewriter
 \shape default
 )
-\family default
-
 \begin_inset Newline newline
 \end_inset
 
+
+\family default
 The 
 \family typewriter
 env
@@ -14037,13 +14037,15 @@ env
 command
 \family typewriter
 \shape default
- [
+ 
 \family default
+[
 \shape italic
 args
-\family typewriter
 \shape default
-...])
+...]
+\family typewriter
+)
 \family default
 
 \begin_inset Newline newline
@@ -14062,6 +14064,7 @@ exec
 null
 \family default
 .
+ The parameter delimiter is the space character.
  To be able to use this function
 \begin_inset space ~
 \end_inset
@@ -14106,19 +14109,23 @@ reference "fig:hxformat-exec"
 condition
 \family typewriter
 \shape default
-,[
+,
 \family default
+[
 \shape italic
 then
-\family typewriter
 \shape default
-][,[
+][
+\family typewriter
+,
 \family default
+[
 \shape italic
 else
-\family typewriter
 \shape default
-]])
+]]
+\family typewriter
+)
 \family default
 
 \begin_inset Newline newline
@@ -14188,7 +14195,21 @@ Lowercases or uppercases the supplied argument.
 \begin_layout Itemize
 
 \family typewriter
-%(shell command [args...])
+%(shell 
+\family default
+\shape italic
+command
+\family typewriter
+\shape default
+ 
+\family default
+[
+\shape italic
+args
+\shape default
+...]
+\family typewriter
+)
 \family default
 
 \begin_inset Newline newline
@@ -14208,7 +14229,14 @@ e.
 
 `
 \family typewriter
-sh -c 'command...'
+sh -c '
+\family default
+\shape italic
+command
+\shape default
+...
+\family typewriter
+'
 \family default
 `) such that special characters, redirection, and so on can be used.
 \end_layout
@@ -14231,7 +14259,11 @@ text
 Strips trailing newlines from text and replaces any other newline by a space.
  What happens implicity in Makefiles' 
 \family typewriter
-$(shell ...)
+$(shell 
+\family default
+...
+\family typewriter
+)
 \family default
  statements usually is explicitly separate in libHX.
 \end_layout
