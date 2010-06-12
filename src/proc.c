@@ -120,9 +120,9 @@ EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
 
 	t  = (proc->p_flags & (HXPROC_STDIN | HXPROC_NULL_STDIN)) ==
 	     (HXPROC_STDIN | HXPROC_NULL_STDIN);
-	t  = (proc->p_flags & (HXPROC_STDOUT | HXPROC_NULL_STDOUT)) ==
+	t |= (proc->p_flags & (HXPROC_STDOUT | HXPROC_NULL_STDOUT)) ==
 	     (HXPROC_STDOUT | HXPROC_NULL_STDOUT);
-	t  = (proc->p_flags & (HXPROC_STDERR | HXPROC_NULL_STDERR)) ==
+	t |= (proc->p_flags & (HXPROC_STDERR | HXPROC_NULL_STDERR)) ==
 	     (HXPROC_STDERR | HXPROC_NULL_STDERR);
 	if (t > 0)
 		return -EINVAL;
