@@ -1,6 +1,6 @@
 /*
  *	String placeholder expansion
- *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2007 - 2009
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2007 - 2010
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -8,19 +8,21 @@
  *	Foundation; either version 2.1 or 3 of the License.
  */
 #include <errno.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <libHX/ctype_helper.h>
-#include <libHX/deque.h>
-#include <libHX/map.h>
-#include <libHX/misc.h>
-#include <libHX/option.h>
-#include <libHX/string.h>
+#include <unistd.h>
+#include <libHX.h>
 #include "internal.h"
 
 /* Definitions */
 #define MAX_KEY_SIZE 256
+/* To make it easier on the highlighter */
+#define C_OPEN  '('
+#define C_CLOSE ')'
+#define S_OPEN  "("
+#define S_CLOSE ")"
 
 struct fmt_entry {
 	const void *ptr;
@@ -119,6 +121,8 @@ static inline char *HX_strchr0(const char *s, char c)
 struct HXformat2_fd {
 	const char *name;
 	hxmc_t *(*proc)(int, const char *const *);
+	const char *delim;
+	bool (*check)(const struct HXmap *);
 };
 
 /*
@@ -188,6 +192,74 @@ static hxmc_t *HXformat2_lower(int argc, const hxmc_t *const *argv)
 	return ret;
 }
 
+static bool HXformat2_execchk(const struct HXmap *table)
+{
+	return HXmap_find(table, "/libhx/exec") != NULL;
+}
+
+static hxmc_t *HXformat2_exec1(const hxmc_t *const *argv, bool shell)
+{
+	struct HXproc proc = {
+		.p_flags = HXPROC_NULL_STDIN | HXPROC_STDOUT | HXPROC_VERBOSE,
+	};
+	hxmc_t *slurp, *complete = NULL;
+	ssize_t ret;
+
+	slurp = HXmc_meminit(NULL, BUFSIZ);
+	if (slurp == NULL)
+		return NULL;
+	complete = HXmc_meminit(NULL, BUFSIZ);
+	if (complete == NULL)
+		goto out;
+
+	ret = HXproc_run_async(argv, &proc);
+	if (ret < 0)
+		goto out;
+	while ((ret = read(proc.p_stdout, slurp, BUFSIZ)) > 0)
+		if (HXmc_memcat(&complete, slurp, ret) == NULL)
+			break;
+	close(proc.p_stdout);
+	HXproc_wait(&proc);
+	HXmc_free(slurp);
+	return complete;
+ out:
+	HXmc_free(complete);
+	HXmc_free(slurp);
+	return &HXformat2_nexp;
+}
+
+static hxmc_t *HXformat2_exec(int argc, const hxmc_t *const *argv)
+{
+	if (argc == 0)
+		return &HXformat2_nexp;
+	return HXformat2_exec1(argv, false);
+}
+
+static hxmc_t *HXformat2_shell(int argc, const hxmc_t *const *argv)
+{
+	const char *cmd[] = {"/bin/sh", "-c", NULL, NULL};
+	if (argc == 0)
+		return &HXformat2_nexp;
+	cmd[2] = argv[0];
+	return HXformat2_exec1(cmd, true);
+}
+
+static hxmc_t *HXformat2_snl(int argc, const hxmc_t *const *argv)
+{
+	hxmc_t *s;
+	char *p;
+
+	if (argc == 0)
+		return &HXformat2_nexp;
+	p = s = HXmc_strinit(*argv);
+	if (s == NULL)
+		return NULL;
+	HX_chomp(s);
+	while ((p = strchr(p, '\n')) != NULL)
+		*p++ = ' ';
+	return s;
+}
+
 static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv)
 {
 	hxmc_t *ret;
@@ -200,13 +272,23 @@ static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv)
 }
 
 static const struct HXformat2_fd HXformat2_fmap[] = {
-	{"echo",	HXformat2_echo},
-	{"env",		HXformat2_env},
-	{"if",		HXformat2_if},
-	{"lower",	HXformat2_lower},
-	{"upper",	HXformat2_upper},
-	{NULL},
+	/* Need to be alphabetically sorted */
+	{"echo",	HXformat2_echo,		S_CLOSE " ,"},
+	{"env",		HXformat2_env,		S_CLOSE " ,"},
+	{"exec",	HXformat2_exec,		S_CLOSE " ", HXformat2_execchk},
+	{"if",		HXformat2_if,		S_CLOSE ","}, /* no sp: ok */
+	{"lower",	HXformat2_lower,	S_CLOSE " ,"},
+	{"shell",	HXformat2_shell,	S_CLOSE, HXformat2_execchk},
+	{"snl",		HXformat2_snl,		S_CLOSE},
+	{"upper",	HXformat2_upper,	S_CLOSE " ,"},
 };
+
+static int HXformat2_fmap_compare(const void *pa, const void *pb)
+{
+	const char *a_name = pa;
+	const struct HXformat2_fd *b = pb;
+	return strcmp(a_name, b->name);
+}
 
 /**
  * HXformat2_xcall - expand function call (gather args)
@@ -223,23 +305,26 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 	const struct HXformat2_fd *entry;
 	hxmc_t *ret, *ret2, **argv;
 	struct HXdeque *dq;
-	const char *s;
+	const char *s, *delim;
 	int err;
 
 	dq = HXdeque_init();
 	if (dq == NULL)
 		return NULL;
 
-	if (**pptr == /* ( */ ')')
+	entry = bsearch(name, HXformat2_fmap, ARRAY_SIZE(HXformat2_fmap),
+	        sizeof(*HXformat2_fmap), HXformat2_fmap_compare);
+	delim = (entry != NULL) ? entry->delim : S_CLOSE;
+	if (**pptr == C_CLOSE)
 		++*pptr;
 	else for (s = *pptr; *s != '\0'; s = ++*pptr) {
 		while (HX_isspace(*s))
 			++s;
 		*pptr = s;
-		ret = HXparse_dequote_fmt(s, /* ( */ ",)", pptr);
+		ret = HXparse_dequote_fmt(s, delim, pptr);
 		if (ret == NULL)
 			goto out;
-		if (strstr(ret, "%(" /* ) */) != NULL) {
+		if (strstr(ret, "%" S_OPEN) != NULL) {
 			ret2 = NULL;
 			err = HXformat2_aprintf(fmt_export(table), &ret2, ret);
 			if (ret2 == NULL)
@@ -251,7 +336,7 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 			goto out2;
 		if (**pptr == '\0')
 			break;
-		if (**pptr == /* ( */ ')') {
+		if (**pptr == C_CLOSE) {
 			++*pptr;
 			break;
 		}
@@ -263,12 +348,10 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 		goto out;
 
 	ret = &HXformat2_nexp;
-	for (entry = HXformat2_fmap; entry->name != NULL; ++entry)
-		if (strcmp(name, entry->name) == 0) {
-			ret = entry->proc(dq->items,
-			      const_cast2(const hxmc_t *const *, argv));
-			break;
-		}
+	/* Unknown functions are silently expanded to nothing, like make. */
+	if (entry != NULL && (entry->check == NULL || entry->check(table)))
+		ret = entry->proc(dq->items,
+		      const_cast2(const hxmc_t *const *, argv));
 	/*
 	 * Pointers in argv are shared with those in dq.
 	 * Free only the outer shell of one.
@@ -370,19 +453,19 @@ static hxmc_t *HXformat2_xany(const char **pptr, const struct HXmap *table)
 	 * Some shortcuts for cases that always expand to nothing.
 	 * %() and %( ).
 	 */
-	if (*s == /* ( */ ')') {
+	if (*s == C_CLOSE) {
 		++*pptr;
 		return &HXformat2_nexp;
 	} else if (HX_isspace(*s)) {
 		while (HX_isspace(*s))
 			++s;
-		HXmc_free(HXparse_dequote_fmt(s, /* ( */ ")", pptr));
+		HXmc_free(HXparse_dequote_fmt(s, S_CLOSE, pptr));
 		++*pptr;
 		return &HXformat2_nexp;
 	}
 
 	/* Long parsing */
-	name = HXparse_dequote_fmt(s, /* ( */ ") \t\n\f\v\r", pptr);
+	name = HXparse_dequote_fmt(s, S_CLOSE " \t\n\f\v\r", pptr);
 	if (name == NULL)
 		return NULL;
 	s = *pptr;
@@ -391,7 +474,7 @@ static hxmc_t *HXformat2_xany(const char **pptr, const struct HXmap *table)
 		        "unterminated variable reference / "
 		        "missing closing parenthesis.\n");
 		return NULL;
-	} else if (*s == /* ( */ ')') {
+	} else if (*s == C_CLOSE) {
 		/* Closing parenthesis - variable */
 		const struct fmt_entry *entry;
 		hxmc_t *new_name = NULL;
@@ -439,7 +522,7 @@ EXPORT_SYMBOL int HXformat2_aprintf(const struct HXformat_map *ftable,
 			HXmc_memcat(&out, fmt, current - fmt);
 		if (*current == '\0')
 			break;
-		if (current[1] != '(' /* ) */) {
+		if (current[1] != C_OPEN) {
 			HXmc_memcat(&out, current, 2);
 			fmt = current + 2;
 			continue;

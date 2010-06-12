@@ -4,9 +4,18 @@ HEAD
 ====
 Fixed:
 - strict-aliasing violation in containerof has been worked around
+- format2: failure to skip escaped char in "%(echo foo\ bar)" was corrected
+Enhancements:
+- format2: add the %(exec) function
+- format2: add the %(shell) function
+- format2: security feature for %(exec) and %(shell)
+- format2: add the %(snl) function
 Changes:
 - format1: removed older formatter in favor of format2
 - format2: add check for empty key
+- format2: function-specific delimiters
+- format2: do nest-counting even with normal parentheses
+- format2: check for zero-argument function calls
 - hashmap: do not needlessy change TID when no reshape was done
 - string: HX_basename (the fast variant) now recognizes the root directory
 - string: HX_basename now returns the trailing component with slashes

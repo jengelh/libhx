@@ -14010,7 +14010,7 @@ linux
 
 
 \family typewriter
-%(nameOfFunction parameters[,...])
+%(nameOfFunction parameters[...])
 \family default
 
 \begin_inset Quotes erd
@@ -14018,6 +14018,8 @@ linux
 
 .
  Parameters can be any text, including variables.
+ Paramters are separated from another by a delimiter specific to each function.
+ See this list for details:
 \end_layout
 
 \begin_layout Itemize
@@ -14031,11 +14033,11 @@ variable
 \family typewriter
 \shape default
 )
-\family default
-
 \begin_inset Newline newline
 \end_inset
 
+
+\family default
 The 
 \family typewriter
 env
@@ -14047,25 +14049,101 @@ env
 \begin_layout Itemize
 
 \family typewriter
+%(exec 
+\family default
+\shape italic
+command
+\family typewriter
+\shape default
+ 
+\family default
+[
+\shape italic
+args
+\shape default
+...]
+\family typewriter
+)
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+The 
+\family typewriter
+exec
+\family default
+ function expands to the standard output of the command.
+ The command is directly run without shell invocation, so no special character
+ expansion (wildcards, etc.) takes place.
+ stdin is set to 
+\family typewriter
+/dev\SpecialChar \slash{}
+null
+\family default
+.
+ The parameter delimiter is the space character.
+ To be able to use this function
+\begin_inset space ~
+\end_inset
+
+--- as it is relevant to security
+\begin_inset space ~
+\end_inset
+
+--- the fmt table needs to have a key called 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+/libhx/exec
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+.
+ See example
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:hxformat-exec"
+
+\end_inset
+
+ for details.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
 %(if 
 \family default
 \shape italic
 condition
 \family typewriter
 \shape default
-,[
+,
 \family default
+[
 \shape italic
 then
-\family typewriter
 \shape default
-][,[
+][
+\family typewriter
+,
 \family default
+[
 \shape italic
 else
-\family typewriter
 \shape default
-]])
+]]
+\family typewriter
+)
 \family default
 
 \begin_inset Newline newline
@@ -14089,6 +14167,7 @@ else
 \end_inset
 
  block.
+ The delimiter used is a comma.
 \end_layout
 
 \begin_layout Itemize
@@ -14117,6 +14196,94 @@ text
 \end_inset
 
 Lowercases or uppercases the supplied argument.
+ As these functions are meant to take only one argument, there is no delimiter
+ defined that would need escaping if multiple arguments were supposed to
+ be passed.
+ 
+\family typewriter
+%(lower a,b)
+\family default
+ is equivalent to 
+\family typewriter
+%(lower "a,b")
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+%(shell 
+\family default
+\shape italic
+command
+\family typewriter
+\shape default
+ 
+\family default
+[
+\shape italic
+args
+\shape default
+...]
+\family typewriter
+)
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+Similar to 
+\family typewriter
+%(exec)
+\family default
+, but invokes the shell inbetween (i.
+\begin_inset space \thinspace{}
+\end_inset
+
+e.
+\begin_inset space \space{}
+\end_inset
+
+`
+\family typewriter
+sh -c '
+\family default
+\shape italic
+command
+\shape default
+...
+\family typewriter
+'
+\family default
+`) such that special characters, redirection, and so on can be used.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+%(snl 
+\family default
+\shape italic
+text
+\family typewriter
+\shape default
+)
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+Strips trailing newlines from text and replaces any other newline by a space.
+ What happens implicity in Makefiles' 
+\family typewriter
+$(shell 
+\family default
+...
+\family typewriter
+)
+\family default
+ statements usually is explicitly separate in libHX.
 \end_layout
 
 \begin_layout Standard
@@ -14242,6 +14409,59 @@ name "fig:hxformat-immediate-deferred"
 \end_inset
 
 Immediate and deferred resolution
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout LyX-Code
+
+\series bold
+struct
+\series default
+ HXformat_map 
+\series bold
+*
+\series default
+table = HXformat_init();
+\begin_inset Newline newline
+\end_inset
+
+HXformat_add(table, "/libhx/exec", NULL, HXTYPE_IMMED);
+\begin_inset Newline newline
+\end_inset
+
+HXformat2_aprintf(table, &result, "%(exec uname -s)");
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:hxformat-exec"
+
+\end_inset
+
+Using the 
+\family typewriter
+%(exec)
+\family default
+ function
 \end_layout
 
 \end_inset

@@ -24,20 +24,29 @@ static const char *const fmt2_strings[] = {
 	"empty-4: <%(echo )>\n",
 	"empty-5: <%(echo %())>\n",
 	"empty-6: <%(echo %( ))>\n",
+	"empty-7: <%(env )> <%(exec )> <%(if )> <%(if cond)> <%(lower )>\n",
+	"empty-8: <%(shell )> <%(snl )> <%(upper )>\n",
 	"basic: <%(ZERO)> <%(ONE)>\n",
 	"recursive-var: <%(%(USER))>\n",
 	"recursive-func: <%(%(env USER))>\n",
 	"ignore-escape: %(echo A\\,B) %(echo A\\)B)\n",
-	"quote-1: %(echo \"A,B\")\n"
-	"quote-2: %(echo %(echo A,B),%(echo C,D))\n",
+	"quote-1: %(echo \"A,B\")\n",
+	"quote-2: %(echo %(echo A,B),%(echo C,D),%(echo E F))\n",
 	"quote-3: %(echo \"A)B\")\n",
+	"quote-4: %(echo foo bar) %(echo foo\\ bar)\n",
 	"unclosed-1: %(echo \"%(echo A\",B)\n",
-	"unclosed-2: %(if X,Y,Z" /* ) */
+	"unclosed-2: %(if X,Y,Z", /* ) */
+	"nest-1: %(echo ()) %(echo %())\n",
+	"nest-2: %(echo \\(A) %(echo \\)B)\n",
+	"nest-3: %(echo \\)B\\() %(echo )B()\n",
 	"if-1: %(if %(ZERO),,\"zero is empty\")\n",
 	"if-2: %(if %(ZERO),\"zero is not empty\")\n",
 	"if-3: %(if %(ONE),,\"one is empty\")\n",
 	"if-4: %(if %(ONE),\"one is not empty\")\n",
 	"if-5: %(if %(ONE),-o%(ONE))\n",
+	"exec-1: %(exec uname -s)\n",
+	"exec-2: %(shell uname -s)\n",
+	"exec-3: %(snl %(shell uname -s))\n",
 	NULL,
 };
 
@@ -46,6 +55,7 @@ static void t_format(int argc)
 	struct HXformat_map *fmt = HXformat_init();
 	const char *const *s;
 
+	HXformat_add(fmt, "/libhx/exec", NULL, HXFORMAT_IMMED);
 	HXformat_add(fmt, "jengelh", "1337", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "USER", "jengelh", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ARGC", &argc, HXTYPE_INT);
