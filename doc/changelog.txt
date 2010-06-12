@@ -15,6 +15,7 @@ Changes:
 - format2: add check for empty key
 - format2: function-specific delimiters
 - format2: do nest-counting even with normal parentheses
+- format2: check for zero-argument function calls
 - string: HX_basename (the fast variant) now recognizes the root directory
 - string: HX_basename now returns the trailing component with slashes
   instead of everything after the last slash (which may have been nothing)
