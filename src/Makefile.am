@@ -6,7 +6,7 @@ AM_CFLAGS        = ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${srcdir}/inclu
 AM_CXXFLAGS      = ${regular_CXXFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${srcdir}/include
 
 lib_LTLIBRARIES  = libHX.la
-libHX_la_SOURCES = containerof.c deque.c dir.c dl.c format.c map.c \
+libHX_la_SOURCES = deque.c dir.c dl.c format.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c ${mingw32_extra} ${proc_sources}
 libHX_la_LIBADD  = ${regular_LIBS}
