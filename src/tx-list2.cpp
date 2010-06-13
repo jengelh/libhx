@@ -9,10 +9,11 @@ struct item {
 int main(void)
 {
 	HXLIST_HEAD(clh);
-	HXLIST_HEAD(lh);
+	struct item lh;
 	struct item *pos;
 
-	HXlist_add_tail(&clh, &lh);
+	HXlist_init(&lh.list);
+	HXlist_add_tail(&clh, &lh.list);
 	HXlist_for_each_entry(pos, &clh, list)
 #ifdef OK
 		printf("%p\n", pos);
