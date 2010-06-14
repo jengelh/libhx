@@ -149,6 +149,8 @@ static void t_quote(void)
 	printf("%s\n", HX_strquote("\"Good\" ol' \\'escaped\\' strings", HXQUOTE_SQUOTE, &fm));
 	printf("%s\n", HX_strquote("\"Good\" ol' \\'escaped\\' strings", HXQUOTE_DQUOTE, &fm));
 	printf("%s\n", HX_strquote("<p style=\"height: 1;\">Foo &amp; \"bar\"</p>", HXQUOTE_HTML, &fm));
+	printf("(objectClass=%s)\n", HX_strquote(" #o=foo(*),bar ", HXQUOTE_LDAPFLT, &fm));
+	printf("o=%s\n", HX_strquote(" #o=foo(*),bar ", HXQUOTE_LDAPRDN, &fm));
 	free(fm);
 }
 

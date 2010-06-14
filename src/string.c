@@ -1,6 +1,6 @@
 /*
  *	C-string functions
- *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2008
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2010
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -368,15 +368,26 @@ static const char *const HX_quote_chars[] = {
 	[HXQUOTE_SQUOTE] = "'\\",
 	[HXQUOTE_DQUOTE] = "\"\\",
 	[HXQUOTE_HTML]   = "\"&<>",
+	[HXQUOTE_LDAPFLT] = "\n*()\\",
+	[HXQUOTE_LDAPRDN] = "\n \"#+,;<=>\\",
 };
 
-static size_t HX_qsize_backslash(const char *s, const char *qchars)
+/**
+ * HX_qsize_backslash - calculate size of new buffer
+ * @s:		input string
+ * @qchars:	characters that need quoting
+ * @cost:	quoting cost per quoted character
+ *
+ * The cost depends on the quote format (\a vs \07 vs \x07).
+ */
+static size_t HX_qsize_backslash(const char *s, const char *qchars,
+    unsigned int cost)
 {
 	const char *p = s;
 	size_t n = strlen(s);
 
 	while ((p = strpbrk(p, qchars)) != NULL) {
-		++n;
+		n += cost;
 		++p;
 	}
 	return n;
@@ -458,6 +469,31 @@ static char *HX_quote_html(char *dest, const char *src)
 #undef put
 }
 
+static char *HX_quote_ldap(char *dest, const char *src, const char *qc)
+{
+	static const char hex[] = "0123456789ABCDEF";
+	char *ret = dest;
+	size_t len;
+
+	while (*src != '\0') {
+		len = strcspn(src, qc);
+		if (len > 0) {
+			memcpy(dest, src, len);
+			dest += len;
+			src  += len;
+			if (*src == '\0')
+				break;
+		}
+		*dest++ = '\\';
+		*dest++ = hex[(*src >> 4) & 0x0F];
+		*dest++ = hex[*src++ & 0x0F];
+	}
+
+	*dest = '\0';
+	return ret;
+}
+
+
 /**
  * HX_quoted_size -
  * @s:		string to analyze
@@ -470,9 +506,12 @@ static size_t HX_quoted_size(const char *s, unsigned int type)
 	switch (type) {
 	case HXQUOTE_SQUOTE:
 	case HXQUOTE_DQUOTE:
-		return HX_qsize_backslash(s, HX_quote_chars[type]);
+		return HX_qsize_backslash(s, HX_quote_chars[type], 1);
 	case HXQUOTE_HTML:
 		return HX_qsize_html(s);
+	case HXQUOTE_LDAPFLT:
+	case HXQUOTE_LDAPRDN:
+		return HX_qsize_backslash(s, HX_quote_chars[type], 2);
 	default:
 		return strlen(s);
 	}
@@ -511,6 +550,9 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 		return HX_quote_backslash(*free_me, src, HX_quote_chars[type]);
 	case HXQUOTE_HTML:
 		return HX_quote_html(*free_me, src);
+	case HXQUOTE_LDAPFLT:
+	case HXQUOTE_LDAPRDN:
+		return HX_quote_ldap(*free_me, src, HX_quote_chars[type]);
 	}
 	return NULL;
 }
