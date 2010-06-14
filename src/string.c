@@ -1,6 +1,6 @@
 /*
  *	C-string functions
- *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2008
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2010
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -368,6 +368,7 @@ static const char *const HX_quote_chars[] = {
 	[HXQUOTE_DQUOTE] = "\"\\",
 	[HXQUOTE_HTML]   = "\"&<>",
 	[HXQUOTE_LDAPFLT] = "\n*()\\",
+	[HXQUOTE_LDAPRDN] = "\n \"#+,;<=>\\",
 };
 
 /**
@@ -508,6 +509,7 @@ static size_t HX_quoted_size(const char *s, unsigned int type)
 	case HXQUOTE_HTML:
 		return HX_qsize_html(s);
 	case HXQUOTE_LDAPFLT:
+	case HXQUOTE_LDAPRDN:
 		return HX_qsize_backslash(s, HX_quote_chars[type], 2);
 	default:
 		return strlen(s);
@@ -549,6 +551,7 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 	case HXQUOTE_HTML:
 		return HX_quote_html(*free_me, src);
 	case HXQUOTE_LDAPFLT:
+	case HXQUOTE_LDAPRDN:
 		return HX_quote_ldap(*free_me, src, HX_quote_chars[type]);
 	}
 	return NULL;

@@ -11,6 +11,7 @@ Enhancements:
 - format2: security feature for %(exec) and %(shell)
 - format2: add the %(snl) function
 - string: HX_strquote gained HXQUOTE_LDAPFLT (LDAP search filter) support
+- string: HX_strquote gained HXQUOTE_LDAPRDN (LDAP relative DN) support
 Changes:
 - format1: removed older formatter in favor of format2
 - format2: add check for empty key
