@@ -176,6 +176,7 @@ int main(int argc, const char **argv)
 	t_strsep();
 	t_split();
 	t_quote();
+	HXmc_free(tx);
 	HX_exit();
 	return EXIT_SUCCESS;
 }
