@@ -10280,6 +10280,27 @@ HXQUOTE_HTML
 .
 \end_layout
 
+\begin_layout Description
+
+\family typewriter
+HXQUOTE_LDAPFLT
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXQUOTE_LDAPFLT
+\end_layout
+
+\end_inset
+
+ Escape the string using backslash-plus-hexcode notation as described in
+ RFC 4515, to make it suitable for use in an LDAP search filter.
+\end_layout
+
 \begin_layout Standard
 If 
 \family typewriter
