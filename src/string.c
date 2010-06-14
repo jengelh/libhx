@@ -483,9 +483,8 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 	bool do_quote;
 	char *tmp;
 
-	do_quote = type >= _HXQUOTE_MAX || (type < _HXQUOTE_MAX &&
-	           strpbrk(src, HX_quote_chars[type]) != NULL);
-
+	do_quote = type < _HXQUOTE_MAX &&
+	           strpbrk(src, HX_quote_chars[type]) != NULL;
 	/*
 	 * free_me == NULL implies that we always allocate, even if
 	 * there is nothing to quote.

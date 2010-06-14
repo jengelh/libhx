@@ -5,6 +5,7 @@ HEAD
 Fixed:
 - format2: failure to skip escaped char in "%(echo foo\ bar)" was corrected
 - proc: properly check for HXPROC_STDx--HXPROC_STDx_NULL overlap
+- strquote: do not cause allocation with invalid format numbers
 Enhancements:
 - format2: add the %(exec) function
 - format2: add the %(shell) function
