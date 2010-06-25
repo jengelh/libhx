@@ -2513,6 +2513,62 @@ s
 \end_layout
 
 \begin_layout Subsection
+Sizes
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#define
+\series default
+ HXSIZEOF_Z32
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXSIZEOF_Z32
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#define
+\series default
+ HXSIZEOF_Z64
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXSIZEOF_Z64
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Expands to the size needed for a buffer (including '
+\family typewriter
+
+\backslash
+0
+\family default
+') to hold the base-10 string representation of a 32\SpecialChar \nobreakdash-
+ or 64\SpecialChar \nobreakdash-
+bit integer.
+\end_layout
+
+\begin_layout Subsection
 Locators
 \end_layout
 
