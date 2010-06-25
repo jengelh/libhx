@@ -161,6 +161,7 @@ static inline new_type signed_cast(unsigned char *expr)
 #	define S_IRWXUGO (S_IRUGO | S_IWUGO | S_IXUGO)
 #endif
 
+#define HXSIZEOF_Z16 sizeof("-65536")
 /* 2^32 and -2^31 have differing length */
 #define HXSIZEOF_Z32 sizeof("-4294967296")
 /* 2^64 and -2^63 have same length */
