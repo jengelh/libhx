@@ -11,6 +11,7 @@ Changes:
 Enhancements:
 - defs: add BUILD_BUG_ON_EXPR
 - format: provide a %(substr) function
+- io: add HX_readlink (zero-terminating mc-output readlink)
 
 
 v3.9.1 (2011-01-17)

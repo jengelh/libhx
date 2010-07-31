@@ -14929,6 +14929,89 @@ Filesystem operations
 \end_layout
 
 \begin_layout Section
+Dentry operations
+\end_layout
+
+\begin_layout Subsection
+Synopsis
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include <libHX/io.h>
+\series default
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HX_readlink(hxmc_t 
+\series bold
+**
+\series default
+buf, 
+\series bold
+const char *
+\series default
+path);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+HX_readlink
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+HX_readlink
+\family default
+ calls through to 
+\family typewriter
+readlink
+\family default
+ to read the target of a symbolic link, and stores the result in the memory
+ container referenced by 
+\family typewriter
+*buf
+\family default
+ (similar to 
+\family typewriter
+HX_getl
+\family default
+ semantics).
+ If 
+\family typewriter
+*buf
+\family default
+ is 
+\family typewriter
+NULL
+\family default
+, a new container will be allocated and a pointer to it stored in 
+\family typewriter
+*buf
+\family default
+.
+ The container's content is naturally zero-terminated automatically.
+ The return value of the function will be the length of the link target,
+ or negative to indicate the system error value.
+\end_layout
+
+\begin_layout Section
 Directory traversal
 \begin_inset CommandInset label
 LatexCommand label

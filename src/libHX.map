@@ -156,3 +156,8 @@ global:
 	HXio_fullread;
 	HXio_fullwrite;
 } LIBHX_3.4;
+
+LIBHX_3.10 {
+global:
+	HX_readlink;
+} LIBHX_3.9;

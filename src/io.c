@@ -272,6 +272,32 @@ EXPORT_SYMBOL int HX_mkdir(const char *idir)
 	return 1;
 }
 
+/* Readlink - with a trailing zero (provided by HXmc) */
+EXPORT_SYMBOL int HX_readlink(hxmc_t **target, const char *path)
+{
+	bool dnull = *target == NULL;
+	char *tb;
+	int ret;
+
+	if (dnull) {
+		*target = HXmc_meminit(NULL, PATH_MAX);
+		if (*target == NULL)
+			return -errno;
+	}
+	tb  = *target;
+	ret = readlink(path, tb, PATH_MAX);
+	if (ret < 0) {
+		ret = -errno;
+		if (!dnull) {
+			HXmc_free(*target);
+			*target = NULL;
+		}
+		return ret;
+	}
+	HXmc_setlen(target, ret);
+	return ret;
+}
+
 EXPORT_SYMBOL int HX_rrmdir(const char *dir)
 {
 	struct HXdir *ptr;

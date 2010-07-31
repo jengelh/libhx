@@ -16,6 +16,7 @@ F column: Function first seen in version, possibly with different API.
 RMV	MinVer	FirstA	Name
 ----------------------------------------------------------------------
 3.10	3.10	3.10	BUILD_BUG_ON_EXPR
+3.10	3.10	3.10	HX_readlink
 3.9.1	3.9	3.9	HXio_fullread
 3.9.1	3.9	3.9	HXio_fullwrite
 3.9	3.9	3.9	HXMAP_NONE
