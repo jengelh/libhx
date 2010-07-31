@@ -1,18 +1,21 @@
 
-Name:		libHX22
-%define lname	libHX
-Version:	3.4
-Release:	0
+Name:		libHX
+%define lname	libHX25
+Version:	3.5
+Release:	jng<CI_CNT>
 Group:		System/Libraries
 URL:		http://libhx.sf.net/
 Summary:	Useful collection of routines for C and C++ programming
-License:	LGPL2+
+License:	LGPLv2+
 Source:		http://downloads.sf.net/libhx/libHX-%version.tar.xz
+Source9:	baselibs.conf
 BuildRoot:	%_tmppath/%name-%version-build
-BuildRequires:	gcc-c++ xz
+BuildRequires:	gcc-c++, pkg-config, xz
 # no, libxml2-devel is NOT required because nothing
 # that requires it is going to be compiled.
-# gcc-c++ is pretty optional and only used for make check
+# gcc-c++ is pretty optional and only used for make check 
+
+%define debug_package_requires %lname = %version-%release
 
 %description
 A library for:
@@ -26,10 +29,37 @@ A library for:
 - various string, memory and zvec ops
 - more
 
-%package -n libHX-devel
-Group:		Development/Libraries/C and C++
+Author(s):
+----------
+	Jan Engelhardt
+
+%package -n %lname
+Group:		System/Libraries
 Summary:	Useful collection of routines for C and C++ programming
-Requires:	%name = %version
+
+%description -n %lname
+A library for:
+- hash/rbtree-based maps/sets
+- double-ended queues (stacks/fifos/lists)
+- platform-independent opendir-style directory access
+- platform-independent dlopen-style shared library access
+- auto-storage strings with direct access
+- command line option (argv) parser
+- shconfig-style config file parser
+- various string, memory and zvec ops
+- more
+
+Author(s):
+----------
+	Jan Engelhardt
+
+%package devel
+Group:		Development/Libraries/C and C++
+Summary:	Development files for libHX
+Requires:	%lname = %version
+%if "%{?vendor_uuid}" != ""
+Provides:	libHX-devel(vendor:%vendor_uuid) = %version-%release
+%endif
 
 %description -n libHX-devel
 A library for:
@@ -43,11 +73,15 @@ A library for:
 - various string, memory and zvec ops
 - more
 
+Author(s):
+----------
+	Jan Engelhardt
+
 %prep
-%setup -n %lname-%version
+%setup -q
 
 %build
-if [ ! -e configure ]; then
+if [ ! -e autogen.sh ]; then
 	./autogen.sh
 fi;
 %configure
@@ -57,27 +91,28 @@ make %{?_smp_mflags}
 b="%buildroot"
 rm -Rf "$b"
 mkdir "$b"
-make install DESTDIR="$b" docdir="%_docdir/%lname"
-rm -f "$b/%_libdir/%lname.la"
-mkdir -p "$b/%_docdir/%lname"
-install -pm0644 doc/*.txt "$b/%_docdir/%lname/"
+make install DESTDIR="$b" docdir="%_docdir/%name"
+rm -f "$b/%_libdir/%name.la"
+mkdir -p "$b/%_docdir/%name"
+install -pm0644 doc/*.txt "$b/%_docdir/%name/"
 
 %check
 make check
 
-%post -p /sbin/ldconfig
+%post -n %lname -p /sbin/ldconfig
 
-%postun -p /sbin/ldconfig
+%postun -n %lname -p /sbin/ldconfig
 
-%files
+%files -n %lname
 %defattr(-,root,root)
-%_libdir/%{lname}*.so.*
+%_libdir/%{name}*.so.*
 
-%files -n libHX-devel
+%files devel
 %defattr(-,root,root)
-%_libdir/%{lname}*.so
+%_libdir/%{name}*.so
 %_libdir/pkgconfig/*
 %_includedir/*
-%doc %_docdir/%lname
+%docdir %_docdir/%name
+%_docdir/%name
 
 %changelog

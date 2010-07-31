@@ -73,8 +73,7 @@ static unsigned int HX_use_count;
 static void __attribute__((constructor)) HX_ident(void)
 {
 	if (getenv("LIBHX_IDENTIFY") != NULL)
-		fprintf(stderr, PACKAGE_NAME " " PACKAGE_VERSION " "
-		        __DATE__ " " __TIME__ "\n");
+		fprintf(stderr, "# " PACKAGE_NAME " " PACKAGE_VERSION "\n");
 }
 
 EXPORT_SYMBOL int HX_init(void)
