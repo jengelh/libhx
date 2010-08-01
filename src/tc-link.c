@@ -31,6 +31,7 @@ static void *funcs[] = {
 	HX_copy_dir,
 	HX_mkdir,
 	HX_readlink,
+	HX_realpath,
 	HX_rrmdir,
 	HXio_fullread,
 	HXio_fullwrite,

@@ -13,5 +13,6 @@
 /t?-other
 /t?-proc
 /t?-rand
+/t?-realpath
 /t?-string
 /t?-time

@@ -21,7 +21,7 @@ endif
 
 check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-link \
                      tc-list tc-list2 tc-map tc-misc tc-netio \
-                     tc-option tc-proc tc-rand tc-string tc-time
+                     tc-option tc-proc tc-rand tc-realpath tc-string tc-time
 tc_cast_CFLAGS     = ${AM_CFLAGS} -std=c99
 tc_cast_LDADD      = libHX.la -lm
 tc_compile_LDADD   = libHX.la
@@ -36,6 +36,7 @@ tc_netio_LDADD     = libHX.la ${libsocket_LIBS}
 tc_option_LDADD    = libHX.la
 tc_proc_LDADD      = libHX.la
 tc_rand_LDADD      = libHX.la
+tc_realpath_LDADD  = libHX.la
 tc_string_LDADD    = libHX.la
 tc_time_LDADD      = libHX.la
 

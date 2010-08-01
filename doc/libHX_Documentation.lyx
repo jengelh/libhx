@@ -14972,6 +14972,36 @@ HX_readlink
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
+ HX_realpath(hxmc_t 
+\series bold
+**
+\series default
+buf, 
+\series bold
+const char *
+\series default
+path, 
+\series bold
+unsigned int
+\series default
+ flags);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+HX_realpath
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -15009,6 +15039,177 @@ NULL
  The container's content is naturally zero-terminated automatically.
  The return value of the function will be the length of the link target,
  or negative to indicate the system error value.
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+HX_realpath
+\family default
+ will normalize the given path by transforming various path components into
+ alternate descriptions.
+ The 
+\family typewriter
+flags
+\family default
+ parameter controls its actions:
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_REALPATH_DFL
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_REALPATH_DFL
+\end_layout
+
+\end_inset
+
+ A mnemonic for a set of standard flags: 
+\family typewriter
+HX_\SpecialChar \-
+REALPATH_\SpecialChar \-
+SELF
+\begin_inset space ~
+\end_inset
+
+| HX_\SpecialChar \-
+REALPATH_\SpecialChar \-
+PARENT
+\begin_inset space ~
+\end_inset
+
+| HX_\SpecialChar \-
+REALPATH_-SYMLINK
+\family default
+.
+ Note that 
+\family typewriter
+HX_\SpecialChar \-
+REALPATH_\SpecialChar \-
+ABS
+\family default
+, which would also be required to get libc's 
+\family typewriter
+realpath
+\family default
+(3) behavior, is not included in the set.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_REALPATH_ABS
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_REALPATH_ABS
+\end_layout
+
+\end_inset
+
+ Requests that the output path shall be absolute.
+ In the absence of this flag, an absolute output path will only be produced
+ if the input path is also absolute.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_REALPATH_SELF
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_REALPATH_SELF
+\end_layout
+
+\end_inset
+
+ Request resolution of 
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+ path components.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_REALPATH_PARENT
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_REALPATH_PARENT
+\end_layout
+
+\end_inset
+
+ Request resolution of 
+\begin_inset Quotes eld
+\end_inset
+
+..
+\begin_inset Quotes erd
+\end_inset
+
+ path components.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_REALPATH_SYMLINK
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_REALPATH_SYMLINK
+\end_layout
+
+\end_inset
+
+ Request following symbolic links.
+\end_layout
+
+\begin_layout Standard
+The result is stored in a memory container whose pointer is returned through
+ 
+\family typewriter
+*buf
+\family default
+.
+ The return value of the function will be negative to indicate a possible
+ system error, or be positive non-zero for success.
 \end_layout
 
 \begin_layout Section

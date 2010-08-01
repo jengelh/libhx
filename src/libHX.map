@@ -160,4 +160,5 @@ global:
 LIBHX_3.10 {
 global:
 	HX_readlink;
+	HX_realpath;
 } LIBHX_3.9;

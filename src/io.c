@@ -1,6 +1,6 @@
 /*
  *	File and directory handling
- *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2008
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002-2011
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -295,6 +295,159 @@ EXPORT_SYMBOL int HX_readlink(hxmc_t **target, const char *path)
 		return ret;
 	}
 	HXmc_setlen(target, ret);
+	return ret;
+}
+
+/**
+ * The buffers HX_realpath_symres are used are retained across symres calls to
+ * not do unnecessarily many allocation calls. Downside is that the state is
+ * roughly 12K in the worst case.
+ */
+struct HX_realpath_state {
+	hxmc_t *dest;
+	hxmc_t *link_target;
+	hxmc_t *new_path;
+	hxmc_t *symres_tmp;
+	const char *path;
+	unsigned int deref_count;
+};
+
+/**
+ * Perform symlink resolution on the currently last component (state->dest).
+ */
+static int HX_realpath_symres(struct HX_realpath_state *state, const char *path)
+{
+	int ret;
+
+	ret = HX_readlink(&state->link_target, state->dest);
+	if (ret == -EINVAL)
+		return -EINVAL;
+	else if (ret < 0)
+		return -errno;
+	else if (state->deref_count++ >= 40)
+		return -ELOOP;
+
+	if (*state->link_target == '/') {
+		*state->dest = '\0';
+		if (HXmc_setlen(&state->dest, 0) == NULL)
+			return -errno;
+	} else {
+		char *dptr = state->dest + HXmc_length(state->dest);
+		while (*--dptr != '/')
+			;
+		*dptr = '\0';
+		if (HXmc_setlen(&state->dest, dptr - state->dest) == NULL)
+			return -errno;
+	}
+
+	if (HXmc_strcpy(&state->symres_tmp, state->link_target) == NULL)
+		return -errno;
+	/*
+	 * @path could be pointing to @state->new_path already, so we need
+	 * to construct the new path in a temp buffer (@symres_tmp) first.
+	 */
+	if (HXmc_strcat(&state->symres_tmp, path) == NULL)
+		return -errno;
+	if (HXmc_strcpy(&state->new_path, state->symres_tmp) == NULL)
+		return -errno;
+	state->path = state->new_path;
+	return 1;
+}
+
+EXPORT_SYMBOL int HX_realpath(hxmc_t **dest_pptr, const char *path,
+    unsigned int flags)
+{
+	struct HX_realpath_state state = {.dest = *dest_pptr};
+	bool rq_slash = false, dnull = state.dest == NULL;
+	const char *cptr, *orig_path = path;
+	int ret;
+
+	if (dnull) {
+		state.dest = HXmc_meminit(NULL, PATH_MAX);
+		if (state.dest == NULL)
+			goto err;
+	}
+
+	if (*path == '/') {
+		rq_slash = true;
+	} else if (flags & HX_REALPATH_ABSOLUTE) {
+		if (getcwd(state.dest, PATH_MAX) == NULL)
+			goto err;
+		rq_slash = true;
+		if (HXmc_setlen(&state.dest, strlen(state.dest)) == NULL)
+			goto err;
+	}
+
+	while (*path != '\0') {
+		if (*path == '/') {
+			++path;
+			continue;
+		} else if (path[0] == '.' &&
+		    (path[1] == '/' || path[1] == '\0') &&
+		    flags & HX_REALPATH_SELF) {
+			++path;
+			continue;
+		} else if (path[0] == '.' && path[1] == '.' &&
+		    (path[2] == '/' || path[2] == '\0') &&
+		    flags & HX_REALPATH_PARENT &&
+		    ((flags & HX_REALPATH_ABSOLUTE) || *state.dest != '\0')) {
+			cptr  = state.dest + HXmc_length(state.dest);
+			path += 2;
+			while (cptr > state.dest && *--cptr != '/')
+				;
+			state.dest[cptr-state.dest] = '\0';
+			if (HXmc_setlen(&state.dest,
+			    cptr - state.dest) == NULL)
+				goto err;
+			continue;
+		}
+
+		for (cptr = path; *cptr != '\0' && *cptr != '/'; ++cptr)
+			;
+		if (rq_slash && HXmc_strcat(&state.dest, "/") == NULL)
+			goto out;
+		if (HXmc_memcat(&state.dest, path, cptr - path) == NULL)
+			goto out;
+		path = cptr;
+		rq_slash = true;
+
+		if (!(flags & HX_REALPATH_SYMLINK))
+			continue;
+		ret = HX_realpath_symres(&state, path);
+		if (ret == -EINVAL)
+			continue;
+		else if (ret < 0)
+			goto out;
+		path = state.path;
+	}
+
+	if (*state.dest == '\0') {
+		if (*orig_path == '/') {
+			if (HXmc_strcpy(&state.dest, "/") == NULL)
+				goto err;
+		} else {
+			if (HXmc_strcpy(&state.dest, ".") == NULL)
+				goto err;
+		}
+	}
+
+	*dest_pptr = state.dest;
+	HXmc_free(state.link_target);
+	HXmc_free(state.new_path);
+	HXmc_free(state.symres_tmp);
+	return 1;
+
+ err:
+	ret = -errno;
+ out:
+	if (dnull) {
+		/* If caller supplied a buffer, do not take it away. */
+		HXmc_free(state.dest);
+		*dest_pptr = NULL;
+	}
+	HXmc_free(state.link_target);
+	HXmc_free(state.new_path);
+	HXmc_free(state.symres_tmp);
 	return ret;
 }
 
