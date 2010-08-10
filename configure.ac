@@ -38,7 +38,7 @@ AC_ARG_WITH([pkgconfigdir], AS_HELP_STRING([--with-pkgconfigdir=PATH],
 AC_SUBST([pkgconfigdir])
 
 CHECK_GCC_FVISIBILITY
-AC_CHECK_LIB([dl], [dlopen], [regular_LIBS="$regular_LIBS -ldl"])
+AC_SEARCH_LIBS([dlopen], [dl])
 
 AC_CHECK_MEMBERS(
 	[struct timespec.tv_nsec,
@@ -64,7 +64,6 @@ regular_CXXFLAGS="-D_FILE_OFFSET_BITS=64 \
 	-D_REENTRANT -Wall -Wno-pointer-arith -Wredundant-decls -pipe";
 AC_SUBST([regular_CFLAGS])
 AC_SUBST([regular_CXXFLAGS])
-AC_SUBST([regular_LIBS])
 AC_CONFIG_FILES([Makefile doc/Makefile src/Makefile
 	src/include/Makefile libHX.pc])
 AC_OUTPUT

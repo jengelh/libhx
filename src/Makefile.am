@@ -9,7 +9,6 @@ lib_LTLIBRARIES  = libHX.la
 libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c ${mingw32_extra} ${proc_sources}
-libHX_la_LIBADD  = ${regular_LIBS}
 libHX_la_LDFLAGS = -version-info 25:0:0
 
 if MINGW32
