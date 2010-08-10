@@ -50,7 +50,7 @@ static unsigned int HXrand_obtain_seed(void)
 	return s;
 }
 
-static __attribute__((constructor)) void HXrand_init(void)
+static void HXrand_init(void)
 {
 	unsigned int seed;
 	int fd, ret = 0;
