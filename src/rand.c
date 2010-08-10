@@ -18,9 +18,6 @@
 #ifdef __unix__
 #	include <unistd.h>
 #endif
-#ifdef HAVE_GETTIMEOFDAY
-#	include <sys/time.h>
-#endif
 #include <libHX/init.h>
 #include <libHX/misc.h>
 #include "internal.h"
@@ -29,12 +26,12 @@ static unsigned int HXrand_obtain_seed(void)
 {
 	unsigned int s;
 
-#if defined(HAVE_GETTIMEOFDAY)
-	struct timeval tv;
+#if defined(HAVE_CLOCK_GETTIME)
+	struct timespec tv;
 
-	gettimeofday(&tv, NULL);
+	clock_gettime(CLOCK_REALTIME, &tv);
 	s  = tv.tv_sec;
-	s ^= tv.tv_usec << 16;
+	s ^= tv.tv_nsec << 2;
 #else
 	s = time(NULL);
 #endif
