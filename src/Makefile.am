@@ -26,13 +26,13 @@ tc_dir_LDADD       = libHX.la
 tc_list_LDADD      = libHX.la
 tc_list2_LDADD     = libHX.la
 tc_list2_CFLAGS    = ${AM_CFLAGS} -O2 -fstrict-aliasing
-tc_map_LDADD       = libHX.la -lm -lrt
+tc_map_LDADD       = libHX.la -lm
 tc_misc_LDADD      = libHX.la
 tc_option_LDADD    = libHX.la
 tc_proc_LDADD      = libHX.la
-tc_rand_LDADD      = libHX.la -lrt
+tc_rand_LDADD      = libHX.la
 tc_string_LDADD    = libHX.la
-tc_time_LDADD      = libHX.la -lrt
+tc_time_LDADD      = libHX.la
 
 if HAVE_CXX
 check_PROGRAMS    += tx-compile tx-cast tx-deque tx-dir tx-list tx-list2 \

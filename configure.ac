@@ -39,6 +39,7 @@ AC_SUBST([pkgconfigdir])
 
 CHECK_GCC_FVISIBILITY
 AC_SEARCH_LIBS([dlopen], [dl])
+AC_SEARCH_LIBS([clock_gettime], [rt])
 
 AC_CHECK_MEMBERS(
 	[struct timespec.tv_nsec,
