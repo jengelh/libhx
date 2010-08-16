@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Fixed:
+- bitmap: set/clear/test had no effect due to wrong type selection
 
 
 libHX 3.5 (August 01 2010)
