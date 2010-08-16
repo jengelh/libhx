@@ -148,7 +148,10 @@ EXPORT_SYMBOL char **HX_split(const char *str, const char *delim,
 	{
 		const char *wp = str;
 		while ((wp = strpbrk(wp, delim)) != NULL) {
-			++*cp;
+			if (++*cp >= max && max > 0) {
+				*cp = max;
+				break;
+			}
 			++wp;
 		}
 	}
