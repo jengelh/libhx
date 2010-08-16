@@ -1,8 +1,8 @@
 
 Name:		libHX
 %define lname	libHX25
-Version:	3.5
-Release:	jng<CI_CNT>
+Version:	3.6
+Release:	0
 Group:		System/Libraries
 URL:		http://libhx.sf.net/
 Summary:	Useful collection of routines for C and C++ programming
