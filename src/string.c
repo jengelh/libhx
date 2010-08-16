@@ -153,7 +153,7 @@ EXPORT_SYMBOL char **HX_split(const char *str, const char *delim,
 		}
 	}
 
-	if (max == 0)
+	if (max == 0 || *cp < max)
 		max = *cp;
 	else if (*cp > max)
 		*cp = max;

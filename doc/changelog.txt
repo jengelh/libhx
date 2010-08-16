@@ -5,6 +5,8 @@ HEAD
 Fixed:
 - bitmap: set/clear/test had no effect due to wrong type selection
 - bitmap: avoid left-shift larger than type on 64-bit
+- string: fixed buffer overflow in HX_split when too few fields were present
+  in the input
 
 
 libHX 3.5 (August 01 2010)

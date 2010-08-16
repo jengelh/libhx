@@ -142,6 +142,17 @@ static void t_split(void)
 	free(a1);
 }
 
+static void t_split2(void)
+{
+	static const char tmp[] = "";
+	int c = 0;
+	char **a;
+
+	a = HX_split(tmp, " ", &c, 6);
+	printf("Got %d fields\n", c);
+	HX_zvecfree(a);
+}
+
 static void t_quote(void)
 {
 	char *fm = NULL;
@@ -178,6 +189,7 @@ int main(int argc, const char **argv)
 	t_strncat();
 	t_strsep();
 	t_split();
+	t_split2();
 	t_quote();
 	HXmc_free(tx);
 	HX_exit();
