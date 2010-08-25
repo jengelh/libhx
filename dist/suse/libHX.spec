@@ -81,7 +81,7 @@ Author(s):
 %setup -q
 
 %build
-if [ ! -e autogen.sh ]; then
+if [ ! -e configure ]; then
 	./autogen.sh
 fi;
 %configure
