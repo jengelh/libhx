@@ -27,35 +27,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* This simplistic version does not deal with negative numbers. */
+
 static bool HX_tofrac(double arg, unsigned long *num, unsigned long *denom)
 {
 	size_t i, min_denom = *num, max_denom = *denom;
 	char simple[32], rounded[32];
 	double j;
 
-	if (min_denom > max_denom) {
-		for (i = max_denom; i < min_denom; --i) {
-			j = arg * i;
-			snprintf(simple, sizeof(simple), "%f", j);
-			snprintf(rounded, sizeof(rounded), "%.0f", j);
-			j = strtod(rounded, 0);
-			if (strtod(simple, NULL) == j) {
-				*num   = j;
-				*denom = i;
-				return true;
-			}
-		}
-	} else {
-		for (i = min_denom; i < max_denom; ++i) {
-			j = arg * i;
-			snprintf(simple, sizeof(simple), "%f", j);
-			snprintf(rounded, sizeof(rounded), "%.0f", j);
-			j = strtod(rounded, 0);
-			if (strtod(simple, NULL) == j) {
-				*num   = j;
-				*denom = i;
-				return true;
-			}
+	for (i = min_denom; i < max_denom; ++i) {
+		j = arg * i;
+		snprintf(simple, sizeof(simple), "%f", j);
+		snprintf(rounded, sizeof(rounded), "%.0f", j);
+		j = strtod(rounded, 0);
+		if (strtod(simple, NULL) == j) {
+			*num   = j;
+			*denom = i;
+			return true;
 		}
 	}
 	return false;
