@@ -35,6 +35,11 @@ static bool HX_tofrac(double arg, unsigned long *num, unsigned long *denom)
 	char simple[32], rounded[32];
 	double j;
 
+	/*
+	 * This tries all possible denominators until @arg multiplied by @i
+	 * gives a number that has a fractional part of 0, which is when we
+	 * found the optimal fraction.
+	 */
 	for (i = min_denom; i < max_denom; ++i) {
 		j = arg * i;
 		snprintf(simple, sizeof(simple), "%f", j);
@@ -51,8 +56,7 @@ static bool HX_tofrac(double arg, unsigned long *num, unsigned long *denom)
 
 int main(int argc, const char **argv)
 {
-	/* A high denominator @n gives high precision of the fraction */
-	unsigned long d = 1, n = ULLONG_MAX;
+	unsigned long d = 1, n = ULONG_MAX;
 
 	if (argc < 2) {
 		fprintf(stderr, "Usage: %s 3.141592\n", *argv);
