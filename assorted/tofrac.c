@@ -23,6 +23,7 @@
  */
 #include <sys/types.h>
 #include <limits.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,9 +32,8 @@
 
 static bool HX_tofrac(double arg, unsigned long *num, unsigned long *denom)
 {
-	size_t i, min_denom = *num, max_denom = *denom;
-	char simple[32], rounded[32];
-	double j;
+	unsigned long i, min_denom = *num, max_denom = *denom;
+	double j, s;
 
 	/*
 	 * This tries all possible denominators until @arg multiplied by @i
@@ -41,11 +41,9 @@ static bool HX_tofrac(double arg, unsigned long *num, unsigned long *denom)
 	 * found the optimal fraction.
 	 */
 	for (i = min_denom; i < max_denom; ++i) {
-		j = arg * i;
-		snprintf(simple, sizeof(simple), "%f", j);
-		snprintf(rounded, sizeof(rounded), "%.0f", j);
-		j = strtod(rounded, 0);
-		if (strtod(simple, NULL) == j) {
+		s = arg * i;
+		modf(s, &j);
+		if (s == j) {
 			*num   = j;
 			*denom = i;
 			return true;
