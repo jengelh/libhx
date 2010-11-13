@@ -34,9 +34,24 @@ EXPORT_SYMBOL int HX_fls(unsigned long n)
 	return -1;
 }
 
-EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
+static inline void hexdump_ascii(FILE *fp, unsigned char c, bool tty)
 {
 	static const unsigned char ct_char[] = "31", up_char[] = "34";
+
+	if (HX_isprint(c))
+		fprintf(fp, "%c", c);
+	else if (tty && c == 0)
+		fprintf(fp, "\e[%sm@\e[0m", up_char); // ]]
+	else if (tty && c < 32)
+		fprintf(fp, "\e[%sm%c\e[0m", ct_char, '@' + c); // ]]
+	else if (tty)
+		fprintf(fp, "\e[%sm.\e[0m", up_char); // ]]
+	else
+		fprintf(fp, ".");
+}
+
+EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
+{
 	const unsigned char *ptr = vptr;
 	unsigned int i, j;
 	bool tty = isatty(fileno(fp));
@@ -48,17 +63,8 @@ EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
 			fprintf(fp, "%02x%c", *ptr++, (j == 7) ? '-' : ' ');
 		ptr -= 16;
 		fprintf(fp, "| ");
-		for (j = 0; j < 16; ++j, ++ptr)
-			if (HX_isprint(*ptr))
-				fprintf(fp, "%c", *ptr);
-			else if (tty && *ptr == 0)
-				fprintf(fp, "\e[%sm@\e[0m", up_char); // ]]
-			else if (tty && *ptr < 32)
-				fprintf(fp, "\e[%sm%c\e[0m", ct_char, '@' + *ptr); // ]]
-			else if (tty)
-				fprintf(fp, "\e[%sm.\e[0m", up_char); // ]]
-			else
-				fprintf(fp, ".");
+		for (j = 0; j < 16; ++j)
+			hexdump_ascii(fp, *ptr++, tty);
 		fprintf(fp, "\n");
 	}
 	fprintf(fp, "%04x | ", i * 16);
@@ -68,17 +74,8 @@ EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
 	for (; i < 16; ++i)
 		fprintf(fp, "   ");
 	fprintf(fp, "| ");
-	for (i = 0; i < len; ++i, ++ptr)
-		if (HX_isprint(*ptr))
-			fprintf(fp, "%c", *ptr);
-		else if (tty && *ptr == 0)
-			fprintf(fp, "\e[%sm@\e[0m", up_char); // ]]
-		else if (tty && *ptr < 32)
-			fprintf(fp, "\e[%sm%c\e[0m", ct_char, '@' + *ptr); // ]]
-		else if (tty)
-			fprintf(fp, "\e[%sm.\e[0m", up_char); // ]]
-		else
-			fprintf(fp, ".");
+	for (i = 0; i < len; ++i)
+		hexdump_ascii(fp, *ptr++, tty);
 	fprintf(fp, "\n");
 }
 
