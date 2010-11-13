@@ -1,6 +1,6 @@
 /*
  *	Miscellaneous functions
- *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2009
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 1999 - 2010
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -36,6 +36,7 @@ EXPORT_SYMBOL int HX_fls(unsigned long n)
 
 EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
 {
+	static const unsigned char ct_char[] = "31", up_char[] = "34";
 	const unsigned char *ptr = vptr;
 	unsigned int i, j;
 	bool tty = isatty(fileno(fp));
@@ -50,8 +51,12 @@ EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
 		for (j = 0; j < 16; ++j, ++ptr)
 			if (HX_isprint(*ptr))
 				fprintf(fp, "%c", *ptr);
+			else if (tty && *ptr == 0)
+				fprintf(fp, "\e[%sm@\e[0m", up_char); // ]]
+			else if (tty && *ptr < 32)
+				fprintf(fp, "\e[%sm%c\e[0m", ct_char, '@' + *ptr); // ]]
 			else if (tty)
-				fprintf(fp, "\e[31m.\e[0m"); // ]]
+				fprintf(fp, "\e[%sm.\e[0m", up_char); // ]]
 			else
 				fprintf(fp, ".");
 		fprintf(fp, "\n");
@@ -63,11 +68,15 @@ EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
 	for (; i < 16; ++i)
 		fprintf(fp, "   ");
 	fprintf(fp, "| ");
-	for (i = 0; i < len; ++i)
-		if (HX_isprint(ptr[i]))
-			fprintf(fp, "%c", ptr[i]);
+	for (i = 0; i < len; ++i, ++ptr)
+		if (HX_isprint(*ptr))
+			fprintf(fp, "%c", *ptr);
+		else if (tty && *ptr == 0)
+			fprintf(fp, "\e[%sm@\e[0m", up_char); // ]]
+		else if (tty && *ptr < 32)
+			fprintf(fp, "\e[%sm%c\e[0m", ct_char, '@' + *ptr); // ]]
 		else if (tty)
-			fprintf(fp, "\e[31m.\e[0m"); // ]]
+			fprintf(fp, "\e[%sm.\e[0m", up_char); // ]]
 		else
 			fprintf(fp, ".");
 	fprintf(fp, "\n");
