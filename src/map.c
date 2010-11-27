@@ -112,26 +112,6 @@ static void *HXmap_valuecpy(const void *p, size_t len)
 
 #define jrot(x,k) (((x) << (k)) | ((x) >> (32 - (k))))
 
-/* jhash_mix - mix 3 32-bit values reversibly. */
-#define jhash_mix(a, b, c) { \
-	a -= c; a ^= jrot(c,  4); c += b; \
-	b -= a; b ^= jrot(a,  6); a += c; \
-	c -= b; c ^= jrot(b,  8); b += a; \
-	a -= c; a ^= jrot(c, 16); c += b; \
-	b -= a; b ^= jrot(a, 19); a += c; \
-	c -= b; c ^= jrot(b,  4); b += a; \
-}
-
-#define jhash_final(a, b, c) { \
-	c ^= b; c -= jrot(b, 14); \
-	a ^= c; a -= jrot(c, 11); \
-	b ^= a; b -= jrot(a, 25); \
-	c ^= b; c -= jrot(b, 16); \
-	a ^= c; a -= jrot(c,  4);  \
-	b ^= a; b -= jrot(a, 14); \
-	c ^= b; c -= jrot(b, 24); \
-}
-
 EXPORT_SYMBOL unsigned long HXhash_jlookup3(const void *vkey, size_t length)
 {
 	static const unsigned int JHASH_GOLDEN_RATIO = 0x9e3779b9;
@@ -147,7 +127,13 @@ EXPORT_SYMBOL unsigned long HXhash_jlookup3(const void *vkey, size_t length)
 		     ((uint32_t)key[6] << 16) + ((uint32_t)key[7] << 24);
 		c += key[8] + ((uint32_t)key[9] << 8) +
 		     ((uint32_t)key[10] << 16)+ ((uint32_t)key[11] << 24);
-		jhash_mix(a, b, c);
+		/* jhash_mix - mix 3 32-bit values reversibly. */
+		a -= c; a ^= jrot(c,  4); c += b;
+		b -= a; b ^= jrot(a,  6); a += c;
+		c -= b; c ^= jrot(b,  8); b += a;
+		a -= c; a ^= jrot(c, 16); c += b;
+		b -= a; b ^= jrot(a, 19); a += c;
+		c -= b; c ^= jrot(b,  4); b += a;
 	}
 
 	switch (length) {
@@ -166,8 +152,14 @@ EXPORT_SYMBOL unsigned long HXhash_jlookup3(const void *vkey, size_t length)
 		break;
 	case  0: return c;
 	}
-
-	jhash_final(a,b,c);
+	/* jhash_final */
+	c ^= b; c -= jrot(b, 14);
+	a ^= c; a -= jrot(c, 11);
+	b ^= a; b -= jrot(a, 25);
+	c ^= b; c -= jrot(b, 16);
+	a ^= c; a -= jrot(c,  4);
+	b ^= a; b -= jrot(a, 14);
+	c ^= b; c -= jrot(b, 24);
 	return c;
 }
 
