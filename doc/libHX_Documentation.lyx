@@ -1,4 +1,4 @@
-#LyX 1.6.4 created this file. For more info see http://www.lyx.org/
+#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
 \lyxformat 345
 \begin_document
 \begin_header
@@ -21847,15 +21847,19 @@ xmlNode
 \series bold
 *
 \series default
-xml_newnode(xmlNs 
+xml_newnode(xmlNode 
 \series bold
 *
 \series default
-ns, 
+parent, 
 \series bold
 const char *
 \series default
-name);
+name, 
+\series bold
+const char *
+\series default
+value);
 \begin_inset Index
 status open
 
@@ -21978,14 +21982,17 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-xmlNewNode
+xmlNewTextNode
 \end_layout
 
 \end_inset
 
 
 \family typewriter
-xmlNewNode
+xml\SpecialChar \-
+New\SpecialChar \-
+Text\SpecialChar \-
+Node
 \family default
  and 
 \begin_inset Index
@@ -22001,7 +22008,9 @@ xmlSetProp
 
 
 \family typewriter
-xmlSetProp
+xml\SpecialChar \-
+Set\SpecialChar \-
+Prop
 \family default
 , respectively.
 \end_layout

@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Changes:
+- libxml_helper: redo xml_newnode to take a parent and value string
 
 
 libHX v3.6 (August 16 2010)

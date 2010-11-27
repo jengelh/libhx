@@ -54,12 +54,20 @@ static inline xmlAttr *xml_newprop(xmlNode *node, const char *name,
 #endif
 }
 
-static inline xmlNode *xml_newnode(xmlNs *ns, const char *name)
+/**
+ * @ptr:	parent node
+ * @name:	name of new node
+ * @value:	string, or %NULL
+ */
+static inline xmlNode *xml_newnode(xmlNode *ptr, const char *name,
+    const char *value)
 {
 #ifdef __cplusplus
-	return xmlNewNode(ns, signed_cast<const xmlChar *>(name));
+	return xmlNewTextChild(ptr, NULL, signed_cast<const xmlChar *>(name),
+	       signed_cast<const xmlChar *>(value));
 #else
-	return xmlNewNode(ns, signed_cast(const xmlChar *, name));
+	return xmlNewTextChild(ptr, NULL, signed_cast(const xmlChar *, name),
+	       signed_cast(const xmlChar *, value));
 #endif
 }
 
