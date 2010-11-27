@@ -3,4 +3,4 @@
 doc_DATA = libHX_Documentation.pdf
 
 libHX_Documentation.pdf: libHX_Documentation.lyx
-	./generate;
+	srcdir="${srcdir}" ${srcdir}/generate;
