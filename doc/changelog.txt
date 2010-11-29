@@ -5,6 +5,8 @@ HEAD
 Changes:
 - libxml_helper: redo xml_newnode to take a parent and value string
 - list: unify naming of reverse-direction functions
+Fixes:
+- list: avoid potential shadow warning when using HXclist_{shift,pop}
 
 
 libHX v3.6 (August 16 2010)

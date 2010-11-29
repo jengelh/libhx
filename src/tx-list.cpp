@@ -105,6 +105,29 @@ static void l_empty(void)
 	       HXlist_empty(&lh) ? "" : " NOT");
 }
 
+static void l_shift(void)
+{
+	/* Check for -Wshadow warnings */
+	struct object {
+		int value;
+		struct HXlist_head anchor;
+	};
+	HXCLIST_HEAD(clh);
+	struct object q, *p;
+	void *x;
+
+	q.value = 1337;
+	HXlist_init(&q.anchor);
+	HXclist_push(&clh, &q.anchor);
+	x = p = HXclist_shift(&clh, struct object, anchor);
+	printf("%d\n", p->value);
+
+	HXlist_init(&q.anchor);
+	HXclist_push(&clh, &q.anchor);
+	x = p = HXclist_pop(&clh, struct object, anchor);
+	printf("%d\n", p->value);
+}
+
 int main(int argc, const char **argv)
 {
 	unsigned int max = 10;
@@ -118,6 +141,7 @@ int main(int argc, const char **argv)
 	l_traverse();
 	l_dump(HX_rand() & 1);
 	l_empty();
+	l_shift();
 	HX_exit();
 	return EXIT_SUCCESS;
 }

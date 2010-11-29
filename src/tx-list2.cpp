@@ -1,3 +1,6 @@
+/*
+ *	this program is released in the Public Domain
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <libHX/list.h>

@@ -147,10 +147,8 @@ static inline struct HXlist_head *__HXclist_pop(struct HXclist_head *head)
 	return p;
 }
 
-#define HXclist_pop(head, type, member) ({ \
-	struct HXlist_head *x = __HXclist_pop(head); \
-	HXlist_entry(x, type, member); \
-})
+#define HXclist_pop(head, type, member) \
+	HXlist_entry(__HXclist_pop(head), type, member)
 
 static inline struct HXlist_head *__HXclist_shift(struct HXclist_head *head)
 {
@@ -163,10 +161,8 @@ static inline struct HXlist_head *__HXclist_shift(struct HXclist_head *head)
 	return p;
 }
 
-#define HXclist_shift(head, type, member) ({ \
-	struct HXlist_head *x = __HXclist_shift(head); \
-	HXlist_entry(x, type, member); \
-})
+#define HXclist_shift(head, type, member) \
+	HXlist_entry(__HXclist_shift(head), type, member)
 
 #ifdef __cplusplus
 } /* extern "C" */
