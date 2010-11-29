@@ -66,7 +66,7 @@ static inline bool HXlist_empty(const struct HXlist_head *head)
 	for ((pos) = (head)->next; (pos) != (void *)(head); \
 	     (pos) = (pos)->next)
 
-#define HXlist_for_each_prev(pos, head) \
+#define HXlist_for_each_rev(pos, head) \
 	for ((pos) = (head)->prev; (pos) != (void *)(head); \
 	     (pos) = (pos)->prev)
 
@@ -74,7 +74,7 @@ static inline bool HXlist_empty(const struct HXlist_head *head)
 	for ((pos) = (head)->next, (n) = (pos)->next; (pos) != (void *)(head); \
 	     (pos) = (n), (n) = (pos)->next)
 
-#define HXlist_for_each_prev_safe(pos, n, head) \
+#define HXlist_for_each_rev_safe(pos, n, head) \
 	for ((pos) = (head)->prev, (n) = (pos)->prev; (pos) != (void *)(head); \
 	     (pos) = (n), (n) = (pos)->prev)
 

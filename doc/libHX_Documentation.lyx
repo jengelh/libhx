@@ -8024,7 +8024,7 @@ struct HXlist_head
 .
  Lists can either be traversed in forward direction, or, using the 
 \family typewriter
-_prev
+_rev
 \family default
  variants, in reverse direction.
  The 
@@ -8057,14 +8057,14 @@ HXlist_for_each
 \begin_inset Newline newline
 \end_inset
 
-HXlist_for_each_prev(pos, head)
+HXlist_for_each_rev(pos, head)
 \begin_inset Index
 status open
 
 \begin_layout Plain Layout
 
 \family typewriter
-HXlist_for_each_prev
+HXlist_for_each_rev
 \end_layout
 
 \end_inset
@@ -8089,14 +8089,14 @@ HXlist_for_each_safe
 \begin_inset Newline newline
 \end_inset
 
-HXlist_for_each_prev_safe(pos, n, head)
+HXlist_for_each_rev_safe(pos, n, head)
 \begin_inset Index
 status open
 
 \begin_layout Plain Layout
 
 \family typewriter
-HXlist_for_each_prev_safe
+HXlist_for_each_rev_safe
 \end_layout
 
 \end_inset
@@ -8115,7 +8115,7 @@ HXlist_for_each
 \begin_layout Description
 
 \family typewriter
-HXlist_for_each_prev
+HXlist_for_each_rev
 \family default
  Reverse iteration over the list heads.
 \end_layout
@@ -8135,7 +8135,7 @@ pos
 \begin_layout Description
 
 \family typewriter
-HXlist_for_each_prev_safe
+HXlist_for_each_rev_safe
 \family default
  Reverse iteration over the list heads that is safe against freeing 
 \family typewriter
