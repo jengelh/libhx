@@ -3206,7 +3206,7 @@ HX_zvecfree
 
 
 \series bold
-int
+unsigned int
 \series default
  HX_zveclen(
 \series bold

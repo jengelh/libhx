@@ -83,9 +83,9 @@ extern double HX_drand(double, double);
 /*
  *	INLINE FUNCTIONS
  */
-static inline int HX_zveclen(const char *const *args)
+static inline unsigned int HX_zveclen(const char *const *args)
 {
-	int argk = 0;
+	unsigned int argk = 0;
 	while (*args++ != NULL)
 		++argk;
 	return argk;

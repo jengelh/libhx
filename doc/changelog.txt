@@ -5,6 +5,7 @@ HEAD
 Changes:
 - libxml_helper: redo xml_newnode to take a parent and value string
 - list: unify naming of reverse-direction functions
+- misc: HX_zveclen now returns unsigned from (previous: int)
 Fixes:
 - list: avoid potential shadow warning when using HXclist_{shift,pop}
 
