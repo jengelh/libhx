@@ -67,5 +67,5 @@ regular_CXXFLAGS="-D_FILE_OFFSET_BITS=64 \
 AC_SUBST([regular_CFLAGS])
 AC_SUBST([regular_CXXFLAGS])
 AC_CONFIG_FILES([Makefile doc/Makefile src/Makefile
-	src/include/Makefile libHX.pc])
+	include/Makefile libHX.pc])
 AC_OUTPUT

@@ -1,9 +1,7 @@
 # -*- Makefile -*-
 
-SUBDIRS = include
-
-AM_CFLAGS        = ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${srcdir}/include
-AM_CXXFLAGS      = ${regular_CXXFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${srcdir}/include
+AM_CFLAGS        = ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${top_srcdir}/include
+AM_CXXFLAGS      = ${regular_CXXFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${top_srcdir}/include
 
 lib_LTLIBRARIES  = libHX.la
 libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
