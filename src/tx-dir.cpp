@@ -13,7 +13,7 @@
 
 int main(void)
 {
-	void *d;
+	struct HXdir *d;
 	const char *n;
 
 	if (HX_init() <= 0)

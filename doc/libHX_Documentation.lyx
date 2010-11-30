@@ -14684,7 +14684,11 @@ libHX/misc.h
 
 
 \series bold
-void *
+struct
+\series default
+ HXdir 
+\series bold
+*
 \series default
 HXdir_open(
 \series bold
@@ -14714,7 +14718,11 @@ const char *
 \series default
 HXdir_read(
 \series bold
-void *
+struct
+\series default
+ HXdir 
+\series bold
+*
 \series default
 handle);
 \begin_inset Index
@@ -14740,7 +14748,11 @@ void
 \series default
  HXdir_close(
 \series bold
-void *
+struct
+\series default
+ HXdir 
+\series bold
+*
 \series default
 handle);
 \begin_inset Index
@@ -14827,7 +14839,11 @@ Example
 
 
 \series bold
-void *
+struct
+\series default
+ HXdir 
+\series bold
+*
 \series default
 dh;
 \begin_inset Newline newline

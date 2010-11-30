@@ -69,7 +69,7 @@ static int mkdir_gen(const char *d)
 	return 1;
 }
 
-EXPORT_SYMBOL void *HXdir_open(const char *s)
+EXPORT_SYMBOL struct HXdir *HXdir_open(const char *s)
 {
 	struct HXdir *d;
 	if ((d = malloc(sizeof(struct HXdir))) == NULL)
@@ -92,9 +92,8 @@ EXPORT_SYMBOL void *HXdir_open(const char *s)
 	return NULL;
 }
 
-EXPORT_SYMBOL const char *HXdir_read(void *dv)
+EXPORT_SYMBOL const char *HXdir_read(struct HXdir *d)
 {
-	struct HXdir *d = dv;
 	if (d == NULL)
 		return NULL;
 
@@ -119,10 +118,9 @@ EXPORT_SYMBOL const char *HXdir_read(void *dv)
 #endif
 }
 
-EXPORT_SYMBOL void HXdir_close(void *dv)
+EXPORT_SYMBOL void HXdir_close(struct HXdir *d)
 {
-	struct HXdir *d = dv;
-	if (dv == NULL)
+	if (d == NULL)
 		return;
 #if defined _WIN32
 	FindClose(d->ptr);
