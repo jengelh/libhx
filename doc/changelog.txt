@@ -9,6 +9,8 @@ Changes:
 - dir: HXdir functions now work with struct HXdir * instead of void *
 Fixes:
 - list: avoid potential shadow warning when using HXclist_{shift,pop}
+Enhancements:
+- doc: add doc/api.txt that lists the minimum required versions for symbols
 
 
 libHX v3.6 (August 16 2010)
