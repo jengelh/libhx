@@ -2,6 +2,10 @@
 
 HEAD
 ====
+
+
+libHX 3.7 (December 01 2010)
+============================
 Changes:
 - libxml_helper: redo xml_newnode to take a parent and value string
 - list: unify naming of reverse-direction functions
@@ -13,7 +17,7 @@ Enhancements:
 - doc: add doc/api.txt that lists the minimum required versions for symbols
 
 
-libHX v3.6 (August 16 2010)
+libHX 3.6 (August 16 2010)
 ===========================
 Fixed:
 - bitmap: set/clear/test had no effect due to wrong type selection

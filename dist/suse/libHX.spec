@@ -1,7 +1,7 @@
 
 Name:		libHX
 %define lname	libHX25
-Version:	3.6
+Version:	3.7
 Release:	0
 Group:		System/Libraries
 URL:		http://libhx.sf.net/
@@ -58,10 +58,10 @@ Group:		Development/Libraries/C and C++
 Summary:	Development files for libHX
 Requires:	%lname = %version
 %if "%{?vendor_uuid}" != ""
-Provides:	libHX-devel(vendor:%vendor_uuid) = %version-%release
+Provides:	%name-devel(vendor:%vendor_uuid) = %version-%release
 %endif
 
-%description -n libHX-devel
+%description devel
 A library for:
 - hash/rbtree-based maps/sets
 - double-ended queues (stacks/fifos/lists)
@@ -82,19 +82,19 @@ Author(s):
 
 %build
 if [ ! -e configure ]; then
-	./autogen.sh
+	./autogen.sh;
 fi;
 %configure
-make %{?_smp_mflags}
+make %{?_smp_mflags};
 
 %install
-b="%buildroot"
-rm -Rf "$b"
-mkdir "$b"
-make install DESTDIR="$b" docdir="%_docdir/%name"
-rm -f "$b/%_libdir/%name.la"
-mkdir -p "$b/%_docdir/%name"
-install -pm0644 doc/*.txt "$b/%_docdir/%name/"
+b="%buildroot";
+rm -Rf "$b";
+mkdir "$b";
+make install DESTDIR="$b" docdir="%_docdir/%name";
+find "$b/%_libdir" -type f -name "*.la" -delete;
+mkdir -p "$b/%_docdir/%name";
+install -pm0644 doc/*.txt "$b/%_docdir/%name/";
 
 %check
 make check
