@@ -65,7 +65,7 @@ static void HXrand_init(void)
 }
 
 static pthread_mutex_t HX_init_lock = PTHREAD_MUTEX_INITIALIZER;
-static unsigned int HX_use_count;
+static unsigned long HX_use_count;
 
 static void __attribute__((constructor)) HX_ident(void)
 {
