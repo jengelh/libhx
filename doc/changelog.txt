@@ -4,8 +4,8 @@ HEAD
 ====
 
 
-libHX 3.7 (December 01 2010)
-============================
+v3.7 (2010-12-01)
+=================
 Changes:
 - libxml_helper: redo xml_newnode to take a parent and value string
 - list: unify naming of reverse-direction functions
@@ -17,8 +17,8 @@ Enhancements:
 - doc: add doc/api.txt that lists the minimum required versions for symbols
 
 
-libHX 3.6 (August 16 2010)
-===========================
+v3.6 (2010-08-16)
+=================
 Fixed:
 - bitmap: set/clear/test had no effect due to wrong type selection
 - bitmap: avoid left-shift larger than type on 64-bit
@@ -26,8 +26,8 @@ Fixed:
   in the input
 
 
-libHX 3.5 (August 01 2010)
-==========================
+v3.5 (2010-08-01)
+=================
 Fixed:
 - format2: failure to skip escaped char in "%(echo foo\ bar)" was corrected
 - proc: properly check for HXPROC_STDx--HXPROC_STDx_NULL overlap
@@ -51,8 +51,8 @@ Changes:
   instead of everything after the last slash (which may have been nothing)
 
 
-libHX 3.4 (April 03 2010)
-=========================
+v3.4 (2010-04-03)
+=================
 Changes:
 - add explicit initialize/deinitialize functions HX_init, HX_exit
 Enhancements:
@@ -61,8 +61,8 @@ Enhancements:
 - documentation updates: HXlist traversal
 
 
-libHX 3.3 (January 20 2010)
-===========================
+v3.3 (2010-01-20)
+=================
 Bug fixes:
 - format: fix incorrect copying of non-expanded % strings
 - proc: avoid calling close(-1) to not trip up valgrind
@@ -78,29 +78,29 @@ Enhancements:
 - rand: avoid some function call overhead in HX_irand
 
 
-libHX 3.2 (October 11 2009)
-===========================
+v3.2 (2009-10-11)
+=================
 Enhancements:
 - opt: add HXTYPE_MCSTR for storing into hxmc_t *s
 - string: add HX_strquote
 
 
-libHX 3.1 (September 13 2009)
-=============================
+v3.1 (2009-09-13)
+=================
 Enhancements:
 - added HXbitmap_* functions
 Fixes:
 - mc: HXmc_strcpy produced a zero-length string when NULL was copied
 
 
-libHX 3.0.1 (August 31 2009)
-============================
+v3.0.1 (2009-08-31)
+===================
 Fixes:
 - map: avoid underflow in value-based tree comparison
 
 
-libHX 3.0 (August 27 2009)
-==========================
+v3.0 (2009-08-27)
+=================
 Changes:
 - automatically skip building testcases if C++ compiler not available
   (reminder: libHX itself does not require a C++ compiler)
@@ -119,29 +119,29 @@ Fixes:
 - format: memory leaks fixes in HXformat
 
 
-libHX 2.9 (July 11 2009)
-========================
+v2.9 (2009-07-11)
+=================
 Fixes:
 - string: fixed number of fields and trailing NULL in HX_split4
 Enhancements:
 - string: add HX_basename_exact
 
 
-libHX 2.8 (July 01 2009)
-========================
+v2.8 (2009-07-01)
+=================
 Enhancements:
 - HXproc now knows about HXPROC_NULL_*, which can be used to discard I/O
 - HXproc: expressly prohibit HXPROC_STD* for HXproc_run_sync
 
 
-libHX 2.7 (April 08 2009)
-=========================
+v2.7 (2009-04-08)
+=================
 Fixes:
 - install missing wx_helper.hpp
 
 
-libHX 2.6 (March 28 2009)
-=========================
+v2.6 (2009-03-28)
+=================
 Documentation:
 - install documentation
 - update project URLs
@@ -153,19 +153,19 @@ Changes:
 - add wx_helper.hpp
 
 
-libHX 2.5 (February 11 2009)
-============================
+v2.5 (2009-02-11)
+=================
 Fixes:
 - proc: fix fd setup when the standard channels are already closed
 
 
-libHX 2.4 (February 05 2009)
-============================
+v2.4 (2009-02-05)
+=================
 Documentation updates. A few internal cleanups, nothing user-visible.
 
 
-libHX 2.3 (January 13 2009)
-===========================
+v2.3 (2009-01-13)
+=================
 Fixes:
 - defs: only use __builtin_offsetof with GCC >= 4
 - misc: fix time_compare on FreeBSD to actually use mtimespec
@@ -173,8 +173,8 @@ Fixes:
 - dir: do not cause directory traversal to restart after 2^32 entries
 
 
-libHX 2.2 (January 01 2009)
-===========================
+v2.2 (2009-01-01)
+=================
 Fixes:
 - defs/cast: avoid warning between conversion from type[] to type *
 - defs/cast: add fallback defs for const_castN()
@@ -191,15 +191,15 @@ Enhancements:
 - string: add HX_split4 function
 
 
-libHX 2.1 (December 23 2008)
-============================
+v2.1 (2008-12-23)
+=================
 - defs: fix bogus offsetof macro for non-GCC
 - defs: add a pair of guarding parentheses in static_cast()
 - doc: generate PDF file from LyX document
 
 
-libHX 2.0 (December 23 2008)
-============================
+v2.0 (2008-12-23)
+=================
 Fixes:
 - arbtree: reject illegal flag combinations
 - arbtree: correctly set errno in HXbtree_find and HXbtree_get
@@ -245,14 +245,14 @@ Removals:
   [no more "remaining string", now returns a zero-length string]
 
 
-libHX 1.28 (November 18 2008)
-=============================
+v1.28 (2008-11-18)
+==================
 - add HXTYPE_{U,}INT{8,16,32,64}
 - add includedir to cflags (libHX.pc)
 
 
-libHX 1.27 (October 23 2008)
-============================
+v1.27 (2008-12-23)
+==================
 No functional changes for Linux platforms.
 
 - build: fixed compile errors with i586-mingw32msvc cross compile
@@ -261,8 +261,8 @@ No functional changes for Linux platforms.
   POSIX-compliant and work with BSD make
 
 
-libHX 1.26 (October 12 2008)
-============================
+v1.26 (2008-10-12)
+==================
 - add HX_hexdump() for debugging within programs
 - fix double free in the error path of HX_getopt() when a long option preceded
   a short option of which the latter had problems (i.e. missing argument)
@@ -271,57 +271,57 @@ libHX 1.26 (October 12 2008)
   (but this is normally disabled to avoid compile interruption)
 
 
-libHX 1.25 (September 07 2008)
-==============================
+v1.25 (2008-09-07)
+==================
 - install missing misc.h
 - HXmc: pointer was not automatically updated after hmc_trunc()
 - HXmc: rename functions and put them into the HX* namespace (API change)
 - HXmc: make code resistant to memory allocation failure
 
 
-libHX 1.23 (September 02 2008)
-==============================
+v1.23 (2008-09-02)
+==================
 - code cleanup: misc.h has been split off libHX.h
 - add defs.h
 
 
-libHX 1.22 (July 16 2008)
-=========================
+v1.22 (2008-07-16)
+==================
 - need to use lstat() on directory operations such as mkdir and rrmdir
 - use RTLD_LAZY when opening dynamic libraries
 - add libxml_helper
 
 
-libHX 1.18 (June 10 2008)
-=========================
+v1.18 (2008-06-10)
+==================
 - implement reverse iterating through HXlist
 - remove deprecated HXlist_init_head() and HXclist_init_head()
   [replaced by HXlist_init() and HXclist_init()]
 - added HX_ffs()
 
 
-libHX 1.17 (May 08 2008)
-========================
+v1.17 (2008-05-08)
+==================
 - HXlist: added HXlist_for_each_safe, HXlist_for_each_entry_safe
 - HXclist: added HXclist_del
 
 
-libHX 1.15 (April 04 2008)
-==========================
+v1.15 (2008-04-04)
+==================
 - HXformat: add %(ifempty) and %(ifnempty) tags
 - libHX.h: split into {arbtree,deque,option,string}.h (and libHX.h)
 - Add inline-doubly-linked-list data structures
 
 
-libHX 1.10.2 (December 06 2007)
-===============================
+v1.10.2 (2007-12-06)
+====================
 - [r105]: pass up NULL from memory allocation error
 - [r108]: only return success on EEXIST when HXF_KEEP was given
 - [r112]: HX_dirname() incorrectly computed the path
 
 
-libHX 1.10.1 (September 17 2007)
-================================
+v1.10.1 (2007-09-17)
+====================
 - [r96]: Fix output of line-wrapped help text
 - tarball: in libHX 1.10.0 I forgot to provide the configure - sorry
   (but you could regenerate it using ./autogen.sh if you have autotools)
