@@ -4,6 +4,13 @@ HEAD
 ====
 
 
+v3.8 (2010-12-01)
+=================
+This was supposed to go into 3.7 but I forgot to merge in time..
+Changes:
+- hexdump: colorize characters 0x00 thru 0x1F in tty mode
+
+
 v3.7 (2010-12-01)
 =================
 Changes:

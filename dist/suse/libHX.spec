@@ -1,7 +1,7 @@
 
 Name:		libHX
 %define lname	libHX25
-Version:	3.7
+Version:	3.8
 Release:	0
 Group:		System/Libraries
 URL:		http://libhx.sf.net/

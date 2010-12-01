@@ -73,6 +73,13 @@ enum {
 	RBT_BLACK,
 	/* Allows for at least 16 million objects (in a worst-case tree) */
 	RBT_MAXDEP = 48,
+	/*
+	 * Height h => pow(2, h/2)-1 nodes minimum. 1: 1, 2: 2, 4: 4, 6: 8,
+	 * 8: 16, 10: 32, 12: 64, 14: 128, 16: 256, 18: 512, 20: 1K, 22: 2K,
+	 * 24: 4K, 26: 8K, 28: 16K, 30: 32K, 32: 64K, 34: 128K, 36: 256K,
+	 * 38: 512K, 40: 1M, 42: 2M, 44: 4M. 46: 8M, 48: 16M, 50: 32M, 52: 64M,
+	 * 54: 128M, 56: 256M, 58: 512M, 60: 1G, 62: 2G, 64: 4G.
+	 */
 };
 
 /**
