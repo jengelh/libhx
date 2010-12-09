@@ -10,6 +10,7 @@ A=b;C="d" ; E="F;" ; F= G=Z
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libHX/defs.h>
 #include <libHX/init.h>
 #include <libHX/map.h>
 #include <libHX/option.h>
@@ -59,7 +60,7 @@ static void t_format(int argc)
 	HXformat_add(fmt, "jengelh", "1337", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "USER", "jengelh", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ARGC", &argc, HXTYPE_INT);
-	HXformat_add(fmt, "ARGK", (const void *)(long)argc, HXTYPE_INT | HXFORMAT_IMMED);
+	HXformat_add(fmt, "ARGK", reinterpret_cast(const void *, static_cast(long, argc)), HXTYPE_INT | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ZERO", "", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ONE", "1", HXTYPE_STRING | HXFORMAT_IMMED);
 	++argc;

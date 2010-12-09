@@ -82,7 +82,7 @@ extern int symlink(const char *, const char *);
  *	UX-MMAP.C
  */
 #ifdef _WIN32
-#	define MAP_FAILED ((void *)-1)
+#	define MAP_FAILED  reinterpret_cast(void *, static_cast(long, -1))
 #	define PROT_NONE   0x0
 #	define PROT_READ   0x1
 #	define PROT_WRITE  0x2

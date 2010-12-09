@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <libxml/parser.h>
+#include <libHX/defs.h>
 #include <libHX/libxml_helper.h>
 
 int main(void)
@@ -21,7 +22,8 @@ int main(void)
 	xml_newnode(etc, "a", "1234 bytes");
 	node = xml_newnode(etc, "b", "0 bytes");
 	xml_newnode(node, "extra", NULL);
-	xmlDocDumpFormatMemory(doc, (xmlChar **)&result, &size, true);
+	xmlDocDumpFormatMemory(doc, reinterpret_cast(xmlChar **, &result),
+		&size, true);
 	xmlSaveFileEnc("test.xml", doc, "utf-8");
 	if (result != NULL)
 		printf("%.*s\n", size, result);

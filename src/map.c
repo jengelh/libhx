@@ -1005,7 +1005,9 @@ EXPORT_SYMBOL struct HXmap_node *HXmap_keysvalues(const struct HXmap *xmap)
 		HXhmap_keysvalues(vmap, array);
 		break;
 	case HXMAPT_RBTREE:
-		HXrbtree_keysvalues(((struct HXrbtree *)vmap)->root, array);
+		HXrbtree_keysvalues(
+			static_cast(const struct HXrbtree *, vmap)->root,
+			array);
 		break;
 	}
 	return array;
