@@ -3,6 +3,11 @@
 AM_CFLAGS        = ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${top_srcdir}/include
 AM_CXXFLAGS      = ${regular_CXXFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${top_srcdir}/include
 
+bin_PROGRAMS = hxdirstamp
+
+hxdirstamp_SOURCES = dirstamp.c
+hxdirstamp_LDADD   = libHX.la
+
 lib_LTLIBRARIES  = libHX.la
 libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
