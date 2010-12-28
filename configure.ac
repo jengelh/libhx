@@ -57,12 +57,12 @@ AC_CHECK_FUNCS([fork execv execvp pipe], [b_proc="1"])
 AC_CHECK_FUNCS([clock_gettime getegid geteuid getpid getppid])
 AM_CONDITIONAL([B_PROC], [test "$b_proc" = 1])
 
-regular_CFLAGS="-D_FILE_OFFSET_BITS=64 \
-	-D_REENTRANT -Wall -Waggregate-return -Wmissing-declarations \
+regular_CPPFLAGS="-D_FILE_OFFSET_BITS=64 -D_REENTRANT"
+regular_CFLAGS="-Wall -Waggregate-return -Wmissing-declarations \
 	-Wmissing-prototypes -Wredundant-decls -Wshadow -Wstrict-prototypes \
 	-Wformat=2 -pipe"
-regular_CXXFLAGS="-D_FILE_OFFSET_BITS=64 \
-	-D_REENTRANT -Wall -Wno-pointer-arith -Wredundant-decls -pipe";
+regular_CXXFLAGS="-Wall -Wno-pointer-arith -Wredundant-decls -pipe";
+AC_SUBST([regular_CPPFLAGS])
 AC_SUBST([regular_CFLAGS])
 AC_SUBST([regular_CXXFLAGS])
 AC_CONFIG_FILES([Makefile doc/Makefile src/Makefile

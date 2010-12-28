@@ -1,7 +1,8 @@
 # -*- Makefile -*-
 
-AM_CFLAGS        = ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${top_srcdir}/include
-AM_CXXFLAGS      = ${regular_CXXFLAGS} ${GCC_FVISIBILITY_HIDDEN} -I${top_srcdir}/include
+AM_CPPFLAGS = ${regular_CPPFLAGS} -I${top_srcdir}/include
+AM_CFLAGS   = ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN}
+AM_CXXFLAGS = ${regular_CXXFLAGS} ${GCC_FVISIBILITY_HIDDEN}
 
 bin_PROGRAMS = hxdirstamp
 
