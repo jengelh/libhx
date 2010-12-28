@@ -14648,7 +14648,7 @@ readdir
  anticipating for this scenario.
  libHX's 
 \family typewriter
-dir.c
+io.c
 \family default
  mitigates this.
 \end_layout
@@ -14662,14 +14662,14 @@ Synopsis
 \series bold
 #include
 \series default
- <libHX/misc.h>
+ <libHX/io.h>
 \begin_inset Index
 status open
 
 \begin_layout Plain Layout
 
 \family typewriter
-libHX/misc.h
+libHX/io.h
 \end_layout
 
 \end_inset
@@ -14829,7 +14829,7 @@ Example
 \series bold
 #include
 \series default
- <libHX/misc.h>
+ <libHX/io.h>
 \begin_inset Newline newline
 \end_inset
 
@@ -14913,14 +14913,14 @@ Synopsis
 \series bold
 #include
 \series default
- <libHX/misc.h>
+ <libHX/io.h>
 \begin_inset Index
 status open
 
 \begin_layout Plain Layout
 
 \family typewriter
-libHX/misc.h
+libHX/io.h
 \end_layout
 
 \end_inset
@@ -15042,14 +15042,14 @@ Synopsis
 \series bold
 #include
 \series default
- <libHX/misc.h>
+ <libHX/io.h>
 \begin_inset Index
 status open
 
 \begin_layout Plain Layout
 
 \family typewriter
-libHX/misc.h
+libHX/io.h
 \end_layout
 
 \end_inset

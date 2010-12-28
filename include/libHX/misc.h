@@ -10,6 +10,7 @@
 #	include <cstdarg>
 #	include <cstdio>
 #endif
+#include <libHX/io.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,27 +32,9 @@ extern "C" {
 #define HXbitmap_test(map, bit) \
 	((bool)(__HXbitmap_quant(map, bit) & (1ULL << (bit % __HXbitmap_bpq(*(map))))))
 
-struct HXdir;
 struct stat;
 struct timespec;
 struct timeval;
-
-/*
- *	DIR.C
- */
-enum {
-	HXF_UID  = 1 << 0,
-	HXF_GID  = 1 << 1,
-	HXF_KEEP = 1 << 2,
-};
-
-extern struct HXdir *HXdir_open(const char *);
-extern const char *HXdir_read(struct HXdir *);
-extern void HXdir_close(struct HXdir *);
-extern int HX_copy_dir(const char *, const char *, unsigned int, ...);
-extern int HX_copy_file(const char *, const char *, unsigned int, ...);
-extern int HX_mkdir(const char *);
-extern int HX_rrmdir(const char *);
 
 /*
  *	DL.C
