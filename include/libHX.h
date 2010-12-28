@@ -1,5 +1,5 @@
 #ifndef _LIBHX_H
-#define _LIBHX_H 20090101
+#define _LIBHX_H 20101228
 
 /*
  * This file is for programs that really need about everything. The presence of
@@ -15,6 +15,7 @@
 #include <libHX/deque.h>
 #include <libHX/list.h>
 #include <libHX/init.h>
+#include <libHX/io.h>
 #include <libHX/map.h>
 #include <libHX/misc.h>
 #include <libHX/option.h>

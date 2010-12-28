@@ -5,6 +5,7 @@ HEAD
 Enhancements:
 - hxdirstamp: new development helper program for library users
   (Note to distros: should be in libHX-devel; it is only used during builds)
+- io: new functions HXio_full{read,write}
 
 
 v3.8 (2010-12-01)

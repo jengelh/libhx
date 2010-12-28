@@ -25,6 +25,7 @@
 #	include <unistd.h>
 #endif
 #include <libHX/ctype_helper.h>
+#include <libHX/io.h>
 #include <libHX/misc.h>
 #include <libHX/string.h>
 #include "internal.h"
@@ -315,4 +316,34 @@ EXPORT_SYMBOL int HX_rrmdir(const char *dir)
 	HXdir_close(ptr);
 	HXmc_free(fn);
 	return ret;
+}
+
+EXPORT_SYMBOL ssize_t HXio_fullread(int fd, void *buf, size_t size)
+{
+	size_t rem = size;
+	ssize_t ret;
+
+	while (rem > 0) {
+		ret = read(fd, buf, rem);
+		if (ret < 0)
+			return ret;
+		rem -= ret;
+		buf += ret;
+	}
+	return size;
+}
+
+EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *buf, size_t size)
+{
+	size_t rem = size;
+	ssize_t ret;
+
+	while (rem > 0) {
+		ret = write(fd, buf, rem);
+		if (ret < 0)
+			return ret;
+		rem -= ret;
+		buf += ret;
+	}
+	return size;
 }

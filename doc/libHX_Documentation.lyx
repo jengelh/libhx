@@ -15246,6 +15246,136 @@ HX_copy_file
  alone (historic negligience?).
 \end_layout
 
+\begin_layout Subsection
+Filedescriptor I/O
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#include
+\series default
+ <libHX/io.h>
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+libHX/io.h
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+ssize_t
+\series default
+ HXio_fullread(
+\series bold
+int
+\series default
+ fd, 
+\series bold
+void *
+\series default
+buf, 
+\series bold
+size_t
+\series default
+ size, 
+\series bold
+unsigned int
+\series default
+ flags);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXio_fullread
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+ssize_t
+\series default
+ HXio_fullwrite(
+\series bold
+int
+\series default
+ fd, 
+\series bold
+const void *
+\series default
+buf, 
+\series bold
+size_t
+\series default
+ size, 
+\series bold
+unsigned int
+\series default
+ flags);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXio_fullwrite
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since plain 
+\family typewriter
+read
+\family default
+(2) and 
+\family typewriter
+write
+\family default
+(2) may process only part of the buffer
+\begin_inset space ~
+\end_inset
+
+--- even more likely so with sockets
+\begin_inset space ~
+\end_inset
+
+---, libHX provides two functions that calls these in a loop to retry said
+ operations until the full amount has been processed.
+ Since 
+\family typewriter
+read
+\family default
+ and 
+\family typewriter
+write
+\family default
+ can also be used with socket file descriptors, so can these.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage clearpage
 \end_inset
