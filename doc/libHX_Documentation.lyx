@@ -4301,6 +4301,26 @@ flags
 \begin_layout Description
 
 \family typewriter
+HXMAP_NONE
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXMAP_NONE
+\end_layout
+
+\end_inset
+
+ This is just a mnemonic for the value 0, indicating no flags.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
 HXMAP_NOREPLACE
 \family default
 

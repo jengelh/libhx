@@ -15,6 +15,7 @@ F column: Function first seen in version, possibly with different API.
 
 RMV	MinVer	FirstA	Name
 ----------------------------------------------------------------------
+3.9	3.9	3.9	HXMAP_NONE
 3.9	3.9	3.9	HXio_fullread
 3.9	3.9	3.9	HXio_fullwrite
 3.7	3.7	3.7	xml_newtextnode
