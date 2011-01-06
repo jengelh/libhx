@@ -4,22 +4,22 @@
 
 EXPORT_SYMBOL int chown(const char *path, long uid, long gid)
 {
-	return -ENOSYS;
+	return -(errno = ENOSYS);
 }
 
 EXPORT_SYMBOL int fchmod(int fd, long perm)
 {
-	return -ENOSYS;
+	return -(errno = ENOSYS);
 }
 
 EXPORT_SYMBOL int fchown(int fd, long uid, long gid)
 {
-	return -ENOSYS;
+	return -(errno = ENOSYS);
 }
 
 EXPORT_SYMBOL int lchown(const char *path, long uid, long gid)
 {
-	return -ENOSYS;
+	return -(errno = ENOSYS);
 }
 
 EXPORT_SYMBOL int lstat(const char *path, struct stat *sb)
@@ -29,20 +29,20 @@ EXPORT_SYMBOL int lstat(const char *path, struct stat *sb)
 
 EXPORT_SYMBOL int mkfifo(const char *path, long mode)
 {
-	return -EPERM;
+	return -(errno = EPERM);
 }
 
 EXPORT_SYMBOL int mknod(const char *path, long mode, long dev)
 {
-	return -EPERM;
+	return -(errno = EPERM);
 }
 
 EXPORT_SYMBOL int readlink(const char *path, char *dest, size_t len)
 {
-	return -EINVAL;
+	return -(errno = EINVAL);
 }
 
 EXPORT_SYMBOL int symlink(const char *src, const char *dest)
 {
-	return -EPERM;
+	return -(errno = EPERM);
 }
