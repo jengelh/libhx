@@ -41,6 +41,17 @@ AC_SEARCH_LIBS([dlopen], [dl])
 AC_SEARCH_LIBS([clock_gettime], [rt])
 AC_SEARCH_LIBS([pthread_mutex_lock], [pthread])
 
+AC_CHECK_SIZEOF([void *])
+AC_CHECK_SIZEOF([char *])
+AC_CHECK_SIZEOF([struct x *])
+AC_CHECK_SIZEOF([struct x **])
+if test "$ac_cv_sizeof_void_p" != "$ac_cv_sizeof_char_p" ||
+   test "$ac_cv_sizeof_struct_x_p" != "$ac_cv_sizeof_struct_x_pp"; then
+	# format.c: reinterpret_cast(hxmc_t **, HXdeque_to_vec(...))
+	# map.c: reinterpret_cast(struct HXrbtree_node *, &btree->root);
+	AC_MSG_ERROR([The code currently relies on certain type sizes to take shortcuts.])
+fi;
+
 AC_CHECK_MEMBERS(
 	[struct timespec.tv_nsec,
 	struct timeval.tv_usec,
