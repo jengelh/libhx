@@ -12,6 +12,7 @@
 #	include <stdlib.h>
 #	include <string.h>
 #endif
+#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {
