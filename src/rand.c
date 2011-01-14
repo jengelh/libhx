@@ -18,6 +18,9 @@
 #ifdef __unix__
 #	include <unistd.h>
 #endif
+#ifdef _WIN32
+#	include <process.h>
+#endif
 #include <libHX/init.h>
 #include <libHX/misc.h>
 #include "internal.h"
