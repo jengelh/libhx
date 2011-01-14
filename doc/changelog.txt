@@ -9,6 +9,7 @@ Fixes:
 Changes:
 - For filesystem/filehandle-related functions, io.h should now be included
   in userspace programs instead of misc.h
+- libHX.so is now built with a symvers map file
 Enhancements:
 - hxdirstamp: new development helper program for library users
   (Note to distros: should be in libHX-devel; it is only used during builds)
