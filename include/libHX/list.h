@@ -79,20 +79,20 @@ static inline bool HXlist_empty(const struct HXlist_head *head)
 	     (pos) = (n), (n) = (pos)->prev)
 
 #define HXlist_for_each_entry(pos, head, member) \
-	for ((pos) = HXlist_entry((head)->next, typeof(*(pos)), member); \
+	for ((pos) = HXlist_entry((head)->next, __typeof__(*(pos)), member); \
 	     &(pos)->member != (void *)(head); \
-	     (pos) = HXlist_entry((pos)->member.next, typeof(*(pos)), member))
+	     (pos) = HXlist_entry((pos)->member.next, __typeof__(*(pos)), member))
 
 #define HXlist_for_each_entry_rev(pos, head, member) \
-	for ((pos) = HXlist_entry((head)->prev, typeof(*(pos)), member); \
+	for ((pos) = HXlist_entry((head)->prev, __typeof__(*(pos)), member); \
 	     &(pos)->member != (void *)(head); \
-	     (pos) = HXlist_entry((pos)->member.prev, typeof(*(pos)), member))
+	     (pos) = HXlist_entry((pos)->member.prev, __typeof__(*(pos)), member))
 
 #define HXlist_for_each_entry_safe(pos, n, head, member) \
-	for ((pos) = HXlist_entry((head)->next, typeof(*(pos)), member), \
-	     (n) = HXlist_entry((pos)->member.next, typeof(*(pos)), member); \
+	for ((pos) = HXlist_entry((head)->next, __typeof__(*(pos)), member), \
+	     (n) = HXlist_entry((pos)->member.next, __typeof__(*(pos)), member); \
 	     &(pos)->member != (void *)(head); \
-	     (pos) = (n), (n) = HXlist_entry((n)->member.next, typeof(*(n)), \
+	     (pos) = (n), (n) = HXlist_entry((n)->member.next, __typeof__(*(n)), \
 	     member))
 
 struct HXclist_head {

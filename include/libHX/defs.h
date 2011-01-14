@@ -5,7 +5,7 @@
 #	define HXsizeof_member(type, member) \
 		sizeof(static_cast<type *>(NULL)->member)
 #	define HXtypeof_member(type, member) \
-		typeof(static_cast<type *>(NULL)->member)
+		__typeof__(static_cast<type *>(NULL)->member)
 #	if defined(__GNUC__) && __GNUC__ >= 4 && !defined(offsetof)
 		/*
 		 * This is here so most programs can skip inclusion
@@ -59,7 +59,7 @@ static inline new_type signed_cast(unsigned char *expr)
 }
 #else
 #	define HXsizeof_member(type, member) sizeof(((type *)NULL)->member)
-#	define HXtypeof_member(type, member) typeof(((type *)NULL)->member)
+#	define HXtypeof_member(type, member) __typeof__(((type *)NULL)->member)
 	/* N.B. signed_cast<> does not exist in C++. */
 #	define __signed_cast_compatible(a, b) \
 		__builtin_choose_expr( \
@@ -81,7 +81,7 @@ static inline new_type signed_cast(unsigned char *expr)
 
 #	if defined(__GNUC__) && !defined(signed_cast)
 #		define signed_cast(type, expr) ({ \
-			BUILD_BUG_ON(!__signed_cast_compatible(typeof(type), typeof(expr))); \
+			BUILD_BUG_ON(!__signed_cast_compatible(__typeof__(type), __typeof__(expr))); \
 			(type)(expr); \
 		})
 #	endif
@@ -91,11 +91,11 @@ static inline new_type signed_cast(unsigned char *expr)
 #	endif
 #	if defined(__GNUC__) && !defined(const_cast1)
 #		define __const_cast_strip1(expr) \
-			typeof(*(struct { int z; typeof(expr) x; }){0}.x)
+			__typeof__(*(struct { int z; __typeof__(expr) x; }){0}.x)
 #		define __const_cast_strip2(expr) \
-			typeof(**(struct { int z; typeof(expr) x; }){0}.x)
+			__typeof__(**(struct { int z; __typeof__(expr) x; }){0}.x)
 #		define __const_cast_strip3(expr) \
-			typeof(***(struct { int z; typeof(expr) x; }){0}.x)
+			__typeof__(***(struct { int z; __typeof__(expr) x; }){0}.x)
 #		define const_cast1(new_type, expr) ({ \
 			BUILD_BUG_ON(!__builtin_types_compatible_p(__const_cast_strip1(expr), __const_cast_strip1(new_type))); \
 			(new_type)(expr); \
