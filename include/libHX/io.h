@@ -3,6 +3,10 @@
 
 #include <sys/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum {
 	HXF_UID  = 1 << 0,
 	HXF_GID  = 1 << 1,
@@ -21,5 +25,9 @@ extern int HX_rrmdir(const char *);
 
 extern ssize_t HXio_fullread(int, void *, size_t);
 extern ssize_t HXio_fullwrite(int, const void *, size_t);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* _LIBHX_IO_H */
