@@ -20,7 +20,6 @@ RMV	MinVer	FirstA	Name
 3.9	3.9	3.9	HXio_fullwrite
 3.7	3.7	3.7	HXlist_for_each_rev
 3.7	3.7	3.7	HXlist_for_each_rev_safe
-3.7	3.7	3.7	xml_newtextnode
 3.7	3.7	1.22	xml_newnode
 3.7	1.15	1.15	HXclist_pop
 3.7	1.15	1.15	HXclist_shift
