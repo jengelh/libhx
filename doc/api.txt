@@ -85,8 +85,10 @@ RMV	MinVer	FirstA	Name
 3.0	3.0	3.0	HXhash_djb2
 3.0	3.0	3.0	HXhash_jlookup3
 3.0	3.0	3.0	HXhash_jlookup3s
+3.0	3.0	3.0	HXmap_free
 3.0	3.0	3.0	HXmap_init
 3.0	3.0	3.0	HXmap_init5
+3.0	3.0	3.0	HXmap_keysvalues
 3.0	3.0	3.0	HXmap_travfree
 3.0	3.0	3.0	HXsizeof_member
 3.0	3.0	3.0	HXtypeof_member
