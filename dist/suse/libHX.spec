@@ -18,16 +18,18 @@ BuildRequires:	gcc-c++, pkg-config, xz
 %define debug_package_requires %lname = %version-%release
 
 %description
-A library for:
-- hash/rbtree-based maps/sets
-- double-ended queues (stacks/fifos/lists)
-- platform-independent opendir-style directory access
-- platform-independent dlopen-style shared library access
-- auto-storage strings with direct access
-- command line option (argv) parser
-- shconfig-style config file parser
-- various string, memory and zvec ops
-- more
+libHX is a C library (with some C++ bindings available) that provides
+data structures and functions commonly needed, such as maps, deques,
+linked lists, string formatting and autoresizing, option and config
+file parsing, type checking casts and more.
+
+libHX aids in quickly writing up C and C++ data processing programs,
+by consolidating tasks that often happen to be open-coded, such as
+(simple) config file reading, option parsing, directory traversal,
+and others, into a library. The focus is on reducing the amount of
+time (and secondarily, the amount of code) a developer has to spend
+for otherwise implementing such.
+
 
 Author(s):
 ----------
@@ -38,16 +40,18 @@ Group:		System/Libraries
 Summary:	Useful collection of routines for C and C++ programming
 
 %description -n %lname
-A library for:
-- hash/rbtree-based maps/sets
-- double-ended queues (stacks/fifos/lists)
-- platform-independent opendir-style directory access
-- platform-independent dlopen-style shared library access
-- auto-storage strings with direct access
-- command line option (argv) parser
-- shconfig-style config file parser
-- various string, memory and zvec ops
-- more
+libHX is a C library (with some C++ bindings available) that provides
+data structures and functions commonly needed, such as maps, deques,
+linked lists, string formatting and autoresizing, option and config
+file parsing, type checking casts and more.
+
+libHX aids in quickly writing up C and C++ data processing programs,
+by consolidating tasks that often happen to be open-coded, such as
+(simple) config file reading, option parsing, directory traversal,
+and others, into a library. The focus is on reducing the amount of
+time (and secondarily, the amount of code) a developer has to spend
+for otherwise implementing such.
+
 
 Author(s):
 ----------
@@ -62,16 +66,18 @@ Provides:	%name-devel(vendor:%vendor_uuid) = %version-%release
 %endif
 
 %description devel
-A library for:
-- hash/rbtree-based maps/sets
-- double-ended queues (stacks/fifos/lists)
-- platform-independent opendir-style directory access
-- platform-independent dlopen-style shared library access
-- auto-storage strings with direct access
-- command line option (argv) parser
-- shconfig-style config file parser
-- various string, memory and zvec ops
-- more
+libHX is a C library (with some C++ bindings available) that provides
+data structures and functions commonly needed, such as maps, deques,
+linked lists, string formatting and autoresizing, option and config
+file parsing, type checking casts and more.
+
+libHX aids in quickly writing up C and C++ data processing programs,
+by consolidating tasks that often happen to be open-coded, such as
+(simple) config file reading, option parsing, directory traversal,
+and others, into a library. The focus is on reducing the amount of
+time (and secondarily, the amount of code) a developer has to spend
+for otherwise implementing such.
+
 
 Author(s):
 ----------
