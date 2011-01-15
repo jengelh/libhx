@@ -1,7 +1,7 @@
 
 Name:		libHX
 %define lname	libHX25
-Version:	3.8
+Version:	3.9
 Release:	0
 Group:		System/Libraries
 URL:		http://libhx.sf.net/
@@ -109,9 +109,11 @@ make check
 
 %files devel
 %defattr(-,root,root)
+%_bindir/*
 %_libdir/%{name}*.so
 %_libdir/pkgconfig/*
 %_includedir/*
+%_mandir/*/*
 %docdir %_docdir/%name
 %_docdir/%name
 

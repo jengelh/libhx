@@ -1,5 +1,5 @@
 #ifndef _LIBHX_H
-#define _LIBHX_H 20101228
+#define _LIBHX_H 20110115
 
 /*
  * This file is for programs that really need about everything. The presence of
