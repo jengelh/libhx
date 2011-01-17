@@ -23,12 +23,14 @@ if B_PROC
 proc_sources     = proc.c
 endif
 
-check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-list tc-list2 \
+check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-link \
+                     tc-list tc-list2 \
                      tc-map tc-misc tc-option tc-proc tc-rand tc-string tc-time
 tc_cast_CFLAGS     = ${AM_CFLAGS} -std=c99
 tc_cast_LDADD      = libHX.la -lm
 tc_compile_LDADD   = libHX.la
 tc_dir_LDADD       = libHX.la
+tc_link_LDADD      = libHX.la
 tc_list_LDADD      = libHX.la
 tc_list2_LDADD     = libHX.la
 tc_list2_CFLAGS    = ${AM_CFLAGS} -O2 -fstrict-aliasing

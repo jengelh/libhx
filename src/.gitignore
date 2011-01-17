@@ -3,6 +3,7 @@
 /t?-compile
 /t?-deque
 /t?-dir
+/t?-link
 /t?-list
 /t?-list2
 /t?-map
