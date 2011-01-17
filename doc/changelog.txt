@@ -2,6 +2,10 @@
 
 HEAD
 ====
+
+
+v3.9.1 (2011-01-17)
+===================
 Fixes:
 - libHX/io.h was not copied on `make install`, which has been fixed
 

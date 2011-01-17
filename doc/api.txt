@@ -10,14 +10,14 @@ Function reference
 
 R column: Recommend version number to use in PKG_CONFIG_CHECK in
 projects using libHX. Includes important bugfixes.
-S column: Lowest possible version with the same API.
+M column: Lowest possible version with the same API.
 F column: Function first seen in version, possibly with different API.
 
 RMV	MinVer	FirstA	Name
 ----------------------------------------------------------------------
+3.9.1	3.9	3.9	HXio_fullread
+3.9.1	3.9	3.9	HXio_fullwrite
 3.9	3.9	3.9	HXMAP_NONE
-3.9	3.9	3.9	HXio_fullread
-3.9	3.9	3.9	HXio_fullwrite
 3.7	3.7	3.7	HXlist_for_each_rev
 3.7	3.7	3.7	HXlist_for_each_rev_safe
 3.7	3.7	1.22	xml_newnode
