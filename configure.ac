@@ -37,9 +37,12 @@ AC_ARG_WITH([pkgconfigdir], AS_HELP_STRING([--with-pkgconfigdir=PATH],
 AC_SUBST([pkgconfigdir])
 
 CHECK_GCC_FVISIBILITY
-AC_SEARCH_LIBS([dlopen], [dl])
-AC_SEARCH_LIBS([clock_gettime], [rt])
-AC_SEARCH_LIBS([pthread_mutex_lock], [pthread])
+AC_SEARCH_LIBS([dlopen], [dl], [libdl_LIBS="$LIBS"; LIBS=""])
+AC_SUBST([libdl_LIBS])
+AC_SEARCH_LIBS([clock_gettime], [rt], [librt_LIBS="$LIBS"; LIBS=""])
+AC_SUBST([librt_LIBS])
+AC_SEARCH_LIBS([pthread_mutex_lock], [pthread], [libpthread_LIBS="$LIBS"; LIBS=""])
+AC_SUBST([libpthread_LIBS])
 
 AC_CHECK_SIZEOF([void *])
 AC_CHECK_SIZEOF([char *])

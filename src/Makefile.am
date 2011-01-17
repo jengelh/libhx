@@ -13,6 +13,7 @@ lib_LTLIBRARIES  = libHX.la
 libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c ${mingw32_extra} ${proc_sources}
+libHX_la_LIBADD  = ${libdl_LIBS} ${libpthread_LIBS} ${librt_LIBS}
 libHX_la_LDFLAGS = -version-info 26:0:1 \
                    -Wl,--version-script=${srcdir}/libHX.map
 
@@ -64,9 +65,9 @@ tx_option_SOURCES  = tx-option.cpp
 tx_proc_SOURCES    = tx-proc.cpp
 tx_proc_LDADD      = libHX.la
 tx_rand_SOURCES    = tx-rand.cpp
-tx_rand_LDADD      = libHX.la -lrt
+tx_rand_LDADD      = libHX.la ${librt_LIBS}
 tx_string_SOURCES  = tx-string.cpp
 tx_string_LDADD    = libHX.la
 tx_time_SOURCES    = tx-time.cpp
-tx_time_LDADD      = libHX.la -lrt
+tx_time_LDADD      = libHX.la ${librt_LIBS}
 endif
