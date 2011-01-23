@@ -43,6 +43,23 @@ AC_SEARCH_LIBS([clock_gettime], [rt], [librt_LIBS="$LIBS"; LIBS=""])
 AC_SUBST([librt_LIBS])
 AC_SEARCH_LIBS([pthread_mutex_lock], [pthread], [libpthread_LIBS="$LIBS"; LIBS=""])
 AC_SUBST([libpthread_LIBS])
+AC_SEARCH_LIBS([getaddrinfo], [socket], [libsocket_LIBS="$LIBS"; LIBS=""], [])
+if test -z "$libsocket_LIBS"; then
+	AC_MSG_CHECKING([non-standard libraries containing getaddrinfo])
+	LIBS="-lws2_32";
+	AC_LINK_IFELSE([
+		#include <winsock2.h>
+		#include <ws2tcpip.h>
+		int main(void) { return getaddrinfo(NULL, NULL, NULL, NULL); }
+	], [
+		AC_MSG_RESULT([-lws2_32])
+		libsocket_LIBS="$libsocket_LIBS $LIBS";
+	], [
+		AC_MSG_RESULT([no])
+	])
+	LIBS="";
+fi;
+AC_SUBST([libsocket_LIBS])
 
 AC_CHECK_SIZEOF([void *])
 AC_CHECK_SIZEOF([char *])
