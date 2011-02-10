@@ -3829,21 +3829,37 @@ name "sec:maps"
 \end_layout
 
 \begin_layout Standard
-A map, also known as associative array, is a collection of key-value pairs.
- The underlying storage mechanism may not be an array however.
- Each key is unique and has an associated value.
+A map is a collection of key-value pairs.
+ (Some languages, such as Perl, also call them 
+\begin_inset Quotes eld
+\end_inset
+
+associative array
+\begin_inset Quotes erd
+\end_inset
+
+ or just 
+\begin_inset Quotes eld
+\end_inset
+
+hash
+\begin_inset Quotes erd
+\end_inset
+
+, however, the underlying storage mechanism may not be an array or a hash,
+ however.) Each key is unique and has an associated value.
  Keys can be any data desired; HXmap allows to specify your own key and
  data handling functions so they can be strings, raw pointers, or complex
  structures.
 \end_layout
 
 \begin_layout Standard
-To access any map-related functions, #include <
+To access any map-related functions, 
 \family typewriter
-libHX\SpecialChar \slash{}
-map.h
+#include <libHX\SpecialChar \slash{}
+map.h>
 \family default
->.
+.
 \end_layout
 
 \begin_layout Subsection
@@ -3920,13 +3936,11 @@ items
 flags
 \family default
  The current behavior flags for the map.
- While implementation-private bits are exposed to not necessarily waste
- space, one should only modify the public bits.
- Currently, only 
+ While implementation-private bits are exposed, only 
 \family typewriter
 HXMAP_NOREPLACE
 \family default
- is allowed to be (un)set by the developer while a map exists.
+ is currently allowed to be (un)set by the developer while a map exists.
 \end_layout
 
 \begin_layout Standard
@@ -4024,7 +4038,12 @@ key
 \family default
  The so-called primary key, which uniquely identifies an element (a key-value
  pair) in the map.
- The memory it points to is generally owned by the map and must not be modified.
+ The memory portions that make up the key must not be modified.
+ (If the key changes, so does its hash value and/or position index, and
+ without taking that into account, writing to the key directly is going
+ to end up with an inconsistent state.
+ To change the key, you will need to delete the element and reinsert it
+ with its new key.)
 \end_layout
 
 \begin_layout Description
@@ -4045,20 +4064,24 @@ g.
 \family typewriter
 printf
 \family default
- or other varargs function, which would normally require casting of the
+ or other varargs function, which would otherwise require casting of the
  
 \family typewriter
 void
 \begin_inset space ~
 \end_inset
 
+*key
+\family default
+ member to 
+\family typewriter
+const char
+\begin_inset space ~
+\end_inset
+
 *
 \family default
- type of the 
-\family typewriter
-key
-\family default
- member.
+ first.
 \end_layout
 
 \begin_layout Description
@@ -4111,8 +4134,8 @@ HXMAPT_DEFAULT
 
 \end_inset
 
- No further preferences; selects any map type that the libHX maintainer
- deemed fast.
+ No further preferences or guarantees; selects any map type that the libHX
+ maintainer deemed fast.
 \end_layout
 
 \begin_layout Description
@@ -4132,7 +4155,7 @@ HXMAPT_ORDERED
 
 \end_inset
 
- The map type shall be of a type that provides ordered traversal.
+ The map shall use a data structure that provides ordered traversal.
 \end_layout
 
 \begin_layout Standard
@@ -4164,7 +4187,7 @@ HX_MAPT_HASH
 \begin_inset Formula $\mathcal{O}\left(1\right)$
 \end_inset
 
- insertion, lookup and deletion; unordered
+ insertion, lookup and deletion; unordered.
 \end_layout
 
 \begin_layout Description
@@ -4192,7 +4215,11 @@ HX_MAPT_RBTREE
 \begin_inset Formula $\mathcal{O}\left(\log\left(n\right)\right)$
 \end_inset
 
- insertion, lookup and deletion; ordered
+ insertion, lookup and deletion; ordered.
+\end_layout
+
+\begin_layout Standard
+These can then be used with the initialization functions:
 \end_layout
 
 \begin_layout LyX-Code
@@ -4288,7 +4315,7 @@ Both the
 \family typewriter
 *_init5
 \family default
- create a new table; the latter function allows to specify the operations
+ variant creates a new map; the latter function allows to specify the operations
  in detail as well as key and data size, which may become necessary when
  using data sets which have their own way of being managed.
  The 
