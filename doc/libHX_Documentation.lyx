@@ -4455,25 +4455,34 @@ k_free
 \family default
  operations to 
 \family typewriter
-HX_strdup
-\family default
- and 
-\family typewriter
-free
-\family default
- if 
-\family typewriter
-HXMAP_SKEY
-\family default
- was also specified, otherwise sets 
-\family typewriter
 HX_memdup
 \family default
  and 
 \family typewriter
 free
 \family default
-.
+, and as such, the 
+\family typewriter
+key_size
+\family default
+ parameter must not be zero.
+ If however, 
+\family typewriter
+HXMAP_SKEY
+\family default
+ is also specified, 
+\family typewriter
+HX_strdup
+\family default
+ and 
+\family typewriter
+free
+\family default
+ will be used and 
+\family typewriter
+key_size
+\family default
+ must be zero.
 \end_layout
 
 \begin_layout Description
@@ -4635,6 +4644,176 @@ HXmap_add
 NULL
 \family default
 .
+\end_layout
+
+\begin_layout Subsection
+Flag combinations
+\end_layout
+
+\begin_layout Standard
+This subsection highlights the way 
+\family typewriter
+HXMAP_SKEY
+\family default
+ interacts with 
+\family typewriter
+HXMAP_CKEY
+\family default
+ and the key size.
+ The copy semantics are the same for 
+\family typewriter
+HXMAP_SDATA
+\family default
+ and 
+\family typewriter
+HXMAP_CDATA
+\family default
+.
+\end_layout
+
+\begin_layout Subsubsection*
+
+\family typewriter
+HXMAP_SKEY
+\family default
+ is unset, 
+\family typewriter
+HXMAP_CKEY
+\family default
+ is unset
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+key_size
+\family default
+ parameter at the time of map construction is ignored.
+ The pointer value of the 
+\family typewriter
+key
+\family default
+ parameter for the 
+\family typewriter
+HXmap_add
+\family default
+ call is directly stored in the tree, and this is the key that uniquely
+ identifies the map entry and which is used for comparisons.
+ This may be used if you intend to directly map pointer values.
+\end_layout
+
+\begin_layout LyX-Code
+static struct something *x = ..., *y = ...;
+\begin_inset Newline newline
+\end_inset
+
+HXmap_add(map, &x[0], "foo");
+\begin_inset Newline newline
+\end_inset
+
+HXmap_add(map, &x[1], "bar");
+\end_layout
+
+\begin_layout Subsubsection*
+
+\family typewriter
+HXMAP_SKEY
+\family default
+ is set, 
+\family typewriter
+HXMAP_CKEY
+\family default
+ is unset
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+key_size
+\family default
+ parameter at the time of map construction is ignored.
+ The pointer value of the 
+\family typewriter
+key
+\family default
+ parameter for the 
+\family typewriter
+HXmap_add
+\family default
+ call is directly stored in the tree, but it is the C string 
+\shape italic
+pointed to
+\shape default
+ by the 
+\family typewriter
+key
+\family default
+ parameter that serves as the key.
+\end_layout
+
+\begin_layout Subsubsection*
+
+\family typewriter
+HXMAP_SKEY
+\family default
+ is set, 
+\family typewriter
+HXMAP_CKEY
+\family default
+ is set
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+key_size
+\family default
+ parameter at the time of map construction is ignored.
+ The string pointed to by the key parameter will be duplicated, and the
+ resulting pointer will be stored in the tree.
+ Again, it is the pointed-to string that is the key.
+\end_layout
+
+\begin_layout Subsubsection*
+
+\family typewriter
+HXMAP_SKEY
+\family default
+ is unset, 
+\family typewriter
+HXMAP_CKEY
+\family default
+ is set
+\end_layout
+
+\begin_layout Standard
+The memory block pointed to by the key parameter will be duplicated.
+ The 
+\family typewriter
+key_size
+\family default
+ parameter must be non-zero for this to successfully work.
+\end_layout
+
+\begin_layout Subsubsection*
+With separate ops
+\end_layout
+
+\begin_layout Standard
+However, when a custom 
+\family typewriter
+struct HXmap_ops
+\family default
+ is provided in the call to 
+\family typewriter
+HXmap_init5
+\family default
+, any of these semantics can be overridden.
+ Particularly, since your own ops can practically ignore 
+\family typewriter
+key_size
+\family default
+, it could be set to any value.
 \end_layout
 
 \begin_layout Subsection

@@ -394,6 +394,22 @@ EXPORT_SYMBOL struct HXmap *HXmap_init5(enum HXmap_type type,
 EXPORT_SYMBOL struct HXmap *HXmap_init(enum HXmap_type type,
     unsigned int flags)
 {
+	/*
+	 * We cannot check this in HXmap_init5, since a custom ops may
+	 * allow key_size==0/data_size==0.
+	 */
+	if ((flags & HXMAP_SCKEY) == HXMAP_CKEY) {
+		fprintf(stderr, "%s: zero key_size with standard memcpy ops "
+		        "won't work.\n", __func__);
+		errno = EINVAL;
+		return NULL;
+	}
+	if ((flags & HXMAP_SCDATA) == HXMAP_CDATA) {
+		fprintf(stderr, "%s: zero data_size with standard memcpy ops "
+		        "won't work.\n", __func__);
+		errno = EINVAL;
+		return NULL;
+	}
 	return HXmap_init5(type, flags, NULL, 0, 0);
 }
 

@@ -676,10 +676,25 @@ static void tmap_rbt_test_7(void)
 	HXmap_free(u.map);
 }
 
+static void tmap_zero(void)
+{
+	struct HXmap *b;
+
+	b = HXmap_init(HXMAPT_DEFAULT, HXMAP_CKEY | HXMAP_CDATA);
+	if (b != NULL)
+		fprintf(stderr, "eek!\n");
+	b = HXmap_init(HXMAPT_DEFAULT, HXMAP_CKEY);
+	if (b != NULL)
+		fprintf(stderr, "eek!\n");
+}
+
 int main(void)
 {
 	if (HX_init() <= 0)
 		abort();
+
+	tmap_zero();
+
 	tmap_printf("* HXhashmap\n");
 	tmap_generic_tests(HXMAPT_HASH, HXhash_djb2, "DJB2");
 	tmap_generic_tests(HXMAPT_HASH, HXhash_jlookup3s, "JL3");
