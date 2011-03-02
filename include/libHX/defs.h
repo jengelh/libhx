@@ -139,8 +139,14 @@ static inline new_type signed_cast(unsigned char *expr)
 #	endif
 #endif
 
+#if defined(__GNUC__) && !defined(__cplusplus)
+#	define __array_size_check(a) BUILD_BUG_ON_EXPR(\
+		__builtin_types_compatible_p(__typeof__(a), __typeof__(&*(a))))
+#else
+#	define __array_size_check(a) 0
+#endif
 #ifndef ARRAY_SIZE
-#	define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
+#	define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)) + __array_size_check(x))
 #endif
 #ifndef BUILD_BUG_ON_EXPR
 #	define BUILD_BUG_ON_EXPR(condition) (sizeof(char[1 - 2 * !!(condition)]))
