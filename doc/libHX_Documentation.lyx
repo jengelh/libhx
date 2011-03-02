@@ -2904,6 +2904,42 @@ Compile-time build checks
 \begin_layout LyX-Code
 
 \series bold
+int
+\series default
+ BUILD_BUG_ON_EXPR(
+\series bold
+bool
+\series default
+ condition); 
+\series bold
+/* 
+\family roman
+\series default
+\shape italic
+implemented as a macro
+\family default
+\series bold
+\shape default
+ */
+\series default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+BUILD_BUG_ON_EXPR
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
 void
 \series default
  BUILD_BUG_ON(
@@ -2944,6 +2980,20 @@ condition
 \family default
  evaluates to true.
  If not implemented for a compiler, it will be a no-op.
+ 
+\family typewriter
+BUILD_BUG_ON
+\family default
+ is meant to be used as a standalone statement, while 
+\family typewriter
+BUILD_\SpecialChar \-
+BUG_\SpecialChar \-
+ON_\SpecialChar \-
+EXPR
+\family default
+ is for when a check is to occur within an expression, that latter of which
+ is useful for within macros when one cannot, or does not want to use multiple
+ statements.
 \end_layout
 
 \begin_layout Subsection
