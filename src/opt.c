@@ -1,6 +1,6 @@
 /*
  *	libHX/opt.c
- *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2009
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2011
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -176,7 +176,7 @@ static void do_assign(struct HXoptcb *cbi)
 static inline const struct HXoption *lookup_short(const struct HXoption *table,
     char opt)
 {
-	for (; table->ln != NULL || table->sh != '\0'; ++table)
+	for (; table->type != HXTYPE_XSNTMARK; ++table)
 		if (table->sh == opt)
 			return table;
 	return NULL;
@@ -185,7 +185,7 @@ static inline const struct HXoption *lookup_short(const struct HXoption *table,
 static inline const struct HXoption *lookup_long(const struct HXoption *table,
     const char *key)
 {
-	for (; table->ln != NULL || table->sh != '\0'; ++table)
+	for (; table->type != HXTYPE_XSNTMARK; ++table)
 		if (table->ln != NULL && strcmp(table->ln, key) == 0)
 			return table;
 	return NULL;

@@ -77,6 +77,7 @@ enum {
 	HXTYPE_INT32,
 	HXTYPE_INT64,
 	HXTYPE_MCSTR, /* put into hxmc_t */
+	HXTYPE_XSNTMARK, /* sentinel marker */
 
 	/* .type extra flags */
 	/* argument is optional */
@@ -155,12 +156,12 @@ extern void HX_shconfig_free(const struct HXoption *);
 		{.ln = "usage", .type = HXTYPE_NONE, \
 		.cb = HX_getopt_usage_cb, \
 		.help = "Display brief usage message"}
-#	define HXOPT_TABLEEND {.ln = NULL, .sh = 0}
+#	define HXOPT_TABLEEND {.type = HXTYPE_XSNTMARK}
 #else
 #	define HXOPT_AUTOHELP \
 		{NULL, '?', HXTYPE_NONE, NULL, NULL, HX_getopt_help_cb, \
 		0, NULL, "Show this help message"}
-#	define HXOPT_TABLEEND {NULL, 0}
+#	define HXOPT_TABLEEND {NULL, 0, HXTYPE_XSNTMARK}
 #endif
 
 #endif /* _LIBHX_OPTION_H */
