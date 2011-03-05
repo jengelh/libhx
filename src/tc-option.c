@@ -150,12 +150,13 @@ int main(int argc, const char **argv)
 {
 	if (HX_init() <= 0)
 		abort();
+	printf("Return value of HX_getopt: %d\n",
+	       HX_getopt(table, &argc, &argv, HXOPT_USAGEONERR));
+
 	t_format(argc);
 	t_shconfig((argc >= 2) ? argv[1] : "tc-option.c");
 	t_shconfig2((argc >= 2) ? argv[1] : "tc-option.c");
 
-	printf("Return value of HX_getopt: %d\n",
-	       HX_getopt(table, &argc, &argv, HXOPT_USAGEONERR));
 	printf("Either-or is: %s\n", opt_eitheror[opt_dst]);
 	printf("values: D=%lf I=%d L=%ld S=%s\n",
 	       opt_kdbl, opt_kint, opt_klong, opt_kstr);
