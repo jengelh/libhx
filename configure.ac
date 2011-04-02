@@ -47,11 +47,11 @@ AC_SEARCH_LIBS([getaddrinfo], [socket], [libsocket_LIBS="$LIBS"; LIBS=""], [])
 if test -z "$libsocket_LIBS"; then
 	AC_MSG_CHECKING([non-standard libraries containing getaddrinfo])
 	LIBS="-lws2_32";
-	AC_LINK_IFELSE([
+	AC_LINK_IFELSE(AC_LANG_SOURCE([
 		#include <winsock2.h>
 		#include <ws2tcpip.h>
 		int main(void) { return getaddrinfo(NULL, NULL, NULL, NULL); }
-	], [
+	]), [
 		AC_MSG_RESULT([-lws2_32])
 		libsocket_LIBS="$libsocket_LIBS $LIBS";
 	], [

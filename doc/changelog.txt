@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Fixes:
+- build: resolve autoconf-2.68 warnings
 Changes:
 - defs: add array type checking in ARRAY_SIZE
 - opt: use non-zero sentinel marker
