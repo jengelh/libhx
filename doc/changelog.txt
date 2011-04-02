@@ -2,6 +2,11 @@
 
 HEAD
 ====
+Changes:
+- defs: add array type checking in ARRAY_SIZE
+- opt: use non-zero sentinel marker
+Enhancements:
+- defs: add BUILD_BUG_ON_EXPR
 
 
 v3.9.1 (2011-01-17)
