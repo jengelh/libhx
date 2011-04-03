@@ -1,4 +1,4 @@
-#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+#LyX 1.6.9 created this file. For more info see http://www.lyx.org/
 \lyxformat 345
 \begin_document
 \begin_header
@@ -14653,6 +14653,53 @@ command
 '
 \family default
 `) such that special characters, redirection, and so on can be used.
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+%(substr 
+\family default
+\shape italic
+text
+\family typewriter
+\shape default
+,
+\family default
+\shape italic
+offset
+\shape default
+[
+\family typewriter
+,
+\family default
+\shape italic
+length
+\shape default
+]
+\family typewriter
+)
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+Extracts a substring out of the given text, starting at 
+\shape italic
+offset
+\shape default
+ and running for the given length.
+ If no length is given, will extract until the end of the string.
+ If 
+\shape italic
+offset
+\shape default
+ is negative, it specifies the offset from the end of the string.
+ If 
+\shape italic
+length
+\shape default
+ is negative, that many characters are left off the end.
 \end_layout
 
 \begin_layout Itemize

@@ -10,6 +10,7 @@ Changes:
 - opt: use non-zero sentinel marker
 Enhancements:
 - defs: add BUILD_BUG_ON_EXPR
+- format: provide a %(substr) function
 
 
 v3.9.1 (2011-01-17)

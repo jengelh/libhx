@@ -260,6 +260,61 @@ static hxmc_t *HXformat2_snl(int argc, const hxmc_t *const *argv)
 	return s;
 }
 
+static hxmc_t *HXformat2_substr(int argc, const hxmc_t *const *argv)
+{
+	ssize_t offset, length, z;
+	hxmc_t *ret;
+	char *end;
+
+	if (argc < 2) {
+		HXformat2_insuf(__func__, argc);
+		return &HXformat2_nexp;
+	}
+
+	offset = strtoll(argv[1], &end, 0);
+	if (*end != '\0') {
+		fprintf(stderr, "HXformat2-substr: found garbage in "
+		        "offset specification\n");
+		return &HXformat2_nexp;
+	}
+
+	z = strlen(argv[0]);
+	if (offset < 0)
+		offset = z + offset;
+	if (offset >= z)
+		return &HXformat2_nexp;
+
+	if (argc == 2) {
+		if (offset < 0)
+			offset = 0;
+		length = z - offset;
+	} else {
+		length = strtoll(argv[2], &end, 0);
+		if (*end != '\0') {
+			fprintf(stderr, "HXformat2-substr; found garbage in "
+			        "length specification\n");
+			return &HXformat2_nexp;
+		}
+		if (length < 0)
+			length/*end*/ = z + length;
+		else
+			length/*end*/ = offset + length;
+		if (offset < 0)
+			offset = 0;
+	}
+	if (length <= 0)
+		return &HXformat2_nexp;
+
+	ret = HXmc_meminit(NULL, length);
+	if (ret == NULL)
+		return &HXformat2_nexp;
+	if (HXmc_memcpy(&ret, &argv[0][offset], length) == NULL) {
+		HXmc_free(ret);
+		return &HXformat2_nexp;
+	}
+	return ret;
+}
+
 static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv)
 {
 	hxmc_t *ret;
@@ -280,6 +335,7 @@ static const struct HXformat2_fd HXformat2_fmap[] = {
 	{"lower",	HXformat2_lower,	S_CLOSE},
 	{"shell",	HXformat2_shell,	S_CLOSE, HXformat2_execchk},
 	{"snl",		HXformat2_snl,		S_CLOSE},
+	{"substr",	HXformat2_substr,	S_CLOSE ","},
 	{"upper",	HXformat2_upper,	S_CLOSE},
 };
 
