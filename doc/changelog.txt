@@ -4,6 +4,7 @@ HEAD
 ====
 Fixes:
 - build: resolve autoconf-2.68 warnings
+- format: do not split arguments in %(lower) and %(upper)
 Changes:
 - defs: add array type checking in ARRAY_SIZE
 - opt: use non-zero sentinel marker

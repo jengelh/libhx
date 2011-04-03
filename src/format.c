@@ -277,10 +277,10 @@ static const struct HXformat2_fd HXformat2_fmap[] = {
 	{"env",		HXformat2_env,		S_CLOSE " ,"},
 	{"exec",	HXformat2_exec,		S_CLOSE " ", HXformat2_execchk},
 	{"if",		HXformat2_if,		S_CLOSE ","}, /* no sp: ok */
-	{"lower",	HXformat2_lower,	S_CLOSE " ,"},
+	{"lower",	HXformat2_lower,	S_CLOSE},
 	{"shell",	HXformat2_shell,	S_CLOSE, HXformat2_execchk},
 	{"snl",		HXformat2_snl,		S_CLOSE},
-	{"upper",	HXformat2_upper,	S_CLOSE " ,"},
+	{"upper",	HXformat2_upper,	S_CLOSE},
 };
 
 static int HXformat2_fmap_compare(const void *pa, const void *pb)

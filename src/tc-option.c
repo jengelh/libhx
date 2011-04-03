@@ -18,6 +18,7 @@ A=b;C="d" ; E="F;" ; F= G=Z
 static const char *const fmt2_strings[] = {
 	"HOME=%(env HOME)\n",
 	"USER=%(upper %(lower %(env USER)))\n",
+	"lower: %(lower foo, bar) %(lower %(TWOARG))\n",
 	"no-exp: %%(NOEXPANSION) %NOEXPANSION\n",
 	"empty-1: <%()>\n",
 	"empty-2: <%( )>\n",
@@ -63,6 +64,7 @@ static void t_format(int argc)
 	HXformat_add(fmt, "ARGK", reinterpret_cast(const void *, static_cast(long, argc)), HXTYPE_INT | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ZERO", "", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ONE", "1", HXTYPE_STRING | HXFORMAT_IMMED);
+	HXformat_add(fmt, "TWOARG", "a, b", HXTYPE_STRING | HXFORMAT_IMMED);
 	++argc;
 	printf("# HXformat2\n");
 	for (s = fmt2_strings; *s != '\0'; ++s)
