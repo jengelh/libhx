@@ -2,6 +2,10 @@
 
 HEAD
 ====
+
+
+v3.10 (2011-04-05)
+==================
 Fixes:
 - build: resolve autoconf-2.68 warnings
 - format: do not split arguments in %(lower) and %(upper)

@@ -1,4 +1,4 @@
-AC_INIT([libHX], [3.9.1])
+AC_INIT([libHX], [3.10])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_PROG_INSTALL
