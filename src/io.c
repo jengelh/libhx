@@ -360,7 +360,7 @@ EXPORT_SYMBOL int HX_realpath(hxmc_t **dest_pptr, const char *path,
 	struct HX_realpath_state state = {.dest = *dest_pptr};
 	bool rq_slash = false, dnull = state.dest == NULL;
 	const char *cptr, *orig_path = path;
-	int ret;
+	int ret = 0;
 
 	if (dnull) {
 		state.dest = HXmc_meminit(NULL, PATH_MAX);
