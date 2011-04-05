@@ -8,6 +8,7 @@ Fixes:
 Changes:
 - defs: add array type checking in ARRAY_SIZE
 - opt: use non-zero sentinel marker
+- string: make HX_getl more resilient against errors
 Enhancements:
 - defs: add BUILD_BUG_ON_EXPR
 - format: provide a %(substr) function

@@ -103,13 +103,17 @@ EXPORT_SYMBOL hxmc_t *HX_getl(hxmc_t **ptr, FILE *fp)
 	if (fgets(temp, sizeof(temp), fp) == NULL)
 		return NULL;
 
-	if (*ptr == NULL)
+	if (*ptr == NULL) {
 		*ptr = HXmc_meminit(NULL, 0);
-	else
+		if (*ptr == NULL)
+			return NULL;
+	} else {
 		HXmc_trunc(ptr, 0);
+	}
 
 	do {
-		HXmc_strcat(ptr, temp);
+		if (HXmc_strcat(ptr, temp) == NULL)
+			return *ptr;
 		if (strchr(temp, '\n') != NULL)
 			break;
 	} while (fgets(temp, sizeof(temp), fp) != NULL);
