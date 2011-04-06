@@ -149,7 +149,7 @@ static inline new_type signed_cast(unsigned char *expr)
 #	define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)) + __array_size_check(x))
 #endif
 #ifndef BUILD_BUG_ON_EXPR
-#	define BUILD_BUG_ON_EXPR(condition) (sizeof(char[1 - 2 * !!(condition)]))
+#	define BUILD_BUG_ON_EXPR(condition) (sizeof(char[1 - 2 * !!(condition)]) - 1)
 #endif
 #ifndef BUILD_BUG_ON
 #	define BUILD_BUG_ON(condition) ((void)BUILD_BUG_ON_EXPR(condition))

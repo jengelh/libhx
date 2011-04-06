@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Fixes:
+- defs: BUILD_BUG_ON_EXPR had erroneously returned 1
 
 
 v3.10 (2011-04-05)
