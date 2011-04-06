@@ -2,6 +2,10 @@
 
 HEAD
 ====
+
+
+v3.10.1 (2011-04-06)
+====================
 Fixes:
 - defs: BUILD_BUG_ON_EXPR had erroneously returned 1
 

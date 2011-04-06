@@ -1,13 +1,14 @@
 
 Name:		libHX
-%define lname	libHX25
-Version:	3.9
-Release:	0
+%define lname	libHX27
+Version:	3.10.1
+Release:	jng<CI_CNT>
 Group:		System/Libraries
 URL:		http://libhx.sf.net/
 Summary:	Useful collection of routines for C and C++ programming
 License:	LGPLv2+
 Source:		http://downloads.sf.net/libhx/libHX-%version.tar.xz
+Source3:	http://downloads.sf.net/libhx/libHX-%version.tar.xz.asc
 Source9:	baselibs.conf
 BuildRoot:	%_tmppath/%name-%version-build
 BuildRequires:	gcc-c++, pkg-config, xz
@@ -115,7 +116,6 @@ make check
 
 %files devel
 %defattr(-,root,root)
-%_bindir/*
 %_libdir/%{name}*.so
 %_libdir/pkgconfig/*
 %_includedir/*
