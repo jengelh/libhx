@@ -7,7 +7,7 @@ AC_DEFUN([CHECK_GCC_FVISIBILITY], [
 	CFLAGS="$saved_CFLAGS -fvisibility=hidden"
 	AC_CACHE_CHECK([whether compiler accepts -fvisibility=hidden],
 	  [ac_cv_fvisibility_hidden], AC_COMPILE_IFELSE(
-		AC_LANG_SOURCE(),
+		[AC_LANG_SOURCE()],
 		[ac_cv_fvisibility_hidden=yes],
 		[ac_cv_fvisibility_hidden=no]
 	))
