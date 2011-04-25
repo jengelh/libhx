@@ -4,7 +4,7 @@ AM_CPPFLAGS = ${regular_CPPFLAGS} -I${top_srcdir}/include
 AM_CFLAGS   = ${regular_CFLAGS} ${GCC_FVISIBILITY_HIDDEN}
 AM_CXXFLAGS = ${regular_CXXFLAGS} ${GCC_FVISIBILITY_HIDDEN}
 
-lib_LTLIBRARIES  = libHX.la
+lib_LTLIBRARIES  = libHX.la libHX_rtcheck.la
 libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c ${mingw32_extra} ${proc_sources}
@@ -18,6 +18,10 @@ endif
 if B_PROC
 proc_sources     = proc.c
 endif
+
+libHX_rtcheck_la_SOURCES = rtcheck.c
+libHX_rtcheck_la_LDFLAGS = -avoid-version -module \
+                           -Wl,--version-script=${srcdir}/libHX.map
 
 check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-link \
                      tc-list tc-list2 tc-map tc-misc tc-netio \

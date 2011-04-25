@@ -2,6 +2,9 @@
 
 HEAD
 ====
+Enhancements:
+- A LD_PRELOAD-able library libHX_rtcheck.so that adds global state correctness
+  checks, was added.
 
 
 v3.10.1 (2011-04-06)
