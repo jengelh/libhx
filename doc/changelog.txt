@@ -5,6 +5,7 @@ HEAD
 Enhancements:
 - A LD_PRELOAD-able library libHX_rtcheck.so that adds global state correctness
   checks, was added.
+- add a HXQUOTE_BASE64 to HX_strquote
 Changes:
 - HX_strquote will return NULL for unknown types now instead of just
   returning the input pointer

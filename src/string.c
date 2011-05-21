@@ -422,6 +422,45 @@ static char *HX_quote_backslash(char *dest, const char *src, const char *qc)
 	return ret;
 }
 
+/**
+ * Encode @src into BASE-64 according to RFC 4648 and write result to @dest,
+ * which must be of appropriate size, plus one for a trailing NUL.
+ */
+static char *HX_quote_base64(char *d, const char *s)
+{
+	static const char a[] =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"abcdefghijklmnopqrstuvwxyz0123456789+/";
+	size_t len = strlen(s);
+	char *ret = d;
+
+	while (len > 0) {
+		if (len >= 3) {
+			len -= 3;
+			d[0] = a[(s[0] & 0xFC) >> 2];
+			d[1] = a[((s[0] & 0x03) << 4) | ((s[1] & 0xF0) >> 4)];
+			d[2] = a[((s[1] & 0x0F) << 2) | ((s[2] & 0xC0) >> 6)];
+			d[3] = a[s[2] & 0x3F];
+		} else if (len == 2) {
+			len = 0;
+			d[0] = a[(s[0] & 0xFC) >> 2];
+			d[1] = a[((s[0] & 0x03) << 4) | ((s[1] & 0xF0) >> 4)];
+			d[2] = a[(s[1] & 0x0F) << 2];
+			d[3] = '=';
+		} else if (len == 1) {
+			len = 0;
+			d[0] = a[(s[0] & 0xFC) >> 2];
+			d[1] = a[(s[0] & 0x03) << 4];
+			d[2] = '=';
+			d[3] = '=';
+		}
+		s += 3;
+		d += 4;
+	}
+	*d = '\0';
+	return ret;
+}
+
 static size_t HX_qsize_html(const char *s)
 {
 	const char *p = s;
@@ -519,6 +558,8 @@ static size_t HX_quoted_size(const char *s, unsigned int type)
 	case HXQUOTE_LDAPFLT:
 	case HXQUOTE_LDAPRDN:
 		return HX_qsize_backslash(s, HX_quote_chars[type], 2);
+	case HXQUOTE_BASE64:
+		return (strlen(s) + 2) / 3 * 4;
 	default:
 		return strlen(s);
 	}
@@ -535,7 +576,8 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 		return NULL;
 	}
 	/* If quote_chars is NULL, it is clear all chars are to be encoded. */
-	do_quote = HX_quote_chars[type] == NULL ||
+	do_quote = type >= ARRAY_SIZE(HX_quote_chars) ||
+	           HX_quote_chars[type] == NULL ||
 	           strpbrk(src, HX_quote_chars[type]) != NULL;
 	/*
 	 * free_me == NULL implies that we always allocate, even if
@@ -565,6 +607,8 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 	case HXQUOTE_LDAPFLT:
 	case HXQUOTE_LDAPRDN:
 		return HX_quote_ldap(*free_me, src, HX_quote_chars[type]);
+	case HXQUOTE_BASE64:
+		return HX_quote_base64(*free_me, src);
 	}
 	return NULL;
 }

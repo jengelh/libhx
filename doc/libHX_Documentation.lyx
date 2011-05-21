@@ -10676,6 +10676,26 @@ HXQUOTE_LDAPRDN
  Name.
 \end_layout
 
+\begin_layout Description
+
+\family typewriter
+HXQUOTE_BASE64
+\family default
+
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXQUOTE_BASE64
+\end_layout
+
+\end_inset
+
+ Transform the string to BASE64, as described in RFC x.
+\end_layout
+
 \begin_layout Standard
 Specifying an unrecognized type will result in 
 \family typewriter
