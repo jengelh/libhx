@@ -534,7 +534,9 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 		errno = EINVAL;
 		return NULL;
 	}
-	do_quote = strpbrk(src, HX_quote_chars[type]) != NULL;
+	/* If quote_chars is NULL, it is clear all chars are to be encoded. */
+	do_quote = HX_quote_chars[type] == NULL ||
+	           strpbrk(src, HX_quote_chars[type]) != NULL;
 	/*
 	 * free_me == NULL implies that we always allocate, even if
 	 * there is nothing to quote.
