@@ -163,6 +163,8 @@ static void t_quote(void)
 	printf("(objectClass=%s)\n", HX_strquote(" #o=foo(*),bar ", HXQUOTE_LDAPFLT, &fm));
 	printf("o=%s\n", HX_strquote(" #o=foo(*),bar ", HXQUOTE_LDAPRDN, &fm));
 	free(fm);
+	if (HX_strquote("", -1, NULL) != NULL)
+		printf("Something is fishy with strquote\n");
 }
 
 int main(int argc, const char **argv)
