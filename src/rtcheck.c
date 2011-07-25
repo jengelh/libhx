@@ -24,14 +24,20 @@
 #define call_next(f) \
 	((__typeof__(f) *)dlsym(RTLD_NEXT, #f))
 
-#define stub(f, args, invoke, params) \
+#define stub_head(f, args, invoke) \
 	EXPORT_SYMBOL __typeof__(f invoke) f args \
 	{ \
 		if (HXrefchk_count <= 0) \
 			fprintf(stderr, "%s: HX_init has not been called!\n", \
-			        __func__); \
+			        __func__);
+
+#define stub_tail(f, params) \
 		return call_next(f) params; \
 	}
+
+#define stub(f, args, invoke, params) \
+	stub_head(f, args, invoke) \
+	stub_tail(f, params)
 
 #define stubv(f, args, params) \
 	EXPORT_SYMBOL void f args \
@@ -178,11 +184,46 @@ stub2(HXproc_run_sync, (const char *const *a, unsigned int b));
 stub1(HXproc_wait, (struct HXproc *a));
 
 /* string.h */
+static inline struct memcont *HXmc_base(const hxmc_t *p)
+{
+	return containerof(p, struct memcont, data);
+}
+
+static inline void HXmc_check(const char *func, const void *cv)
+{
+	const struct memcont *c;
+
+	if (cv == NULL)
+		return;
+	c = HXmc_base(cv);
+	if (c->id != HXMC_IDENT)
+		fprintf(stderr, "%s: %p is not a HXmc object!\n", func, cv);
+}
+
 stub1(HXmc_strinit, (const char *a));
 stub2(HXmc_meminit, (const void *a, size_t b));
-stub2(HXmc_strcpy, (hxmc_t **a, const char *b));
-stub3(HXmc_memcpy, (hxmc_t **a, const void *b, size_t c));
-stub1(HXmc_length, (const hxmc_t *a));
+
+stub_head(HXmc_strcpy, (hxmc_t **a, const char *b), (0, 0))
+{
+	if (*a != NULL)
+		HXmc_check(__func__, *a);
+}
+stub_tail(HXmc_strcpy, (a, b))
+
+stub_head(HXmc_memcpy, (hxmc_t **a, const void *b, size_t c), (0, 0, 0))
+{
+	if (*a != NULL)
+		HXmc_check(__func__, *a);
+}
+stub_tail(HXmc_memcpy, (a, b, c))
+
+stub_head(HXmc_length, (const hxmc_t *a), (0))
+{
+	if (a != NULL)
+		HXmc_check(__func__, a);
+}
+stub_tail(HXmc_length, (a))
+
 stub2(HXmc_setlen, (hxmc_t **a, size_t b));
 stub2(HXmc_trunc, (hxmc_t **a, size_t b));
 stub2(HXmc_strcat, (hxmc_t **a, const char *b));

@@ -42,6 +42,14 @@
 #define MAXFNLEN 256  /* max length for filename buffer */
 #define MAXLNLEN 1024 /* max length for usual line */
 
+#define HXMC_IDENT 0x200571AF
+
+struct memcont {
+	size_t alloc, length;
+	unsigned int id;
+	char data[0];
+};
+
 extern hxmc_t *HXparse_dequote_fmt(const char *, const char *, const char **);
 
 #endif /* LIBHX_INTERNAL_H */

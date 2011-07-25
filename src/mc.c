@@ -1,6 +1,6 @@
 /*
  *	Auto-sizing memory containers
- *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2008
+ *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002-2011
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
@@ -13,14 +13,6 @@
 #include <string.h>
 #include <libHX/string.h>
 #include "internal.h"
-
-#define HXMC_IDENT 0x200571AF
-
-struct memcont {
-	size_t alloc, length;
-	unsigned int id;
-	char data[0];
-};
 
 static inline size_t __HXmc_request(size_t len)
 {
