@@ -22,6 +22,21 @@
 #include "internal.h"
 #include "map_int.h"
 
+#ifdef NONPRIME_HASH
+/*
+ * If a hash function is good, it will yield an even distribution even with
+ * a non-prime-sized bucket set.
+ */
+EXPORT_SYMBOL const unsigned int HXhash_primes[] = {
+	1 <<  4, 1 <<  5, 1 <<  6,  1 <<  7,
+	1 <<  8, 1 <<  9, 1 << 10,  1 << 11,
+	1 << 12, 1 << 13, 1 << 14,  1 << 15,
+	1 << 16, 1 << 17, 1 << 18,  1 << 19,
+	1 << 20, 1 << 21, 1 << 22,  1 << 23,
+	1 << 24, 1 << 25, 1 << 26,  1 << 27,
+	1 << 28, 1 << 29, 1 << 30, 1U << 31,
+};
+#else
 /*
  * http://planetmath.org/encyclopedia/GoodHashTablePrimes.html
  * 23 and 3221.. added by j.eng.
@@ -32,6 +47,7 @@ EXPORT_SYMBOL const unsigned int HXhash_primes[] = {
 	25165843, 50331653, 100663319, 201326611, 402653189, 805306457,
 	1610612741, 3221225473U,
 };
+#endif
 
 static void HXhmap_free(struct HXhmap *hmap)
 {
@@ -268,11 +284,19 @@ static void HXhmap_move(struct HXlist_head *bk_array, unsigned int bk_number,
 	struct HXhmap_node *drop, *dnext;
 	unsigned int bk_idx, i;
 
+#ifdef NONPRIME_HASH
+	--bk_number;
+#endif
 	for (i = 0; i < HXhash_primes[hmap->power]; ++i)
 		HXlist_for_each_entry_safe(drop, dnext,
 		    &hmap->bk_array[i], anchor) {
+#ifdef NONPRIME_HASH
+			bk_idx = hmap->super.ops.k_hash(drop->key,
+			         hmap->super.key_size) & bk_number;
+#else
 			bk_idx = hmap->super.ops.k_hash(drop->key,
 			         hmap->super.key_size) % bk_number;
+#endif
 			HXlist_del(&drop->anchor);
 			HXlist_add_tail(&bk_array[bk_idx], &drop->anchor);
 		}
@@ -419,8 +443,13 @@ static struct HXhmap_node *HXhmap_find(const struct HXhmap *hmap,
 	struct HXhmap_node *drop;
 	unsigned int bk_idx;
 
+#ifdef NONPRIME_HASH
+	bk_idx = hmap->super.ops.k_hash(key, hmap->super.key_size) &
+	         (HXhash_primes[hmap->power] - 1);
+#else
 	bk_idx = hmap->super.ops.k_hash(key, hmap->super.key_size) %
 	         HXhash_primes[hmap->power];
+#endif
 	HXlist_for_each_entry(drop, &hmap->bk_array[bk_idx], anchor)
 		if (hmap->super.ops.k_compare(key, drop->key,
 		    hmap->super.key_size) == 0)
@@ -527,8 +556,13 @@ static int HXhmap_add(struct HXhmap *hmap, const void *key, const void *value)
 	if (drop->data == NULL && value != NULL)
 		goto out;
 
+#ifdef NONPRIME_HASH
+	bk_idx = hmap->super.ops.k_hash(key, hmap->super.key_size) &
+	         (HXhash_primes[hmap->power] - 1);
+#else
 	bk_idx = hmap->super.ops.k_hash(key, hmap->super.key_size) %
 	         HXhash_primes[hmap->power];
+#endif
 	HXlist_add_tail(&hmap->bk_array[bk_idx], &drop->anchor);
 	++hmap->super.items;
 	return 1;
