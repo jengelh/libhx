@@ -16,6 +16,7 @@ F column: Function first seen in version, possibly with different API.
 RMV	MinVer	FirstA	Name
 ----------------------------------------------------------------------
 3.12	3.12	3.12	HX_mkdir2
+3.12	3.12	3.12	HX_strnlen
 3.11	3.11	3.11	HXQUOTE_BASE64
 3.10	3.10	3.10	BUILD_BUG_ON_EXPR
 3.10	3.10	3.10	HX_readlink

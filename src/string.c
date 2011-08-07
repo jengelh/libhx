@@ -294,6 +294,14 @@ EXPORT_SYMBOL char *HX_strmid(const char *expr, long offset, long length)
 	return HX_strlcpy(buffer, expr, length + 1);
 }
 
+EXPORT_SYMBOL size_t HX_strnlen(const char *src, size_t size)
+{
+	const char *ptr = src;
+	for (; *ptr != '\0' && size > 0; --size, ++ptr)
+		;
+	return ptr - src;
+}
+
 EXPORT_SYMBOL size_t HX_strrcspn(const char *s, const char *rej)
 {
 	size_t n = strlen(s);

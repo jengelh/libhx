@@ -11410,6 +11410,32 @@ HX_strlncat
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+size_t
+\series default
+ HX_strnlen(
+\series bold
+const char *
+\series default
+src, 
+\series bold
+size_t
+\series default
+ max);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+HX_strnlen
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11482,6 +11508,20 @@ dest
 0'
 \family default
 -terminated.
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+HX_strnlen
+\family default
+ will return the length of the input string or the upper bound given by
+ 
+\family typewriter
+max
+\family default
+, whichever is less.
+ It will not attempt to access more than this many bytes in the input buffer.
 \end_layout
 
 \begin_layout Subsection

@@ -97,6 +97,14 @@ static void t_strncat(void)
 	printf("String: >%s<\n", data);
 }
 
+static void t_strnlen(void)
+{
+	static const char s[] = "Hello world";
+	printf("# strnlen: %zu %zu %zu %zu %zu\n",
+		HX_strnlen(s, -1), HX_strnlen(s, 0), HX_strnlen(s, 1),
+		HX_strnlen(s, strlen(s)), HX_strnlen(s, 999));
+}
+
 static void t_strsep(void)
 {
 	char b[] = "jengelh:x:1500:100:Jan Engelhardt:/home/jengelh:/bin/bash";
@@ -190,6 +198,7 @@ int main(int argc, const char **argv)
 	t_path();
 	t_strcpy();
 	t_strncat();
+	t_strnlen();
 	t_strsep();
 	t_split();
 	t_split2();
