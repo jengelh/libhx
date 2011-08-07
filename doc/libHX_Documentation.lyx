@@ -11611,6 +11611,32 @@ HX_strdup
 
 
 \series bold
+char *
+\series default
+HX_strndup(
+\series bold
+const char *
+\series default
+str, 
+\series bold
+size_t
+\series default
+ max);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+HX_strndup
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
 
 \begin_inset Note Greyedout
 status open
@@ -11716,6 +11742,19 @@ HX_strdup
 strdup
 \family default
 , but the latter may not be available on all platforms.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_strndup
+\family default
+ Duplicates the input string, but copies at most 
+\family typewriter
+max
+\family default
+ characters.
+ (The resulting string will be NUL-terminated of course.)
 \end_layout
 
 \begin_layout Description

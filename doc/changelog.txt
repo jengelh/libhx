@@ -4,6 +4,7 @@ HEAD
 ====
 Enhancements:
 - io: add HX_mkdir2 which can take a mode argument
+- string: add a HX_strndup function
 - string: add a HX_strnlen function
 
 

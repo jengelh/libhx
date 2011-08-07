@@ -76,6 +76,12 @@ static void t_strcpy(void)
 		abort();
 }
 
+static void t_strdup(void)
+{
+	char *a = HX_strndup("DATA", 2);
+	printf(">%s<\n", a);
+}
+
 static void t_strncat(void)
 {
 	char data[5] = "DATA";
@@ -199,6 +205,7 @@ int main(int argc, const char **argv)
 	t_strcpy();
 	t_strncat();
 	t_strnlen();
+	t_strdup();
 	t_strsep();
 	t_split();
 	t_split2();
