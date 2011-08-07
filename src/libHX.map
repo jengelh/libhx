@@ -162,3 +162,8 @@ global:
 	HX_readlink;
 	HX_realpath;
 } LIBHX_3.9;
+
+LIBHX_3.12 {
+global:
+	HX_mkdir2;
+} LIBHX_3.10;

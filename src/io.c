@@ -49,14 +49,14 @@ struct HXdir {
 #endif
 };
 
-static int mkdir_gen(const char *d)
+static int mkdir_gen(const char *d, unsigned int mode)
 {
 	struct stat sb;
 	if (lstat(d, &sb) < 0) {
 #if defined(_WIN32)
 		if (mkdir(d) < 0)
 #else
-		if (mkdir(d, 0777) < 0) /* use umask() for permissions */
+		if (mkdir(d, mode) < 0) /* use umask() for permissions */
 #endif
 			return -errno;
 	} else {
@@ -234,7 +234,7 @@ EXPORT_SYMBOL int HX_copy_dir(const char *src, const char *dest,
 	return 1;
 }
 
-EXPORT_SYMBOL int HX_mkdir(const char *idir)
+EXPORT_SYMBOL int HX_mkdir2(const char *idir, unsigned int mode)
 {
 	int i = 0, len = strlen(idir);
 	char buf[MAXFNLEN], dir[MAXFNLEN];
@@ -260,16 +260,21 @@ EXPORT_SYMBOL int HX_mkdir(const char *idir)
 		if (dir[i] == '/') {
 			strncpy(buf, dir, i);
 			buf[i] = '\0';
-			if ((v = mkdir_gen(buf)) <= 0)
+			if ((v = mkdir_gen(buf, mode)) <= 0)
 				return v;
 		} else if (i == len - 1) {
 			strncpy(buf, dir, len);
 			buf[len] = '\0';
-			if ((v = mkdir_gen(buf)) <= 0)
+			if ((v = mkdir_gen(buf, mode)) <= 0)
 				return v;
 		}
 	}
 	return 1;
+}
+
+EXPORT_SYMBOL int HX_mkdir(const char *idir)
+{
+	return HX_mkdir2(idir, S_IRWXUGO);
 }
 
 /* Readlink - with a trailing zero (provided by HXmc) */

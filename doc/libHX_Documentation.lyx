@@ -15604,6 +15604,32 @@ HX_mkdir
 \series bold
 int
 \series default
+ HX_mkdir2(
+\series bold
+const char *
+\series default
+path, 
+\series bold
+unsigned int
+\series default
+ mode);
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+HX_mkdir2
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int
+\series default
  HX_rrmdir(
 \series bold
 const char *
@@ -15628,13 +15654,17 @@ HX_rrmdir
 \begin_layout Standard
 
 \family typewriter
-HX_mkdir
+HX_mkdir2
 \family default
  will create the directory given by 
 \family typewriter
 path
 \family default
-, and all its parents that do not exist yet.
+ and all its parents that do not exist yet using the given 
+\family typewriter
+mode
+\family default
+.
  It is equivalent to the `
 \family typewriter
 mkdir -p
@@ -15645,6 +15675,16 @@ mkdir -p
 -errno
 \family default
  on error.
+ 
+\family typewriter
+HX_mkdir
+\family default
+ is a now-deprecated variant where the mode argument is absent and implied
+ as 
+\family typewriter
+S_IRWXUGO
+\family default
+.
 \end_layout
 
 \begin_layout Standard

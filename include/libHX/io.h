@@ -33,6 +33,7 @@ extern void HXdir_close(struct HXdir *);
 extern int HX_copy_dir(const char *, const char *, unsigned int, ...);
 extern int HX_copy_file(const char *, const char *, unsigned int, ...);
 extern int HX_mkdir(const char *);
+extern int HX_mkdir2(const char *, unsigned int);
 extern int HX_readlink(hxmc_t **, const char *);
 extern int HX_realpath(hxmc_t **, const char *, unsigned int);
 extern int HX_rrmdir(const char *);
