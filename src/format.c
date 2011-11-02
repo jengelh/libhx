@@ -362,7 +362,7 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 	hxmc_t *ret, *ret2, **argv;
 	struct HXdeque *dq;
 	const char *s, *delim;
-	int err;
+	int err = 0;
 
 	dq = HXdeque_init();
 	if (dq == NULL)
@@ -383,7 +383,7 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 		if (strstr(ret, "%" S_OPEN) != NULL) {
 			ret2 = NULL;
 			err = HXformat2_aprintf(fmt_export(table), &ret2, ret);
-			if (ret2 == NULL)
+			if (err < 0 || ret2 == NULL)
 				goto out2;
 			HXmc_free(ret);
 			ret = ret2;
