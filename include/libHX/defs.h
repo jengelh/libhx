@@ -79,17 +79,17 @@ static inline new_type signed_cast(unsigned char *expr)
 			__builtin_types_compatible_p(a, unsigned char *) \
 		)
 
-#	if defined(__GNUC__) && !defined(signed_cast)
+#	if defined(__GNUC__) && !defined(__clang__) && !defined(signed_cast)
 #		define signed_cast(type, expr) ({ \
 			BUILD_BUG_ON(!__signed_cast_compatible(__typeof__(type), __typeof__(expr))); \
 			(type)(expr); \
 		})
 #	endif
-#	if defined(__GNUC__) && !defined(static_cast)
+#	if defined(__GNUC__) && !defined(__clang__) && !defined(static_cast)
 #		define static_cast(type, expr) \
 			((struct { type x; }){(expr)}.x)
 #	endif
-#	if defined(__GNUC__) && !defined(const_cast1)
+#	if defined(__GNUC__) && !defined(__clang__) && !defined(const_cast1)
 #		define __const_cast_strip1(expr) \
 			__typeof__(*(struct { int z; __typeof__(expr) x; }){0}.x)
 #		define __const_cast_strip2(expr) \
