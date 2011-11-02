@@ -142,7 +142,7 @@ EXPORT_SYMBOL struct HXdeque_node *HXdeque_find(struct HXdeque *dq,
 
 EXPORT_SYMBOL void *HXdeque_get(struct HXdeque *dq, const void *ptr)
 {
-	struct HXdeque_node *trav = dq->first;
+	struct HXdeque_node *trav;
 	for (trav = dq->first; trav != NULL; trav = trav->next)
 		if (trav->ptr == ptr)
 			return trav->ptr;
