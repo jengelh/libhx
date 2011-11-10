@@ -211,7 +211,7 @@ EXPORT_SYMBOL int HX_copy_dir(const char *src, const char *dest,
 		if (S_ISREG(sb.st_mode)) {
 			HX_copy_file(fsrc, fdest, opts, uid, gid);
 		} else if (S_ISDIR(sb.st_mode)) {
-			HX_mkdir(fdest);
+			HX_mkdir2(fdest, S_IRWXUGO);
 			HX_copy_dir(fsrc, fdest, opts, uid, gid);
 		} else if (S_ISLNK(sb.st_mode)) {
 			char pt[MAXFNLEN];
