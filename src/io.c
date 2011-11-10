@@ -138,7 +138,6 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 	char buf[MAXLNLEN];
 	unsigned int extra_flags = 0;
 	int dd, eax = 0, sd, l;
-	int throw_away;
 
 	if ((sd = open(src, O_RDONLY | O_BINARY)) < 0)
 		return -errno;
@@ -171,7 +170,8 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 
 		if (opts & HXF_UID) uid = va_arg(argp, long);
 		if (opts & HXF_GID) gid = va_arg(argp, long);
-		throw_away = fchown(dd, uid, gid);
+		if (fchown(dd, uid, gid) < 0)
+			{};
 		va_end(argp);
 	}
 	close(dd);
@@ -184,7 +184,6 @@ EXPORT_SYMBOL int HX_copy_dir(const char *src, const char *dest,
 	void *dt = HXdir_open(src);
 	long uid = -1, gid = -1;
 	const char *fn;
-	int throw_away;
 
 	if (dt == NULL)
 		return 0;
@@ -218,14 +217,16 @@ EXPORT_SYMBOL int HX_copy_dir(const char *src, const char *dest,
 			char pt[MAXFNLEN];
 			memset(pt, '\0', MAXFNLEN);
 			if (readlink(fsrc, pt, MAXFNLEN - 1) < MAXFNLEN - 1)
-				throw_away = symlink(pt, fdest);
+				if (symlink(pt, fdest) < 0)
+					{};
 		} else if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode)) {
 			mknod(fdest, sb.st_mode, sb.st_dev);
 		} else if (S_ISFIFO(sb.st_mode)) {
 			mkfifo(fdest, sb.st_mode);
 		}
 
-		throw_away = lchown(fdest, uid, gid);
+		if (lchown(fdest, uid, gid) < 0)
+			{};
 		if (!S_ISLNK(sb.st_mode))
 			chmod(fdest, sb.st_mode);
 	}
