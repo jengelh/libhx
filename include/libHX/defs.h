@@ -91,11 +91,11 @@ static inline new_type signed_cast(unsigned char *expr)
 #	endif
 #	if defined(__GNUC__) && !defined(__clang__) && !defined(const_cast1)
 #		define __const_cast_strip1(expr) \
-			__typeof__(*(struct { int z; __typeof__(expr) x; }){0}.x)
+			__typeof__(*(union { int z; __typeof__(expr) x; }){0}.x)
 #		define __const_cast_strip2(expr) \
-			__typeof__(**(struct { int z; __typeof__(expr) x; }){0}.x)
+			__typeof__(**(union { int z; __typeof__(expr) x; }){0}.x)
 #		define __const_cast_strip3(expr) \
-			__typeof__(***(struct { int z; __typeof__(expr) x; }){0}.x)
+			__typeof__(***(union { int z; __typeof__(expr) x; }){0}.x)
 #		define const_cast1(new_type, expr) ({ \
 			BUILD_BUG_ON(!__builtin_types_compatible_p(__const_cast_strip1(expr), __const_cast_strip1(new_type))); \
 			(new_type)(expr); \
