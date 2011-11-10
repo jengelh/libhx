@@ -379,17 +379,17 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 		*pptr = s;
 		ret = HXparse_dequote_fmt(s, delim, pptr);
 		if (ret == NULL)
-			goto out;
+			goto out_h_errno;
 		if (strstr(ret, "%" S_OPEN) != NULL) {
 			ret2 = NULL;
 			err = HXformat2_aprintf(fmt_export(table), &ret2, ret);
 			if (err < 0 || ret2 == NULL)
-				goto out2;
+				goto out_h_neg;
 			HXmc_free(ret);
 			ret = ret2;
 		}
 		if (HXdeque_push(dq, ret) == NULL)
-			goto out2;
+			goto out_h_errno;
 		if (**pptr == '\0')
 			break;
 		if (**pptr == C_CLOSE) {
@@ -401,7 +401,7 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 	ret = NULL;
 	argv = reinterpret_cast(hxmc_t **, HXdeque_to_vec(dq, NULL));
 	if (argv == NULL)
-		goto out;
+		goto out_h_errno;
 
 	ret = &HXformat2_nexp;
 	/* Unknown functions are silently expanded to nothing, like make. */
@@ -415,8 +415,12 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 	free(argv);
  out:
 	HXdeque_genocide2(dq, static_cast(void *, HXmc_free));
+	errno = -err;
 	return ret;
- out2:
+
+ out_h_errno:
+	err = -errno;
+ out_h_neg:
 	HXmc_free(ret);
 	ret = NULL;
 	goto out;
