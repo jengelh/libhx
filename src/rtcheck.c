@@ -111,6 +111,7 @@ stub1v(HXdir_close, (struct HXdir *a));
 /* HX_copy_dir: has varargs */
 /* HX_copy_file: has varargs */
 stub1(HX_mkdir, (const char *a));
+stub2(HX_mkdir2, (const char *a, unsigned int b));
 stub2(HX_readlink, (hxmc_t **a, const char *b));
 stub3(HX_realpath, (hxmc_t **a, const char *b, unsigned int c));
 stub1(HX_rrmdir, (const char *a));
@@ -250,6 +251,8 @@ stub2(HX_strclone, (char **a, const char *b));
 stub1(HX_strlower, (char *a));
 stub1(HX_strltrim, (char *a));
 stub3(HX_strmid, (const char *a, long b, long c));
+stub2(HX_strndup, (const char *a, size_t b));
+stub2(HX_strnlen, (const char *a, size_t b));
 stub3(HX_strquote, (const char *a, unsigned int b, char **c));
 stub2(HX_strrcspn, (const char *a, const char *b));
 stub1(HX_strrev, (char *a));
