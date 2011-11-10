@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Fixes:
+- format: error handling for HXformat2_aprintf
 Enhancements:
 - build: deactivate type-checking of the *_cast() macros for clang due to a
   compiler bug involving nested structs-in-typeofs

@@ -568,18 +568,24 @@ EXPORT_SYMBOL int HXformat2_aprintf(const struct HXformat_map *ftable,
     hxmc_t **resultp, const char *fmt)
 {
 	const struct HXmap *table = fmt_import(ftable);
-	hxmc_t *ex, *ts, *out = HXmc_meminit(NULL, 0);
+	hxmc_t *ex, *ts, *out;
 	const char *current;
 	int ret = 0;
+
+	out = HXmc_strinit("");
+	if (out == NULL)
+		goto out;
 
 	current = fmt;
 	while ((current = HX_strchr0(fmt, '%')) != NULL) {
 		if (current - fmt > 0)
-			HXmc_memcat(&out, fmt, current - fmt);
+			if (HXmc_memcat(&out, fmt, current - fmt) == NULL)
+				goto out;
 		if (*current == '\0')
 			break;
 		if (current[1] != C_OPEN) {
-			HXmc_memcat(&out, current, 2);
+			if (HXmc_memcat(&out, current, 2) == NULL)
+				goto out;
 			fmt = current + 2;
 			continue;
 		}
