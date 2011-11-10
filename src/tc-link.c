@@ -128,6 +128,11 @@ static void *funcs[] = {
 
 int main(void)
 {
+	unsigned int i;
+
+	for (i = 0; i < ARRAY_SIZE(funcs); ++i)
+		printf("%p ", funcs[i]);
+	printf("\n");
 	printf("There are %zu exported functions\n", ARRAY_SIZE(funcs));
 	return EXIT_SUCCESS;
 }
