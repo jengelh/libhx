@@ -15,7 +15,6 @@ Fixes:
 Enhancements:
 - build: deactivate type-checking of the *_cast() macros for clang due to a
   compiler bug involving nested structs-in-typeofs
-- io: add HX_mkdir2 which can take a mode argument
 - option: allow argc=NULL on HX_getopt
 - option: error handling for HX_getopt
 - option: support POSIXLY_CORRECT environment variable
@@ -24,6 +23,7 @@ Enhancements:
 - mc: use an implicit minimum allocated length
 Changes:
 - format: renamed HXformat2_[afs]printf back to HXformat_[afs]printf
+- io: add mode argument to HX_mkdir
 - map: avoid 1<<31 in constants
 - option: remove struct HXoptcb.arg0
 - option: remove struct HXoptcb.match_{ln,sh} by .flags

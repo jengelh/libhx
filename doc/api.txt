@@ -15,7 +15,7 @@ F column: Function first seen in version, possibly with different API.
 
 RMV	MinVer	FirstA	Name
 ----------------------------------------------------------------------
-3.12	3.12	3.12	HX_mkdir2
+3.12	3.12	1.10.0	HX_mkdir
 3.12	3.12	3.12	HX_strndup
 3.12	3.12	3.12	HX_strnlen
 3.12	3.0	3.0	HXMAP_CDATA
@@ -259,7 +259,6 @@ RMV	MinVer	FirstA	Name
 1.10.0	1.10.0	1.10.0	HX_irand
 1.10.0	1.10.0	1.10.0	HX_memdup
 1.10.0	1.10.0	1.10.0	HX_memdup<>
-1.10.0	1.10.0	1.10.0	HX_mkdir
 1.10.0	1.10.0	1.10.0	HX_rand
 1.10.0	1.10.0	1.10.0	HX_rrmdir
 1.10.0	1.10.0	1.10.0	HX_shconfig_free

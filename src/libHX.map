@@ -14,7 +14,6 @@ global:
 	HX_getopt_help;
 	HX_getopt_usage;
 	HX_irand;
-	HX_mkdir;
 	HX_rand;
 	HX_rrmdir;
 	HX_shconfig;
@@ -160,7 +159,7 @@ LIBHX_3.12 {
 global:
 	HX_getopt_help_cb;
 	HX_getopt_usage_cb;
-	HX_mkdir2;
+	HX_mkdir;
 	HX_strdup;
 	HX_strlcat;
 	HX_strlcpy;

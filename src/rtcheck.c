@@ -110,8 +110,7 @@ stub1(HXdir_read, (struct HXdir *a));
 stub1v(HXdir_close, (struct HXdir *a));
 /* HX_copy_dir: has varargs */
 /* HX_copy_file: has varargs */
-stub1(HX_mkdir, (const char *a));
-stub2(HX_mkdir2, (const char *a, unsigned int b));
+stub2(HX_mkdir, (const char *a, unsigned int b));
 stub2(HX_readlink, (hxmc_t **a, const char *b));
 stub3(HX_realpath, (hxmc_t **a, const char *b, unsigned int c));
 stub1(HX_rrmdir, (const char *a));

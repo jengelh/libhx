@@ -211,7 +211,7 @@ EXPORT_SYMBOL int HX_copy_dir(const char *src, const char *dest,
 		if (S_ISREG(sb.st_mode)) {
 			HX_copy_file(fsrc, fdest, opts, uid, gid);
 		} else if (S_ISDIR(sb.st_mode)) {
-			HX_mkdir2(fdest, S_IRWXUGO);
+			HX_mkdir(fdest, S_IRWXUGO);
 			HX_copy_dir(fsrc, fdest, opts, uid, gid);
 		} else if (S_ISLNK(sb.st_mode)) {
 			char pt[MAXFNLEN];
@@ -235,7 +235,7 @@ EXPORT_SYMBOL int HX_copy_dir(const char *src, const char *dest,
 	return 1;
 }
 
-EXPORT_SYMBOL int HX_mkdir2(const char *idir, unsigned int mode)
+EXPORT_SYMBOL int HX_mkdir(const char *idir, unsigned int mode)
 {
 	int i = 0, len = strlen(idir);
 	char buf[MAXFNLEN], dir[MAXFNLEN];
@@ -271,11 +271,6 @@ EXPORT_SYMBOL int HX_mkdir2(const char *idir, unsigned int mode)
 		}
 	}
 	return 1;
-}
-
-EXPORT_SYMBOL int HX_mkdir(const char *idir)
-{
-	return HX_mkdir2(idir, S_IRWXUGO);
 }
 
 /* Readlink - with a trailing zero (provided by HXmc) */

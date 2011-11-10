@@ -15676,30 +15676,6 @@ int
 \series bold
 const char *
 \series default
-path);
-\begin_inset Index idx
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-HX_mkdir
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\series bold
-int
-\series default
- HX_mkdir2(
-\series bold
-const char *
-\series default
 path, 
 \series bold
 unsigned int
@@ -15709,7 +15685,7 @@ unsigned int
 status open
 
 \begin_layout Plain Layout
-HX_mkdir2
+HX_mkdir
 \end_layout
 
 \end_inset
@@ -15746,7 +15722,7 @@ HX_rrmdir
 \begin_layout Standard
 
 \family typewriter
-HX_mkdir2
+HX_mkdir
 \family default
  will create the directory given by 
 \family typewriter
@@ -15767,16 +15743,6 @@ mkdir -p
 -errno
 \family default
  on error.
- 
-\family typewriter
-HX_mkdir
-\family default
- is a now-deprecated variant where the mode argument is absent and implied
- as 
-\family typewriter
-S_IRWXUGO
-\family default
-.
 \end_layout
 
 \begin_layout Standard
