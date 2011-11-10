@@ -85,7 +85,7 @@ AC_CHECK_MEMBERS(
 	#include <time.h>
 	])
 AC_CHECK_FUNCS([fork execv execvp pipe], [b_proc="1"])
-AC_CHECK_FUNCS([clock_gettime getegid geteuid getpid getppid])
+AC_CHECK_FUNCS([getegid geteuid getpid getppid])
 AM_CONDITIONAL([B_PROC], [test "$b_proc" = 1])
 
 regular_CPPFLAGS="-D_FILE_OFFSET_BITS=64 -D_REENTRANT"
