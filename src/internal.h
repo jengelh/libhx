@@ -47,7 +47,7 @@
 struct memcont {
 	size_t alloc, length;
 	unsigned int id;
-	char data[0];
+	char data[];
 };
 
 extern hxmc_t *HXparse_dequote_fmt(const char *, const char *, const char **);
