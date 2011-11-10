@@ -22,6 +22,8 @@
 #include "internal.h"
 #include "map_int.h"
 
+typedef void *(*clonefunc_t)(const void *, size_t);
+
 #ifdef NONPRIME_HASH
 /*
  * If a hash function is good, it will yield an even distribution even with
@@ -222,12 +224,14 @@ static void HXmap_ops_setup(struct HXmap_private *super,
 
 	if (super->flags & HXMAP_CKEY) {
 		ops->k_clone = (super->flags & HXMAP_SKEY) ?
-		               static_cast(void *, HX_strdup) : HX_memdup;
+		               reinterpret_cast(clonefunc_t, HX_strdup) :
+		               HX_memdup;
 		ops->k_free  = free;
 	}
 	if (super->flags & HXMAP_CDATA) {
 		ops->d_clone = (super->flags & HXMAP_SDATA) ?
-		               static_cast(void *, HX_strdup) : HX_memdup;
+		               reinterpret_cast(clonefunc_t, HX_strdup) :
+		               HX_memdup;
 		ops->d_free  = free;
 	}
 
