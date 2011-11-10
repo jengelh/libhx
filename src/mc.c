@@ -34,7 +34,10 @@ static inline struct memcont *HXmc_base(const hxmc_t *p)
 EXPORT_SYMBOL hxmc_t *HXmc_strinit(const char *s)
 {
 	hxmc_t *t = NULL;
-	return HXmc_memcpy(&t, s, strlen(s));
+	size_t z = strlen(s);
+	if (z < 23 && HXmc_memcpy(&t, NULL, 23) == NULL)
+		return NULL;
+	return HXmc_memcpy(&t, s, z);
 }
 
 EXPORT_SYMBOL hxmc_t *HXmc_meminit(const void *ptr, size_t len)

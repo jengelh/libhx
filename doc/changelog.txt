@@ -8,6 +8,7 @@ Enhancements:
 - io: add HX_mkdir2 which can take a mode argument
 - string: add a HX_strndup function
 - string: add a HX_strnlen function
+- mc: use an implicit minimum allocated length
 
 
 v3.11 (2011-07-25)
