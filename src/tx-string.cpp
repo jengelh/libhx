@@ -31,9 +31,9 @@ static void t_mc(void)
 	HXmc_trunc(&s, 8192);
 	if (old_s != s)
 		fprintf(stderr, "INFO: HXmc: no reallocation took place.\n");
-	printf("Length is now %Zu\n", HXmc_length(s));
+	printf("Length is now %zu\n", HXmc_length(s));
 	HXmc_setlen(&s, 16384);
-	printf("Length is now %Zu\n", HXmc_length(s));
+	printf("Length is now %zu\n", HXmc_length(s));
 	HXmc_free(s);
 }
 
