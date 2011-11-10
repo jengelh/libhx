@@ -630,9 +630,9 @@ static void HXrbtree_amov(struct HXrbtree_node **path,
 			grandp->sub[LR]  = newnode;
 			/* relabel */
 			parent  = grandp->sub[LR];
-			newnode = parent->sub[LR];
+			/* unused assignment: newnode = parent->sub[LR]; */
 		} else {
-			newnode = path[depth];
+			/* unused assignment: newnode = path[depth]; */
 		}
 
 		/*
