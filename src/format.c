@@ -197,7 +197,7 @@ static bool HXformat2_execchk(const struct HXmap *table)
 	return HXmap_find(table, "/libhx/exec") != NULL;
 }
 
-static hxmc_t *HXformat2_exec1(const hxmc_t *const *argv, bool shell)
+static hxmc_t *HXformat2_exec1(const hxmc_t *const *argv)
 {
 	struct HXproc proc = {
 		.p_flags = HXPROC_NULL_STDIN | HXPROC_STDOUT | HXPROC_VERBOSE,
@@ -232,7 +232,7 @@ static hxmc_t *HXformat2_exec(int argc, const hxmc_t *const *argv)
 {
 	if (argc == 0)
 		return &HXformat2_nexp;
-	return HXformat2_exec1(argv, false);
+	return HXformat2_exec1(argv);
 }
 
 static hxmc_t *HXformat2_shell(int argc, const hxmc_t *const *argv)
@@ -241,7 +241,7 @@ static hxmc_t *HXformat2_shell(int argc, const hxmc_t *const *argv)
 	if (argc == 0)
 		return &HXformat2_nexp;
 	cmd[2] = argv[0];
-	return HXformat2_exec1(cmd, true);
+	return HXformat2_exec1(cmd);
 }
 
 static hxmc_t *HXformat2_snl(int argc, const hxmc_t *const *argv)
