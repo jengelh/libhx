@@ -117,8 +117,6 @@ global:
 	HXmap_find;
 	HXmap_free;
 	HXmap_get;
-	HXmap_init5;
-	HXmap_init;
 	HXmap_keysvalues;
 	HXmap_qfe;
 	HXmap_traverse;
@@ -172,4 +170,6 @@ global:
 	HX_strlncat;
 	HX_strndup;
 	HX_strnlen;
+	HXmap_init5;
+	HXmap_init;
 } LIBHX_3.10;
