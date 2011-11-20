@@ -11,6 +11,7 @@ libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
 libHX_la_LIBADD  = ${libdl_LIBS} ${libpthread_LIBS} ${librt_LIBS}
 libHX_la_LDFLAGS = -version-info 28:0:1 \
                    -Wl,--version-script=${srcdir}/libHX.map
+libHX_la_DEPENDENCIES = libHX.map
 
 if MINGW32
 mingw32_extra    = ux-file.c ux-mmap.c
