@@ -55,12 +55,6 @@
 #define SCREEN_WIDTH 80 /* fine, popt also has it hardcoded */
 
 enum {
-	E_SUCCESS = 0,
-	E_LONG_UNKNOWN,
-	E_LONG_TAKESVOID,
-	E_LONG_MISSING,
-	E_SHORT_UNKNOWN,
-	E_SHORT_MISSING,
 
 	W_NONE    = 0,
 	W_SPACE   = 1 << 0,
@@ -71,6 +65,24 @@ enum {
 	HXOPT_LOPMASK2 = HXOPT_OR | HXOPT_AND | HXOPT_XOR,
 	HXOPT_LOPMASK  = HXOPT_LOPMASK2 | HXOPT_NOT,
 	HXOPT_TYPEMASK = 0x1F, /* 5 bits */
+};
+
+/**
+ * HX_getopt_error - internal option parser error codes
+ * %HXOPT_E_SUCCESS:		no error
+ * %HXOPT_E_LONG_UNKNOWN:	unknown long option
+ * %HXOPT_E_LONG_TAKESVOID:	long option was used with an arg (--long=arg)
+ * %HXOPT_E_LONG_MISSING:	long option requires an argument
+ * %HXOPT_E_SHORT_UNKNOWN:	unknown short option
+ * %HXOPT_E_SHORT_MISSING:	short option requires an argument
+ */
+enum {
+	HXOPT_E_SUCCESS = 0,
+	HXOPT_E_LONG_UNKNOWN,
+	HXOPT_E_LONG_TAKESVOID,
+	HXOPT_E_LONG_MISSING,
+	HXOPT_E_SHORT_UNKNOWN,
+	HXOPT_E_SHORT_MISSING,
 };
 
 /**
@@ -392,7 +404,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	const char **opt = *argv, *value = NULL, *shstr = NULL;
 	struct HXdeque *remaining = HXdeque_init();
 	unsigned int state = HXOPT_S_NORMAL;
-	int ret = E_SUCCESS;
+	int ret = HXOPT_E_SUCCESS;
 	struct HXoptcb cbi;
 	char *key = NULL;
 	unsigned int argk;
@@ -414,7 +426,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
-				ret = E_LONG_UNKNOWN;
+				ret = HXOPT_E_LONG_UNKNOWN;
 				break;
 			}
 
@@ -442,7 +454,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				}
 			} else {
 				if (cur == NULL) {
-					ret = E_LONG_MISSING;
+					ret = HXOPT_E_LONG_MISSING;
 					break;
 				}
 				cbi.data = cur;
@@ -466,16 +478,16 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
-				ret = E_LONG_UNKNOWN;
+				ret = HXOPT_E_LONG_UNKNOWN;
 				break;
 			}
 
 			if (takes_void(cbi.current->type) && got_value) {
-				ret = E_LONG_TAKESVOID;
+				ret = HXOPT_E_LONG_TAKESVOID;
 				break;
 			} else if (!takes_void(cbi.current->type) &&
 			    !got_value) {
-				ret = E_LONG_MISSING;
+				ret = HXOPT_E_LONG_MISSING;
 				break;
 			}
 
@@ -508,7 +520,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
-				ret = E_SHORT_UNKNOWN;
+				ret = HXOPT_E_SHORT_UNKNOWN;
 				break;
 			}
 
@@ -548,7 +560,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			} else {
 				/* -A value */
 				if (cur == NULL) {
-					ret = E_SHORT_MISSING;
+					ret = HXOPT_E_SHORT_MISSING;
 					break;
 				}
 				cbi.data = cur;
@@ -622,30 +634,30 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 
 	if (ret != 0) {
 		switch (ret) {
-		case E_LONG_UNKNOWN:
+		case HXOPT_E_LONG_UNKNOWN:
 			if (!(flags & HXOPT_QUIET))
 				fprintf(stderr, "Unknown option: --%s\n", key);
 			ret = -HXOPT_ERR_UNKN;
 			break;
-		case E_LONG_TAKESVOID:
+		case HXOPT_E_LONG_TAKESVOID:
 			if (!(flags & HXOPT_QUIET))
 				fprintf(stderr, "Option --%s does not take "
 				        "any argument\n", key);
 			ret = -HXOPT_ERR_VOID;
 			break;
-		case E_LONG_MISSING:
+		case HXOPT_E_LONG_MISSING:
 			if (!(flags & HXOPT_QUIET))
 				fprintf(stderr, "Option --%s requires an "
 				        "argument\n", key);
 			ret = -HXOPT_ERR_MIS;
 			break;
-		case E_SHORT_UNKNOWN:
+		case HXOPT_E_SHORT_UNKNOWN:
 			if (!(flags & HXOPT_QUIET))
 				fprintf(stderr, "Unknown option: -%c\n",
 				        *shstr);
 			ret = -HXOPT_ERR_UNKN;
 			break;
-		case E_SHORT_MISSING:
+		case HXOPT_E_SHORT_MISSING:
 			if (!(flags & HXOPT_QUIET))
 				fprintf(stderr, "Option -%c requires an "
 				        "argument\n", *shstr);
