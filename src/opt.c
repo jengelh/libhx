@@ -62,12 +62,6 @@ enum {
 	E_SHORT_UNKNOWN,
 	E_SHORT_MISSING,
 
-	S_NORMAL = 0,
-	S_SHORT,
-	S_TWOLONG,
-	S_LONG,
-	S_TERMINATED,
-
 	W_NONE    = 0,
 	W_SPACE   = 1 << 0,
 	W_BRACKET = 1 << 1,
@@ -77,6 +71,22 @@ enum {
 	HXOPT_LOPMASK2 = HXOPT_OR | HXOPT_AND | HXOPT_XOR,
 	HXOPT_LOPMASK  = HXOPT_LOPMASK2 | HXOPT_NOT,
 	HXOPT_TYPEMASK = 0x1F, /* 5 bits */
+};
+
+/**
+ * HX_getopt_state - internal option parser states
+ * %HXOPT_S_NORMAL:	base state, options accepted
+ * %HXOPT_S_SHORT:	a short option has been seen
+ * %HXOPT_S_TWOLONG:	a long option has been seen
+ * %HXOPT_S_LONG:	a long option and its argument have been seen
+ * %HXOPT_S_TERMINATED:	options closed, all remaining args are to be copied
+ */
+enum HX_getopt_state {
+	HXOPT_S_NORMAL = 0,
+	HXOPT_S_SHORT,
+	HXOPT_S_TWOLONG,
+	HXOPT_S_LONG,
+	HXOPT_S_TERMINATED,
 };
 
 static void do_assign(struct HXoptcb *cbi)
@@ -381,7 +391,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 {
 	const char **opt = *argv, *value = NULL, *shstr = NULL;
 	struct HXdeque *remaining = HXdeque_init();
-	unsigned int state = S_NORMAL;
+	unsigned int state = HXOPT_S_NORMAL;
 	int ret = E_SUCCESS;
 	struct HXoptcb cbi;
 	char *key = NULL;
@@ -396,12 +406,12 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	while (true) {
 		const char *cur = *opt;
 
-		if (state == S_TWOLONG) {
+		if (state == HXOPT_S_TWOLONG) {
 			if ((cbi.current = lookup_long(table, key)) == NULL) {
 				if (flags & HXOPT_PTHRU) {
 					HXdeque_push(remaining, HX_strdup(key));
 					++opt;
-					state = S_NORMAL;
+					state = HXOPT_S_NORMAL;
 					continue;
 				}
 				ret = E_LONG_UNKNOWN;
@@ -442,18 +452,18 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			do_assign(&cbi);
 			free(key);
 			key   = NULL;
-			state = S_NORMAL;
+			state = HXOPT_S_NORMAL;
 			/* fallthrough */
 		}
 
-		if (state == S_LONG) {
+		if (state == HXOPT_S_LONG) {
 			bool got_value = (strchr(cur, '=') != NULL);
 
 			if ((cbi.current = lookup_long(table, key)) == NULL) {
 				if (flags & HXOPT_PTHRU) {
 					HXdeque_push(remaining,
 					             HX_strdup(*opt++));
-					state = S_NORMAL;
+					state = HXOPT_S_NORMAL;
 					continue;
 				}
 				ret = E_LONG_UNKNOWN;
@@ -476,15 +486,15 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 
 			free(key);
 			key   = NULL;
-			state = S_NORMAL;
+			state = HXOPT_S_NORMAL;
 			cur   = *++opt;
 			/* fallthrough */
 		}
 
-		if (state == S_SHORT) {
+		if (state == HXOPT_S_SHORT) {
 			if (*shstr == '\0') {
 				++opt;
-				state = S_NORMAL;
+				state = HXOPT_S_NORMAL;
 				continue;
 			}
 
@@ -495,7 +505,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					snprintf(buf, sizeof(buf), "-%s", shstr);
 					HXdeque_push(remaining, HX_strdup(buf));
 					++opt;
-					state = S_NORMAL;
+					state = HXOPT_S_NORMAL;
 					continue;
 				}
 				ret = E_SHORT_UNKNOWN;
@@ -518,7 +528,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				/* -Avalue */
 				cbi.data = shstr + 1;
 				do_assign(&cbi);
-				state = S_NORMAL;
+				state = HXOPT_S_NORMAL;
 				continue;
 			}
 
@@ -546,19 +556,19 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			}
 
 			do_assign(&cbi);
-			state = S_NORMAL;
+			state = HXOPT_S_NORMAL;
 			/* fallthrough */
 		}
 
 		if (cur == NULL)
 			break;
 
-		if (state == S_TERMINATED) {
+		if (state == HXOPT_S_TERMINATED) {
 			HXdeque_push(remaining, HX_strdup(*opt++));
 			continue;
 		}
 
-		if (state == S_NORMAL) {
+		if (state == HXOPT_S_NORMAL) {
 			if (cur[0] == '-' && cur[1] == '\0') {
 				/*
 				 * Note to popt developers: A single dash is
@@ -569,7 +579,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			}
 			if (cur[0] == '-' && cur[1] == '-' && cur[2] == '\0') {
 				/* double dash */
-				state = S_TERMINATED;
+				state = HXOPT_S_TERMINATED;
 				/*
 				 * If passthrough is on, "--" must be copied
 				 * into @remaining. This is done in the next
@@ -586,19 +596,19 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					/*
 					 * Two argument long option: --long arg
 					 */
-					state = S_TWOLONG;
+					state = HXOPT_S_TWOLONG;
 					++opt;
 					continue;
 				}
 				/* Single argument long option: --long=arg */
 				*p++  = '\0';
 				value = p;
-				state = S_LONG;
+				state = HXOPT_S_LONG;
 				continue;
 			}
 			if (cur[0] == '-') {
 				/* Short option(s) - one or more(!) */
-				state = S_SHORT;
+				state = HXOPT_S_SHORT;
 				shstr = cur + 1;
 				continue;
 			}
@@ -607,7 +617,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		}
 
 		fprintf(stderr, "libHX-opt: invalid state: %u\n", state);
-		state = S_NORMAL;
+		state = HXOPT_S_NORMAL;
 	}
 
 	if (ret != 0) {
