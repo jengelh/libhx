@@ -449,19 +449,22 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		const char *cur = *opt;
 
 		if (state == HXOPT_S_TWOLONG) {
+			const char *key = cur;
+
 			if ((cbi.current = lookup_long(table, key + 2)) == NULL) {
 				if (flags & HXOPT_PTHRU) {
 					HXdeque_push(remaining, HX_strdup(key));
+					++opt;
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
 				ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, flags);
-				key = NULL;
 				break;
 			}
 
 			cbi.match_ln = key + 2;
 			cbi.match_sh = '\0';
+			cur = *++opt;
 
 			if (takes_void(cbi.current->type)) {
 				cbi.data = NULL;
@@ -485,7 +488,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			} else {
 				if (cur == NULL) {
 					ret = HX_getopt_error(HXOPT_E_LONG_MISSING, key, flags);
-					key = NULL;
 					break;
 				}
 				cbi.data = cur;
@@ -493,7 +495,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			}
 
 			do_assign(&cbi);
-			key   = NULL;
 			state = HXOPT_S_NORMAL;
 			continue;
 		}
@@ -633,9 +634,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			if (cur[0] == '-' && cur[1] == '-') { /* long option */
 				char *p = strchr(cur + 2, '=');
 				if (p == NULL) {
-					key = const_cast(char *, cur);
 					state = HXOPT_S_TWOLONG;
-					++opt;
 					continue;
 				}
 				/* Single argument long option: --long=arg */
