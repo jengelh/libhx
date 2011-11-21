@@ -1,7 +1,4 @@
 /*
-A=b;C="d" ; E="F;" ; F= G=Z
-*/
-/*
  *	option parser test program
  *	written by Jan Engelhardt
  *	this program is released in the Public Domain
@@ -14,34 +11,6 @@ A=b;C="d" ; E="F;" ; F= G=Z
 #include <libHX/init.h>
 #include <libHX/map.h>
 #include <libHX/option.h>
-
-static void t_shconfig(const char *file)
-{
-	char *A, *C, *E;
-	struct HXoption opt_tab[] = {
-		{.ln = "A", .type = HXTYPE_STRING, .ptr = &A},
-		{.ln = "C", .type = HXTYPE_STRING, .ptr = &C},
-		{.ln = "E", .type = HXTYPE_STRING, .ptr = &E},
-		HXOPT_TABLEEND,
-	};
-	if (HX_shconfig(file, opt_tab) < 0)
-		fprintf(stderr, "Read error %s: %s\n", file, strerror(errno));
-}
-
-static void t_shconfig2(const char *file)
-{
-	const struct HXmap_node *node;
-	struct HXmap_trav *trav;
-	struct HXmap *map;
-
-	map = HX_shconfig_map(file);
-	if (map == NULL)
-		abort();
-	trav = HXmap_travinit(map, HXMAP_NOFLAGS);
-	while ((node = HXmap_traverse(trav)) != NULL)
-		printf("\t\"%s\" -> \"%s\"\n", node->skey, node->sdata);
-	HXmap_travfree(trav);
-}
 
 static int opt_v = 0, opt_mask = 0;
 static char *opt_kstr = NULL;
@@ -97,9 +66,6 @@ int main(int argc, const char **argv)
 		abort();
 	printf("Return value of HX_getopt: %d\n",
 	       HX_getopt(table, &argc, &argv, HXOPT_USAGEONERR));
-
-	t_shconfig((argc >= 2) ? argv[1] : "tc-option.c");
-	t_shconfig2((argc >= 2) ? argv[1] : "tc-option.c");
 
 	printf("Either-or is: %s\n", opt_eitheror[opt_dst]);
 	printf("values: D=%lf I=%d L=%ld S=%s\n",
