@@ -444,7 +444,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				    (cur[0] == '-' && cur[1] == '\0')) {
 					/* --file -, --file bla */
 					cbi.data = cur;
-					cur      = *opt++;
+					++opt;
 				} else {
 					/*
 					 * --file --another --file --
@@ -458,14 +458,14 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					break;
 				}
 				cbi.data = cur;
-				cur      = *++opt;
+				++opt;
 			}
 
 			do_assign(&cbi);
 			free(key);
 			key   = NULL;
 			state = HXOPT_S_NORMAL;
-			/* fallthrough */
+			continue;
 		}
 
 		if (state == HXOPT_S_LONG) {
@@ -497,8 +497,8 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			free(key);
 			key   = NULL;
 			state = HXOPT_S_NORMAL;
-			cur   = *++opt;
-			/* fallthrough */
+			++opt;
+			continue;
 		}
 
 		if (state == HXOPT_S_SHORT) {
@@ -533,24 +533,25 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				continue;
 			}
 
-			cur = *++opt;
 			if (*(shstr + 1) != '\0') {
 				/* -Avalue */
 				cbi.data = shstr + 1;
 				do_assign(&cbi);
 				state = HXOPT_S_NORMAL;
+				++opt;
 				continue;
 			}
 
+			cur = *++opt;
 			if (cbi.current->type & HXOPT_OPTIONAL) {
 				if (cur == NULL || *cur != '-' ||
 				    (cur[0] == '-' && cur[1] == '\0')) {
-					/* --file - --file bla */
+					/* -f - -f bla */
 					cbi.data = cur;
-					cur      = *++opt;
+					++opt;
 				} else {
 					/*
-					 * --file --another --file --
+					 * -f -a-file --another --file --
 					 * endofoptions
 					 */
 					cbi.data = NULL;
@@ -562,12 +563,12 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					break;
 				}
 				cbi.data = cur;
-				cur      = *++opt;
+				++opt;
 			}
 
 			do_assign(&cbi);
 			state = HXOPT_S_NORMAL;
-			/* fallthrough */
+			continue;
 		}
 
 		if (cur == NULL)
