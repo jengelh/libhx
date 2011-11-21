@@ -60,6 +60,27 @@ static struct HXoption table[] = {
 	HXOPT_TABLEEND,
 };
 
+static void dump_argv(const char **v)
+{
+	while (*v != NULL)
+		printf("[%s] ", *v++);
+	printf("\n");
+}
+
+static void t_pthru(void)
+{
+	const char *argv[] = {
+		"ARGV0", "--unknown-a", NULL
+	};
+	const char **argp = argv;
+	int argc = ARRAY_SIZE(argv) - 1;
+
+	printf("PTHRU test:\n");
+	HX_getopt(table, &argc, &argp, HXOPT_USAGEONERR | HXOPT_PTHRU);
+	dump_argv(argp);
+	printf("\n");
+}
+
 int main(int argc, const char **argv)
 {
 	if (HX_init() <= 0)
@@ -73,6 +94,9 @@ int main(int argc, const char **argv)
 	printf("Verbosity level: %d\n", opt_v);
 	printf("Mask: 0x%08X\n", opt_mask);
 	printf("mcstr: >%s<\n", opt_mcstr);
+
+	t_pthru();
+
 	HX_exit();
 	return EXIT_SUCCESS;
 }
