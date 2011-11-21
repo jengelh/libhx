@@ -24,13 +24,14 @@ libHX_rtcheck_la_SOURCES = rtcheck.c
 libHX_rtcheck_la_LDFLAGS = -avoid-version -module \
                            -Wl,--version-script=${srcdir}/libHX.map
 
-check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-link \
+check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-link \
                      tc-list tc-list2 tc-map tc-misc tc-netio \
                      tc-option tc-proc tc-rand tc-realpath tc-string tc-time
 tc_cast_CFLAGS     = ${AM_CFLAGS} -std=c99
 tc_cast_LDADD      = libHX.la -lm
 tc_compile_LDADD   = libHX.la
 tc_dir_LDADD       = libHX.la
+tc_format_LDADD    = libHX.la
 tc_link_LDADD      = libHX.la
 tc_list_LDADD      = libHX.la
 tc_list2_LDADD     = libHX.la
