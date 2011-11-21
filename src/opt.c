@@ -456,6 +456,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					continue;
 				}
 				ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, flags);
+				key = NULL;
 				break;
 			}
 
@@ -484,6 +485,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			} else {
 				if (cur == NULL) {
 					ret = HX_getopt_error(HXOPT_E_LONG_MISSING, key, flags);
+					key = NULL;
 					break;
 				}
 				cbi.data = cur;
@@ -491,7 +493,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			}
 
 			do_assign(&cbi);
-			free(key);
 			key   = NULL;
 			state = HXOPT_S_NORMAL;
 			continue;
@@ -630,17 +631,16 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				continue;
 			}
 			if (cur[0] == '-' && cur[1] == '-') { /* long option */
-				char *p;
-				key = HX_strdup(cur);
-				if ((p = strchr(key + 2, '=')) == NULL) {
-					/*
-					 * Two argument long option: --long arg
-					 */
+				char *p = strchr(cur + 2, '=');
+				if (p == NULL) {
+					key = const_cast(char *, cur);
 					state = HXOPT_S_TWOLONG;
 					++opt;
 					continue;
 				}
 				/* Single argument long option: --long=arg */
+				key = HX_strdup(cur);
+				p = key + (p - cur);
 				*p++  = '\0';
 				value = p;
 				state = HXOPT_S_LONG;
