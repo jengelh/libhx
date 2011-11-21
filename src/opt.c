@@ -401,7 +401,7 @@ hxmc_t *HXparse_dequote_fmt(const char *s, const char *end, const char **pptr)
 EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
     const char ***argv, unsigned int flags)
 {
-	const char **opt = *argv, *value = NULL, *shstr = NULL;
+	const char **opt = *argv, *value, *shstr = NULL;
 	struct HXdeque *remaining = HXdeque_init();
 	unsigned int state = HXOPT_S_NORMAL;
 	int ret = HXOPT_E_SUCCESS;
@@ -469,8 +469,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		}
 
 		if (state == HXOPT_S_LONG) {
-			bool got_value = (strchr(cur, '=') != NULL);
-
 			if ((cbi.current = lookup_long(table, key)) == NULL) {
 				if (flags & HXOPT_PTHRU) {
 					HXdeque_push(remaining,
@@ -482,12 +480,12 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				break;
 			}
 
-			if (takes_void(cbi.current->type) && got_value) {
+			/*
+			 * @value is always non-NULL when entering
+			 * %HXOPT_S_LONG, so no need to check for !takes_void.
+			 */
+			if (takes_void(cbi.current->type)) {
 				ret = HXOPT_E_LONG_TAKESVOID;
-				break;
-			} else if (!takes_void(cbi.current->type) &&
-			    !got_value) {
-				ret = HXOPT_E_LONG_MISSING;
 				break;
 			}
 
