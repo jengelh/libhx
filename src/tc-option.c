@@ -70,7 +70,7 @@ static void dump_argv(const char **v)
 static void t_pthru(void)
 {
 	const char *argv[] = {
-		"ARGV0", "--unknown-a", NULL
+		"ARGV0", "--unknown-a", "foo", "bar", NULL
 	};
 	const char **argp = argv;
 	int argc = ARRAY_SIZE(argv) - 1;

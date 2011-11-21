@@ -6,6 +6,7 @@ Fixes:
 - defs: resolve warning for users of const_cast*() when using -Wextra
 - format: error handling for HXformat2_aprintf
 - option: do not omit dashes when passthru'ing unknown two-part long opts
+- option: do not omit arg following unknown unknown two-part long opts in pthru
 Enhancements:
 - build: deactivate type-checking of the *_cast() macros for clang due to a
   compiler bug involving nested structs-in-typeofs

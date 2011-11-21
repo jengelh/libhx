@@ -422,7 +422,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			if ((cbi.current = lookup_long(table, key + 2)) == NULL) {
 				if (flags & HXOPT_PTHRU) {
 					HXdeque_push(remaining, HX_strdup(key));
-					++opt;
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
