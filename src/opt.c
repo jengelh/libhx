@@ -398,6 +398,36 @@ hxmc_t *HXparse_dequote_fmt(const char *s, const char *end, const char **pptr)
 	return tmp;
 }
 
+static int HX_getopt_error(int err, const char *key, unsigned int flags)
+{
+	switch (err) {
+	case HXOPT_E_LONG_UNKNOWN:
+		if (!(flags & HXOPT_QUIET))
+			fprintf(stderr, "Unknown option: %s\n", key);
+		return -HXOPT_ERR_UNKN;
+	case HXOPT_E_LONG_TAKESVOID:
+		if (!(flags & HXOPT_QUIET))
+			fprintf(stderr, "Option %s does not take "
+			        "any argument\n", key);
+		return -HXOPT_ERR_VOID;
+	case HXOPT_E_LONG_MISSING:
+		if (!(flags & HXOPT_QUIET))
+			fprintf(stderr, "Option %s requires an "
+			        "argument\n", key);
+		return -HXOPT_ERR_MIS;
+	case HXOPT_E_SHORT_UNKNOWN:
+		if (!(flags & HXOPT_QUIET))
+			fprintf(stderr, "Unknown option: -%c\n", *key);
+		return -HXOPT_ERR_UNKN;
+	case HXOPT_E_SHORT_MISSING:
+		if (!(flags & HXOPT_QUIET))
+			fprintf(stderr, "Option -%c requires an "
+			        "argument\n", *key);
+		return -HXOPT_ERR_MIS;
+	}
+	return 0;
+}
+
 EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
     const char ***argv, unsigned int flags)
 {
@@ -425,7 +455,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
-				ret = HXOPT_E_LONG_UNKNOWN;
+				ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, flags);
 				break;
 			}
 
@@ -453,7 +483,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				}
 			} else {
 				if (cur == NULL) {
-					ret = HXOPT_E_LONG_MISSING;
+					ret = HX_getopt_error(HXOPT_E_LONG_MISSING, key, flags);
 					break;
 				}
 				cbi.data = cur;
@@ -475,7 +505,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
-				ret = HXOPT_E_LONG_UNKNOWN;
+				ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, flags);
 				break;
 			}
 
@@ -484,7 +514,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			 * %HXOPT_S_LONG, so no need to check for !takes_void.
 			 */
 			if (takes_void(cbi.current->type)) {
-				ret = HXOPT_E_LONG_TAKESVOID;
+				ret = HX_getopt_error(HXOPT_E_LONG_TAKESVOID, key, flags);
 				break;
 			}
 
@@ -517,7 +547,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
-				ret = HXOPT_E_SHORT_UNKNOWN;
+				ret = HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, shstr, flags);
 				break;
 			}
 
@@ -558,7 +588,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			} else {
 				/* -A value */
 				if (cur == NULL) {
-					ret = HXOPT_E_SHORT_MISSING;
+					ret = HX_getopt_error(HXOPT_E_SHORT_MISSING, shstr, flags);
 					break;
 				}
 				cbi.data = cur;
@@ -631,37 +661,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	}
 
 	if (ret != 0) {
-		switch (ret) {
-		case HXOPT_E_LONG_UNKNOWN:
-			if (!(flags & HXOPT_QUIET))
-				fprintf(stderr, "Unknown option: --%s\n", key);
-			ret = -HXOPT_ERR_UNKN;
-			break;
-		case HXOPT_E_LONG_TAKESVOID:
-			if (!(flags & HXOPT_QUIET))
-				fprintf(stderr, "Option --%s does not take "
-				        "any argument\n", key);
-			ret = -HXOPT_ERR_VOID;
-			break;
-		case HXOPT_E_LONG_MISSING:
-			if (!(flags & HXOPT_QUIET))
-				fprintf(stderr, "Option --%s requires an "
-				        "argument\n", key);
-			ret = -HXOPT_ERR_MIS;
-			break;
-		case HXOPT_E_SHORT_UNKNOWN:
-			if (!(flags & HXOPT_QUIET))
-				fprintf(stderr, "Unknown option: -%c\n",
-				        *shstr);
-			ret = -HXOPT_ERR_UNKN;
-			break;
-		case HXOPT_E_SHORT_MISSING:
-			if (!(flags & HXOPT_QUIET))
-				fprintf(stderr, "Option -%c requires an "
-				        "argument\n", *shstr);
-			ret = -HXOPT_ERR_MIS;
-			break;
-		} /* switch */
 		free(key);
 
 		if (flags & HXOPT_HELPONERR)
