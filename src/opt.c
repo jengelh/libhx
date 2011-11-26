@@ -437,6 +437,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	int ret = HXOPT_E_SUCCESS;
 	struct HXoptcb cbi;
 	unsigned int argk;
+	const char *cur;
 
 	memset(&cbi, 0, sizeof(cbi));
 	cbi.arg0  = **argv;
@@ -444,16 +445,14 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 
 	HXdeque_push(remaining, HX_strdup(*opt++)); /* put argv[0] back */
 
-	while (true) {
-		const char *cur = *opt;
-
+	for (cur = *opt; cur != NULL; ) {
 		if (state == HXOPT_S_TWOLONG) {
 			const char *key = cur;
 
 			if ((cbi.current = lookup_long(table, key + 2)) == NULL) {
 				if (flags & HXOPT_PTHRU) {
 					HXdeque_push(remaining, HX_strdup(key));
-					++opt;
+					cur = *++opt;
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
@@ -476,7 +475,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				    (cur[0] == '-' && cur[1] == '\0')) {
 					/* --file -, --file bla */
 					cbi.data = cur;
-					++opt;
+					cur = *++opt;
 				} else {
 					/*
 					 * --file --another --file --
@@ -490,7 +489,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					break;
 				}
 				cbi.data = cur;
-				++opt;
+				cur = *++opt;
 			}
 
 			do_assign(&cbi);
@@ -506,7 +505,8 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			if ((cbi.current = lookup_long(table, key + 2)) == NULL) {
 				if (flags & HXOPT_PTHRU) {
 					HXdeque_push(remaining,
-					             HX_strdup(*opt++));
+					             HX_strdup(*opt));
+					cur = *++opt;
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
@@ -532,13 +532,13 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 
 			free(key);
 			state = HXOPT_S_NORMAL;
-			++opt;
+			cur = *++opt;
 			continue;
 		}
 
 		if (state == HXOPT_S_SHORT) {
 			if (*shstr == '\0') {
-				++opt;
+				cur = *++opt;
 				state = HXOPT_S_NORMAL;
 				continue;
 			}
@@ -549,7 +549,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					char buf[16];
 					snprintf(buf, sizeof(buf), "-%s", shstr);
 					HXdeque_push(remaining, HX_strdup(buf));
-					++opt;
+					cur = *++opt;
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
@@ -573,7 +573,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				cbi.data = shstr + 1;
 				do_assign(&cbi);
 				state = HXOPT_S_NORMAL;
-				++opt;
+				cur = *++opt;
 				continue;
 			}
 
@@ -583,7 +583,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				    (cur[0] == '-' && cur[1] == '\0')) {
 					/* -f - -f bla */
 					cbi.data = cur;
-					++opt;
+					cur = *++opt;
 				} else {
 					/*
 					 * -f -a-file --another --file --
@@ -598,7 +598,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					break;
 				}
 				cbi.data = cur;
-				++opt;
+				cur = *++opt;
 			}
 
 			do_assign(&cbi);
@@ -606,11 +606,9 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			continue;
 		}
 
-		if (cur == NULL)
-			break;
-
 		if (state == HXOPT_S_TERMINATED) {
-			HXdeque_push(remaining, HX_strdup(*opt++));
+			HXdeque_push(remaining, HX_strdup(*opt));
+			cur = *++opt;
 			continue;
 		}
 
@@ -620,7 +618,8 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				 * Note to popt developers: A single dash is
 				 * NOT an option!
 				 */
-				HXdeque_push(remaining, HX_strdup(*opt++));
+				HXdeque_push(remaining, HX_strdup(*opt));
+				cur = *++opt;
 				continue;
 			}
 			if (cur[0] == '-' && cur[1] == '-' && cur[2] == '\0') {
@@ -632,7 +631,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				 * round.
 				 */
 				if (!(flags & HXOPT_PTHRU))
-					++opt;
+					cur = *++opt;
 				continue;
 			}
 			if (cur[0] == '-' && cur[1] == '-') { /* long option */
@@ -650,7 +649,8 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				shstr = cur + 1;
 				continue;
 			}
-			HXdeque_push(remaining, HX_strdup(*opt++));
+			HXdeque_push(remaining, HX_strdup(*opt));
+			cur = *++opt;
 			continue;
 		}
 
