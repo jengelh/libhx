@@ -500,10 +500,10 @@ static int HX_getopt_twolong(const char *const *opt,
 	return HXOPT_S_NORMAL | adv;
 }
 
-static int HX_getopt_long(const char *const *opt, struct HX_getopt_vars *par)
+static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 {
 	int ret;
-	char *key = HX_strdup(*opt), *value = strchr(key, '=');
+	char *key = HX_strdup(cur), *value = strchr(key, '=');
 
 	*value++ = '\0';
 	par->cbi.current = lookup_long(par->cbi.table, key + 2);
@@ -594,19 +594,17 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 	return HXOPT_S_NORMAL | adv;
 }
 
-static int HX_getopt_term(const char *const *opt, const struct HX_getopt_vars *par)
+static int HX_getopt_term(const char *cur, const struct HX_getopt_vars *par)
 {
-	HXdeque_push(par->remaining, HX_strdup(*opt));
+	HXdeque_push(par->remaining, HX_strdup(cur));
 	return HXOPT_S_TERMINATED | HXOPT_I_ADVARG;
 }
 
-static int HX_getopt_normal(const char *const *opt, const struct HX_getopt_vars *par)
+static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 {
-	const char *cur = *opt;
-
 	if (cur[0] == '-' && cur[1] == '\0') {
 		/* Note to popt developers: A single dash is NOT an option! */
-		HXdeque_push(par->remaining, HX_strdup(*opt));
+		HXdeque_push(par->remaining, HX_strdup(cur));
 		return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 	}
 	if (cur[0] == '-' && cur[1] == '-' && cur[2] == '\0') {
@@ -627,7 +625,7 @@ static int HX_getopt_normal(const char *const *opt, const struct HX_getopt_vars 
 	if (cur[0] == '-')
 		/* Short option(s) - one or more(!) */
 		return HXOPT_S_SHORT | HXOPT_I_ADVCHAR;
-	HXdeque_push(par->remaining, HX_strdup(*opt));
+	HXdeque_push(par->remaining, HX_strdup(cur));
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
 
@@ -653,13 +651,13 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		if (state == HXOPT_S_TWOLONG)
 			state = HX_getopt_twolong(opt, &ps);
 		else if (state == HXOPT_S_LONG)
-			state = HX_getopt_long(opt, &ps);
+			state = HX_getopt_long(cur, &ps);
 		else if (state == HXOPT_S_SHORT)
 			state = HX_getopt_short(opt, cur, &ps);
 		else if (state == HXOPT_S_TERMINATED)
-			state = HX_getopt_term(opt, &ps);
+			state = HX_getopt_term(cur, &ps);
 		else if (state == HXOPT_S_NORMAL)
-			state = HX_getopt_normal(opt, &ps);
+			state = HX_getopt_normal(cur, &ps);
 
 		if (state & HXOPT_I_ERROR) {
 			ret = state & ~HXOPT_I_ERROR;
