@@ -459,50 +459,39 @@ static int HX_getopt_error(int err, const char *key, unsigned int flags)
 static int HX_getopt_twolong(const char *const *opt,
     struct HX_getopt_vars *par)
 {
-	int ret;
 	unsigned int adv;
-	const char *cur = opt[0];
-	const char *key = cur;
+	const char *key = opt[0], *cur = opt[1];
 
-	if ((par->cbi.current = lookup_long(par->cbi.table, key + 2)) == NULL) {
+	par->cbi.current = lookup_long(par->cbi.table, key + 2);
+	if (par->cbi.current == NULL) {
 		if (par->flags & HXOPT_PTHRU) {
 			HXdeque_push(par->remaining, HX_strdup(key));
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
-		ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, par->flags);
-		return ret;
+		return HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, par->flags);
 	}
 
 	par->cbi.match_ln = key + 2;
 	par->cbi.match_sh = '\0';
-	cur = opt[1];
 
 	if (takes_void(par->cbi.current->type)) {
 		par->cbi.data = NULL;
 		adv = HXOPT_I_ADVARG;
 	} else if (par->cbi.current->type & HXOPT_OPTIONAL) {
-		/*
-		 * Rule: take arg if next thing is not-null,
-		 * not-option.
-		 */
+		/* Rule: take arg if next thing is not-null, not-option. */
 		if (cur == NULL || *cur != '-' ||
 		    (cur[0] == '-' && cur[1] == '\0')) {
 			/* --file -, --file bla */
 			par->cbi.data = cur;
 			adv = HXOPT_I_ADVARG2;
 		} else {
-			/*
-			 * --file --another --file --
-			 * endofoptions
-			 */
+			/* --file --another --file -- endofoptions */
 			par->cbi.data = NULL;
 			adv = HXOPT_I_ADVARG;
 		}
 	} else {
-		if (cur == NULL) {
-			ret = HX_getopt_error(HXOPT_E_LONG_MISSING, key, par->flags);
-			return ret;
-		}
+		if (cur == NULL)
+			return HX_getopt_error(HXOPT_E_LONG_MISSING, key, par->flags);
 		par->cbi.data = cur;
 		adv = HXOPT_I_ADVARG2;
 	}
@@ -514,12 +503,11 @@ static int HX_getopt_twolong(const char *const *opt,
 static int HX_getopt_long(const char *const *opt, struct HX_getopt_vars *par)
 {
 	int ret;
-	const char *cur = opt[0];
-	char *key = HX_strdup(cur);
-	char *value = strchr(key, '=');
-	*value++ = '\0';
+	char *key = HX_strdup(*opt), *value = strchr(key, '=');
 
-	if ((par->cbi.current = lookup_long(par->cbi.table, key + 2)) == NULL) {
+	*value++ = '\0';
+	par->cbi.current = lookup_long(par->cbi.table, key + 2);
+	if (par->cbi.current == NULL) {
 		if (par->flags & HXOPT_PTHRU) {
 			/* Undo nuke of '=' and reuse alloc */
 			value[-1] = '=';
@@ -530,7 +518,6 @@ static int HX_getopt_long(const char *const *opt, struct HX_getopt_vars *par)
 		free(key);
 		return ret;
 	}
-
 	/*
 	 * @value is always non-NULL when entering
 	 * %HXOPT_S_LONG, so no need to check for !takes_void.
@@ -545,7 +532,6 @@ static int HX_getopt_long(const char *const *opt, struct HX_getopt_vars *par)
 	par->cbi.match_sh = '\0';
 	par->cbi.data     = value;
 	do_assign(&par->cbi);
-
 	free(key);
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
@@ -553,11 +539,10 @@ static int HX_getopt_long(const char *const *opt, struct HX_getopt_vars *par)
 static int HX_getopt_short(const char *const *opt, const char *cur,
     struct HX_getopt_vars *par)
 {
-	int ret;
 	unsigned int adv;
-	if (*cur == '\0') {
+
+	if (*cur == '\0')
 		return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
-	}
 
 	par->cbi.current = lookup_short(par->cbi.table, *cur);
 	if (par->cbi.current == NULL) {
@@ -567,8 +552,7 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 			HXdeque_push(par->remaining, HX_strdup(buf));
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
-		ret = HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, cur, par->flags);
-		return ret;
+		return HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, cur, par->flags);
 	}
 
 	par->cbi.match_ln = NULL;
@@ -579,9 +563,7 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 		par->cbi.data = NULL;
 		do_assign(&par->cbi);
 		return HXOPT_S_SHORT | HXOPT_I_ADVCHAR;
-	}
-
-	if (cur[1] != '\0') {
+	} else if (cur[1] != '\0') {
 		/* -Avalue */
 		par->cbi.data = cur + 1;
 		do_assign(&par->cbi);
@@ -596,19 +578,14 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 			par->cbi.data = cur;
 			adv = HXOPT_I_ADVARG2;
 		} else {
-			/*
-			 * -f -a-file --another --file --
-			 * endofoptions
-			 */
+			/* -f -a-file --another --file -- endofoptions */
 			par->cbi.data = NULL;
 			adv = HXOPT_I_ADVARG;
 		}
 	} else {
 		/* -A value */
-		if (cur == NULL) {
-			ret = HX_getopt_error(HXOPT_E_SHORT_MISSING, &par->cbi.match_sh, par->flags);
-			return ret;
-		}
+		if (cur == NULL)
+			return HX_getopt_error(HXOPT_E_SHORT_MISSING, &par->cbi.match_sh, par->flags);
 		par->cbi.data = cur;
 		adv = HXOPT_I_ADVARG2;
 	}
@@ -628,35 +605,28 @@ static int HX_getopt_normal(const char *const *opt, const struct HX_getopt_vars 
 	const char *cur = *opt;
 
 	if (cur[0] == '-' && cur[1] == '\0') {
-		/*
-		 * Note to popt developers: A single dash is
-		 * NOT an option!
-		 */
+		/* Note to popt developers: A single dash is NOT an option! */
 		HXdeque_push(par->remaining, HX_strdup(*opt));
 		return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 	}
 	if (cur[0] == '-' && cur[1] == '-' && cur[2] == '\0') {
-		/* double dash */
 		/*
-		 * If passthrough is on, "--" must be copied
-		 * into @remaining. This is done in the next
-		 * round.
+		 * Double dash. If passthrough is on, "--" must be copied into
+		 * @remaining. This is done in the next round.
 		 */
 		if (!(par->flags & HXOPT_PTHRU))
 			return HXOPT_S_TERMINATED | HXOPT_I_ADVARG;
 		return HXOPT_S_TERMINATED;
 	}
 	if (cur[0] == '-' && cur[1] == '-') { /* long option */
-		if (strchr(cur + 2, '=') == NULL) {
+		if (strchr(cur + 2, '=') == NULL)
 			return HXOPT_S_TWOLONG;
-		}
 		/* Single argument long option: --long=arg */
 		return HXOPT_S_LONG;
 	}
-	if (cur[0] == '-') {
+	if (cur[0] == '-')
 		/* Short option(s) - one or more(!) */
 		return HXOPT_S_SHORT | HXOPT_I_ADVCHAR;
-	}
 	HXdeque_push(par->remaining, HX_strdup(*opt));
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
