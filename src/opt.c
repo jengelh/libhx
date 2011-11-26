@@ -431,12 +431,11 @@ static int HX_getopt_error(int err, const char *key, unsigned int flags)
 EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
     const char ***argv, unsigned int flags)
 {
-	const char **opt = *argv, *value, *shstr = NULL;
+	const char **opt = *argv, *shstr = NULL;
 	struct HXdeque *remaining = HXdeque_init();
 	unsigned int state = HXOPT_S_NORMAL;
 	int ret = HXOPT_E_SUCCESS;
 	struct HXoptcb cbi;
-	char *key = NULL;
 	unsigned int argk;
 
 	memset(&cbi, 0, sizeof(cbi));
@@ -500,6 +499,10 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		}
 
 		if (state == HXOPT_S_LONG) {
+			char *key = HX_strdup(cur);
+			char *value = strchr(key, '=');
+			*value++ = '\0';
+
 			if ((cbi.current = lookup_long(table, key + 2)) == NULL) {
 				if (flags & HXOPT_PTHRU) {
 					HXdeque_push(remaining,
@@ -508,6 +511,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 					continue;
 				}
 				ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, flags);
+				free(key);
 				break;
 			}
 
@@ -517,6 +521,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			 */
 			if (takes_void(cbi.current->type)) {
 				ret = HX_getopt_error(HXOPT_E_LONG_TAKESVOID, key, flags);
+				free(key);
 				break;
 			}
 
@@ -526,7 +531,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			do_assign(&cbi);
 
 			free(key);
-			key   = NULL;
 			state = HXOPT_S_NORMAL;
 			++opt;
 			continue;
@@ -632,16 +636,11 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				continue;
 			}
 			if (cur[0] == '-' && cur[1] == '-') { /* long option */
-				char *p = strchr(cur + 2, '=');
-				if (p == NULL) {
+				if (strchr(cur + 2, '=') == NULL) {
 					state = HXOPT_S_TWOLONG;
 					continue;
 				}
 				/* Single argument long option: --long=arg */
-				key = HX_strdup(cur);
-				p = key + (p - cur);
-				*p++  = '\0';
-				value = p;
 				state = HXOPT_S_LONG;
 				continue;
 			}
@@ -660,8 +659,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	}
 
 	if (ret != 0) {
-		free(key);
-
 		if (flags & HXOPT_HELPONERR)
 			HX_getopt_help(&cbi, stderr);
 		else if (flags & HXOPT_USAGEONERR)
