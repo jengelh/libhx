@@ -460,7 +460,7 @@ static int HX_getopt_twolong(const char *const *opt,
     struct HX_getopt_vars *par)
 {
 	unsigned int adv;
-	const char *key = opt[0], *cur = opt[1];
+	const char *key = opt[0], *value = opt[1];
 
 	par->cbi.current = lookup_long(par->cbi.table, key + 2);
 	if (par->cbi.current == NULL) {
@@ -479,10 +479,10 @@ static int HX_getopt_twolong(const char *const *opt,
 		adv = HXOPT_I_ADVARG;
 	} else if (par->cbi.current->type & HXOPT_OPTIONAL) {
 		/* Rule: take arg if next thing is not-null, not-option. */
-		if (cur == NULL || *cur != '-' ||
-		    (cur[0] == '-' && cur[1] == '\0')) {
+		if (value == NULL || *value != '-' ||
+		    (value[0] == '-' && value[1] == '\0')) {
 			/* --file -, --file bla */
-			par->cbi.data = cur;
+			par->cbi.data = value;
 			adv = HXOPT_I_ADVARG2;
 		} else {
 			/* --file --another --file -- endofoptions */
@@ -490,9 +490,9 @@ static int HX_getopt_twolong(const char *const *opt,
 			adv = HXOPT_I_ADVARG;
 		}
 	} else {
-		if (cur == NULL)
+		if (value == NULL)
 			return HX_getopt_error(HXOPT_E_LONG_MISSING, key, par->flags);
-		par->cbi.data = cur;
+		par->cbi.data = value;
 		adv = HXOPT_I_ADVARG2;
 	}
 
