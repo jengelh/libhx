@@ -101,6 +101,18 @@ enum HX_getopt_state {
 	HXOPT_S_TERMINATED,
 };
 
+/**
+ * struct HX_getopt_vars - option parser working variable set
+ * @remaining:	list of extracted non-options
+ * @cbi:	callback info
+ * @flags:	flags setting the behavior for HX_getopt
+ */
+struct HX_getopt_vars {
+	struct HXdeque *remaining;
+	struct HXoptcb cbi;
+	unsigned int flags;
+};
+
 static void do_assign(struct HXoptcb *cbi)
 {
 	const struct HXoption *opt = cbi->current;
@@ -431,42 +443,43 @@ static int HX_getopt_error(int err, const char *key, unsigned int flags)
 EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
     const char ***argv, unsigned int flags)
 {
+	struct HX_getopt_vars ps, *par = &ps;
 	const char **opt = *argv;
-	struct HXdeque *remaining = HXdeque_init();
 	unsigned int state = HXOPT_S_NORMAL;
 	int ret = HXOPT_E_SUCCESS;
-	struct HXoptcb cbi;
 	unsigned int argk;
 	const char *cur;
 
-	memset(&cbi, 0, sizeof(cbi));
-	cbi.arg0  = **argv;
-	cbi.table = table;
+	memset(&ps, 0, sizeof(ps));
+	ps.remaining = HXdeque_init();
+	ps.flags = flags;
+	ps.cbi.arg0  = **argv;
+	ps.cbi.table = table;
 
-	HXdeque_push(remaining, HX_strdup(*opt++)); /* put argv[0] back */
+	HXdeque_push(ps.remaining, HX_strdup(*opt++)); /* put argv[0] back */
 
 	for (cur = *opt; cur != NULL; ) {
 		if (state == HXOPT_S_TWOLONG) {
 			const char *key = cur;
 
-			if ((cbi.current = lookup_long(cbi.table, key + 2)) == NULL) {
-				if (flags & HXOPT_PTHRU) {
-					HXdeque_push(remaining, HX_strdup(key));
+			if ((par->cbi.current = lookup_long(par->cbi.table, key + 2)) == NULL) {
+				if (par->flags & HXOPT_PTHRU) {
+					HXdeque_push(par->remaining, HX_strdup(key));
 					cur = *++opt;
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
-				ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, flags);
+				ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, par->flags);
 				break;
 			}
 
-			cbi.match_ln = key + 2;
-			cbi.match_sh = '\0';
+			par->cbi.match_ln = key + 2;
+			par->cbi.match_sh = '\0';
 			cur = *++opt;
 
-			if (takes_void(cbi.current->type)) {
-				cbi.data = NULL;
-			} else if (cbi.current->type & HXOPT_OPTIONAL) {
+			if (takes_void(par->cbi.current->type)) {
+				par->cbi.data = NULL;
+			} else if (par->cbi.current->type & HXOPT_OPTIONAL) {
 				/*
 				 * Rule: take arg if next thing is not-null,
 				 * not-option.
@@ -474,25 +487,25 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				if (cur == NULL || *cur != '-' ||
 				    (cur[0] == '-' && cur[1] == '\0')) {
 					/* --file -, --file bla */
-					cbi.data = cur;
+					par->cbi.data = cur;
 					cur = *++opt;
 				} else {
 					/*
 					 * --file --another --file --
 					 * endofoptions
 					 */
-					cbi.data = NULL;
+					par->cbi.data = NULL;
 				}
 			} else {
 				if (cur == NULL) {
-					ret = HX_getopt_error(HXOPT_E_LONG_MISSING, key, flags);
+					ret = HX_getopt_error(HXOPT_E_LONG_MISSING, key, par->flags);
 					break;
 				}
-				cbi.data = cur;
+				par->cbi.data = cur;
 				cur = *++opt;
 			}
 
-			do_assign(&cbi);
+			do_assign(&par->cbi);
 			state = HXOPT_S_NORMAL;
 			continue;
 		}
@@ -502,16 +515,16 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			char *value = strchr(key, '=');
 			*value++ = '\0';
 
-			if ((cbi.current = lookup_long(cbi.table, key + 2)) == NULL) {
-				if (flags & HXOPT_PTHRU) {
+			if ((par->cbi.current = lookup_long(par->cbi.table, key + 2)) == NULL) {
+				if (par->flags & HXOPT_PTHRU) {
 					/* Undo nuke of '=' and reuse alloc */
 					value[-1] = '=';
-					HXdeque_push(remaining, key);
+					HXdeque_push(par->remaining, key);
 					cur = *++opt;
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
-				ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, flags);
+				ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, par->flags);
 				free(key);
 				break;
 			}
@@ -520,16 +533,16 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			 * @value is always non-NULL when entering
 			 * %HXOPT_S_LONG, so no need to check for !takes_void.
 			 */
-			if (takes_void(cbi.current->type)) {
-				ret = HX_getopt_error(HXOPT_E_LONG_TAKESVOID, key, flags);
+			if (takes_void(par->cbi.current->type)) {
+				ret = HX_getopt_error(HXOPT_E_LONG_TAKESVOID, key, par->flags);
 				free(key);
 				break;
 			}
 
-			cbi.match_ln = key + 2;
-			cbi.match_sh = '\0';
-			cbi.data     = value;
-			do_assign(&cbi);
+			par->cbi.match_ln = key + 2;
+			par->cbi.match_sh = '\0';
+			par->cbi.data     = value;
+			do_assign(&par->cbi);
 
 			free(key);
 			state = HXOPT_S_NORMAL;
@@ -544,71 +557,71 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				continue;
 			}
 
-			cbi.current = lookup_short(cbi.table, *cur);
-			if (cbi.current == NULL) {
-				if (flags & HXOPT_PTHRU) {
+			par->cbi.current = lookup_short(par->cbi.table, *cur);
+			if (par->cbi.current == NULL) {
+				if (par->flags & HXOPT_PTHRU) {
 					char buf[16];
 					snprintf(buf, sizeof(buf), "-%s", cur);
-					HXdeque_push(remaining, HX_strdup(buf));
+					HXdeque_push(par->remaining, HX_strdup(buf));
 					cur = *++opt;
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
-				ret = HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, cur, flags);
+				ret = HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, cur, par->flags);
 				break;
 			}
 
-			cbi.match_ln = NULL;
-			cbi.match_sh = *cur;
+			par->cbi.match_ln = NULL;
+			par->cbi.match_sh = *cur;
 
-			if (takes_void(cbi.current->type)) {
+			if (takes_void(par->cbi.current->type)) {
 				/* -A */
-				cbi.data = NULL;
-				do_assign(&cbi);
+				par->cbi.data = NULL;
+				do_assign(&par->cbi);
 				++cur;
 				continue;
 			}
 
 			if (cur[1] != '\0') {
 				/* -Avalue */
-				cbi.data = cur + 1;
-				do_assign(&cbi);
+				par->cbi.data = cur + 1;
+				do_assign(&par->cbi);
 				state = HXOPT_S_NORMAL;
 				cur = *++opt;
 				continue;
 			}
 
 			cur = *++opt;
-			if (cbi.current->type & HXOPT_OPTIONAL) {
+			if (par->cbi.current->type & HXOPT_OPTIONAL) {
 				if (cur == NULL || *cur != '-' ||
 				    (cur[0] == '-' && cur[1] == '\0')) {
 					/* -f - -f bla */
-					cbi.data = cur;
+					par->cbi.data = cur;
 					cur = *++opt;
 				} else {
 					/*
 					 * -f -a-file --another --file --
 					 * endofoptions
 					 */
-					cbi.data = NULL;
+					par->cbi.data = NULL;
 				}
 			} else {
 				/* -A value */
 				if (cur == NULL) {
-					ret = HX_getopt_error(HXOPT_E_SHORT_MISSING, &cbi.match_sh, flags);
+					ret = HX_getopt_error(HXOPT_E_SHORT_MISSING, &par->cbi.match_sh, par->flags);
 					break;
 				}
-				cbi.data = cur;
+				par->cbi.data = cur;
 				cur = *++opt;
 			}
 
-			do_assign(&cbi);
+			do_assign(&par->cbi);
 			state = HXOPT_S_NORMAL;
 			continue;
 		}
 
 		if (state == HXOPT_S_TERMINATED) {
-			HXdeque_push(remaining, HX_strdup(*opt));
+			HXdeque_push(par->remaining, HX_strdup(*opt));
 			cur = *++opt;
 			continue;
 		}
@@ -619,7 +632,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				 * Note to popt developers: A single dash is
 				 * NOT an option!
 				 */
-				HXdeque_push(remaining, HX_strdup(*opt));
+				HXdeque_push(par->remaining, HX_strdup(*opt));
 				cur = *++opt;
 				continue;
 			}
@@ -631,7 +644,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				 * into @remaining. This is done in the next
 				 * round.
 				 */
-				if (!(flags & HXOPT_PTHRU))
+				if (!(par->flags & HXOPT_PTHRU))
 					cur = *++opt;
 				continue;
 			}
@@ -650,7 +663,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 				++cur;
 				continue;
 			}
-			HXdeque_push(remaining, HX_strdup(*opt));
+			HXdeque_push(par->remaining, HX_strdup(*opt));
 			cur = *++opt;
 			continue;
 		}
@@ -660,16 +673,16 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	}
 
 	if (ret != 0) {
-		if (flags & HXOPT_HELPONERR)
-			HX_getopt_help(&cbi, stderr);
-		else if (flags & HXOPT_USAGEONERR)
-			HX_getopt_usage(&cbi, stderr);
+		if (ps.flags & HXOPT_HELPONERR)
+			HX_getopt_help(&ps.cbi, stderr);
+		else if (ps.flags & HXOPT_USAGEONERR)
+			HX_getopt_usage(&ps.cbi, stderr);
 
-		HXdeque_genocide(remaining);
+		HXdeque_genocide(ps.remaining);
 		return ret;
 	}
 
-	if (flags & HXOPT_DESTROY_OLD)
+	if (ps.flags & HXOPT_DESTROY_OLD)
 		/*
 		 * Only the "true, original" argv is stored on the stack - the
 		 * argv that HX_getopt() produces is on the heap, so the
@@ -680,9 +693,9 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		HX_zvecfree(const_cast2(char **, *argv));
 
 	*argv = reinterpret_cast(const char **,
-	        HXdeque_to_vec(remaining, &argk));
+	        HXdeque_to_vec(ps.remaining, &argk));
 	*argc = argk;
-	HXdeque_free(remaining);
+	HXdeque_free(ps.remaining);
 	return 1;
 }
 
