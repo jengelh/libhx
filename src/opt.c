@@ -431,7 +431,7 @@ static int HX_getopt_error(int err, const char *key, unsigned int flags)
 EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
     const char ***argv, unsigned int flags)
 {
-	const char **opt = *argv, *shstr = NULL;
+	const char **opt = *argv;
 	struct HXdeque *remaining = HXdeque_init();
 	unsigned int state = HXOPT_S_NORMAL;
 	int ret = HXOPT_E_SUCCESS;
@@ -537,40 +537,40 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		}
 
 		if (state == HXOPT_S_SHORT) {
-			if (*shstr == '\0') {
+			if (*cur == '\0') {
 				cur = *++opt;
 				state = HXOPT_S_NORMAL;
 				continue;
 			}
 
-			cbi.current = lookup_short(table, *shstr);
+			cbi.current = lookup_short(table, *cur);
 			if (cbi.current == NULL) {
 				if (flags & HXOPT_PTHRU) {
 					char buf[16];
-					snprintf(buf, sizeof(buf), "-%s", shstr);
+					snprintf(buf, sizeof(buf), "-%s", cur);
 					HXdeque_push(remaining, HX_strdup(buf));
 					cur = *++opt;
 					state = HXOPT_S_NORMAL;
 					continue;
 				}
-				ret = HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, shstr, flags);
+				ret = HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, cur, flags);
 				break;
 			}
 
 			cbi.match_ln = NULL;
-			cbi.match_sh = *shstr;
+			cbi.match_sh = *cur;
 
 			if (takes_void(cbi.current->type)) {
 				/* -A */
 				cbi.data = NULL;
 				do_assign(&cbi);
-				++shstr;
+				++cur;
 				continue;
 			}
 
-			if (*(shstr + 1) != '\0') {
+			if (cur[1] != '\0') {
 				/* -Avalue */
-				cbi.data = shstr + 1;
+				cbi.data = cur + 1;
 				do_assign(&cbi);
 				state = HXOPT_S_NORMAL;
 				cur = *++opt;
@@ -594,7 +594,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			} else {
 				/* -A value */
 				if (cur == NULL) {
-					ret = HX_getopt_error(HXOPT_E_SHORT_MISSING, shstr, flags);
+					ret = HX_getopt_error(HXOPT_E_SHORT_MISSING, &cbi.match_sh, flags);
 					break;
 				}
 				cbi.data = cur;
@@ -646,7 +646,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			if (cur[0] == '-') {
 				/* Short option(s) - one or more(!) */
 				state = HXOPT_S_SHORT;
-				shstr = cur + 1;
+				++cur;
 				continue;
 			}
 			HXdeque_push(remaining, HX_strdup(*opt));
