@@ -65,7 +65,6 @@ enum {
 
 /**
  * HX_getopt_error - internal option parser error codes
- * %HXOPT_E_SUCCESS:		no error
  * %HXOPT_E_LONG_UNKNOWN:	unknown long option
  * %HXOPT_E_LONG_TAKESVOID:	long option was used with an arg (--long=arg)
  * %HXOPT_E_LONG_MISSING:	long option requires an argument
@@ -73,8 +72,7 @@ enum {
  * %HXOPT_E_SHORT_MISSING:	short option requires an argument
  */
 enum {
-	HXOPT_E_SUCCESS = 0,
-	HXOPT_E_LONG_UNKNOWN,
+	HXOPT_E_LONG_UNKNOWN = 1,
 	HXOPT_E_LONG_TAKESVOID,
 	HXOPT_E_LONG_MISSING,
 	HXOPT_E_SHORT_UNKNOWN,
@@ -620,7 +618,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	struct HX_getopt_vars ps;
 	const char **opt = *argv;
 	unsigned int state = HXOPT_S_NORMAL;
-	int ret = HXOPT_E_SUCCESS;
+	int ret = -HXOPT_ERR_SUCCESS;
 	unsigned int argk;
 	const char *cur;
 
