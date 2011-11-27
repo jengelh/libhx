@@ -185,6 +185,16 @@ enum {
 	SHCONF_ONE = 1 << 0,
 };
 
+/**
+ * Flags in struct HXoptcb.flags
+ * %HXOPTCB_BY_LONG:	cb was called by invocation of @current->ln
+ * %HXOPTCB_BY_SHORT:	cb was called by invocation of @current->sh
+ */
+enum {
+	HXOPTCB_BY_LONG  = 1 << 0,
+	HXOPTCB_BY_SHORT = 1 << 1,
+};
+
 struct HXoptcb {
 	const struct HXoption *table, *current;
 	const char *data;
@@ -192,8 +202,7 @@ struct HXoptcb {
 		double data_dbl;
 		long data_long;
 	};
-	const char *match_ln;
-	char match_sh;
+	unsigned int flags;
 };
 
 /**

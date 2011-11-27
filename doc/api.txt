@@ -19,6 +19,8 @@ RMV	MinVer	FirstA	Name
 3.12	3.12	3.12	HX_strndup
 3.12	3.12	3.12	HX_strnlen
 3.12	3.12	3.12	HXOPT_ERR_SYS
+3.12	3.12	3.12	HXOPTCB_BY_LONG
+3.12	3.12	3.12	HXOPTCB_BY_SHORT
 3.11	3.11	3.11	HXQUOTE_BASE64
 3.10	3.10	3.10	BUILD_BUG_ON_EXPR
 3.10	3.10	3.10	HX_readlink
@@ -304,7 +306,7 @@ MinVer	FirstA
 3.0	3.0	struct HXmap_ops
 3.0	3.0	struct HXmap_node
 3.12	1.10.0	struct HXoptcb
-1.10.0	1.10.0	struct HXoption
+3.12	1.10.0	struct HXoption
 2.2	2.2	struct HXproc_ops
 2.2	2.2	struct HXproc
 

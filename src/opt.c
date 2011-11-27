@@ -487,9 +487,7 @@ static int HX_getopt_twolong(const char *const *opt,
 		return HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, par->flags);
 	}
 
-	par->cbi.match_ln = key + 2;
-	par->cbi.match_sh = '\0';
-
+	par->cbi.flags = HXOPTCB_BY_LONG;
 	if (takes_void(par->cbi.current->type)) {
 		par->cbi.data = NULL;
 		return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG;
@@ -549,8 +547,7 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 		return ret;
 	}
 
-	par->cbi.match_ln = key + 2;
-	par->cbi.match_sh = '\0';
+	par->cbi.flags    = HXOPTCB_BY_LONG;
 	par->cbi.data     = value;
 	/* Not possible to use %HXOPT_I_ASSIGN due to transience of @key. */
 	do_assign(&par->cbi, par->arg0);
@@ -561,10 +558,12 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 static int HX_getopt_short(const char *const *opt, const char *cur,
     struct HX_getopt_vars *par)
 {
-	if (*cur == '\0')
+	char op = *cur;
+
+	if (op == '\0')
 		return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 
-	par->cbi.current = lookup_short(par->cbi.table, *cur);
+	par->cbi.current = lookup_short(par->cbi.table, op);
 	if (par->cbi.current == NULL) {
 		if (par->flags & HXOPT_PTHRU) {
 			/*
@@ -580,12 +579,10 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
-		return HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, cur, par->flags);
+		return HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, &op, par->flags);
 	}
 
-	par->cbi.match_ln = NULL;
-	par->cbi.match_sh = *cur;
-
+	par->cbi.flags = HXOPTCB_BY_SHORT;
 	if (takes_void(par->cbi.current->type)) {
 		/* -A */
 		par->cbi.data = NULL;
@@ -611,7 +608,7 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 	} else {
 		/* -A value */
 		if (cur == NULL)
-			return HX_getopt_error(HXOPT_E_SHORT_MISSING, &par->cbi.match_sh, par->flags);
+			return HX_getopt_error(HXOPT_E_SHORT_MISSING, &op, par->flags);
 		par->cbi.data = cur;
 		return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG2;
 	}
@@ -891,13 +888,14 @@ static void HX_shconf_break(void *ptr, char *line,
 
 static void HX_shconf_assign(void *table, const char *key, const char *value)
 {
-	struct HXoptcb cbi = {.table = table, .match_sh = '\0'};
+	struct HXoptcb cbi = {
+		.table = table,
+		.flags = HXOPTCB_BY_LONG,
+		.data  = value,
+	};
 
 	if ((cbi.current = lookup_long(table, key)) == NULL)
 		return;
-
-	cbi.match_ln = key;
-	cbi.data     = value;
 	do_assign(&cbi, NULL);
 }
 
