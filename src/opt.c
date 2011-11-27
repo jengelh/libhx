@@ -630,7 +630,9 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	ps.cbi.arg0  = **argv;
 	ps.cbi.table = table;
 
-	HXdeque_push(ps.remaining, HX_strdup(*opt++)); /* put argv[0] back */
+	if (*opt != NULL)
+		/* put argv[0] back */
+		HXdeque_push(ps.remaining, HX_strdup(*opt++));
 
 	for (cur = *opt; cur != NULL; ) {
 		if (state == HXOPT_S_TWOLONG)

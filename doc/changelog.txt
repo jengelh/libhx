@@ -10,6 +10,7 @@ Fixes:
 - option: do run callback on HXTYPE_BOOL
 - option: correct passthrough of squashed unknown short options
 - option: do not stop early when printing help/usage
+- option: avoid crash when passing an empty argv
 Enhancements:
 - build: deactivate type-checking of the *_cast() macros for clang due to a
   compiler bug involving nested structs-in-typeofs
