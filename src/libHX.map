@@ -12,9 +12,7 @@ global:
 	HX_ffs;
 	HX_getopt;
 	HX_getopt_help;
-	HX_getopt_help_cb;
 	HX_getopt_usage;
-	HX_getopt_usage_cb;
 	HX_irand;
 	HX_mkdir;
 	HX_rand;
@@ -165,6 +163,8 @@ global:
 
 LIBHX_3.12 {
 global:
+	HX_getopt_help_cb;
+	HX_getopt_usage_cb;
 	HX_mkdir2;
 	HX_strdup;
 	HX_strlcat;

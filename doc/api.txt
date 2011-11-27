@@ -10,7 +10,7 @@ Function reference
 
 R column: Recommend version number to use in PKG_CONFIG_CHECK in
 projects using libHX. Includes important bugfixes.
-M column: Lowest possible version with the same API.
+M column: Lowest possible version with the same function signature.
 F column: Function first seen in version, possibly with different API.
 
 RMV	MinVer	FirstA	Name
@@ -303,7 +303,7 @@ MinVer	FirstA
 3.0	3.0	struct HXmap
 3.0	3.0	struct HXmap_ops
 3.0	3.0	struct HXmap_node
-1.10.0	1.10.0	struct HXoptcb
+3.12	1.10.0	struct HXoptcb
 1.10.0	1.10.0	struct HXoption
 2.2	2.2	struct HXproc_ops
 2.2	2.2	struct HXproc

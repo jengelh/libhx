@@ -9,7 +9,7 @@ libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c ${mingw32_extra} ${proc_sources}
 libHX_la_LIBADD  = ${libdl_LIBS} ${libpthread_LIBS} ${librt_LIBS}
-libHX_la_LDFLAGS = -version-info 28:0:1 \
+libHX_la_LDFLAGS = -version-info 28:0:0 \
                    -Wl,--version-script=${srcdir}/libHX.map
 libHX_la_DEPENDENCIES = libHX.map
 

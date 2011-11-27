@@ -117,11 +117,13 @@ enum {
 
 /**
  * struct HX_getopt_vars - option parser working variable set
+ * @arg0:	saved program name
  * @remaining:	list of extracted non-options
  * @cbi:	callback info
  * @flags:	flags setting the behavior for HX_getopt
  */
 struct HX_getopt_vars {
+	const char *arg0;
 	struct HXdeque *remaining;
 	struct HXoptcb cbi;
 	unsigned int flags;
@@ -143,7 +145,7 @@ static bool posix_me_harder(void)
 	return true; /* non-empty string */
 }
 
-static void do_assign(struct HXoptcb *cbi)
+static void do_assign(struct HXoptcb *cbi, const char *arg0)
 {
 	const struct HXoption *opt = cbi->current;
 
@@ -220,6 +222,7 @@ static void do_assign(struct HXoptcb *cbi)
 			HXmc_strcpy(opt->ptr, cbi->data);
 		break;
 	case HXTYPE_XHELP:
+		cbi->data = arg0;
 		break;
 	default:
 		fprintf(stderr, "libHX-opt: illegal type %d\n",
@@ -550,7 +553,7 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 	par->cbi.match_sh = '\0';
 	par->cbi.data     = value;
 	/* Not possible to use %HXOPT_I_ASSIGN due to transience of @key. */
-	do_assign(&par->cbi);
+	do_assign(&par->cbi, par->arg0);
 	free(key);
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
@@ -673,7 +676,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	if (ps.remaining == NULL)
 		goto out;
 	ps.flags = flags;
-	ps.cbi.arg0  = **argv;
+	ps.arg0  = **argv;
 	ps.cbi.table = table;
 
 	if (*opt != NULL) {
@@ -708,7 +711,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			break;
 		}
 		if (state & HXOPT_I_ASSIGN)
-			do_assign(&ps.cbi);
+			do_assign(&ps.cbi, ps.arg0);
 		if (state & HXOPT_I_ADVARG)
 			cur = *++opt;
 		else if (state & HXOPT_I_ADVARG2)
@@ -742,6 +745,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		if (!(ps.flags & HXOPT_QUIET))
 			fprintf(stderr, "%s: %s\n", __func__, strerror(errno));
 	} else {
+		ps.cbi.data = ps.arg0;
 		if (ps.flags & HXOPT_HELPONERR)
 			HX_getopt_help(&ps.cbi, stderr);
 		else if (ps.flags & HXOPT_USAGEONERR)
@@ -793,7 +797,8 @@ EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 	FILE *fp = (nfp == NULL) ? stderr : nfp;
 	const struct HXoption *travp;
 	char tmp[84] = {};
-	const char *arg0 = cbi->arg0;
+	/* Program name now expected in .data */
+	const char *arg0 = cbi->data;
 
 	if (arg0 == NULL)
 		arg0 = "($0)";
@@ -893,7 +898,7 @@ static void HX_shconf_assign(void *table, const char *key, const char *value)
 
 	cbi.match_ln = key;
 	cbi.data     = value;
-	do_assign(&cbi);
+	do_assign(&cbi, NULL);
 }
 
 EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)

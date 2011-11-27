@@ -186,7 +186,6 @@ enum {
 };
 
 struct HXoptcb {
-	const char *arg0;
 	const struct HXoption *table, *current;
 	const char *data;
 	union {

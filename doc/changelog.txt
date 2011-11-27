@@ -23,6 +23,7 @@ Enhancements:
 - string: add a HX_strnlen function
 - mc: use an implicit minimum allocated length
 Changes:
+- option: remove struct HXoptcb.arg0
 - string: unline HX_strdup, HX_strlcat, HX_strlcpy, HX_strnlcat
 
 
