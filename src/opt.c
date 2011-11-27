@@ -25,9 +25,6 @@
 /* Definitions */
 #define C_OPEN  '('
 #define C_CLOSE ')'
-#define CALL_CB \
-	if (opt->cb != NULL) \
-		opt->cb(cbi);
 #define NTYPE_S(con, tpx) NTYPE((con), tpx, strtol)
 #define NTYPE_U(con, tpx) NTYPE((con), tpx, strtoul)
 
@@ -48,7 +45,6 @@
 		} \
 	} \
 	cbi->data_long = v; \
-	CALL_CB; \
 	break; \
 }
 
@@ -145,17 +141,14 @@ static void do_assign(struct HXoptcb *cbi)
 			else                            *p = 1;
 		}
 		cbi->data_long = 1;
-		CALL_CB;
 		break;
 	}
 	case HXTYPE_VAL:
 		*static_cast(int *, opt->ptr) = cbi->data_long = opt->val;
-		CALL_CB;
 		break;
 	case HXTYPE_SVAL:
 		*reinterpret_cast(const char **, opt->ptr) =
 			cbi->data = opt->sval;
-		CALL_CB;
 		break;
 	case HXTYPE_BOOL: {
 		int *p;
@@ -165,12 +158,10 @@ static void do_assign(struct HXoptcb *cbi)
 			     strcasecmp(cbi->data, "true") == 0 ||
 			     (HX_isdigit(*cbi->data) &&
 			     strtoul(cbi->data, NULL, 0) != 0);
-		CALL_CB;
 		break;
 	}
 	case HXTYPE_BYTE:
 		*static_cast(unsigned char *, opt->ptr) = *cbi->data;
-		CALL_CB;
 		break;
 
 	NTYPE_U(HXTYPE_UCHAR,  unsigned char);
@@ -197,33 +188,30 @@ static void do_assign(struct HXoptcb *cbi)
 		cbi->data_dbl = strtod(cbi->data, NULL);
 		if (opt->ptr != NULL)
 			*static_cast(float *, opt->ptr) = cbi->data_dbl;
-		CALL_CB;
 		break;
 	case HXTYPE_DOUBLE:
 		cbi->data_dbl = strtod(cbi->data, NULL);
 		if (opt->ptr != NULL)
 			*static_cast(double *, opt->ptr) = cbi->data_dbl;
-		CALL_CB;
 		break;
 	case HXTYPE_STRING:
 		if (opt->ptr != NULL)
 			*static_cast(char **, opt->ptr) = HX_strdup(cbi->data);
-		CALL_CB;
 		break;
 	case HXTYPE_STRDQ:
 		HXdeque_push(opt->ptr, HX_strdup(cbi->data));
-		CALL_CB;
 		break;
 	case HXTYPE_MCSTR:
 		if (opt->ptr != NULL)
 			HXmc_strcpy(opt->ptr, cbi->data);
-		CALL_CB;
 		break;
 	default:
 		fprintf(stderr, "libHX-opt: illegal type %d\n",
 		        opt->type & HXOPT_TYPEMASK);
 		break;
 	} /* switch */
+	if (opt->cb != NULL)
+		opt->cb(cbi);
 }
 
 static inline const struct HXoption *lookup_short(const struct HXoption *table,
