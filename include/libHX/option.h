@@ -37,78 +37,133 @@ extern int HXformat2_fprintf(const struct HXformat_map *,
 /*
  *	OPT.C
  */
-enum {
-	/* .type */
+
+/**
+ * Available types for struct HXoption.type.
+ * %HXTYPE_NONE:	[-o] (int *) No argument; counts presence.
+ * %HXTYPE_VAL:		[-o] (int *) Set to value in .val.
+ * %HXTYPE_SVAL:	[-o] (const char *) Set to value in .sval.
+ * %HXTYPE_BOOL:	[fo] (int *) Parse argument as boolean
+ * 			     ("yes", "no", "true", "false", 0 or non-zero)
+ * %HXTYPE_BYTE:	[fo] (unsigned char *) Take first char of argument
+ * %HXTYPE_UCHAR:	[fo] (unsigned char *) An integer.
+ * %HXTYPE_CHAR:	[fo] (char *) An integer.
+ * %HXTYPE_USHORT:	[fo] (unsigned short *) An integer.
+ * %HXTYPE_SHORT:	[fo] (short *) An integer.
+ * %HXTYPE_UINT:	[fo] (unsigned int *) An integer.
+ * %HXTYPE_INT:		[fo] (int *) An integer.
+ * %HXTYPE_ULONG:	[fo] (unsigned long *) An integer.
+ * %HXTYPE_LONG:	[fo] (long *) An integer.
+ * %HXTYPE_ULLONG:	[fo] (unsigned long long *) An integer.
+ * %HXTYPE_LLONG:	[fo] (long long *) An integer.
+ * %HXTYPE_FLOAT:	[fo] (float *) Read a floating point number
+ * %HXTYPE_DOUBLE:	[fo] (double *) Read a floating point number
+ * %HXTYPE_STRING:	[fo] (char **) Any string.
+ * %HXTYPE_STRP:	[f-] (const char *const *) A string.
+ * %HXTYPE_STRDQ:	[-o] (struct HXdeque *) A string.
+ * %HXTYPE_UINT8:	[-o] (uint8_t *) An integer.
+ * %HXTYPE_UINT16:	[-o] (uint8_t *) An integer.
+ * %HXTYPE_UINT32:	[-o] (uint8_t *) An integer.
+ * %HXTYPE_UINT64:	[-o] (uint8_t *) An integer.
+ * %HXTYPE_INT8:	[-o] (uint8_t *) An integer.
+ * %HXTYPE_INT16:	[-o] (uint8_t *) An integer.
+ * %HXTYPE_INT32:	[-o] (uint8_t *) An integer.
+ * %HXTYPE_INT64:	[-o] (uint8_t *) An integer.
+ * %HXTYPE_MCSTR:	[-o] (hxmc_t *) A string.
+ *
+ * Type expected of struct HXoption.ptr is given in ().
+ * HX_getopt (o) and HXformat_* (f) support different sets, marked with [].
+ */
+enum HX_option_type {
 	HXTYPE_NONE = 0,
-	/* for opt: set specific integer value */
 	HXTYPE_VAL,
-	/* for opt: set specific string value */
 	HXTYPE_SVAL,
-	/*
-	 * accept a string "yes", "no", "true", "false" and
-	 * put into *(unsigned int*)
-	 */
 	HXTYPE_BOOL,
-	/* read _one byte_ and put it into *(unsigned char *) */
 	HXTYPE_BYTE,
-	/* read an integer/float (sscanf %d/%o/%x/%f) */
-	HXTYPE_UCHAR,
+	HXTYPE_UCHAR, /* 5 */
 	HXTYPE_CHAR,
 	HXTYPE_USHORT,
 	HXTYPE_SHORT,
 	HXTYPE_UINT,
-	HXTYPE_INT,
+	HXTYPE_INT, /* 10 */
 	HXTYPE_ULONG,
 	HXTYPE_LONG,
 	HXTYPE_ULLONG,
 	HXTYPE_LLONG,
-	HXTYPE_FLOAT,
+	HXTYPE_FLOAT, /* 15 */
 	HXTYPE_DOUBLE,
-	/* read string and put into *(const char **) */
 	HXTYPE_STRING,
 	HXTYPE_STRP, /* (const char **) */
 	HXTYPE_STRDQ,
-	HXTYPE_UINT8,
+	HXTYPE_UINT8, /* 20 */
 	HXTYPE_UINT16,
 	HXTYPE_UINT32,
 	HXTYPE_UINT64,
 	HXTYPE_INT8,
-	HXTYPE_INT16,
+	HXTYPE_INT16, /* 25 */
 	HXTYPE_INT32,
 	HXTYPE_INT64,
-	HXTYPE_MCSTR, /* put into hxmc_t */
-	HXTYPE_XSNTMARK, /* sentinel marker */
+	HXTYPE_MCSTR,
+	HXTYPE_XSNTMARK, /* 29: sentinel marker */
+};
 
-	/* .type extra flags */
-	/* argument is optional */
+/**
+ * Extra flags to be OR'ed into struct HXoption.type.
+ * %HXOPT_OPTIONAL:	argument to option is optional
+ * 			(it's bad taste to use this)
+ * %HXOPT_INC:		increase variable pointed to by .ptr.
+ * 			(only applies to %HXTYPE_NONE)
+ * %HXOPT_DEC:		increase variable pointed to by .ptr.
+ * 			(only applies to %HXTYPE_NONE)
+ * %HXOPT_NOT:		negate input (*ptr), this is done before OR/AND
+ * %HXOPT_OR:		OR *ptr by argument
+ * %HXOPT_AND:		AND *ptr by argument
+ * %HXOPT_XOR:		XOR *ptr by argument
+ */
+enum {
 	HXOPT_OPTIONAL = 1 << 6,
-	/* increase pointed variable */
 	HXOPT_INC      = 1 << 7,
-	/* decrease pointed variable */
 	HXOPT_DEC      = 1 << 8,
-	/* negate input first */
 	HXOPT_NOT      = 1 << 9,
-	/* or pointed variable with input */
 	HXOPT_OR       = 1 << 10,
-	/* and pointed variable with input */
 	HXOPT_AND      = 1 << 11,
-	/* xor pointed variable with input */
 	HXOPT_XOR      = 1 << 12,
-	HXFORMAT_IMMED = 1 << 13,
+};
 
-	/* HX_getopt() flags */
+/**
+ * Flags (4th arg) to HX_getopt.
+ */
+enum {
 	HXOPT_PTHRU       = 1 << 0,
 	HXOPT_DESTROY_OLD = 1 << 1,
 	HXOPT_QUIET       = 1 << 2,
 	HXOPT_HELPONERR   = 1 << 3,
 	HXOPT_USAGEONERR  = 1 << 4,
+};
 
-	/* Return types for HX_getopt() */
-	HXOPT_ERR_UNKN = 1,
+/**
+ * Return values for HX_getopt.
+ */
+enum {
+	HXOPT_ERR_SUCCESS = 0,
+	HXOPT_ERR_UNKN,
 	HXOPT_ERR_VOID,
 	HXOPT_ERR_MIS,
+};
 
-	SHCONF_ONE = 1 << 0, /* only read one configuration file */
+/**
+ * Extra flags to be OR'ed into HXformat_add()'s 4th arg.
+ */
+enum {
+	HXFORMAT_IMMED = 1 << 13,
+};
+
+/**
+ * Flags for HX_shconfig_pv()
+ * %SHCONF_ONE:		only read one configuration file
+ */
+enum {
+	SHCONF_ONE = 1 << 0,
 };
 
 struct HXoptcb {
@@ -123,6 +178,18 @@ struct HXoptcb {
 	char match_sh;
 };
 
+/**
+ * @ln:		long option string (without "--"), or %NULL
+ * @sh:		short option character, or '\0'
+ * @type:	type of variable pointed to by .ptr
+ * @ptr:	pointer to variable to set/update
+ * @uptr:	freeform user-supplied pointer
+ * @cb:		callback function to invoke, or %NULL
+ * @val:	specific value to set if type == HXTYPE_VAL
+ * @sval:	specific value to set if type == HXTYPE_SVAL
+ * @help:	help string to display
+ * @htyp:	type string to show in option's help
+ */
 struct HXoption {
 	const char *ln;
 	char sh;
