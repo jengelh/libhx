@@ -532,9 +532,14 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 	par->cbi.current = lookup_short(par->cbi.table, *cur);
 	if (par->cbi.current == NULL) {
 		if (par->flags & HXOPT_PTHRU) {
-			char buf[16];
-			snprintf(buf, sizeof(buf), "-%s", cur);
-			HXdeque_push(par->remaining, HX_strdup(buf));
+			/*
+			 * @cur-1 is always valid: it is either the previous
+			 * char, or it is '-'.
+			 */
+			char *buf = HX_strdup(cur - 1);
+			if (buf != NULL)
+				*buf = '-';
+			HXdeque_push(par->remaining, buf);
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
 		return HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, cur, par->flags);
