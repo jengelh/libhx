@@ -696,7 +696,7 @@ EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
 	HX_getopt_usage(cbi, nfp);
 
 	/* Find maximum indent */
-	for (travp = cbi->table; travp->ln != NULL || travp->sh != '\0'; ++travp) {
+	for (travp = cbi->table; travp->type != HXTYPE_XSNTMARK; ++travp) {
 		size_t tl;
 
 		opt_to_text(travp, tmp, sizeof(tmp), W_EQUAL);
@@ -705,7 +705,7 @@ EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
 	}
 
 	/* Print table */
-	for (travp = cbi->table; travp->ln != NULL || travp->sh != '\0'; ++travp) {
+	for (travp = cbi->table; travp->type != HXTYPE_XSNTMARK; ++travp) {
 		opt_to_text(travp, tmp, sizeof(tmp), W_NONE);
 		fprintf(fp, "  %-*s    ", static_cast(int, tw), tmp);
 		if (travp->help == NULL)
@@ -736,7 +736,7 @@ EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 		fprintf(fp, "\n     ");
 		wd = 6;
 	}
-	for (travp = cbi->table; travp->ln != NULL || travp->sh != '\0'; ++travp) {
+	for (travp = cbi->table; travp->type != HXTYPE_XSNTMARK; ++travp) {
 		if (!(travp->ln == NULL && travp->sh != '\0' &&
 		    takes_void(travp->type)))
 			continue;
@@ -760,7 +760,7 @@ EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 	}
 
 	/* Any other args */
-	for (travp = cbi->table; travp->ln != NULL || travp->sh != '\0'; ++travp) {
+	for (travp = cbi->table; travp->type != HXTYPE_XSNTMARK; ++travp) {
 		if (travp->ln == NULL && travp->sh != '\0' &&
 		    takes_void(travp->type))
 			continue;
