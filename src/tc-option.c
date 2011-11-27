@@ -34,6 +34,8 @@ static struct HXoption table[] = {
 	 .ptr = &opt_kflag, .help = "Callback function for flags"},
 	{.ln = "long", .sh = 'L', .type = HXTYPE_LONG, .cb = opt_cbf,
 	 .ptr = &opt_klong, .help = "Callback function for integers"},
+	{.sh = 'B', .type = HXTYPE_BOOL, .ptr = &opt_v,
+	 .cb = opt_cbf, .help = "Bool test", .htyp = "value"},
 	{.sh = 'P', .type = HXTYPE_MCSTR, .ptr = &opt_mcstr,
 	 .help = "Any string"},
 	{.ln = "str", .sh = 'S', .type = HXTYPE_STRING, .cb = opt_cbf,

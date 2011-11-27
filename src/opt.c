@@ -165,6 +165,7 @@ static void do_assign(struct HXoptcb *cbi)
 			     strcasecmp(cbi->data, "true") == 0 ||
 			     (HX_isdigit(*cbi->data) &&
 			     strtoul(cbi->data, NULL, 0) != 0);
+		CALL_CB;
 		break;
 	}
 	case HXTYPE_BYTE:
@@ -172,8 +173,8 @@ static void do_assign(struct HXoptcb *cbi)
 		CALL_CB;
 		break;
 
-	NTYPE_U(HXTYPE_UCHAR,  unsigned char)
-	NTYPE_S(HXTYPE_CHAR,   char)
+	NTYPE_U(HXTYPE_UCHAR,  unsigned char);
+	NTYPE_S(HXTYPE_CHAR,   char);
 	NTYPE_U(HXTYPE_USHORT, unsigned short);
 	NTYPE_S(HXTYPE_SHORT,  short);
 	NTYPE_U(HXTYPE_UINT,   unsigned int);
