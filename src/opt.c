@@ -102,19 +102,21 @@ enum HX_getopt_state {
 };
 
 /**
+ * %HXOPT_I_ASSIGN:	call do_assign
  * %HXOPT_I_ADVARG:	advance to next argument in @opt
  * %HXOPT_I_ADVARG2:	advance by two arguments in @opt
  * %HXOPT_I_ADVCHAR:	advance to next character in @cur
  * %HXOPT_I_ERROR:	system/HXoption error
  */
 enum {
+	HXOPT_I_ASSIGN  = 1 << 3,
 	HXOPT_I_ADVARG  = 1 << 4,
 	HXOPT_I_ADVARG2 = 1 << 5,
 	HXOPT_I_ADVCHAR = 1 << 6,
 	HXOPT_I_ERROR   = 1 << (sizeof(int) * CHAR_BIT - 2),
 
 	HXOPT_I_MASK    = HXOPT_I_ADVARG | HXOPT_I_ADVARG2 | HXOPT_I_ADVCHAR |
-	                  HXOPT_I_ERROR,
+	                  HXOPT_I_ASSIGN | HXOPT_I_ERROR,
 };
 
 /**
@@ -459,7 +461,6 @@ static int HX_getopt_error(int err, const char *key, unsigned int flags)
 static int HX_getopt_twolong(const char *const *opt,
     struct HX_getopt_vars *par)
 {
-	unsigned int adv;
 	const char *key = opt[0], *value = opt[1];
 
 	par->cbi.current = lookup_long(par->cbi.table, key + 2);
@@ -476,28 +477,25 @@ static int HX_getopt_twolong(const char *const *opt,
 
 	if (takes_void(par->cbi.current->type)) {
 		par->cbi.data = NULL;
-		adv = HXOPT_I_ADVARG;
+		return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG;
 	} else if (par->cbi.current->type & HXOPT_OPTIONAL) {
 		/* Rule: take arg if next thing is not-null, not-option. */
 		if (value == NULL || *value != '-' ||
 		    (value[0] == '-' && value[1] == '\0')) {
 			/* --file -, --file bla */
 			par->cbi.data = value;
-			adv = HXOPT_I_ADVARG2;
+			return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG2;
 		} else {
 			/* --file --another --file -- endofoptions */
 			par->cbi.data = NULL;
-			adv = HXOPT_I_ADVARG;
+			return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG;
 		}
 	} else {
 		if (value == NULL)
 			return HX_getopt_error(HXOPT_E_LONG_MISSING, key, par->flags);
 		par->cbi.data = value;
-		adv = HXOPT_I_ADVARG2;
+		return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG2;
 	}
-
-	do_assign(&par->cbi);
-	return HXOPT_S_NORMAL | adv;
 }
 
 static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
@@ -531,6 +529,7 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 	par->cbi.match_ln = key + 2;
 	par->cbi.match_sh = '\0';
 	par->cbi.data     = value;
+	/* Not possible to use %HXOPT_I_ASSIGN due to transience of @key. */
 	do_assign(&par->cbi);
 	free(key);
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
@@ -539,8 +538,6 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 static int HX_getopt_short(const char *const *opt, const char *cur,
     struct HX_getopt_vars *par)
 {
-	unsigned int adv;
-
 	if (*cur == '\0')
 		return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 
@@ -561,13 +558,11 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 	if (takes_void(par->cbi.current->type)) {
 		/* -A */
 		par->cbi.data = NULL;
-		do_assign(&par->cbi);
-		return HXOPT_S_SHORT | HXOPT_I_ADVCHAR;
+		return HXOPT_S_SHORT | HXOPT_I_ASSIGN | HXOPT_I_ADVCHAR;
 	} else if (cur[1] != '\0') {
 		/* -Avalue */
 		par->cbi.data = cur + 1;
-		do_assign(&par->cbi);
-		return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
+		return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG;
 	}
 
 	cur = *++opt;
@@ -576,22 +571,19 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 		    (cur[0] == '-' && cur[1] == '\0')) {
 			/* -f - -f bla */
 			par->cbi.data = cur;
-			adv = HXOPT_I_ADVARG2;
+			return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG2;
 		} else {
 			/* -f -a-file --another --file -- endofoptions */
 			par->cbi.data = NULL;
-			adv = HXOPT_I_ADVARG;
+			return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG;
 		}
 	} else {
 		/* -A value */
 		if (cur == NULL)
 			return HX_getopt_error(HXOPT_E_SHORT_MISSING, &par->cbi.match_sh, par->flags);
 		par->cbi.data = cur;
-		adv = HXOPT_I_ADVARG2;
+		return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG2;
 	}
-
-	do_assign(&par->cbi);
-	return HXOPT_S_NORMAL | adv;
 }
 
 static int HX_getopt_term(const char *cur, const struct HX_getopt_vars *par)
@@ -663,6 +655,8 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			ret = state & ~HXOPT_I_ERROR;
 			break;
 		}
+		if (state & HXOPT_I_ASSIGN)
+			do_assign(&ps.cbi);
 		if (state & HXOPT_I_ADVARG)
 			cur = *++opt;
 		else if (state & HXOPT_I_ADVARG2)
