@@ -683,7 +683,8 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 
 	*argv = reinterpret_cast(const char **,
 	        HXdeque_to_vec(ps.remaining, &argk));
-	*argc = argk;
+	if (argc != NULL)
+		*argc = argk;
 	HXdeque_free(ps.remaining);
 	return 1;
 }

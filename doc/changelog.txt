@@ -15,6 +15,7 @@ Enhancements:
 - build: deactivate type-checking of the *_cast() macros for clang due to a
   compiler bug involving nested structs-in-typeofs
 - io: add HX_mkdir2 which can take a mode argument
+- option: allow argc=NULL on HX_getopt
 - string: add a HX_strndup function
 - string: add a HX_strnlen function
 - mc: use an implicit minimum allocated length
