@@ -659,32 +659,34 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		state &= ~HXOPT_I_MASK;
 	}
 
-	if (ret != 0) {
+	if (ret == HXOPT_ERR_SUCCESS) {
+		if (ps.flags & HXOPT_DESTROY_OLD)
+			/*
+			 * Only the "true, original" argv is stored on the
+			 * stack - the argv that HX_getopt() produces is on
+			 * the heap, so the %HXOPT_DESTROY_OLD flag should be
+			 * passed when you use passthrough chaining, i.e. all
+			 * but the first call to HX_getopt() should have this
+			 * set.
+			 */
+			HX_zvecfree(const_cast2(char **, *argv));
+
+		*argv = reinterpret_cast(const char **,
+		        HXdeque_to_vec(ps.remaining, &argk));
+		if (argc != NULL)
+			*argc = argk;
+
+		/* I just notice that %HXOPT_ERR_SUCCESS is never used.. */
+		ret = 1;
+	} else {
 		if (ps.flags & HXOPT_HELPONERR)
 			HX_getopt_help(&ps.cbi, stderr);
 		else if (ps.flags & HXOPT_USAGEONERR)
 			HX_getopt_usage(&ps.cbi, stderr);
-
-		HXdeque_genocide(ps.remaining);
-		return ret;
 	}
 
-	if (ps.flags & HXOPT_DESTROY_OLD)
-		/*
-		 * Only the "true, original" argv is stored on the stack - the
-		 * argv that HX_getopt() produces is on the heap, so the
-		 * HXOPT_DESTROY_OLD flag should be passed when you use
-		 * passthrough chaining, i.e. all but the first call to
-		 * HX_getopt() should have this set.
-		 */
-		HX_zvecfree(const_cast2(char **, *argv));
-
-	*argv = reinterpret_cast(const char **,
-	        HXdeque_to_vec(ps.remaining, &argk));
-	if (argc != NULL)
-		*argc = argk;
 	HXdeque_free(ps.remaining);
-	return 1;
+	return ret;
 }
 
 EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
