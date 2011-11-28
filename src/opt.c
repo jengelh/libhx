@@ -65,7 +65,6 @@ enum {
 
 /**
  * HX_getopt_error - internal option parser error codes
- * %HXOPT_E_SUCCESS:		no error
  * %HXOPT_E_LONG_UNKNOWN:	unknown long option
  * %HXOPT_E_LONG_TAKESVOID:	long option was used with an arg (--long=arg)
  * %HXOPT_E_LONG_MISSING:	long option requires an argument
@@ -73,8 +72,7 @@ enum {
  * %HXOPT_E_SHORT_MISSING:	short option requires an argument
  */
 enum {
-	HXOPT_E_SUCCESS = 0,
-	HXOPT_E_LONG_UNKNOWN,
+	HXOPT_E_LONG_UNKNOWN = 1,
 	HXOPT_E_LONG_TAKESVOID,
 	HXOPT_E_LONG_MISSING,
 	HXOPT_E_SHORT_UNKNOWN,
@@ -422,26 +420,26 @@ static int HX_getopt_error(int err, const char *key, unsigned int flags)
 	case HXOPT_E_LONG_UNKNOWN:
 		if (!(flags & HXOPT_QUIET))
 			fprintf(stderr, "Unknown option: %s\n", key);
-		return HXOPT_I_ERROR | -HXOPT_ERR_UNKN;
+		return HXOPT_I_ERROR | HXOPT_ERR_UNKN;
 	case HXOPT_E_LONG_TAKESVOID:
 		if (!(flags & HXOPT_QUIET))
 			fprintf(stderr, "Option %s does not take "
 			        "any argument\n", key);
-		return HXOPT_I_ERROR | -HXOPT_ERR_VOID;
+		return HXOPT_I_ERROR | HXOPT_ERR_VOID;
 	case HXOPT_E_LONG_MISSING:
 		if (!(flags & HXOPT_QUIET))
 			fprintf(stderr, "Option %s requires an "
 			        "argument\n", key);
-		return HXOPT_I_ERROR | -HXOPT_ERR_MIS;
+		return HXOPT_I_ERROR | HXOPT_ERR_MIS;
 	case HXOPT_E_SHORT_UNKNOWN:
 		if (!(flags & HXOPT_QUIET))
 			fprintf(stderr, "Unknown option: -%c\n", *key);
-		return HXOPT_I_ERROR | -HXOPT_ERR_UNKN;
+		return HXOPT_I_ERROR | HXOPT_ERR_UNKN;
 	case HXOPT_E_SHORT_MISSING:
 		if (!(flags & HXOPT_QUIET))
 			fprintf(stderr, "Option -%c requires an "
 			        "argument\n", *key);
-		return HXOPT_I_ERROR | -HXOPT_ERR_MIS;
+		return HXOPT_I_ERROR | HXOPT_ERR_MIS;
 	}
 	return HXOPT_I_ERROR;
 }
@@ -454,7 +452,13 @@ static int HX_getopt_twolong(const char *const *opt,
 	par->cbi.current = lookup_long(par->cbi.table, key + 2);
 	if (par->cbi.current == NULL) {
 		if (par->flags & HXOPT_PTHRU) {
-			HXdeque_push(par->remaining, HX_strdup(key));
+			char *tmp = HX_strdup(key);
+			if (tmp == NULL)
+				return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+			if (HXdeque_push(par->remaining, tmp) == NULL) {
+				free(tmp);
+				return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
 		return HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, par->flags);
@@ -489,15 +493,23 @@ static int HX_getopt_twolong(const char *const *opt,
 static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 {
 	int ret;
-	char *key = HX_strdup(cur), *value = strchr(key, '=');
+	char *key, *value;
 
+	key = HX_strdup(cur);
+	if (key == NULL)
+		return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+
+	value = strchr(key, '=');
 	*value++ = '\0';
 	par->cbi.current = lookup_long(par->cbi.table, key + 2);
 	if (par->cbi.current == NULL) {
 		if (par->flags & HXOPT_PTHRU) {
 			/* Undo nuke of '=' and reuse alloc */
 			value[-1] = '=';
-			HXdeque_push(par->remaining, key);
+			if (HXdeque_push(par->remaining, key) == NULL) {
+				free(key);
+				return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
 		ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, par->flags);
@@ -539,7 +551,10 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 			char *buf = HX_strdup(cur - 1);
 			if (buf != NULL)
 				*buf = '-';
-			HXdeque_push(par->remaining, buf);
+			if (HXdeque_push(par->remaining, buf) == NULL) {
+				free(buf);
+				return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
 		return HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, cur, par->flags);
@@ -581,7 +596,13 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 
 static int HX_getopt_term(const char *cur, const struct HX_getopt_vars *par)
 {
-	HXdeque_push(par->remaining, HX_strdup(cur));
+	char *tmp = HX_strdup(cur);
+	if (tmp == NULL)
+		return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+	if (HXdeque_push(par->remaining, tmp) == NULL) {
+		free(tmp);
+		return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+	}
 	return HXOPT_S_TERMINATED | HXOPT_I_ADVARG;
 }
 
@@ -620,18 +641,30 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	struct HX_getopt_vars ps;
 	const char **opt = *argv;
 	unsigned int state = HXOPT_S_NORMAL;
-	int ret = HXOPT_E_SUCCESS;
+	int ret = HXOPT_ERR_SYS;
 	unsigned int argk;
 	const char *cur;
 
 	memset(&ps, 0, sizeof(ps));
 	ps.remaining = HXdeque_init();
+	if (ps.remaining == NULL)
+		goto out;
 	ps.flags = flags;
 	ps.cbi.arg0  = **argv;
 	ps.cbi.table = table;
 
-	HXdeque_push(ps.remaining, HX_strdup(*opt++)); /* put argv[0] back */
+	if (*opt != NULL) {
+		/* put argv[0] back */
+		char *arg = HX_strdup(*opt++);
+		if (arg == NULL)
+			goto out;
+		if (HXdeque_push(ps.remaining, arg) == NULL) {
+			free(arg);
+			goto out;
+		}
+	}
 
+	ret = HXOPT_ERR_SUCCESS;
 	for (cur = *opt; cur != NULL; ) {
 		if (state == HXOPT_S_TWOLONG)
 			state = HX_getopt_twolong(opt, &ps);
@@ -659,31 +692,38 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		state &= ~HXOPT_I_MASK;
 	}
 
-	if (ret != 0) {
+ out:
+	if (ret == HXOPT_ERR_SUCCESS) {
+		if (ps.flags & HXOPT_DESTROY_OLD)
+			/*
+			 * Only the "true, original" argv is stored on the
+			 * stack - the argv that HX_getopt() produces is on
+			 * the heap, so the %HXOPT_DESTROY_OLD flag should be
+			 * passed when you use passthrough chaining, i.e. all
+			 * but the first call to HX_getopt() should have this
+			 * set.
+			 */
+			HX_zvecfree(const_cast2(char **, *argv));
+
+		*argv = reinterpret_cast(const char **,
+		        HXdeque_to_vec(ps.remaining, &argk));
+		if (argc != NULL)
+			*argc = argk;
+
+		/* I just notice that %HXOPT_ERR_SUCCESS is never used.. */
+		ret = -1;
+	} else if (ret == HXOPT_ERR_SYS) {
+		if (!(ps.flags & HXOPT_QUIET))
+			fprintf(stderr, "%s: %s\n", __func__, strerror(errno));
+	} else {
 		if (ps.flags & HXOPT_HELPONERR)
 			HX_getopt_help(&ps.cbi, stderr);
 		else if (ps.flags & HXOPT_USAGEONERR)
 			HX_getopt_usage(&ps.cbi, stderr);
-
-		HXdeque_genocide(ps.remaining);
-		return ret;
 	}
 
-	if (ps.flags & HXOPT_DESTROY_OLD)
-		/*
-		 * Only the "true, original" argv is stored on the stack - the
-		 * argv that HX_getopt() produces is on the heap, so the
-		 * HXOPT_DESTROY_OLD flag should be passed when you use
-		 * passthrough chaining, i.e. all but the first call to
-		 * HX_getopt() should have this set.
-		 */
-		HX_zvecfree(const_cast2(char **, *argv));
-
-	*argv = reinterpret_cast(const char **,
-	        HXdeque_to_vec(ps.remaining, &argk));
-	*argc = argk;
 	HXdeque_free(ps.remaining);
-	return 1;
+	return -ret;
 }
 
 EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
@@ -723,12 +763,17 @@ EXPORT_SYMBOL void HX_getopt_help_cb(const struct HXoptcb *cbi)
 
 EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 {
-	size_t wd = sizeof("Usage:") + strlen(HX_basename(cbi->arg0)), tw = 0;
+	size_t wd, tw = 0;
 	FILE *fp = (nfp == NULL) ? stderr : nfp;
 	const struct HXoption *travp;
 	char tmp[84] = {};
+	const char *arg0 = cbi->arg0;
 
-	fprintf(fp, "Usage: %s", HX_basename(cbi->arg0));
+	if (arg0 == NULL)
+		arg0 = "($0)";
+
+	wd = sizeof("Usage:") + strlen(arg0);
+	fprintf(fp, "Usage: %s", arg0);
 
 	/* Short-only flags */
 	if (wd + 5 > SCREEN_WIDTH) {

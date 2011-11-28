@@ -57,8 +57,8 @@ static struct HXoption table[] = {
 	{.sh = 'G', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
 	{.sh = 'H', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
 	{.sh = 'I', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
-	{.sh = 'J', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
 	HXOPT_AUTOHELP,
+	{.sh = 'J', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
 	HXOPT_TABLEEND,
 };
 
@@ -85,12 +85,22 @@ static void t_pthru(void)
 	printf("\n");
 }
 
+static void t_empty_argv(void)
+{
+	const char *zero_argv[] = {NULL}, **zero_argp = zero_argv;
+	int zero_argc = 0;
+
+	printf("Testing argv={NULL}\n");
+	HX_getopt(table, &zero_argc, &zero_argp, HXOPT_USAGEONERR);
+}
+
 int main(int argc, const char **argv)
 {
 	if (HX_init() <= 0)
 		abort();
 	printf("Return value of HX_getopt: %d\n",
 	       HX_getopt(table, &argc, &argv, HXOPT_USAGEONERR));
+	t_empty_argv();
 
 	printf("Either-or is: %s\n", opt_eitheror[opt_dst]);
 	printf("values: D=%lf I=%d L=%ld S=%s\n",
