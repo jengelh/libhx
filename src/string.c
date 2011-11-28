@@ -263,6 +263,16 @@ EXPORT_SYMBOL char *HX_strdup(const char *src)
 	return HX_strndup(src, SIZE_MAX);
 }
 
+EXPORT_SYMBOL char *HX_strlncat(char *dest, const char *src, size_t dlen,
+    size_t slen)
+{
+	ssize_t x = dlen - strlen(dest) - 1;
+	if (x <= 0)
+		return dest;
+	x = ((ssize_t)slen < x) ? (ssize_t)slen : x;
+	return strncat(dest, src, x);
+}
+
 EXPORT_SYMBOL char *HX_strlower(char *orig)
 {
 	char *expr;

@@ -68,6 +68,7 @@ extern int HX_split5(char *, const char *, int, char **);
 extern char *HX_strbchr(const char *, const char *, char);
 extern char *HX_strclone(char **, const char *);
 extern char *HX_strdup(const char *);
+extern char *HX_strlncat(char *, const char *, size_t, size_t);
 extern char *HX_strlower(char *);
 extern size_t HX_strltrim(char *);
 extern char *HX_strmid(const char *, long, long);
@@ -94,16 +95,6 @@ static inline char *HX_strlcpy(char *dest, const char *src, size_t n)
 	strncpy(dest, src, n);
 	dest[n-1] = '\0';
 	return dest;
-}
-
-static inline char *HX_strlncat(char *dest, const char *src, size_t dlen,
-    size_t slen)
-{
-	ssize_t x = dlen - strlen(dest) - 1;
-	if (x <= 0)
-		return dest;
-	x = ((ssize_t)slen < x) ? (ssize_t)slen : x;
-	return strncat(dest, src, x);
 }
 
 static inline void *HX_memdup(const void *buf, size_t len)
