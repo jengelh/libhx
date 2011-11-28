@@ -23,6 +23,7 @@ Enhancements:
 - string: add a HX_strnlen function
 - mc: use an implicit minimum allocated length
 Changes:
+- format: renamed HXformat2_[afs]printf back to HXformat_[afs]printf
 - map: avoid 1<<31 in constants
 - option: remove struct HXoptcb.arg0
 - option: remove struct HXoptcb.match_{ln,sh} by .flags

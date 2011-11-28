@@ -160,11 +160,11 @@ stub0(HXformat_init);
 stub1v(HXformat_free, (struct HXformat_map *a));
 stub4(HXformat_add, (struct HXformat_map *a, const char *b, const void *c,
 	unsigned int d));
-stub3(HXformat2_aprintf, (const struct HXformat_map *a, hxmc_t **b,
+stub3(HXformat_aprintf, (const struct HXformat_map *a, hxmc_t **b,
 	const char *c));
-stub4(HXformat2_sprintf, (const struct HXformat_map *a, char *b, size_t c,
+stub4(HXformat_sprintf, (const struct HXformat_map *a, char *b, size_t c,
 	const char *d));
-stub3(HXformat2_fprintf, (const struct HXformat_map *a, FILE *b,
+stub3(HXformat_fprintf, (const struct HXformat_map *a, FILE *b,
 	const char *c));
 
 stub4(HX_getopt, (const struct HXoption *a, int *b, const char ***c,

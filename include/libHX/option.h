@@ -27,11 +27,11 @@ extern struct HXformat_map *HXformat_init(void);
 extern void HXformat_free(struct HXformat_map *);
 extern int HXformat_add(struct HXformat_map *, const char *, const void *,
 	unsigned int);
-extern int HXformat2_aprintf(const struct HXformat_map *,
+extern int HXformat_aprintf(const struct HXformat_map *,
 	hxmc_t **, const char *);
-extern int HXformat2_sprintf(const struct HXformat_map *,
+extern int HXformat_sprintf(const struct HXformat_map *,
 	char *, size_t, const char *);
-extern int HXformat2_fprintf(const struct HXformat_map *,
+extern int HXformat_fprintf(const struct HXformat_map *,
 	FILE *, const char *);
 
 /*

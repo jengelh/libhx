@@ -14283,7 +14283,7 @@ Invoking the formatter
 \series bold
 int
 \series default
- HXformat2_aprintf(
+ HXformat_aprintf(
 \series bold
 struct
 \series default
@@ -14306,7 +14306,7 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-HXformat2_aprintf
+HXformat_aprintf
 \end_layout
 
 \end_inset
@@ -14319,7 +14319,7 @@ HXformat2_aprintf
 \series bold
 int
 \series default
- HXformat2_sprintf(
+ HXformat_sprintf(
 \series bold
 struct
 \series default
@@ -14348,7 +14348,7 @@ status open
 \family typewriter
 \size normal
 \color none
-HXformat2_sprintf
+HXformat_sprintf
 \end_layout
 
 \end_inset
@@ -14361,7 +14361,7 @@ HXformat2_sprintf
 \series bold
 int
 \series default
- HXformat2_fprintf(
+ HXformat_fprintf(
 \series bold
 struct
 \series default
@@ -14386,7 +14386,7 @@ status open
 \family typewriter
 \size normal
 \color none
-HXformat2_fprintf
+HXformat_fprintf
 \end_layout
 
 \end_inset
@@ -14397,7 +14397,7 @@ HXformat2_fprintf
 \begin_layout Description
 
 \family typewriter
-HXformat2_aprintf
+HXformat_aprintf
 \family default
  Substitute placeholders in 
 \family typewriter
@@ -14420,7 +14420,7 @@ hxmc_t
 \begin_layout Description
 
 \family typewriter
-HXformat2_sprintf
+HXformat_sprintf
 \family default
  Do substitution and store the expanded result in the buffer 
 \family typewriter
@@ -14436,7 +14436,7 @@ size
 \begin_layout Description
 
 \family typewriter
-HXformat2_fprintf
+HXformat_fprintf
 \family default
  Do substituion and directly output the expansion to the given stdio stream.
 \end_layout
@@ -14452,7 +14452,7 @@ On success, the length of the expanded string is returned, excluding the
 .
  While 
 \family typewriter
-HXformat2_sprintf
+HXformat_sprintf
 \family default
  will not write more than 
 \family typewriter
@@ -14473,7 +14473,7 @@ sprintf
 \end_layout
 
 \begin_layout Standard
-The HXformat2 function family recognizes make-style like functions and recursive
+The HXformat function family recognizes make-style like functions and recursive
  expansion, described below.
 \end_layout
 
@@ -14532,8 +14532,8 @@ linux
 \end_inset
 
  next.
- Besides these variable substitutions, HXformat2 also provides function
- calls whose syntax is 
+ Besides these variable substitutions, HXformat also provides function calls
+ whose syntax is 
 \begin_inset Quotes eld
 \end_inset
 
@@ -14862,11 +14862,6 @@ $(shell
  statements usually is explicitly separate in libHX.
 \end_layout
 
-\begin_layout Standard
-Historical note: HXformat1 also supported functions, but only on a very
- limited and inflexible level.
-\end_layout
-
 \begin_layout Subsection
 Examples
 \end_layout
@@ -14917,11 +14912,11 @@ table = HXformat_init();
 \begin_inset Newline newline
 \end_inset
 
-HXformat2_add(table, "%(GREETING1)", b, HXTYPE_STRING);
+HXformat_add(table, "%(GREETING1)", b, HXTYPE_STRING);
 \begin_inset Newline newline
 \end_inset
 
-HXformat2_add(table, "%(GREETING2)", &c, HXTYPE_STRP);
+HXformat_add(table, "%(GREETING2)", &c, HXTYPE_STRP);
 \begin_inset Newline newline
 \end_inset
 
@@ -14939,13 +14934,13 @@ sizeof
 \begin_inset Newline newline
 \end_inset
 
-HXformat2_aprintf(...);
+HXformat_aprintf(...);
 \end_layout
 
 \begin_layout Plain Layout
 Upon calling 
 \family typewriter
-HXformat2_*printf
+HXformat_*printf
 \family default
 , 
 \family typewriter
@@ -15020,7 +15015,7 @@ HXformat_add(table, "/libhx/exec", NULL, HXTYPE_IMMED);
 \begin_inset Newline newline
 \end_inset
 
-HXformat2_aprintf(table, &result, "%(exec uname -s)");
+HXformat_aprintf(table, &result, "%(exec uname -s)");
 \end_layout
 
 \begin_layout Plain Layout

@@ -134,9 +134,6 @@ global:
 	HX_drand;
 	HX_shconfig_map;
 	HXdeque_genocide2;
-	HXformat2_aprintf;
-	HXformat2_fprintf;
-	HXformat2_sprintf;
 	HXmc_zvecfree;
 } LIBHX_3.2;
 
@@ -170,6 +167,9 @@ global:
 	HX_strlncat;
 	HX_strndup;
 	HX_strnlen;
+	HXformat_aprintf;
+	HXformat_fprintf;
+	HXformat_sprintf;
 	HXmap_init5;
 	HXmap_init;
 } LIBHX_3.10;
