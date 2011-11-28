@@ -167,6 +167,7 @@ LIBHX_3.12 {
 global:
 	HX_mkdir2;
 	HX_strdup;
+	HX_strlcat;
 	HX_strlncat;
 	HX_strndup;
 	HX_strnlen;
