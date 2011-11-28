@@ -67,6 +67,7 @@ extern char **HX_split4(char *, const char *, int *, int);
 extern int HX_split5(char *, const char *, int, char **);
 extern char *HX_strbchr(const char *, const char *, char);
 extern char *HX_strclone(char **, const char *);
+extern char *HX_strdup(const char *);
 extern char *HX_strlower(char *);
 extern size_t HX_strltrim(char *);
 extern char *HX_strmid(const char *, long, long);
@@ -127,25 +128,6 @@ HX_memdup(const void *data, size_t n)
 }
 
 } /* extern "C++" */
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-static inline char *HX_strdup(const char *src)
-{
-	if (src == NULL)
-		return NULL;
-#ifdef __cplusplus
-	return HX_memdup<char *>(src, strlen(src) + 1);
-#else
-	return HX_memdup(src, strlen(src) + 1);
-#endif
-}
-
-#ifdef __cplusplus
-} /* extern "C" */
 #endif
 
 #endif /* _LIBHX_STRING_H */

@@ -99,6 +99,7 @@ static void *funcs[] = {
 	HX_split5,
 	HX_strbchr,
 	HX_strclone,
+	HX_strdup,
 	HX_strlower,
 	HX_strltrim,
 	HX_strmid,

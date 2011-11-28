@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -255,6 +256,11 @@ EXPORT_SYMBOL char *HX_strclone(char **pa, const char *pb)
 		return NULL;
 	strcpy(*pa, pb);
 	return *pa;
+}
+
+EXPORT_SYMBOL char *HX_strdup(const char *src)
+{
+	return HX_strndup(src, SIZE_MAX);
 }
 
 EXPORT_SYMBOL char *HX_strlower(char *orig)
