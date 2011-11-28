@@ -149,6 +149,7 @@ enum {
 	HXOPT_ERR_UNKN,
 	HXOPT_ERR_VOID,
 	HXOPT_ERR_MIS,
+	HXOPT_ERR_SYS,
 };
 
 /**

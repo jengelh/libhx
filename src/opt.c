@@ -452,7 +452,13 @@ static int HX_getopt_twolong(const char *const *opt,
 	par->cbi.current = lookup_long(par->cbi.table, key + 2);
 	if (par->cbi.current == NULL) {
 		if (par->flags & HXOPT_PTHRU) {
-			HXdeque_push(par->remaining, HX_strdup(key));
+			char *tmp = HX_strdup(key);
+			if (tmp == NULL)
+				return HXOPT_I_ERROR | -HXOPT_ERR_SYS;
+			if (HXdeque_push(par->remaining, tmp) == NULL) {
+				free(tmp);
+				return HXOPT_I_ERROR | -HXOPT_ERR_SYS;
+			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
 		return HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, par->flags);
@@ -487,15 +493,23 @@ static int HX_getopt_twolong(const char *const *opt,
 static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 {
 	int ret;
-	char *key = HX_strdup(cur), *value = strchr(key, '=');
+	char *key, *value;
 
+	key = HX_strdup(cur);
+	if (key == NULL)
+		return HXOPT_I_ERROR | -HXOPT_ERR_SYS;
+
+	value = strchr(key, '=');
 	*value++ = '\0';
 	par->cbi.current = lookup_long(par->cbi.table, key + 2);
 	if (par->cbi.current == NULL) {
 		if (par->flags & HXOPT_PTHRU) {
 			/* Undo nuke of '=' and reuse alloc */
 			value[-1] = '=';
-			HXdeque_push(par->remaining, key);
+			if (HXdeque_push(par->remaining, key) == NULL) {
+				free(key);
+				return HXOPT_I_ERROR | -HXOPT_ERR_SYS;
+			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
 		ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, par->flags);
@@ -537,7 +551,10 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 			char *buf = HX_strdup(cur - 1);
 			if (buf != NULL)
 				*buf = '-';
-			HXdeque_push(par->remaining, buf);
+			if (HXdeque_push(par->remaining, buf) == NULL) {
+				free(buf);
+				return HXOPT_I_ERROR | -HXOPT_ERR_SYS;
+			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
 		return HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, cur, par->flags);
@@ -579,7 +596,13 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 
 static int HX_getopt_term(const char *cur, const struct HX_getopt_vars *par)
 {
-	HXdeque_push(par->remaining, HX_strdup(cur));
+	char *tmp = HX_strdup(cur);
+	if (tmp == NULL)
+		return HXOPT_I_ERROR | -HXOPT_ERR_SYS;
+	if (HXdeque_push(par->remaining, tmp) == NULL) {
+		free(tmp);
+		return HXOPT_I_ERROR | -HXOPT_ERR_SYS;
+	}
 	return HXOPT_S_TERMINATED | HXOPT_I_ADVARG;
 }
 
@@ -618,20 +641,30 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	struct HX_getopt_vars ps;
 	const char **opt = *argv;
 	unsigned int state = HXOPT_S_NORMAL;
-	int ret = -HXOPT_ERR_SUCCESS;
+	int ret = -HXOPT_ERR_SYS;
 	unsigned int argk;
 	const char *cur;
 
 	memset(&ps, 0, sizeof(ps));
 	ps.remaining = HXdeque_init();
+	if (ps.remaining == NULL)
+		goto out;
 	ps.flags = flags;
 	ps.cbi.arg0  = **argv;
 	ps.cbi.table = table;
 
-	if (*opt != NULL)
+	if (*opt != NULL) {
 		/* put argv[0] back */
-		HXdeque_push(ps.remaining, HX_strdup(*opt++));
+		char *arg = HX_strdup(*opt++);
+		if (arg == NULL)
+			goto out;
+		if (HXdeque_push(ps.remaining, arg) == NULL) {
+			free(arg);
+			goto out;
+		}
+	}
 
+	ret = HXOPT_ERR_SUCCESS;
 	for (cur = *opt; cur != NULL; ) {
 		if (state == HXOPT_S_TWOLONG)
 			state = HX_getopt_twolong(opt, &ps);
@@ -659,6 +692,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		state &= ~HXOPT_I_MASK;
 	}
 
+ out:
 	if (ret == HXOPT_ERR_SUCCESS) {
 		if (ps.flags & HXOPT_DESTROY_OLD)
 			/*
@@ -678,6 +712,9 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 
 		/* I just notice that %HXOPT_ERR_SUCCESS is never used.. */
 		ret = 1;
+	} else if (ret == -HXOPT_ERR_SYS) {
+		if (!(ps.flags & HXOPT_QUIET))
+			fprintf(stderr, "%s: %s\n", __func__, strerror(errno));
 	} else {
 		if (ps.flags & HXOPT_HELPONERR)
 			HX_getopt_help(&ps.cbi, stderr);
