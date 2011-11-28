@@ -304,7 +304,7 @@ EXPORT_SYMBOL char *HX_strndup(const char *src, size_t size)
 	z = strlen(src);
 	if (z < size)
 		size = z;
-	if ((ret = malloc(size)) == NULL)
+	if ((ret = malloc(size + 1)) == NULL)
 		return NULL;
 	memcpy(ret, src, size);
 	ret[size] = '\0';

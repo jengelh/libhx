@@ -78,8 +78,13 @@ static void t_strcpy(void)
 
 static void t_strdup(void)
 {
-	char *a = HX_strndup("DATA", 2);
+	char *a;
+	a = HX_strndup("DATA", 2);
 	printf(">%s<\n", a);
+	free(a);
+	a = HX_strndup("DATA", 10);
+	printf(">%s<\n", a);
+	free(a);
 }
 
 static void t_strncat(void)
