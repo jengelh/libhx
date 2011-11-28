@@ -271,6 +271,13 @@ EXPORT_SYMBOL char *HX_strlcat(char *dest, const char *src, size_t len)
 	return strncat(dest, src, x);
 }
 
+EXPORT_SYMBOL char *HX_strlcpy(char *dest, const char *src, size_t n)
+{
+	strncpy(dest, src, n);
+	dest[n-1] = '\0';
+	return dest;
+}
+
 EXPORT_SYMBOL char *HX_strlncat(char *dest, const char *src, size_t dlen,
     size_t slen)
 {
