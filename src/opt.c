@@ -763,12 +763,17 @@ EXPORT_SYMBOL void HX_getopt_help_cb(const struct HXoptcb *cbi)
 
 EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 {
-	size_t wd = sizeof("Usage:") + strlen(HX_basename(cbi->arg0)), tw = 0;
+	size_t wd, tw = 0;
 	FILE *fp = (nfp == NULL) ? stderr : nfp;
 	const struct HXoption *travp;
 	char tmp[84] = {};
+	const char *arg0 = cbi->arg0;
 
-	fprintf(fp, "Usage: %s", HX_basename(cbi->arg0));
+	if (arg0 == NULL)
+		arg0 = "($0)";
+
+	wd = sizeof("Usage:") + strlen(arg0);
+	fprintf(fp, "Usage: %s", arg0);
 
 	/* Short-only flags */
 	if (wd + 5 > SCREEN_WIDTH) {
