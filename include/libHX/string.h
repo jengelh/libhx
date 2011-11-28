@@ -67,6 +67,10 @@ extern char **HX_split4(char *, const char *, int *, int);
 extern int HX_split5(char *, const char *, int, char **);
 extern char *HX_strbchr(const char *, const char *, char);
 extern char *HX_strclone(char **, const char *);
+extern char *HX_strdup(const char *);
+extern char *HX_strlcat(char *, const char *, size_t);
+extern char *HX_strlcpy(char *, const char *, size_t);
+extern char *HX_strlncat(char *, const char *, size_t, size_t);
 extern char *HX_strlower(char *);
 extern size_t HX_strltrim(char *);
 extern char *HX_strmid(const char *, long, long);
@@ -79,31 +83,6 @@ extern size_t HX_strrtrim(char *);
 extern char *HX_strsep(char **, const char *);
 extern char *HX_strsep2(char **, const char *);
 extern char *HX_strupper(char *);
-
-static inline char *HX_strlcat(char *dest, const char *src, size_t len)
-{
-	ssize_t x = len - strlen(dest) - 1;
-	if (x <= 0)
-		return dest;
-	return strncat(dest, src, x);
-}
-
-static inline char *HX_strlcpy(char *dest, const char *src, size_t n)
-{
-	strncpy(dest, src, n);
-	dest[n-1] = '\0';
-	return dest;
-}
-
-static inline char *HX_strlncat(char *dest, const char *src, size_t dlen,
-    size_t slen)
-{
-	ssize_t x = dlen - strlen(dest) - 1;
-	if (x <= 0)
-		return dest;
-	x = ((ssize_t)slen < x) ? (ssize_t)slen : x;
-	return strncat(dest, src, x);
-}
 
 static inline void *HX_memdup(const void *buf, size_t len)
 {
@@ -127,25 +106,6 @@ HX_memdup(const void *data, size_t n)
 }
 
 } /* extern "C++" */
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-static inline char *HX_strdup(const char *src)
-{
-	if (src == NULL)
-		return NULL;
-#ifdef __cplusplus
-	return HX_memdup<char *>(src, strlen(src) + 1);
-#else
-	return HX_memdup(src, strlen(src) + 1);
-#endif
-}
-
-#ifdef __cplusplus
-} /* extern "C" */
 #endif
 
 #endif /* _LIBHX_STRING_H */
