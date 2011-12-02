@@ -150,23 +150,17 @@ enum {
 };
 
 /**
- * Return values for HX_getopt.
- * %HXOPT_ERR_SUCCESS:	unused
+ * (Positive-ranged) return values for HX_getopt.
+ * %HXOPT_ERR_SUCCESS:	success
  * %HXOPT_ERR_UNKN:	unknown option was encountered
  * %HXOPT_ERR_VOID:	long option takes no value
  * %HXOPT_ERR_MIS:	option requires a value argument
- * %HXOPT_ERR_SYS:	system error (memory allocation failure)
- *
- * NOTE: HX_getopt returns >0 for success currently, and <0 indicates
- * the error (e.g. test for HX_getopt(...) == -HXOPT_ERR_SYS).
- * Sucks and should be changed.
  */
 enum {
 	HXOPT_ERR_SUCCESS = 0,
 	HXOPT_ERR_UNKN,
 	HXOPT_ERR_VOID,
 	HXOPT_ERR_MIS,
-	HXOPT_ERR_SYS,
 };
 
 /**

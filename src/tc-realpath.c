@@ -28,7 +28,8 @@ static const struct HXoption rp_option_table[] = {
 
 static bool rp_get_options(int *argc, const char ***argv)
 {
-	if (HX_getopt(rp_option_table, argc, argv, HXOPT_USAGEONERR) < 0)
+	if (HX_getopt(rp_option_table, argc, argv, HXOPT_USAGEONERR) !=
+	    HXOPT_ERR_SUCCESS)
 		return false;
 	rp_flags = HX_REALPATH_DEFAULT;
 	if (rp_absolute)

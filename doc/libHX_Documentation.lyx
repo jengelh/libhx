@@ -18510,7 +18510,27 @@ The return value can be one of the following:
 \begin_layout Description
 
 \family typewriter
--HXOPT_ERR_UNKN
+HXOPT_ERR_SUCCESS
+\family default
+
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXOPT_ERR_SUCCESS
+\end_layout
+
+\end_inset
+
+ Parsing was successful.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXOPT_ERR_UNKN
 \series medium
 
 \begin_inset Index idx
@@ -18534,7 +18554,7 @@ HXOPT_ERR_UNKN
 \begin_layout Description
 
 \family typewriter
--HXOPT_ERR_VOID
+HXOPT_ERR_VOID
 \series medium
 
 \begin_inset Index idx
@@ -18615,7 +18635,7 @@ bar
 \begin_layout Description
 
 \family typewriter
--HXOPT_ERR_MIS
+HXOPT_ERR_MIS
 \series medium
 
 \begin_inset Index idx
@@ -18637,11 +18657,11 @@ HXOPT_ERR_MIS
 \end_layout
 
 \begin_layout Description
-positive
+negative
 \begin_inset space ~
 \end_inset
 
-non-zero Success.
+non-zero Failure on behalf of lower-level calls; errno.
 \end_layout
 
 \begin_layout Subsection
@@ -18737,7 +18757,11 @@ static const struct
 \series bold
 return
 \series default
- HX_getopt(options_table, argc, argv, HXOPT_USAGEONERR) > 0;
+ HX_getopt(options_table, argc, argv, HXOPT_USAGEONERR) ==
+\begin_inset Newline newline
+\end_inset
+
+               HXOPT_ERR_SUCCESS;
 \begin_inset Newline newline
 \end_inset
 
@@ -19146,7 +19170,11 @@ struct
 \series bold
 if
 \series default
- (HX_getopt(options_table, &argc, &argv, HXOPT_USAGEONERR) <= 0)
+ (HX_getopt(options_table, &argc, &argv, HXOPT_USAGEONERR) !=
+\begin_inset Newline newline
+\end_inset
+
+            HXOPT_ERR_SUCCESS)
 \end_layout
 
 \begin_layout LyX-Code
@@ -19819,7 +19847,7 @@ return
 \begin_inset Newline newline
 \end_inset
 
-               HXOPT_USAGEONERR | HXOPT_DESTROY_OLD) > 0;
+               HXOPT_USAGEONERR | HXOPT_DESTROY_OLD) == HXOPT_ERR_SUCCESS;
 \begin_inset Newline newline
 \end_inset
 
@@ -19879,7 +19907,7 @@ return
 \begin_inset Newline newline
 \end_inset
 
-               HXOPT_USAGEONERR | HXOPT_DESTROY_OLD) > 0;
+               HXOPT_USAGEONERR | HXOPT_DESTROY_OLD) == HXOPT_ERR_SUCCESS;
 \begin_inset Newline newline
 \end_inset
 
@@ -19951,7 +19979,11 @@ struct
 \series bold
 if
 \series default
- (HX_getopt(option_table, argc, argv, HXOPT_PTHRU) <= 0)
+ (HX_getopt(option_table, argc, argv, HXOPT_PTHRU) !=
+\begin_inset Newline newline
+\end_inset
+
+            HXOPT_ERR_SUCCESS)
 \begin_inset Newline newline
 \end_inset
 

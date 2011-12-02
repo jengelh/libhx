@@ -102,7 +102,7 @@ enum HX_getopt_state {
  * %HXOPT_I_ADVARG:	advance to next argument in @opt
  * %HXOPT_I_ADVARG2:	advance by two arguments in @opt
  * %HXOPT_I_ADVCHAR:	advance to next character in @cur
- * %HXOPT_I_ERROR:	system/HXoption error
+ * %HXOPT_I_ERROR:	HXoption error
  */
 enum {
 	HXOPT_I_ASSIGN  = 1 << 3,
@@ -477,10 +477,10 @@ static int HX_getopt_twolong(const char *const *opt,
 		if (par->flags & HXOPT_PTHRU) {
 			char *tmp = HX_strdup(key);
 			if (tmp == NULL)
-				return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+				return -errno;
 			if (HXdeque_push(par->remaining, tmp) == NULL) {
 				free(tmp);
-				return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+				return -errno;
 			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
@@ -518,7 +518,7 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 
 	key = HX_strdup(cur);
 	if (key == NULL)
-		return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+		return -errno;
 
 	value = strchr(key, '=');
 	*value++ = '\0';
@@ -529,7 +529,7 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 			value[-1] = '=';
 			if (HXdeque_push(par->remaining, key) == NULL) {
 				free(key);
-				return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+				return -errno;
 			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
@@ -575,7 +575,7 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 				*buf = '-';
 			if (HXdeque_push(par->remaining, buf) == NULL) {
 				free(buf);
-				return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+				return -errno;
 			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
@@ -618,10 +618,10 @@ static int HX_getopt_term(const char *cur, const struct HX_getopt_vars *par)
 {
 	char *tmp = HX_strdup(cur);
 	if (tmp == NULL)
-		return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+		return -errno;
 	if (HXdeque_push(par->remaining, tmp) == NULL) {
 		free(tmp);
-		return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+		return -errno;
 	}
 	return HXOPT_S_TERMINATED | HXOPT_I_ADVARG;
 }
@@ -663,8 +663,8 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 {
 	struct HX_getopt_vars ps;
 	const char **opt = *argv;
-	unsigned int state = HXOPT_S_NORMAL;
-	int ret = HXOPT_ERR_SYS;
+	int state = HXOPT_S_NORMAL;
+	int ret = HXOPT_ERR_SUCCESS;
 	unsigned int argk;
 	const char *cur;
 
@@ -680,17 +680,16 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		/* put argv[0] back */
 		char *arg = HX_strdup(*opt++);
 		if (arg == NULL)
-			goto out;
+			goto out_errno;
 		if (HXdeque_push(ps.remaining, arg) == NULL) {
 			free(arg);
-			goto out;
+			goto out_errno;
 		}
 	}
 
 	if (posix_me_harder())
 		ps.flags |= HXOPT_POSIX_MODE;
 
-	ret = HXOPT_ERR_SUCCESS;
 	for (cur = *opt; cur != NULL; ) {
 		if (state == HXOPT_S_TWOLONG)
 			state = HX_getopt_twolong(opt, &ps);
@@ -703,6 +702,10 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		else if (state == HXOPT_S_NORMAL)
 			state = HX_getopt_normal(cur, &ps);
 
+		if (state < 0) {
+			ret = state;
+			break;
+		}
 		if (state & HXOPT_I_ERROR) {
 			ret = state & ~HXOPT_I_ERROR;
 			break;
@@ -735,10 +738,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		        HXdeque_to_vec(ps.remaining, &argk));
 		if (argc != NULL)
 			*argc = argk;
-
-		/* I just notice that %HXOPT_ERR_SUCCESS is never used.. */
-		ret = -1;
-	} else if (ret == HXOPT_ERR_SYS) {
+	} else if (ret < 0) {
 		if (!(ps.flags & HXOPT_QUIET))
 			fprintf(stderr, "%s: %s\n", __func__, strerror(errno));
 	} else {
@@ -750,7 +750,11 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	}
 
 	HXdeque_free(ps.remaining);
-	return -ret;
+	return ret;
+
+ out_errno:
+	ret = -errno;
+	goto out;
 }
 
 EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
