@@ -2,6 +2,10 @@
 
 HEAD
 ====
+
+
+v3.12 (2010-12-03)
+==================
 Fixes:
 - defs: resolve warning for users of const_cast*() when using -Wextra
 - format: error handling for HXformat2_aprintf
