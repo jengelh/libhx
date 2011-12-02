@@ -164,7 +164,7 @@ static void do_assign(struct HXoptcb *cbi, const char *arg0)
 		*static_cast(int *, opt->ptr) = cbi->data_long = opt->val;
 		break;
 	case HXTYPE_SVAL:
-		*static_cast(const char **, opt->ptr) = cbi->data = opt->sval;
+		*static_cast(const char **, opt->ptr) = cbi->data = opt->uptr;
 		break;
 	case HXTYPE_BOOL: {
 		int *p;

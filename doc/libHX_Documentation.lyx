@@ -16322,22 +16322,6 @@ unsigned int
 
         
 \series bold
-int
-\series default
- ival;
-\begin_inset Newline newline
-\end_inset
-
-        
-\series bold
-const char *
-\series default
-sval;
-\begin_inset Newline newline
-\end_inset
-
-        
-\series bold
 void *
 \series default
 ptr, 
@@ -16365,6 +16349,14 @@ const struct
 *
 \series default
 );
+\begin_inset Newline newline
+\end_inset
+
+        
+\series bold
+int
+\series default
+ val;
 \begin_inset Newline newline
 \end_inset
 
@@ -16466,7 +16458,7 @@ type
 \begin_layout Description
 
 \family typewriter
-ival
+val
 \family default
  An integer value to be stored into 
 \family typewriter
@@ -16479,26 +16471,6 @@ ival
  when 
 \family typewriter
 HXTYPE_IVAL
-\family default
- is used.
-\end_layout
-
-\begin_layout Description
-
-\family typewriter
-sval
-\family default
- A string whose address will be stored into 
-\family typewriter
-*(const char
-\begin_inset space ~
-\end_inset
-
-**)ptr
-\family default
- when 
-\family typewriter
-HXTYPE_SVAL
 \family default
  is used.
 \end_layout
@@ -16529,6 +16501,32 @@ uptr
  A user-supplied pointer.
  Its value is passed verbatim to the callback, and may be used for any purpose
  the user wishes.
+ If 
+\family typewriter
+type
+\family default
+ is 
+\family typewriter
+HXTYPE_SVAL
+\family default
+, it is the value in 
+\family typewriter
+uptr
+\family default
+ that will be used to populate 
+\family typewriter
+*(const char
+\begin_inset space ~
+\end_inset
+
+**)ptr
+\family default
+.
+ (The original 
+\family typewriter
+.sval
+\family default
+ field has been removed in libHX 3.12.)
 \end_layout
 
 \begin_layout Description

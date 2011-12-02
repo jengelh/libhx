@@ -28,6 +28,7 @@ Changes:
 - option: remove struct HXoptcb.arg0
 - option: remove struct HXoptcb.match_{ln,sh} by .flags
 - option: let HX_getopt return code indicate system failure states
+- option: remove struct HXoption.sval (replaced by .uptr)
 - string: unline HX_strdup, HX_strlcat, HX_strlcpy, HX_strnlcat
 
 

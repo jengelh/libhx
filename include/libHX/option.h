@@ -42,7 +42,7 @@ extern int HXformat_fprintf(const struct HXformat_map *,
  * Available types for struct HXoption.type.
  * %HXTYPE_NONE:	[-o] (int *) No argument; counts presence.
  * %HXTYPE_VAL:		[-o] (int *) Set to value in .val.
- * %HXTYPE_SVAL:	[-o] (const char *) Set to value in .sval.
+ * %HXTYPE_SVAL:	[-o] (const char *) Set to value in .uptr.
  * %HXTYPE_BOOL:	[fo] (int *) Parse argument as boolean
  * 			     ("yes", "no", "true", "false", 0 or non-zero)
  * %HXTYPE_BYTE:	[fo] (unsigned char *) Take first char of argument
@@ -204,10 +204,10 @@ struct HXoptcb {
  * @sh:		short option character, or '\0'
  * @type:	type of variable pointed to by .ptr
  * @ptr:	pointer to variable to set/update
- * @uptr:	freeform user-supplied pointer
+ * @uptr:	freeform user-supplied pointer;
+ * 		in case of %HXTYPE_SVAL, this is the specific value to set
  * @cb:		callback function to invoke, or %NULL
  * @val:	specific value to set if type == HXTYPE_VAL
- * @sval:	specific value to set if type == HXTYPE_SVAL
  * @help:	help string to display
  * @htyp:	type string to show in option's help
  */
@@ -218,7 +218,7 @@ struct HXoption {
 	void *ptr, *uptr;
 	void (*cb)(const struct HXoptcb *);
 	int val;
-	const char *sval, *help, *htyp;
+	const char *help, *htyp;
 };
 
 extern int HX_getopt(const struct HXoption *, int *, const char ***,
@@ -248,7 +248,7 @@ extern void HX_shconfig_free(const struct HXoption *);
 #else
 #	define HXOPT_AUTOHELP \
 		{NULL, '?', HXTYPE_XHELP, NULL, NULL, HX_getopt_help_cb, \
-		0, NULL, "Show this help message"}
+		0, "Show this help message"}
 #	define HXOPT_TABLEEND {NULL, 0, HXTYPE_XSNTMARK}
 #endif
 

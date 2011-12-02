@@ -70,6 +70,7 @@ tx_misc_LDADD      = libHX.la
 tx_netio_SOURCES   = tx-netio.cpp
 tx_netio_LDADD     = libHX.la ${libsocket_LIBS}
 tx_option_SOURCES  = tx-option.cpp
+tx_option_LDADD    = libHX.la
 tx_proc_SOURCES    = tx-proc.cpp
 tx_proc_LDADD      = libHX.la
 tx_rand_SOURCES    = tx-rand.cpp
