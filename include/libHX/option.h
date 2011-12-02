@@ -70,6 +70,7 @@ extern int HXformat2_fprintf(const struct HXformat_map *,
  * %HXTYPE_INT32:	[-o] (uint8_t *) An integer.
  * %HXTYPE_INT64:	[-o] (uint8_t *) An integer.
  * %HXTYPE_MCSTR:	[-o] (hxmc_t *) A string.
+ * %HXTYPE_XSNTMARK:	[-o] Internal sentinal marker (used in HXOPT_TABLEEND)
  *
  * Type expected of struct HXoption.ptr is given in ().
  * HX_getopt (o) and HXformat_* (f) support different sets, marked with [].
@@ -104,7 +105,7 @@ enum HX_option_type {
 	HXTYPE_INT32,
 	HXTYPE_INT64,
 	HXTYPE_MCSTR,
-	HXTYPE_XSNTMARK, /* 29: sentinel marker */
+	HXTYPE_XSNTMARK, /* 29 */
 };
 
 /**
@@ -132,6 +133,11 @@ enum {
 
 /**
  * Flags (4th arg) to HX_getopt.
+ * %HXOPT_PTHRU:	pass-through unknown options to new argv
+ * %HXOPT_DESTROY_OLD:	destroy old argv after parsing is successful
+ * %HXOPT_QUIET:	do not output any warnings to stderr
+ * %HXOPT_HELPONERR:	print out help when a parsing error occurs
+ * %HXOPT_USAGEONERR:	print out short usage when a parsing error occurs
  */
 enum {
 	HXOPT_PTHRU       = 1 << 0,
@@ -143,6 +149,15 @@ enum {
 
 /**
  * Return values for HX_getopt.
+ * %HXOPT_ERR_SUCCESS:	unused
+ * %HXOPT_ERR_UNKN:	unknown option was encountered
+ * %HXOPT_ERR_VOID:	long option takes no value
+ * %HXOPT_ERR_MIS:	option requires a value argument
+ * %HXOPT_ERR_SYS:	system error (memory allocation failure)
+ *
+ * NOTE: HX_getopt returns >0 for success currently, and <0 indicates
+ * the error (e.g. test for HX_getopt(...) == -HXOPT_ERR_SYS).
+ * Sucks and should be changed.
  */
 enum {
 	HXOPT_ERR_SUCCESS = 0,
@@ -154,6 +169,7 @@ enum {
 
 /**
  * Extra flags to be OR'ed into HXformat_add()'s 4th arg.
+ * %HXFORMAT_IMMED:	do not dereference the 4th arg to get at the value
  */
 enum {
 	HXFORMAT_IMMED = 1 << 13,
