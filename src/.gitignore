@@ -3,6 +3,7 @@
 /t?-compile
 /t?-deque
 /t?-dir
+/t?-format
 /t?-link
 /t?-list
 /t?-list2
@@ -14,5 +15,6 @@
 /t?-proc
 /t?-rand
 /t?-realpath
+/t?-shconfig
 /t?-string
 /t?-time
