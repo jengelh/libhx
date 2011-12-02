@@ -149,9 +149,8 @@ static void do_assign(struct HXoptcb *cbi)
 
 	switch (opt->type & HXOPT_TYPEMASK) {
 	case HXTYPE_NONE: {
-		int *p;
-		if ((p = opt->ptr) != NULL) {
-			p = opt->ptr;
+		if (opt->ptr != NULL) {
+			int *p = opt->ptr;
 			if (opt->type & HXOPT_INC)      ++*p;
 			else if (opt->type & HXOPT_DEC) --*p;
 			else                            *p = 1;
