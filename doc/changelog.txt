@@ -18,6 +18,7 @@ Enhancements:
 - io: add HX_mkdir2 which can take a mode argument
 - option: allow argc=NULL on HX_getopt
 - option: error handling for HX_getopt
+- option: support POSIXLY_CORRECT environment variable
 - string: add a HX_strndup function
 - string: add a HX_strnlen function
 - mc: use an implicit minimum allocated length
