@@ -61,6 +61,8 @@ enum {
 	HXOPT_LOPMASK2 = HXOPT_OR | HXOPT_AND | HXOPT_XOR,
 	HXOPT_LOPMASK  = HXOPT_LOPMASK2 | HXOPT_NOT,
 	HXOPT_TYPEMASK = 0x1F, /* 5 bits */
+
+	HXOPT_POSIX_MODE = 1 << 16,
 };
 
 /**
@@ -124,6 +126,22 @@ struct HX_getopt_vars {
 	struct HXoptcb cbi;
 	unsigned int flags;
 };
+
+static bool posix_me_harder(void)
+{
+	const char *s;
+	char *end;
+	int res;
+
+	s = getenv("POSIXLY_CORRECT");
+	if (s == NULL || *s == '\0')
+		return false;
+	res = strtol(s, &end, 0);
+	if (end != s)
+		/* number */
+		return res;
+	return true; /* non-empty string */
+}
 
 static void do_assign(struct HXoptcb *cbi)
 {
@@ -631,6 +649,9 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 	if (cur[0] == '-')
 		/* Short option(s) - one or more(!) */
 		return HXOPT_S_SHORT | HXOPT_I_ADVCHAR;
+	if (par->flags & HXOPT_POSIX_MODE)
+		/* POSIX: first non-option implies option termination */
+		return HXOPT_S_TERMINATED;
 	HXdeque_push(par->remaining, HX_strdup(cur));
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
@@ -663,6 +684,9 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			goto out;
 		}
 	}
+
+	if (posix_me_harder())
+		ps.flags |= HXOPT_POSIX_MODE;
 
 	ret = HXOPT_ERR_SUCCESS;
 	for (cur = *opt; cur != NULL; ) {
