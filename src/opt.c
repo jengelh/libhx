@@ -654,7 +654,9 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 	if (par->flags & HXOPT_POSIX_MODE)
 		/* POSIX: first non-option implies option termination */
 		return HXOPT_S_TERMINATED;
-	HXdeque_push(par->remaining, HX_strdup(cur));
+	cur = HX_strdup(cur);
+	if (cur == NULL || HXdeque_push(par->remaining, cur) == NULL)
+		return -errno;
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
 
@@ -723,6 +725,10 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 
  out:
 	if (ret == HXOPT_ERR_SUCCESS) {
+		const char **nvec = reinterpret_cast(const char **,
+		                    HXdeque_to_vec(ps.remaining, &argk));
+		if (nvec == NULL)
+			goto out_errno;
 		if (ps.flags & HXOPT_DESTROY_OLD)
 			/*
 			 * Only the "true, original" argv is stored on the
@@ -734,8 +740,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 			 */
 			HX_zvecfree(const_cast2(char **, *argv));
 
-		*argv = reinterpret_cast(const char **,
-		        HXdeque_to_vec(ps.remaining, &argk));
+		*argv = nvec;
 		if (argc != NULL)
 			*argc = argk;
 	} else if (ret < 0) {
