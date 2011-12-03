@@ -252,7 +252,7 @@ static inline bool takes_void(unsigned int t)
 {
 	t &= HXOPT_TYPEMASK;
 	return t == HXTYPE_NONE || t == HXTYPE_VAL || t == HXTYPE_SVAL ||
-	       t == HXTYPE_XHELP;
+	       t == HXTYPE_XSNTMARK || t == HXTYPE_XHELP;
 }
 
 static void opt_to_text(const struct HXoption *opt, char *buf, size_t len,
