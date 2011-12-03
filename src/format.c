@@ -382,7 +382,7 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 			goto out_h_errno;
 		if (strstr(ret, "%" S_OPEN) != NULL) {
 			ret2 = NULL;
-			err = HXformat2_aprintf(fmt_export(table), &ret2, ret);
+			err = HXformat_aprintf(fmt_export(table), &ret2, ret);
 			if (err < 0 || ret2 == NULL)
 				goto out_h_neg;
 			HXmc_free(ret);
@@ -541,7 +541,7 @@ static hxmc_t *HXformat2_xany(const char **pptr, const struct HXmap *table)
 		int eret;
 
 		*pptr = ++s;
-		eret  = HXformat2_aprintf(fmt_export(table), &new_name, name);
+		eret  = HXformat_aprintf(fmt_export(table), &new_name, name);
 		if (eret <= 0) {
 			ret = NULL;
 		} else if (*new_name == '\0') {
@@ -568,7 +568,7 @@ static hxmc_t *HXformat2_xany(const char **pptr, const struct HXmap *table)
 	return ret;
 }
 
-EXPORT_SYMBOL int HXformat2_aprintf(const struct HXformat_map *ftable,
+EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
     hxmc_t **resultp, const char *fmt)
 {
 	const struct HXmap *table = fmt_import(ftable);
@@ -616,13 +616,13 @@ EXPORT_SYMBOL int HXformat2_aprintf(const struct HXformat_map *ftable,
 	return ret;
 }
 
-EXPORT_SYMBOL int HXformat2_fprintf(const struct HXformat_map *ftable,
+EXPORT_SYMBOL int HXformat_fprintf(const struct HXformat_map *ftable,
     FILE *filp, const char *fmt)
 {
 	hxmc_t *str;
 	int ret;
 
-	if ((ret = HXformat2_aprintf(ftable, &str, fmt)) <= 0)
+	if ((ret = HXformat_aprintf(ftable, &str, fmt)) <= 0)
 		return ret;
 	errno = 0;
 	if (fputs(str, filp) < 0)
@@ -631,13 +631,13 @@ EXPORT_SYMBOL int HXformat2_fprintf(const struct HXformat_map *ftable,
 	return ret;
 }
 
-EXPORT_SYMBOL int HXformat2_sprintf(const struct HXformat_map *ftable,
+EXPORT_SYMBOL int HXformat_sprintf(const struct HXformat_map *ftable,
     char *dest, size_t size, const char *fmt)
 {
 	hxmc_t *str;
 	int ret;
 
-	if ((ret = HXformat2_aprintf(ftable, &str, fmt)) < 0)
+	if ((ret = HXformat_aprintf(ftable, &str, fmt)) < 0)
 		return ret;
 	if (ret == 0) {
 		*dest = '\0';

@@ -110,8 +110,7 @@ stub1(HXdir_read, (struct HXdir *a));
 stub1v(HXdir_close, (struct HXdir *a));
 /* HX_copy_dir: has varargs */
 /* HX_copy_file: has varargs */
-stub1(HX_mkdir, (const char *a));
-stub2(HX_mkdir2, (const char *a, unsigned int b));
+stub2(HX_mkdir, (const char *a, unsigned int b));
 stub2(HX_readlink, (hxmc_t **a, const char *b));
 stub3(HX_realpath, (hxmc_t **a, const char *b, unsigned int c));
 stub1(HX_rrmdir, (const char *a));
@@ -160,11 +159,11 @@ stub0(HXformat_init);
 stub1v(HXformat_free, (struct HXformat_map *a));
 stub4(HXformat_add, (struct HXformat_map *a, const char *b, const void *c,
 	unsigned int d));
-stub3(HXformat2_aprintf, (const struct HXformat_map *a, hxmc_t **b,
+stub3(HXformat_aprintf, (const struct HXformat_map *a, hxmc_t **b,
 	const char *c));
-stub4(HXformat2_sprintf, (const struct HXformat_map *a, char *b, size_t c,
+stub4(HXformat_sprintf, (const struct HXformat_map *a, char *b, size_t c,
 	const char *d));
-stub3(HXformat2_fprintf, (const struct HXformat_map *a, FILE *b,
+stub3(HXformat_fprintf, (const struct HXformat_map *a, FILE *b,
 	const char *c));
 
 stub4(HX_getopt, (const struct HXoption *a, int *b, const char ***c,

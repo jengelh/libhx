@@ -46,11 +46,11 @@ enum HXmap_type {
 enum {
 	HXMAP_NONE      = 0,
 	HXMAP_NOREPLACE = 1 << 0,
-	HXMAP_SINGULAR  = 1 << 27,
-	HXMAP_SKEY      = 1 << 28,
-	HXMAP_CKEY      = 1 << 29,
-	HXMAP_SDATA     = 1 << 30,
-	HXMAP_CDATA     = 1 << 31,
+	HXMAP_SINGULAR  = 1 << 1,
+	HXMAP_SKEY      = 1 << 2,
+	HXMAP_CKEY      = 1 << 3,
+	HXMAP_SDATA     = 1 << 4,
+	HXMAP_CDATA     = 1 << 5,
 
 	HXMAP_SCKEY     = HXMAP_SKEY | HXMAP_CKEY,
 	HXMAP_SCDATA    = HXMAP_SDATA | HXMAP_CDATA,

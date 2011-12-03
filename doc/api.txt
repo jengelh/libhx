@@ -10,15 +10,27 @@ Function reference
 
 R column: Recommend version number to use in PKG_CONFIG_CHECK in
 projects using libHX. Includes important bugfixes.
-M column: Lowest possible version with the same API.
+M column: Lowest possible version with the same function signature.
 F column: Function first seen in version, possibly with different API.
 
 RMV	MinVer	FirstA	Name
 ----------------------------------------------------------------------
-3.12	3.12	3.12	HX_mkdir2
+3.12	3.12	1.10.0	HX_mkdir
 3.12	3.12	3.12	HX_strndup
 3.12	3.12	3.12	HX_strnlen
+3.12	3.0	3.0	HXMAP_CDATA
+3.12	3.0	3.0	HXMAP_CKEY
+3.12	3.0	3.0	HXMAP_SCDATA
+3.12	3.0	3.0	HXMAP_SCKEY
+3.12	3.0	3.0	HXMAP_SDATA
+3.12	3.0	3.0	HXMAP_SINGULAR
+3.12	3.0	3.0	HXMAP_SKEY
 3.12	3.12	3.12	HXOPT_ERR_SYS
+3.12	3.12	3.12	HXOPTCB_BY_LONG
+3.12	3.12	3.12	HXOPTCB_BY_SHORT
+3.12	3.0	1.10.0	HXformat_aprintf
+3.12	3.0	1.10.0	HXformat_fprintf
+3.12	3.0	1.10.0	HXformat_sprintf
 3.11	3.11	3.11	HXQUOTE_BASE64
 3.10	3.10	3.10	BUILD_BUG_ON_EXPR
 3.10	3.10	3.10	HX_readlink
@@ -44,9 +56,6 @@ RMV	MinVer	FirstA	Name
 3.5	3.5	3.5	HXQUOTE_LDAPFLT
 3.5	3.5	3.5	HXQUOTE_LDAPRDN
 3.5	3.5	3.5	HXSIZEOF_Z16
-3.5	3.3	3.3	HXformat2_aprintf
-3.5	3.3	3.3	HXformat2_fprintf
-3.5	3.3	3.3	HXformat2_sprintf
 3.5	2.2	2.2	HXproc_run_async
 3.5	2.2	2.2	HXproc_run_sync
 3.4	3.4	3.4	HX_exit
@@ -79,15 +88,8 @@ RMV	MinVer	FirstA	Name
 3.0	3.0	3.0	HXMAPT_HASH
 3.0	3.0	3.0	HXMAPT_ORDERED
 3.0	3.0	3.0	HXMAPT_RBTREE
-3.0	3.0	3.0	HXMAP_CDATA
-3.0	3.0	3.0	HXMAP_CKEY
 3.0	3.0	3.0	HXMAP_DTRAV
 3.0	3.0	3.0	HXMAP_NOREPLACE
-3.0	3.0	3.0	HXMAP_SCDATA
-3.0	3.0	3.0	HXMAP_SCKEY
-3.0	3.0	3.0	HXMAP_SDATA
-3.0	3.0	3.0	HXMAP_SINGULAR
-3.0	3.0	3.0	HXMAP_SKEY
 3.0	3.0	3.0	HX_diff_timespec
 3.0	3.0	3.0	HX_diff_timeval
 3.0	3.0	3.0	HXhash_djb2
@@ -257,7 +259,6 @@ RMV	MinVer	FirstA	Name
 1.10.0	1.10.0	1.10.0	HX_irand
 1.10.0	1.10.0	1.10.0	HX_memdup
 1.10.0	1.10.0	1.10.0	HX_memdup<>
-1.10.0	1.10.0	1.10.0	HX_mkdir
 1.10.0	1.10.0	1.10.0	HX_rand
 1.10.0	1.10.0	1.10.0	HX_rrmdir
 1.10.0	1.10.0	1.10.0	HX_shconfig_free
@@ -303,8 +304,8 @@ MinVer	FirstA
 3.0	3.0	struct HXmap
 3.0	3.0	struct HXmap_ops
 3.0	3.0	struct HXmap_node
-1.10.0	1.10.0	struct HXoptcb
-1.10.0	1.10.0	struct HXoption
+3.12	1.10.0	struct HXoptcb
+3.12	1.10.0	struct HXoption
 2.2	2.2	struct HXproc_ops
 2.2	2.2	struct HXproc
 

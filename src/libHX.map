@@ -12,11 +12,8 @@ global:
 	HX_ffs;
 	HX_getopt;
 	HX_getopt_help;
-	HX_getopt_help_cb;
 	HX_getopt_usage;
-	HX_getopt_usage_cb;
 	HX_irand;
-	HX_mkdir;
 	HX_rand;
 	HX_rrmdir;
 	HX_shconfig;
@@ -119,8 +116,6 @@ global:
 	HXmap_find;
 	HXmap_free;
 	HXmap_get;
-	HXmap_init5;
-	HXmap_init;
 	HXmap_keysvalues;
 	HXmap_qfe;
 	HXmap_traverse;
@@ -138,9 +133,6 @@ global:
 	HX_drand;
 	HX_shconfig_map;
 	HXdeque_genocide2;
-	HXformat2_aprintf;
-	HXformat2_fprintf;
-	HXformat2_sprintf;
 	HXmc_zvecfree;
 } LIBHX_3.2;
 
@@ -165,11 +157,18 @@ global:
 
 LIBHX_3.12 {
 global:
-	HX_mkdir2;
+	HX_getopt_help_cb;
+	HX_getopt_usage_cb;
+	HX_mkdir;
 	HX_strdup;
 	HX_strlcat;
 	HX_strlcpy;
 	HX_strlncat;
 	HX_strndup;
 	HX_strnlen;
+	HXformat_aprintf;
+	HXformat_fprintf;
+	HXformat_sprintf;
+	HXmap_init5;
+	HXmap_init;
 } LIBHX_3.10;

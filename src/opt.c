@@ -102,7 +102,7 @@ enum HX_getopt_state {
  * %HXOPT_I_ADVARG:	advance to next argument in @opt
  * %HXOPT_I_ADVARG2:	advance by two arguments in @opt
  * %HXOPT_I_ADVCHAR:	advance to next character in @cur
- * %HXOPT_I_ERROR:	system/HXoption error
+ * %HXOPT_I_ERROR:	HXoption error
  */
 enum {
 	HXOPT_I_ASSIGN  = 1 << 3,
@@ -117,11 +117,13 @@ enum {
 
 /**
  * struct HX_getopt_vars - option parser working variable set
+ * @arg0:	saved program name
  * @remaining:	list of extracted non-options
  * @cbi:	callback info
  * @flags:	flags setting the behavior for HX_getopt
  */
 struct HX_getopt_vars {
+	const char *arg0;
 	struct HXdeque *remaining;
 	struct HXoptcb cbi;
 	unsigned int flags;
@@ -143,7 +145,7 @@ static bool posix_me_harder(void)
 	return true; /* non-empty string */
 }
 
-static void do_assign(struct HXoptcb *cbi)
+static void do_assign(struct HXoptcb *cbi, const char *arg0)
 {
 	const struct HXoption *opt = cbi->current;
 
@@ -162,7 +164,7 @@ static void do_assign(struct HXoptcb *cbi)
 		*static_cast(int *, opt->ptr) = cbi->data_long = opt->val;
 		break;
 	case HXTYPE_SVAL:
-		*static_cast(const char **, opt->ptr) = cbi->data = opt->sval;
+		*static_cast(const char **, opt->ptr) = cbi->data = opt->uptr;
 		break;
 	case HXTYPE_BOOL: {
 		int *p;
@@ -220,6 +222,7 @@ static void do_assign(struct HXoptcb *cbi)
 			HXmc_strcpy(opt->ptr, cbi->data);
 		break;
 	case HXTYPE_XHELP:
+		cbi->data = arg0;
 		break;
 	default:
 		fprintf(stderr, "libHX-opt: illegal type %d\n",
@@ -474,19 +477,17 @@ static int HX_getopt_twolong(const char *const *opt,
 		if (par->flags & HXOPT_PTHRU) {
 			char *tmp = HX_strdup(key);
 			if (tmp == NULL)
-				return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+				return -errno;
 			if (HXdeque_push(par->remaining, tmp) == NULL) {
 				free(tmp);
-				return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+				return -errno;
 			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
 		return HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, par->flags);
 	}
 
-	par->cbi.match_ln = key + 2;
-	par->cbi.match_sh = '\0';
-
+	par->cbi.flags = HXOPTCB_BY_LONG;
 	if (takes_void(par->cbi.current->type)) {
 		par->cbi.data = NULL;
 		return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG;
@@ -517,7 +518,7 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 
 	key = HX_strdup(cur);
 	if (key == NULL)
-		return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+		return -errno;
 
 	value = strchr(key, '=');
 	*value++ = '\0';
@@ -528,7 +529,7 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 			value[-1] = '=';
 			if (HXdeque_push(par->remaining, key) == NULL) {
 				free(key);
-				return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+				return -errno;
 			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
@@ -546,11 +547,10 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 		return ret;
 	}
 
-	par->cbi.match_ln = key + 2;
-	par->cbi.match_sh = '\0';
+	par->cbi.flags    = HXOPTCB_BY_LONG;
 	par->cbi.data     = value;
 	/* Not possible to use %HXOPT_I_ASSIGN due to transience of @key. */
-	do_assign(&par->cbi);
+	do_assign(&par->cbi, par->arg0);
 	free(key);
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
@@ -558,10 +558,12 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 static int HX_getopt_short(const char *const *opt, const char *cur,
     struct HX_getopt_vars *par)
 {
-	if (*cur == '\0')
+	char op = *cur;
+
+	if (op == '\0')
 		return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 
-	par->cbi.current = lookup_short(par->cbi.table, *cur);
+	par->cbi.current = lookup_short(par->cbi.table, op);
 	if (par->cbi.current == NULL) {
 		if (par->flags & HXOPT_PTHRU) {
 			/*
@@ -573,16 +575,14 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 				*buf = '-';
 			if (HXdeque_push(par->remaining, buf) == NULL) {
 				free(buf);
-				return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+				return -errno;
 			}
 			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 		}
-		return HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, cur, par->flags);
+		return HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, &op, par->flags);
 	}
 
-	par->cbi.match_ln = NULL;
-	par->cbi.match_sh = *cur;
-
+	par->cbi.flags = HXOPTCB_BY_SHORT;
 	if (takes_void(par->cbi.current->type)) {
 		/* -A */
 		par->cbi.data = NULL;
@@ -608,7 +608,7 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 	} else {
 		/* -A value */
 		if (cur == NULL)
-			return HX_getopt_error(HXOPT_E_SHORT_MISSING, &par->cbi.match_sh, par->flags);
+			return HX_getopt_error(HXOPT_E_SHORT_MISSING, &op, par->flags);
 		par->cbi.data = cur;
 		return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG2;
 	}
@@ -618,10 +618,10 @@ static int HX_getopt_term(const char *cur, const struct HX_getopt_vars *par)
 {
 	char *tmp = HX_strdup(cur);
 	if (tmp == NULL)
-		return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+		return -errno;
 	if (HXdeque_push(par->remaining, tmp) == NULL) {
 		free(tmp);
-		return HXOPT_I_ERROR | HXOPT_ERR_SYS;
+		return -errno;
 	}
 	return HXOPT_S_TERMINATED | HXOPT_I_ADVARG;
 }
@@ -663,8 +663,8 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 {
 	struct HX_getopt_vars ps;
 	const char **opt = *argv;
-	unsigned int state = HXOPT_S_NORMAL;
-	int ret = HXOPT_ERR_SYS;
+	int state = HXOPT_S_NORMAL;
+	int ret = HXOPT_ERR_SUCCESS;
 	unsigned int argk;
 	const char *cur;
 
@@ -673,24 +673,23 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	if (ps.remaining == NULL)
 		goto out;
 	ps.flags = flags;
-	ps.cbi.arg0  = **argv;
+	ps.arg0  = **argv;
 	ps.cbi.table = table;
 
 	if (*opt != NULL) {
 		/* put argv[0] back */
 		char *arg = HX_strdup(*opt++);
 		if (arg == NULL)
-			goto out;
+			goto out_errno;
 		if (HXdeque_push(ps.remaining, arg) == NULL) {
 			free(arg);
-			goto out;
+			goto out_errno;
 		}
 	}
 
 	if (posix_me_harder())
 		ps.flags |= HXOPT_POSIX_MODE;
 
-	ret = HXOPT_ERR_SUCCESS;
 	for (cur = *opt; cur != NULL; ) {
 		if (state == HXOPT_S_TWOLONG)
 			state = HX_getopt_twolong(opt, &ps);
@@ -703,12 +702,16 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		else if (state == HXOPT_S_NORMAL)
 			state = HX_getopt_normal(cur, &ps);
 
+		if (state < 0) {
+			ret = state;
+			break;
+		}
 		if (state & HXOPT_I_ERROR) {
 			ret = state & ~HXOPT_I_ERROR;
 			break;
 		}
 		if (state & HXOPT_I_ASSIGN)
-			do_assign(&ps.cbi);
+			do_assign(&ps.cbi, ps.arg0);
 		if (state & HXOPT_I_ADVARG)
 			cur = *++opt;
 		else if (state & HXOPT_I_ADVARG2)
@@ -735,13 +738,11 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		        HXdeque_to_vec(ps.remaining, &argk));
 		if (argc != NULL)
 			*argc = argk;
-
-		/* I just notice that %HXOPT_ERR_SUCCESS is never used.. */
-		ret = -1;
-	} else if (ret == HXOPT_ERR_SYS) {
+	} else if (ret < 0) {
 		if (!(ps.flags & HXOPT_QUIET))
 			fprintf(stderr, "%s: %s\n", __func__, strerror(errno));
 	} else {
+		ps.cbi.data = ps.arg0;
 		if (ps.flags & HXOPT_HELPONERR)
 			HX_getopt_help(&ps.cbi, stderr);
 		else if (ps.flags & HXOPT_USAGEONERR)
@@ -749,7 +750,11 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	}
 
 	HXdeque_free(ps.remaining);
-	return -ret;
+	return ret;
+
+ out_errno:
+	ret = -errno;
+	goto out;
 }
 
 EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
@@ -793,7 +798,8 @@ EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 	FILE *fp = (nfp == NULL) ? stderr : nfp;
 	const struct HXoption *travp;
 	char tmp[84] = {};
-	const char *arg0 = cbi->arg0;
+	/* Program name now expected in .data */
+	const char *arg0 = cbi->data;
 
 	if (arg0 == NULL)
 		arg0 = "($0)";
@@ -886,14 +892,15 @@ static void HX_shconf_break(void *ptr, char *line,
 
 static void HX_shconf_assign(void *table, const char *key, const char *value)
 {
-	struct HXoptcb cbi = {.table = table, .match_sh = '\0'};
+	struct HXoptcb cbi = {
+		.table = table,
+		.flags = HXOPTCB_BY_LONG,
+		.data  = value,
+	};
 
 	if ((cbi.current = lookup_long(table, key)) == NULL)
 		return;
-
-	cbi.match_ln = key;
-	cbi.data     = value;
-	do_assign(&cbi);
+	do_assign(&cbi, NULL);
 }
 
 EXPORT_SYMBOL int HX_shconfig(const char *file, const struct HXoption *table)

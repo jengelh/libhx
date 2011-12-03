@@ -67,7 +67,7 @@ static void t_format(int argc)
 	++argc;
 	printf("# HXformat2\n");
 	for (s = fmt2_strings; *s != '\0'; ++s)
-		HXformat2_fprintf(fmt, stdout, *s);
+		HXformat_fprintf(fmt, stdout, *s);
 	HXformat_free(fmt);
 }
 

@@ -27,11 +27,11 @@ extern struct HXformat_map *HXformat_init(void);
 extern void HXformat_free(struct HXformat_map *);
 extern int HXformat_add(struct HXformat_map *, const char *, const void *,
 	unsigned int);
-extern int HXformat2_aprintf(const struct HXformat_map *,
+extern int HXformat_aprintf(const struct HXformat_map *,
 	hxmc_t **, const char *);
-extern int HXformat2_sprintf(const struct HXformat_map *,
+extern int HXformat_sprintf(const struct HXformat_map *,
 	char *, size_t, const char *);
-extern int HXformat2_fprintf(const struct HXformat_map *,
+extern int HXformat_fprintf(const struct HXformat_map *,
 	FILE *, const char *);
 
 /*
@@ -42,7 +42,7 @@ extern int HXformat2_fprintf(const struct HXformat_map *,
  * Available types for struct HXoption.type.
  * %HXTYPE_NONE:	[-o] (int *) No argument; counts presence.
  * %HXTYPE_VAL:		[-o] (int *) Set to value in .val.
- * %HXTYPE_SVAL:	[-o] (const char *) Set to value in .sval.
+ * %HXTYPE_SVAL:	[-o] (const char *) Set to value in .uptr.
  * %HXTYPE_BOOL:	[fo] (int *) Parse argument as boolean
  * 			     ("yes", "no", "true", "false", 0 or non-zero)
  * %HXTYPE_BYTE:	[fo] (unsigned char *) Take first char of argument
@@ -150,23 +150,17 @@ enum {
 };
 
 /**
- * Return values for HX_getopt.
- * %HXOPT_ERR_SUCCESS:	unused
+ * (Positive-ranged) return values for HX_getopt.
+ * %HXOPT_ERR_SUCCESS:	success
  * %HXOPT_ERR_UNKN:	unknown option was encountered
  * %HXOPT_ERR_VOID:	long option takes no value
  * %HXOPT_ERR_MIS:	option requires a value argument
- * %HXOPT_ERR_SYS:	system error (memory allocation failure)
- *
- * NOTE: HX_getopt returns >0 for success currently, and <0 indicates
- * the error (e.g. test for HX_getopt(...) == -HXOPT_ERR_SYS).
- * Sucks and should be changed.
  */
 enum {
 	HXOPT_ERR_SUCCESS = 0,
 	HXOPT_ERR_UNKN,
 	HXOPT_ERR_VOID,
 	HXOPT_ERR_MIS,
-	HXOPT_ERR_SYS,
 };
 
 /**
@@ -185,16 +179,24 @@ enum {
 	SHCONF_ONE = 1 << 0,
 };
 
+/**
+ * Flags in struct HXoptcb.flags
+ * %HXOPTCB_BY_LONG:	cb was called by invocation of @current->ln
+ * %HXOPTCB_BY_SHORT:	cb was called by invocation of @current->sh
+ */
+enum {
+	HXOPTCB_BY_LONG  = 1 << 0,
+	HXOPTCB_BY_SHORT = 1 << 1,
+};
+
 struct HXoptcb {
-	const char *arg0;
 	const struct HXoption *table, *current;
 	const char *data;
 	union {
 		double data_dbl;
 		long data_long;
 	};
-	const char *match_ln;
-	char match_sh;
+	unsigned int flags;
 };
 
 /**
@@ -202,10 +204,10 @@ struct HXoptcb {
  * @sh:		short option character, or '\0'
  * @type:	type of variable pointed to by .ptr
  * @ptr:	pointer to variable to set/update
- * @uptr:	freeform user-supplied pointer
+ * @uptr:	freeform user-supplied pointer;
+ * 		in case of %HXTYPE_SVAL, this is the specific value to set
  * @cb:		callback function to invoke, or %NULL
  * @val:	specific value to set if type == HXTYPE_VAL
- * @sval:	specific value to set if type == HXTYPE_SVAL
  * @help:	help string to display
  * @htyp:	type string to show in option's help
  */
@@ -216,7 +218,7 @@ struct HXoption {
 	void *ptr, *uptr;
 	void (*cb)(const struct HXoptcb *);
 	int val;
-	const char *sval, *help, *htyp;
+	const char *help, *htyp;
 };
 
 extern int HX_getopt(const struct HXoption *, int *, const char ***,
@@ -246,7 +248,7 @@ extern void HX_shconfig_free(const struct HXoption *);
 #else
 #	define HXOPT_AUTOHELP \
 		{NULL, '?', HXTYPE_XHELP, NULL, NULL, HX_getopt_help_cb, \
-		0, NULL, "Show this help message"}
+		0, "Show this help message"}
 #	define HXOPT_TABLEEND {NULL, 0, HXTYPE_XSNTMARK}
 #endif
 
