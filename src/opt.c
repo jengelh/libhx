@@ -219,6 +219,8 @@ static void do_assign(struct HXoptcb *cbi)
 		if (opt->ptr != NULL)
 			HXmc_strcpy(opt->ptr, cbi->data);
 		break;
+	case HXTYPE_XHELP:
+		break;
 	default:
 		fprintf(stderr, "libHX-opt: illegal type %d\n",
 		        opt->type & HXOPT_TYPEMASK);
@@ -249,7 +251,8 @@ static inline const struct HXoption *lookup_long(const struct HXoption *table,
 static inline bool takes_void(unsigned int t)
 {
 	t &= HXOPT_TYPEMASK;
-	return t == HXTYPE_NONE || t == HXTYPE_VAL || t == HXTYPE_SVAL;
+	return t == HXTYPE_NONE || t == HXTYPE_VAL || t == HXTYPE_SVAL ||
+	       t == HXTYPE_XHELP;
 }
 
 static void opt_to_text(const struct HXoption *opt, char *buf, size_t len,

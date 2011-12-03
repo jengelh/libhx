@@ -71,6 +71,7 @@ extern int HXformat2_fprintf(const struct HXformat_map *,
  * %HXTYPE_INT64:	[-o] (uint8_t *) An integer.
  * %HXTYPE_MCSTR:	[-o] (hxmc_t *) A string.
  * %HXTYPE_XSNTMARK:	[-o] Internal sentinal marker (used in HXOPT_TABLEEND)
+ * %HXTYPE_XHELP:	[-o] Internal helper marker (used in HXOPT_AUTOHELP)
  *
  * Type expected of struct HXoption.ptr is given in ().
  * HX_getopt (o) and HXformat_* (f) support different sets, marked with [].
@@ -105,7 +106,8 @@ enum HX_option_type {
 	HXTYPE_INT32,
 	HXTYPE_INT64,
 	HXTYPE_MCSTR,
-	HXTYPE_XSNTMARK, /* 29 */
+	HXTYPE_XSNTMARK,
+	HXTYPE_XHELP, /* 30 */
 };
 
 /**
@@ -235,7 +237,7 @@ extern void HX_shconfig_free(const struct HXoption *);
 
 #ifndef __cplusplus
 #	define HXOPT_AUTOHELP \
-		{.ln = "help", .sh = '?', .type = HXTYPE_NONE, \
+		{.ln = "help", .sh = '?', .type = HXTYPE_XHELP, \
 		.cb = HX_getopt_help_cb, .help = "Show this help message"}, \
 		{.ln = "usage", .type = HXTYPE_NONE, \
 		.cb = HX_getopt_usage_cb, \
@@ -243,7 +245,7 @@ extern void HX_shconfig_free(const struct HXoption *);
 #	define HXOPT_TABLEEND {.type = HXTYPE_XSNTMARK}
 #else
 #	define HXOPT_AUTOHELP \
-		{NULL, '?', HXTYPE_NONE, NULL, NULL, HX_getopt_help_cb, \
+		{NULL, '?', HXTYPE_XHELP, NULL, NULL, HX_getopt_help_cb, \
 		0, NULL, "Show this help message"}
 #	define HXOPT_TABLEEND {NULL, 0, HXTYPE_XSNTMARK}
 #endif
