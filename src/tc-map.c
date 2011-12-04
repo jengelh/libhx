@@ -351,13 +351,34 @@ static double hmap_agg_index(const struct HXhmap *hmap, bool verbose)
 		return 0;
 	if (verbose)
 		printf("{");
+
+	/*
+	 * HXhmap is written such that the number of buckets is always equal or
+	 * greater than the element count. This is done because, in practice,
+	 * buckets will be populated with more than a few (two/three) entries
+	 * before elements/buckets >= grow_trigger_ratio.
+	 *
+	 * Therefore, one could distribute elements such that no bucket
+	 * contains more than one. This is the "ideal" situation. We now count
+	 * the sum of absolute differences from this ideal, abs(1-j).
+	 *
+	 */
 	for (i = 0; i < HXhash_primes[hmap->power]; ++i) {
 		j = 0;
 		HXlist_for_each_entry(hnode, &hmap->bk_array[i], anchor)
 			++j;
 		if (verbose)
 			printf("%u,", j);
-		/* Difference to ideal is abs(1 - j): */
+		/*
+		 * The --j thing looks a little odd on review, but actually
+		 * just does j=abs(1-j), but unlike abs, can handle a range
+		 * nearly as large as unsigned int, were it to use something
+		 * like j==(unsigned int)-1 instead of j<0.
+		 *
+		 *   j=0 => j=-1 => j=+1
+		 *   j=1 => j= 0 => j= 0
+		 *   j=2 => j=+1 => j=+1
+		 */
 		--j;
 		if (j < 0)
 			j = -j;
@@ -367,7 +388,11 @@ static double hmap_agg_index(const struct HXhmap *hmap, bool verbose)
 		printf("}\n");
 	/* Ignore buckets that must logically be empty (pigeonhole principle) */
 	f -= HXhash_primes[hmap->power] - hmap->super.items;
-	/* It's f/(2(e-1)) */
+	/*
+	 * Since we counted both underpopulation (0 elements in a bucket) as
+	 * well as overpopulation (more than 1 element in a bucket), @f needs
+	 * to be divided by two, making it f/(2*(e-1)).
+	 */
 	/* Now return % */
 	return static_cast(double, 50 * f) / (hmap->super.items - 1);
 }
