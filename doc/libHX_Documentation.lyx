@@ -466,7 +466,7 @@ status open
 
 \begin_layout Plain Layout
 
-http://freshmeat.net/projects/libhx/
+http://freecode.com/projects/libhx/
 \end_layout
 
 \end_inset
@@ -475,15 +475,7 @@ http://freshmeat.net/projects/libhx/
 \begin_inset space ~
 \end_inset
 
---- Freshmeat page (useful for subscription, i.
-\begin_inset space \thinspace{}
-\end_inset
-
-e.
-\begin_inset space \space{}
-\end_inset
-
-automatic notification of releases)
+--- Freecode page (useful for automatic notification of new releases)
 \end_layout
 
 \begin_layout Section
