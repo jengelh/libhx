@@ -806,7 +806,7 @@ EXPORT_SYMBOL void HX_getopt_usage(const struct HXoptcb *cbi, FILE *nfp)
 	/* Program name now expected in .data */
 	const char *arg0 = cbi->data;
 
-	if (arg0 == NULL)
+	if (arg0 == NULL || *arg0 == '\0')
 		arg0 = "($0)";
 
 	wd = sizeof("Usage:") + strlen(arg0);
