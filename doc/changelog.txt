@@ -2,6 +2,9 @@
 
 HEAD
 ====
+Fixes:
+- build: make build error-free when using -Wl,--no-undefined
+Changes:
 
 
 v3.12 (2010-12-03)

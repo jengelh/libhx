@@ -21,6 +21,7 @@ proc_sources     = proc.c
 endif
 
 libHX_rtcheck_la_SOURCES = rtcheck.c
+libHX_rtcheck_la_LIBADD  = ${libdl_LIBS}
 libHX_rtcheck_la_LDFLAGS = -avoid-version -module \
                            -Wl,--version-script=${srcdir}/libHX.map
 
