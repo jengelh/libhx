@@ -260,6 +260,8 @@ EXPORT_SYMBOL char *HX_strclone(char **pa, const char *pb)
 
 EXPORT_SYMBOL char *HX_strdup(const char *src)
 {
+	if (src == NULL)
+		return NULL;
 	/* return HX_strndup(src, SIZE_MAX); */
 	return HX_memdup(src, strlen(src) + 1);
 }

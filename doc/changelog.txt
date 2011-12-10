@@ -4,6 +4,7 @@ HEAD
 ====
 Fixes:
 - build: make build error-free when using -Wl,--no-undefined
+- string: make HX_strdup(NULL) valid again
 Changes:
 
 

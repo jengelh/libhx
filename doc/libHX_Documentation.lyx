@@ -11713,6 +11713,15 @@ length
 ptr
 \family default
  and returns a pointer to the new memory block.
+ 
+\family typewriter
+ptr
+\family default
+ may not be 
+\family typewriter
+NULL
+\family default
+.
 \end_layout
 
 \begin_layout Description
@@ -11726,6 +11735,19 @@ HX_strdup
 strdup
 \family default
 , but the latter may not be available on all platforms.
+ 
+\family typewriter
+str
+\family default
+ may be 
+\family typewriter
+NULL
+\family default
+, in which case 
+\family typewriter
+NULL
+\family default
+ is also returned.
 \end_layout
 
 \begin_layout Description
@@ -11738,7 +11760,15 @@ HX_strndup
 max
 \family default
  characters.
- (The resulting string will be NUL-terminated of course.)
+ (The resulting string will be NUL-terminated of course.) 
+\family typewriter
+str
+\family default
+ may not be 
+\family typewriter
+NULL
+\family default
+.
 \end_layout
 
 \begin_layout Description
