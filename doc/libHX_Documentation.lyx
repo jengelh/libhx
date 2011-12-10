@@ -500,16 +500,8 @@ make install
 \end_layout
 
 \begin_layout Standard
-Pay attention to bi-arch Linux distributions where you most likely need
- to specify 
-\begin_inset Quotes eld
-\end_inset
-
-lib64
-\begin_inset Quotes erd
-\end_inset
-
- instead of 
+Pay attention to multi-lib Linux distributions where you most likely need
+ to specify a different libdir instead of using the default 
 \begin_inset Quotes eld
 \end_inset
 
@@ -517,53 +509,35 @@ lib
 \begin_inset Quotes erd
 \end_inset
 
-:
+.
+ In case of the Debian-style multi-arch/multi-lib proposal (
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://wiki.debian.org/Multiarch
+\end_layout
+
+\end_inset
+
+):
+\end_layout
+
+\begin_layout LyX-Code
+$ 
+\series bold
+./configure --libdir='${prefix}/lib/x86_64-linux-gnu'
+\end_layout
+
+\begin_layout Standard
+and the classic-style 32-64 2-lib distributions:
 \end_layout
 
 \begin_layout LyX-Code
 $ 
 \series bold
 ./configure --libdir='${prefix}/lib64'
-\end_layout
-
-\begin_layout Standard
-Other libdir naming besides 
-\begin_inset Quotes eld
-\end_inset
-
-
-\family typewriter
-lib
-\family default
-
-\begin_inset Quotes erd
-\end_inset
-
- and 
-\begin_inset Quotes eld
-\end_inset
-
-
-\family typewriter
-lib64
-\family default
-
-\begin_inset Quotes erd
-\end_inset
-
- may be in use by different distributions, but are rarely seen (like 
-\begin_inset Quotes eld
-\end_inset
-
-
-\family typewriter
-lib32
-\family default
-
-\begin_inset Quotes erd
-\end_inset
-
-).
 \end_layout
 
 \begin_layout Subsection
