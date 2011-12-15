@@ -2,6 +2,10 @@
 
 HEAD
 ====
+
+
+v3.12.1 (2011-12-15)
+====================
 Fixes:
 - build: make build error-free when using -Wl,--no-undefined
 - string: make HX_strdup(NULL) valid again
