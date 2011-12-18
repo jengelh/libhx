@@ -7,17 +7,17 @@ AM_CXXFLAGS = ${regular_CXXFLAGS} ${GCC_FVISIBILITY_HIDDEN}
 lib_LTLIBRARIES  = libHX.la libHX_rtcheck.la
 libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
-                   rand.c string.c time.c ${mingw32_extra} ${proc_sources}
+                   rand.c string.c time.c
 libHX_la_LIBADD  = ${libdl_LIBS} ${libpthread_LIBS} ${librt_LIBS}
 libHX_la_LDFLAGS = -version-info 28:0:0 \
                    -Wl,--version-script=${srcdir}/libHX.map
 libHX_la_DEPENDENCIES = libHX.map
 
 if MINGW32
-mingw32_extra    = ux-file.c ux-mmap.c
+libHX_la_SOURCES += ux-file.c ux-mmap.c
 endif
 if B_PROC
-proc_sources     = proc.c
+libHX_la_SOURCES += proc.c
 endif
 
 libHX_rtcheck_la_SOURCES = rtcheck.c
