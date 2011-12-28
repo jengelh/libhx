@@ -25,6 +25,8 @@ libHX_rtcheck_la_LIBADD  = ${libdl_LIBS}
 libHX_rtcheck_la_LDFLAGS = -avoid-version -module \
                            -Wl,--version-script=${srcdir}/libHX.map
 
+EXTRA_DIST = internal.h map_int.h libHX.map
+
 check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-link \
                      tc-list tc-list2 tc-map tc-misc tc-netio \
                      tc-option tc-proc tc-rand tc-realpath \
