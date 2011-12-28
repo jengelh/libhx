@@ -72,6 +72,7 @@ extern int HXformat_fprintf(const struct HXformat_map *,
  * %HXTYPE_MCSTR:	[-o] (hxmc_t *) A string.
  * %HXTYPE_XSNTMARK:	[-o] Internal sentinal marker (used in HXOPT_TABLEEND)
  * %HXTYPE_XHELP:	[-o] Internal helper marker (used in HXOPT_AUTOHELP)
+ * %HXTYPE_SIZE_T:	[-o] (size_t *) An integer.
  *
  * Type expected of struct HXoption.ptr is given in ().
  * HX_getopt (o) and HXformat_* (f) support different sets, marked with [].
@@ -108,6 +109,7 @@ enum HX_option_type {
 	HXTYPE_MCSTR,
 	HXTYPE_XSNTMARK,
 	HXTYPE_XHELP, /* 30 */
+	HXTYPE_SIZE_T,
 };
 
 /**

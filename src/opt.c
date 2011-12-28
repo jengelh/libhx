@@ -200,6 +200,7 @@ static void do_assign(struct HXoptcb *cbi, const char *arg0)
 	NTYPE(HXTYPE_UINT64,   uint64_t, strtoull);
 	NTYPE(HXTYPE_INT64,    int64_t, strtoll);
 #endif
+	NTYPE(HXTYPE_SIZE_T,   size_t, strtoull);
 	case HXTYPE_FLOAT:
 		cbi->data_dbl = strtod(cbi->data, NULL);
 		if (opt->ptr != NULL)
