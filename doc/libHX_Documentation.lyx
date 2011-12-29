@@ -15207,11 +15207,6 @@ SELF
 | HX_\SpecialChar \-
 REALPATH_\SpecialChar \-
 PARENT
-\begin_inset space ~
-\end_inset
-
-| HX_\SpecialChar \-
-REALPATH_-SYMLINK
 \family default
 .
  Note that 
@@ -15303,26 +15298,6 @@ HX_REALPATH_PARENT
 \end_inset
 
  path components.
-\end_layout
-
-\begin_layout Description
-
-\family typewriter
-HX_REALPATH_SYMLINK
-\family default
-
-\begin_inset Index idx
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-HX_REALPATH_SYMLINK
-\end_layout
-
-\end_inset
-
- Request following symbolic links.
 \end_layout
 
 \begin_layout Standard

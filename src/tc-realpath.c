@@ -10,14 +10,12 @@
 #include <libHX/option.h>
 
 static unsigned int rp_flags;
-static unsigned int rp_absolute, rp_no_symlink;
+static unsigned int rp_absolute;
 static unsigned int rp_no_parent, rp_no_self;
 
 static const struct HXoption rp_option_table[] = {
 	{.sh = 'a', .type = HXTYPE_NONE, .ptr = &rp_absolute,
 	 .help = "Produce an absolute path"},
-	{.sh = 'l', .type = HXTYPE_NONE, .ptr = &rp_no_symlink,
-	 .help = "Deactivate following symlinks"},
 	{.sh = 'p', .type = HXTYPE_NONE, .ptr = &rp_no_parent,
 	 .help = "Deactivate resolution of \"..\" entries"},
 	{.sh = 's', .type = HXTYPE_NONE, .ptr = &rp_no_self,
@@ -34,8 +32,6 @@ static bool rp_get_options(int *argc, const char ***argv)
 	rp_flags = HX_REALPATH_DEFAULT;
 	if (rp_absolute)
 		rp_flags |= HX_REALPATH_ABSOLUTE;
-	if (rp_no_symlink)
-		rp_flags &= ~HX_REALPATH_SYMLINK;
 	if (rp_no_parent)
 		rp_flags &= ~HX_REALPATH_PARENT;
 	if (rp_no_self)

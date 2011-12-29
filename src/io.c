@@ -412,8 +412,6 @@ EXPORT_SYMBOL int HX_realpath(hxmc_t **dest_pptr, const char *path,
 		path = cptr;
 		rq_slash = true;
 
-		if (!(flags & HX_REALPATH_SYMLINK))
-			continue;
 		ret = HX_realpath_symres(&state, path);
 		if (ret == -EINVAL)
 			continue;

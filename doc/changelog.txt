@@ -10,6 +10,7 @@ Fixes:
 - build: make build error-free when using -Wl,--no-undefined
 - string: make HX_strdup(NULL) valid again
 Changes:
+- io: remove HX_REALPATH_SYMLINK
 Enhancements:
 - option: add HXTYPE_SIZE_T
 
