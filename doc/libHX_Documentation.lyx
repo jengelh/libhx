@@ -15182,7 +15182,7 @@ flags
 \begin_layout Description
 
 \family typewriter
-HX_REALPATH_DFL
+HX_REALPATH_DEFAULT
 \family default
 
 \begin_inset Index idx
@@ -15191,7 +15191,7 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-HX_REALPATH_DFL
+HX_REALPATH_DEFAULT
 \end_layout
 
 \end_inset
@@ -15218,7 +15218,7 @@ REALPATH_-SYMLINK
 \family typewriter
 HX_\SpecialChar \-
 REALPATH_\SpecialChar \-
-ABS
+ABSOLUTE
 \family default
 , which would also be required to get libc's 
 \family typewriter
@@ -15230,7 +15230,7 @@ realpath
 \begin_layout Description
 
 \family typewriter
-HX_REALPATH_ABS
+HX_REALPATH_ABSOLUTE
 \family default
 
 \begin_inset Index idx
@@ -15239,7 +15239,7 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-HX_REALPATH_ABS
+HX_REALPATH_ABSOLUTE
 \end_layout
 
 \end_inset
