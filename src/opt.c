@@ -61,8 +61,6 @@ enum {
 	HXOPT_LOPMASK2 = HXOPT_OR | HXOPT_AND | HXOPT_XOR,
 	HXOPT_LOPMASK  = HXOPT_LOPMASK2 | HXOPT_NOT,
 	HXOPT_TYPEMASK = 0x1F, /* 5 bits */
-
-	HXOPT_POSIX_MODE = 1 << 16,
 };
 
 /**
@@ -652,7 +650,7 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 	if (cur[0] == '-')
 		/* Short option(s) - one or more(!) */
 		return HXOPT_S_SHORT | HXOPT_I_ADVCHAR;
-	if (par->flags & HXOPT_POSIX_MODE)
+	if (par->flags & HXOPT_RQ_ORDER)
 		/* POSIX: first non-option implies option termination */
 		return HXOPT_S_TERMINATED;
 	cur = HX_strdup(cur);
@@ -691,7 +689,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	}
 
 	if (posix_me_harder())
-		ps.flags |= HXOPT_POSIX_MODE;
+		ps.flags |= HXOPT_RQ_ORDER;
 
 	for (cur = *opt; cur != NULL; ) {
 		if (state == HXOPT_S_TWOLONG)

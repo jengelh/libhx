@@ -142,6 +142,8 @@ enum {
  * %HXOPT_QUIET:	do not output any warnings to stderr
  * %HXOPT_HELPONERR:	print out help when a parsing error occurs
  * %HXOPT_USAGEONERR:	print out short usage when a parsing error occurs
+ * %HXOPT_RQ_ORDER:	require option order/POSIX mode:
+ * 			first non-option terminates option processing
  */
 enum {
 	HXOPT_PTHRU       = 1 << 0,
@@ -149,6 +151,7 @@ enum {
 	HXOPT_QUIET       = 1 << 2,
 	HXOPT_HELPONERR   = 1 << 3,
 	HXOPT_USAGEONERR  = 1 << 4,
+	HXOPT_RQ_ORDER    = 1 << 5,
 };
 
 /**

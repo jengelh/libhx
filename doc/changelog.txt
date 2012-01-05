@@ -2,6 +2,9 @@
 
 HEAD
 ====
+Enhancements:
+- option: new HXOPT_RQ_ORDER flag, allows unconditional POSIX-style parsing
+  (parsing terminates at first non-option encountered)
 
 
 v3.12.1 (2011-12-15)

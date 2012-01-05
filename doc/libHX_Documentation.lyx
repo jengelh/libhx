@@ -18528,6 +18528,36 @@ HXOPT_USAGEONERR
  Display the short-format usage syntax when an error is encountered.
 \end_layout
 
+\begin_layout Description
+
+\family typewriter
+HXOPT_RQ_ORDER
+\family default
+
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXOPT_RQ_ORDER
+\end_layout
+
+\end_inset
+
+ Specifying this option terminates option processing when the first non-option
+ argument in 
+\family typewriter
+argv
+\family default
+ is encountered.
+ This behavior is also implicit when the environment variable 
+\family typewriter
+POSIXLY_CORRECT
+\family default
+ is set.
+\end_layout
+
 \begin_layout Standard
 The return value can be one of the following:
 \end_layout
