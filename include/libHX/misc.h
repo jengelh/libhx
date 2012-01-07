@@ -50,6 +50,8 @@ extern const char *HX_dlerror(void);
 extern int HX_ffs(unsigned long);
 extern int HX_fls(unsigned long);
 extern void HX_hexdump(FILE *, const void *, unsigned int);
+extern struct timespec *HX_timespec_add(struct timespec *,
+	const struct timespec *, const struct timespec *);
 extern struct timespec *HX_timespec_sub(struct timespec *,
 	const struct timespec *, const struct timespec *);
 extern struct timeval *HX_timeval_sub(struct timeval *,

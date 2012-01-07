@@ -19,6 +19,18 @@ enum {
 };
 
 #ifdef HAVE_STRUCT_TIMESPEC_TV_NSEC
+EXPORT_SYMBOL struct timespec *HX_timespec_add(struct timespec *res,
+    const struct timespec *a, const struct timespec *b)
+{
+	res->tv_sec  = a->tv_sec + b->tv_sec;
+	res->tv_nsec = a->tv_nsec + b->tv_nsec;
+	if (res->tv_nsec >= NANOSECOND) {
+		res->tv_nsec -= NANOSECOND;
+		++res->tv_sec;
+	}
+	return res;
+}
+
 /**
  * Calculates @future - @past. You can also swap them and correctly
  * get a negative time.

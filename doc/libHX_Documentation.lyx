@@ -3352,6 +3352,56 @@ struct
 \series bold
 *
 \series default
+HX_timespec_add(
+\series bold
+struct
+\series default
+ timespec 
+\series bold
+*
+\series default
+result,
+\begin_inset Newline newline
+\end_inset
+
+    
+\series bold
+const struct
+\series default
+ timespec 
+\series bold
+*
+\series default
+p, 
+\series bold
+const struct
+\series default
+ timespec 
+\series bold
+*
+\series default
+q);
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+HX_timespec_add
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ timespec 
+\series bold
+*
+\series default
 HX_timespec_sub(
 \series bold
 struct
@@ -3485,6 +3535,19 @@ HX_time_compare
 \end_inset
 
 
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_timespec_add
+\family default
+ Calculates the sum of the two times specified by p and q, which are of
+ type 
+\family typewriter
+struct timespec
+\family default
+.
 \end_layout
 
 \begin_layout Description

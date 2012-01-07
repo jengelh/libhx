@@ -11,6 +11,7 @@ Changes:
 - time: rename HX_diff_timeval to HX_timeval_sub (old ABI kept)
 Enhancements:
 - option: add HXTYPE_SIZE_T
+- time: add a HX_timespec_add function
 
 
 v3.12.1 (2011-12-15)

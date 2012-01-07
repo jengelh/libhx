@@ -143,6 +143,8 @@ stub0(HX_dlerror);
 stub1(HX_ffs, (unsigned long a));
 stub1(HX_fls, (unsigned long a));
 stub3(HX_hexdump, (FILE *a, const void *b, unsigned int c));
+stub3(HX_timespec_add, (struct timespec *a, const struct timespec *b,
+	const struct timespec *c));
 stub3(HX_timespec_sub, (struct timespec *a, const struct timespec *b,
 	const struct timespec *c));
 stub3(HX_diff_timespec, (struct timespec *a, const struct timespec *b,

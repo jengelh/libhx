@@ -13,16 +13,30 @@
 
 static unsigned int sleep_amt = 1336670;
 
-int main(int argc, const char **argv)
+static void zadd(void)
+{
+	static const struct timespec a = {0, 999999999};
+	struct timespec r;
+
+	HX_timespec_add(&r, &a, &a);
+	printf("%ld.%09ld = 2 x %ld.%09ld\n",
+		static_cast(long, r.tv_sec), static_cast(long, r.tv_nsec),
+		static_cast(long, a.tv_sec), static_cast(long, a.tv_nsec));
+}
+
+static void zsub(void)
+{
+	static const struct timespec a = {1, 0}, b = {0, 1};
+	HX_timespec_sub(&r, &a, &b);
+	printf("%ld.%09ld = %ld.%09ld - %ld.%09ld\n",
+		static_cast(long, r.
+}
+
+static void zsleep(void)
 {
 	struct timeval  m_past, m_future, m_delta;
 	struct timespec n_past, n_future, n_delta;
 
-	if (HX_init() <= 0)
-		abort();
-
-	if (argc >= 2)
-		sleep_amt = strtoul(argv[1], NULL, 0);
 	printf("µsec sleep: %u\n", sleep_amt);
 
 	clock_gettime(CLOCK_REALTIME, &n_past);
@@ -57,7 +71,15 @@ int main(int argc, const char **argv)
 	       static_cast(long, n_future.tv_nsec),
 	       static_cast(long, n_delta.tv_sec),
 	       static_cast(long, n_delta.tv_nsec));
+}
 
+int main(void)
+{
+	if (HX_init() <= 0)
+		abort();
+
+	zact();
+	zsleep();
 	HX_exit();
 	return EXIT_SUCCESS;
 }
