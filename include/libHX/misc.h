@@ -52,7 +52,7 @@ extern int HX_fls(unsigned long);
 extern void HX_hexdump(FILE *, const void *, unsigned int);
 extern struct timespec *HX_timespec_sub(struct timespec *,
 	const struct timespec *, const struct timespec *);
-extern void HX_diff_timeval(struct timeval *,
+extern struct timeval *HX_timeval_sub(struct timeval *,
 	const struct timeval *, const struct timeval *);
 extern long HX_time_compare(const struct stat *, const struct stat *, char);
 extern void HX_zvecfree(char **);

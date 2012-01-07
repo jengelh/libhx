@@ -31,7 +31,7 @@ int main(int argc, const char **argv)
 	clock_gettime(CLOCK_REALTIME, &n_future);
 	gettimeofday(&m_future, NULL);
 
-	HX_diff_timeval(&m_delta, &m_future, &m_past);
+	HX_timeval_sub(&m_delta, &m_future, &m_past);
 	printf("µsec: %ld.%06ld -> %ld.%06ld = %ld.%06ld\n",
 	       static_cast(long, m_past.tv_sec),
 	       static_cast(long, m_past.tv_usec),

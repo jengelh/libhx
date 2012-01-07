@@ -8,6 +8,7 @@ Enhancements:
 Changes:
 - io: remove HX_REALPATH_SYMLINK
 - time: rename HX_diff_timespec to HX_timespec_sub (old ABI kept)
+- time: rename HX_diff_timeval to HX_timeval_sub (old ABI kept)
 Enhancements:
 - option: add HXTYPE_SIZE_T
 

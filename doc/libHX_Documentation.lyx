@@ -3398,9 +3398,13 @@ HX_timespec_sub
 
 
 \series bold
-void
+struct
 \series default
- HX_diff_timeval(
+ timeval 
+\series bold
+*
+\series default
+HX_timeval_sub(
 \series bold
 struct
 \series default
@@ -3435,7 +3439,7 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-HX_diff_timeval
+HX_timeval_sub
 \end_layout
 
 \end_inset
@@ -3499,7 +3503,7 @@ struct timespec
 \begin_layout Description
 
 \family typewriter
-HX_diff_timeval
+HX_timeval_sub
 \family default
  Calculates the difference between the two timepoints p and q, which are
  of type 

@@ -130,7 +130,7 @@ static void tmap_add_speed(struct HXmap *map)
 	do {
 		tmap_add_rand(map, 1);
 		tmap_time(&stop);
-		HX_diff_timeval(&delta, &stop, &start);
+		HX_timeval_sub(&delta, &stop, &start);
 	} while (!(delta.tv_sec >= 1 || map->items >= 1000000));
 	tmap_printf("%u elements in %ld.%06ld "
 		"(plus time measurement overhead)\n",
@@ -142,7 +142,7 @@ static void tmap_add_speed(struct HXmap *map)
 	tmap_time(&start);
 	tmap_add_rand(map, threshold);
 	tmap_time(&stop);
-	HX_diff_timeval(&delta, &stop, &start);
+	HX_timeval_sub(&delta, &stop, &start);
 	tmap_printf("%u elements in %ld.%06ld "
 		"(w/o overhead)\n",
 		map->items, static_cast(long, delta.tv_sec),
@@ -168,7 +168,7 @@ static void tmap_trav_speed(struct HXmap *map)
 	while ((node = HXmap_traverse(iter)) != NULL)
 		;
 	tmap_time(&stop);
-	HX_diff_timeval(&delta, &stop, &start);
+	HX_timeval_sub(&delta, &stop, &start);
 	HXmap_travfree(iter);
 	tmap_printf("Open traversal of %u nodes: %ld.%06lds\n",
 		map->items, static_cast(long, delta.tv_sec),
@@ -177,7 +177,7 @@ static void tmap_trav_speed(struct HXmap *map)
 	tmap_time(&start);
 	HXmap_qfe(map, tmap_each_fn, NULL);
 	tmap_time(&stop);
-	HX_diff_timeval(&delta, &stop, &start);
+	HX_timeval_sub(&delta, &stop, &start);
 	tmap_printf("QFE traversal of %u nodes: %ld.%06lds\n",
 		map->items, static_cast(long, delta.tv_sec),
 		static_cast(long, delta.tv_usec));
@@ -190,12 +190,12 @@ static void tmap_trav_speed(struct HXmap *map)
 	while ((node = HXmap_traverse(iter)) != NULL)
 		HXmap_find(map, node->key);
 	tmap_time(&stop);
-	HX_diff_timeval(&delta2, &stop, &start);
+	HX_timeval_sub(&delta2, &stop, &start);
 	HXmap_travfree(iter);
 	/* delta2 includes traversal time */
 	start = delta;
 	stop  = delta2;
-	HX_diff_timeval(&delta, &stop, &start);
+	HX_timeval_sub(&delta, &stop, &start);
 	tmap_printf("Lookup of %u nodes: %ld.%06lds\n",
 		map->items, static_cast(long, delta.tv_sec),
 		static_cast(long, delta.tv_usec));

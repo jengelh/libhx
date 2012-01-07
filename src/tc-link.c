@@ -119,6 +119,7 @@ static void *funcs[] = {
 	HX_diff_timeval,
 	HX_time_compare,
 	HX_timespec_sub,
+	HX_timeval_sub,
 #ifdef _WIN32
 	chown,
 	fchmod,

@@ -176,4 +176,5 @@ global:
 LIBHX_3.13 {
 global:
 	HX_timespec_sub;
+	HX_timeval_sub;
 } LIBHX_3.12;

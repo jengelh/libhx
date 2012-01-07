@@ -51,7 +51,7 @@ EXPORT_SYMBOL void HX_diff_timespec(struct timespec *delta,
 #endif
 
 #ifdef HAVE_STRUCT_TIMEVAL_TV_USEC
-EXPORT_SYMBOL void HX_diff_timeval(struct timeval *delta,
+EXPORT_SYMBOL struct timeval *HX_timeval_sub(struct timeval *delta,
     const struct timeval *future, const struct timeval *past)
 {
 	delta->tv_sec  = future->tv_sec  - past->tv_sec;
@@ -68,6 +68,13 @@ EXPORT_SYMBOL void HX_diff_timeval(struct timeval *delta,
 		delta->tv_usec += MICROSECOND;
 		--delta->tv_sec;
 	}
+	return delta;
+}
+
+EXPORT_SYMBOL void HX_diff_timeval(struct timeval *delta,
+    const struct timeval *future, const struct timeval *past)
+{
+	HX_timeval_sub(delta, future, past);
 }
 #endif
 
