@@ -5,6 +5,10 @@ HEAD
 Enhancements:
 - option: new HXOPT_RQ_ORDER flag, allows unconditional POSIX-style parsing
   (parsing terminates at first non-option encountered)
+Changes:
+- io: remove HX_REALPATH_SYMLINK
+Enhancements:
+- option: add HXTYPE_SIZE_T
 
 
 v3.12.1 (2011-12-15)
@@ -12,10 +16,6 @@ v3.12.1 (2011-12-15)
 Fixes:
 - build: make build error-free when using -Wl,--no-undefined
 - string: make HX_strdup(NULL) valid again
-Changes:
-- io: remove HX_REALPATH_SYMLINK
-Enhancements:
-- option: add HXTYPE_SIZE_T
 
 
 v3.12 (2010-12-03)
