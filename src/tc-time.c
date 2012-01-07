@@ -40,7 +40,7 @@ int main(int argc, const char **argv)
 	       static_cast(long, m_delta.tv_sec),
 	       static_cast(long, m_delta.tv_usec));
 
-	HX_diff_timespec(&n_delta, &n_future, &n_past);
+	HX_timespec_sub(&n_delta, &n_future, &n_past);
 	printf("nsec: %ld.%09ld -> %ld.%09ld = %ld.%09ld\n",
 	       static_cast(long, n_past.tv_sec),
 	       static_cast(long, n_past.tv_nsec),
@@ -49,7 +49,7 @@ int main(int argc, const char **argv)
 	       static_cast(long, n_delta.tv_sec),
 	       static_cast(long, n_delta.tv_nsec));
 
-	HX_diff_timespec(&n_delta, &n_past, &n_future);
+	HX_timespec_sub(&n_delta, &n_past, &n_future);
 	printf("ns-1: %ld.%09ld -> %ld.%09ld = %ld.%09ld\n",
 	       static_cast(long, n_past.tv_sec),
 	       static_cast(long, n_past.tv_nsec),

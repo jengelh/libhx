@@ -3336,7 +3336,7 @@ Time functions
 \series bold
 #include
 \series default
- <libHX/time.h>
+ <libHX/misc.h>
 \begin_inset Newline newline
 \end_inset
 
@@ -3346,9 +3346,13 @@ Time functions
 
 
 \series bold
-void
+struct
 \series default
- HX_diff_timespec(
+ timespec 
+\series bold
+*
+\series default
+HX_timespec_sub(
 \series bold
 struct
 \series default
@@ -3383,7 +3387,7 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-HX_diff_timespec
+HX_timespec_sub
 \end_layout
 
 \end_inset
@@ -3482,7 +3486,7 @@ HX_time_compare
 \begin_layout Description
 
 \family typewriter
-HX_diff_timespec
+HX_timespec_sub
 \family default
  Calculates the difference between the two timepoints p and q, which are
  of type 

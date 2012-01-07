@@ -25,7 +25,7 @@ int main(void)
 			HX_irand(0, RAND_MAX);
 	}
 	clock_gettime(CLOCK_REALTIME, &now);
-	HX_diff_timespec(&delta, &now, &past);
+	HX_timespec_sub(&delta, &now, &past);
 	printf("%% method: %ld.%06ld s\n",
 	       static_cast(long, delta.tv_sec), delta.tv_nsec / 1000);
 
@@ -35,7 +35,7 @@ int main(void)
 			HX_irand(0, ~0U);
 	}
 	clock_gettime(CLOCK_REALTIME, &now);
-	HX_diff_timespec(&delta, &now, &past);
+	HX_timespec_sub(&delta, &now, &past);
 	printf("/ method: %ld.%06ld s\n",
 	       static_cast(long, delta.tv_sec), delta.tv_nsec / 1000);
 

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <libHX.h>
+#include "internal.h"
 
 static void *funcs[] = {
 	HXdeque_init,
@@ -117,6 +118,7 @@ static void *funcs[] = {
 	HX_diff_timespec,
 	HX_diff_timeval,
 	HX_time_compare,
+	HX_timespec_sub,
 #ifdef _WIN32
 	chown,
 	fchmod,

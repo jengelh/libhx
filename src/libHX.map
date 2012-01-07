@@ -172,3 +172,8 @@ global:
 	HXmap_init5;
 	HXmap_init;
 } LIBHX_3.10;
+
+LIBHX_3.13 {
+global:
+	HX_timespec_sub;
+} LIBHX_3.12;

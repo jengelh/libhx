@@ -50,6 +50,12 @@ struct memcont {
 	char data[];
 };
 
+struct timespec;
+
 extern hxmc_t *HXparse_dequote_fmt(const char *, const char *, const char **);
+
+/* time.c - these are obsolete, but kept for ABI */
+extern void HX_diff_timespec(struct timespec *, const struct timespec *,
+	const struct timespec *);
 
 #endif /* LIBHX_INTERNAL_H */

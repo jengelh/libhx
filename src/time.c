@@ -23,7 +23,7 @@ enum {
  * Calculates @future - @past. You can also swap them and correctly
  * get a negative time.
  */
-EXPORT_SYMBOL void HX_diff_timespec(struct timespec *delta,
+EXPORT_SYMBOL struct timespec *HX_timespec_sub(struct timespec *delta,
     const struct timespec *future, const struct timespec *past)
 {
 	delta->tv_sec  = future->tv_sec  - past->tv_sec;
@@ -40,6 +40,13 @@ EXPORT_SYMBOL void HX_diff_timespec(struct timespec *delta,
 		delta->tv_nsec += NANOSECOND;
 		--delta->tv_sec;
 	}
+	return delta;
+}
+
+EXPORT_SYMBOL void HX_diff_timespec(struct timespec *delta,
+    const struct timespec *future, const struct timespec *past)
+{
+	HX_timespec_sub(delta, future, past);
 }
 #endif
 
