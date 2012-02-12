@@ -325,7 +325,7 @@ static void print_indent(const char *msg, unsigned int ind, FILE *fp)
 }
 
 /**
- * HXparse_deshell_int - shell-style argument unescape
+ * HXparse_dequote_int - shell-style argument unescape
  * @o:		input/output string
  * @end:	terminating characters
  *
