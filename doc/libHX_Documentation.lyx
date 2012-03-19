@@ -3627,6 +3627,66 @@ b
 \end_layout
 
 \begin_layout Standard
+The macros 
+\family typewriter
+HX_TIMESPEC_FMT
+\family default
+
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_TIMESPEC_FMT
+\end_layout
+
+\end_inset
+
+ and 
+\family typewriter
+HX_TIMESPEC_EXP
+\family default
+
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HX_TIMESPEC_EXP
+\end_layout
+
+\end_inset
+
+ can be used for passing and printing a 
+\family typewriter
+struct timespec
+\family default
+ using the *
+\family typewriter
+printf
+\family default
+ function family:
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+struct
+\series default
+ timespec p;
+\begin_inset Newline newline
+\end_inset
+
+clock_gettime(CLOCK_MONOTONIC, &p);
+\begin_inset Newline newline
+\end_inset
+
+printf("Now: " HX_TIMESPEC_FMT, HX_TIMESPEC_EXP(&p));
+\end_layout
+
+\begin_layout Standard
 \begin_inset Newpage clearpage
 \end_inset
 

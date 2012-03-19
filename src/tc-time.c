@@ -19,17 +19,15 @@ static void zadd(void)
 	struct timespec r;
 
 	HX_timespec_add(&r, &a, &a);
-	printf("%ld.%09ld = 2 x %ld.%09ld\n",
-		static_cast(long, r.tv_sec), static_cast(long, r.tv_nsec),
-		static_cast(long, a.tv_sec), static_cast(long, a.tv_nsec));
+	printf(HX_TIMESPEC_FMT " = 2 x " HX_TIMESPEC_FMT "\n",
+	       HX_TIMESPEC_EXP(&r), HX_TIMESPEC_EXP(&a));
 }
 
 static void zsub(void)
 {
 	static const struct timespec a = {1, 0}, b = {0, 1};
-	HX_timespec_sub(&r, &a, &b);
-	printf("%ld.%09ld = %ld.%09ld - %ld.%09ld\n",
-		static_cast(long, r.
+//	HX_timespec_sub(&r, &a, &b);
+//	printf(HX_TIMESPEC_FMT " = " HX_TIMESPEC_FMT " - " HX_TIMESPEC_FMT "\n",
 }
 
 static void zsleep(void)
@@ -55,22 +53,16 @@ static void zsleep(void)
 	       static_cast(long, m_delta.tv_usec));
 
 	HX_timespec_sub(&n_delta, &n_future, &n_past);
-	printf("nsec: %ld.%09ld -> %ld.%09ld = %ld.%09ld\n",
-	       static_cast(long, n_past.tv_sec),
-	       static_cast(long, n_past.tv_nsec),
-	       static_cast(long, n_future.tv_sec),
-	       static_cast(long, n_future.tv_nsec),
-	       static_cast(long, n_delta.tv_sec),
-	       static_cast(long, n_delta.tv_nsec));
+	printf("nsec: " HX_TIMESPEC_FMT " -> " HX_TIMESPEC_FMT
+	       " = " HX_TIMESPEC_FMT "\n",
+	       HX_TIMESPEC_EXP(&n_past), HX_TIMESPEC_EXP(&n_future),
+	       HX_TIMESPEC_EXP(&n_delta));
 
 	HX_timespec_sub(&n_delta, &n_past, &n_future);
-	printf("ns-1: %ld.%09ld -> %ld.%09ld = %ld.%09ld\n",
-	       static_cast(long, n_past.tv_sec),
-	       static_cast(long, n_past.tv_nsec),
-	       static_cast(long, n_future.tv_sec),
-	       static_cast(long, n_future.tv_nsec),
-	       static_cast(long, n_delta.tv_sec),
-	       static_cast(long, n_delta.tv_nsec));
+	printf("ns-1: " HX_TIMESPEC_FMT " -> " HX_TIMESPEC_FMT
+	       " = " HX_TIMESPEC_FMT "\n",
+	       HX_TIMESPEC_EXP(&n_past), HX_TIMESPEC_EXP(&n_future),
+	       HX_TIMESPEC_EXP(&n_delta));
 }
 
 int main(void)
@@ -78,7 +70,7 @@ int main(void)
 	if (HX_init() <= 0)
 		abort();
 
-	zact();
+	//zact();
 	zsleep();
 	HX_exit();
 	return EXIT_SUCCESS;

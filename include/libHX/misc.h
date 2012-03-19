@@ -10,6 +10,7 @@
 #	include <cstdarg>
 #	include <cstdio>
 #endif
+#include <libHX/defs.h>
 #include <libHX/io.h>
 
 #ifdef __cplusplus
@@ -31,6 +32,9 @@ extern "C" {
 	((void)(__HXbitmap_quant((map), (bit)) &= ~(1ULL << ((bit) % __HXbitmap_bpq(*(map))))))
 #define HXbitmap_test(map, bit) \
 	((bool)(__HXbitmap_quant((map), (bit)) & (1ULL << ((bit) % __HXbitmap_bpq(*(map))))))
+
+#define HX_TIMESPEC_EXP(p) static_cast(long, (p)->tv_sec), (p)->tv_nsec
+#define HX_TIMESPEC_FMT "%ld.%09ld"
 
 struct stat;
 struct timespec;

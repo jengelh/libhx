@@ -26,8 +26,7 @@ int main(void)
 	}
 	clock_gettime(CLOCK_REALTIME, &now);
 	HX_timespec_sub(&delta, &now, &past);
-	printf("%% method: %ld.%06ld s\n",
-	       static_cast(long, delta.tv_sec), delta.tv_nsec / 1000);
+	printf("%% method: " HX_TIMESPEC_FMT " s\n", HX_TIMESPEC_EXP(&delta));
 
 	clock_gettime(CLOCK_REALTIME, &past);
 	for (i = 0; i < (1 << 25); ++i) {
@@ -36,8 +35,7 @@ int main(void)
 	}
 	clock_gettime(CLOCK_REALTIME, &now);
 	HX_timespec_sub(&delta, &now, &past);
-	printf("/ method: %ld.%06ld s\n",
-	       static_cast(long, delta.tv_sec), delta.tv_nsec / 1000);
+	printf("/ method: " HX_TIMESPEC_FMT " s\n", HX_TIMESPEC_EXP(&delta));
 
 	HX_exit();
 	return EXIT_SUCCESS;

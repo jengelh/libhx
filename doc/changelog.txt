@@ -5,6 +5,7 @@ HEAD
 Enhancements:
 - option: new HXOPT_RQ_ORDER flag, allows unconditional POSIX-style parsing
   (parsing terminates at first non-option encountered)
+- time: add HX_TIMESPEC_{EXP,FMT}
 Changes:
 - io: remove HX_REALPATH_SYMLINK
 - time: rename HX_diff_timespec to HX_timespec_sub (old ABI kept)
