@@ -35,6 +35,8 @@ extern "C" {
 
 #define HX_TIMESPEC_EXP(p) static_cast(long, (p)->tv_sec), (p)->tv_nsec
 #define HX_TIMESPEC_FMT "%ld.%09ld"
+#define HX_TIMEVAL_EXP(p) static_cast(long, (p)->tv_sec), (p)->tv_usec
+#define HX_TIMEVAL_FMT "%ld.%06ld"
 
 struct stat;
 struct timespec;

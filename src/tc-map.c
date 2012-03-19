@@ -1,4 +1,6 @@
 /*
+ *	Test for libHX's maps
+ *	written by Jan Engelhardt
  *	This program is in the Public Domain
  */
 #include <sys/resource.h>
@@ -132,10 +134,9 @@ static void tmap_add_speed(struct HXmap *map)
 		tmap_time(&stop);
 		HX_timeval_sub(&delta, &stop, &start);
 	} while (!(delta.tv_sec >= 1 || map->items >= 1000000));
-	tmap_printf("%u elements in %ld.%06ld "
-		"(plus time measurement overhead)\n",
-		map->items, static_cast(long, delta.tv_sec),
-		static_cast(long, delta.tv_usec));
+	tmap_printf("%u elements in " HX_TIMEVAL_FMT
+		" (plus time measurement overhead)\n",
+		map->items, HX_TIMEVAL_EXP(&delta));
 	threshold = map->items;
 	tmap_flush(map, false);
 
@@ -143,10 +144,8 @@ static void tmap_add_speed(struct HXmap *map)
 	tmap_add_rand(map, threshold);
 	tmap_time(&stop);
 	HX_timeval_sub(&delta, &stop, &start);
-	tmap_printf("%u elements in %ld.%06ld "
-		"(w/o overhead)\n",
-		map->items, static_cast(long, delta.tv_sec),
-		static_cast(long, delta.tv_usec));
+	tmap_printf("%u elements in " HX_TIMEVAL_FMT " (w/o overhead)\n",
+		map->items, HX_TIMEVAL_EXP(&delta));
 	tmap_ipop();
 }
 
@@ -170,17 +169,15 @@ static void tmap_trav_speed(struct HXmap *map)
 	tmap_time(&stop);
 	HX_timeval_sub(&delta, &stop, &start);
 	HXmap_travfree(iter);
-	tmap_printf("Open traversal of %u nodes: %ld.%06lds\n",
-		map->items, static_cast(long, delta.tv_sec),
-		static_cast(long, delta.tv_usec));
+	tmap_printf("Open traversal of %u nodes: " HX_TIMEVAL_FMT "s\n",
+		map->items, HX_TIMEVAL_EXP(&delta));
 
 	tmap_time(&start);
 	HXmap_qfe(map, tmap_each_fn, NULL);
 	tmap_time(&stop);
 	HX_timeval_sub(&delta, &stop, &start);
-	tmap_printf("QFE traversal of %u nodes: %ld.%06lds\n",
-		map->items, static_cast(long, delta.tv_sec),
-		static_cast(long, delta.tv_usec));
+	tmap_printf("QFE traversal of %u nodes: " HX_TIMEVAL_FMT "s\n",
+		map->items, HX_TIMEVAL_EXP(&delta));
 	tmap_ipop();
 
 	tmap_printf("MAP test 2a: Timing lookup\n");
@@ -196,9 +193,8 @@ static void tmap_trav_speed(struct HXmap *map)
 	start = delta;
 	stop  = delta2;
 	HX_timeval_sub(&delta, &stop, &start);
-	tmap_printf("Lookup of %u nodes: %ld.%06lds\n",
-		map->items, static_cast(long, delta.tv_sec),
-		static_cast(long, delta.tv_usec));
+	tmap_printf("Lookup of %u nodes: " HX_TIMEVAL_FMT "s\n",
+		map->items, HX_TIMEVAL_EXP(&delta));
 	tmap_ipop();
 }
 

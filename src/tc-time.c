@@ -44,13 +44,10 @@ static void zsleep(void)
 	gettimeofday(&m_future, NULL);
 
 	HX_timeval_sub(&m_delta, &m_future, &m_past);
-	printf("µsec: %ld.%06ld -> %ld.%06ld = %ld.%06ld\n",
-	       static_cast(long, m_past.tv_sec),
-	       static_cast(long, m_past.tv_usec),
-	       static_cast(long, m_future.tv_sec),
-	       static_cast(long, m_future.tv_usec),
-	       static_cast(long, m_delta.tv_sec),
-	       static_cast(long, m_delta.tv_usec));
+	printf("µsec: " HX_TIMEVAL_FMT " -> " HX_TIMEVAL_FMT
+	       " = " HX_TIMEVAL_FMT "\n",
+	       HX_TIMEVAL_EXP(&m_past), HX_TIMEVAL_EXP(&m_future),
+	       HX_TIMEVAL_EXP(&m_delta));
 
 	HX_timespec_sub(&n_delta, &n_future, &n_past);
 	printf("nsec: " HX_TIMESPEC_FMT " -> " HX_TIMESPEC_FMT
