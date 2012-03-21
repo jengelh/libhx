@@ -28,7 +28,7 @@ libHX_rtcheck_la_LDFLAGS = -avoid-version -module \
 EXTRA_DIST = internal.h map_int.h libHX.map
 
 check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-link \
-                     tc-list tc-list2 tc-map tc-misc tc-netio \
+                     tc-list tc-list2 tc-map tc-memmem tc-misc tc-netio \
                      tc-option tc-proc tc-rand tc-realpath \
                      tc-shconfig tc-string tc-time
 tc_cast_CFLAGS     = ${AM_CFLAGS} -std=c99
@@ -41,6 +41,7 @@ tc_list_LDADD      = libHX.la
 tc_list2_LDADD     = libHX.la
 tc_list2_CFLAGS    = ${AM_CFLAGS} -O2 -fstrict-aliasing
 tc_map_LDADD       = libHX.la -lm
+tc_memmem_LDADD    = libHX.la
 tc_misc_LDADD      = libHX.la
 tc_netio_LDADD     = libHX.la ${libsocket_LIBS}
 tc_option_LDADD    = libHX.la
