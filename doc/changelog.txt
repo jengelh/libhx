@@ -11,6 +11,7 @@ Changes:
 - io: remove HX_REALPATH_SYMLINK
 - time: rename HX_diff_timespec to HX_timespec_sub (old ABI kept)
 - time: rename HX_diff_timeval to HX_timeval_sub (old ABI kept)
+- string: make HX_memmem consider the special case of search_length=0
 Enhancements:
 - option: add HXTYPE_SIZE_T
 - time: add a HX_timespec_add function

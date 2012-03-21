@@ -127,6 +127,8 @@ EXPORT_SYMBOL void *HX_memmem(const void *space, size_t spacesize,
 {
 	size_t i;
 
+	if (pointsize == 0)
+		return const_cast1(void *, space);
 	if (pointsize > spacesize)
 		return NULL;
 	for (i = 0; i <= spacesize - pointsize; ++i)
