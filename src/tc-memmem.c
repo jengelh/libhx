@@ -27,14 +27,14 @@ int main(void)
 	haystack[size-1] = haystack[size-2] = 'Z';
 	printf("Init done\n");
 
-	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &start);
-	printf("Start: " HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&start));
-	HX_memmem(haystack, size, haystack + size - 1, 1);
-	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &stop);
-	printf("Stop:  " HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&stop));
-	HX_timespec_sub(&delta, &stop, &start);
-	printf("Time for full search: " HX_TIMESPEC_FMT "\n",
-	       HX_TIMESPEC_EXP(&delta));
+	for (i = 0; i < 10; ++i) {
+		printf("Search length %u...", i);
+		clock_gettime(CLOCK_THREAD_CPUTIME_ID, &start);
+		HX_memmem(haystack, size, haystack + size - i, i);
+		clock_gettime(CLOCK_THREAD_CPUTIME_ID, &stop);
+		HX_timespec_sub(&delta, &stop, &start);
+		printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&delta));
+	}
 
 	HX_exit();
 	return EXIT_SUCCESS;
