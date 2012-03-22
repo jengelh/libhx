@@ -11,6 +11,8 @@
 #include <libHX/string.h>
 
 static unsigned int size = 1048576 * 128;
+static const char filler_text[] =
+	"Slhrdlu cringle tongle flonging blobbity bleep blingmangl";
 
 int main(void)
 {
@@ -26,6 +28,11 @@ int main(void)
 	memset(haystack, 'A', size);
 	haystack[size-1] = haystack[size-2] = 'Z';
 	printf("Init done\n");
+	printf("Start=%p End=%p\n", filler_text,
+	       filler_text + ARRAY_SIZE(filler_text));
+	printf("%p\n", HX_memmem(filler_text, strlen(filler_text), "nangl", 5));
+	printf("%p\n", HX_memmem(filler_text, strlen(filler_text), "angl", 4));
+	printf("%p\n", HX_memmem(filler_text, strlen(filler_text), "ngl", 3));
 
 	for (i = 0; i < 10; ++i) {
 		printf("Search length %u...", i);
