@@ -1,6 +1,6 @@
 /*
  *	libHX/assorted/deque2.c
- *	Copyright © Jan Engelhardt <jengelh [at] medozas de>, 2002 - 2007
+ *	Copyright © Jan Engelhardt, 2002-2007
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU
