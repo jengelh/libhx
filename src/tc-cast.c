@@ -1,7 +1,10 @@
 /*
  *	Testing for compile error in the cast helpers
  *	written by Jan Engelhardt
- *	this program is released in the Public Domain
+ *
+ *	This program is free software; you can redistribute it and/or
+ *	modify it under the terms of the WTF Public License version 2 or
+ *	(at your option) any later version.
  */
 #include <math.h>
 #include <stdio.h>

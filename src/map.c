@@ -3,9 +3,9 @@
  *	Copyright © Jan Engelhardt, 2009
  *
  *	This file is part of libHX. libHX is free software; you can
- *	redistribute it and/or modify it under the terms of the GNU
- *	Lesser General Public License as published by the Free Software
- *	Foundation; either version 2.1 or 3 of the License.
+ *	redistribute it and/or modify it under the terms of the GNU Lesser
+ *	General Public License as published by the Free Software Foundation;
+ *	either version 2.1 or (at your option) any later version.
  *
  *	Incorporates Public Domain code from Bob Jenkins's lookup3 (May 2006)
  */

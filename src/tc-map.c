@@ -1,7 +1,10 @@
 /*
  *	Test for libHX's maps
- *	written by Jan Engelhardt
- *	This program is in the Public Domain
+ *	Copyright © Jan Engelhardt
+ *
+ *	This program is free software; you can redistribute it and/or
+ *	modify it under the terms of the WTF Public License version 2 or
+ *	(at your option) any later version.
  */
 #include <sys/resource.h>
 #include <sys/time.h>
