@@ -7,6 +7,7 @@
  *	(at your option) any later version.
  */
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <libHX/defs.h>
@@ -28,9 +29,9 @@ static void c_signed(void)
 static void c_reinterpret(void)
 {
 	const char *si_00 = "foo";
-	void *sr_00 = reinterpret_cast(void *, static_cast(long, 8));
-	int sr_01 = reinterpret_cast(long, sr_00);
-	void *sr_02 = reinterpret_cast(void *, static_cast(long, static_cast(int, reinterpret_cast(long, &si_00))));
+	void *sr_00 = reinterpret_cast(void *, static_cast(uintptr_t, 8));
+	int sr_01 = reinterpret_cast(uintptr_t, sr_00);
+	void *sr_02 = reinterpret_cast(void *, static_cast(uintptr_t, static_cast(unsigned int, reinterpret_cast(uintptr_t, &si_00))));
 	printf("sr: %p %u; %p[%p]\n", sr_00, sr_01, sr_02, &si_00);
 }
 

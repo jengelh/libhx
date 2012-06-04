@@ -6,6 +6,7 @@
  *	modify it under the terms of the WTF Public License version 2 or
  *	(at your option) any later version.
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -63,7 +64,7 @@ static void t_format(int argc)
 	HXformat_add(fmt, "jengelh", "1337", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "USER", "jengelh", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ARGC", &argc, HXTYPE_INT);
-	HXformat_add(fmt, "ARGK", reinterpret_cast(const void *, static_cast(long, argc)), HXTYPE_INT | HXFORMAT_IMMED);
+	HXformat_add(fmt, "ARGK", reinterpret_cast(const void *, static_cast(intptr_t, argc)), HXTYPE_INT | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ZERO", "", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "ONE", "1", HXTYPE_STRING | HXFORMAT_IMMED);
 	HXformat_add(fmt, "TWOARG", "a, b", HXTYPE_STRING | HXFORMAT_IMMED);
