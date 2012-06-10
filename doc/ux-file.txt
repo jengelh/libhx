@@ -21,8 +21,8 @@ SYNOPSIS
     int mknod(const char *PATH, long MODE, long DEV);
     int readlink(const char *PATH, char *DEST, size_t LEN);
     int symlink(const char *SRC, const char *DEST);
-    
-    
+
+
 lstat()
 
     Maps to stat() under Win32.

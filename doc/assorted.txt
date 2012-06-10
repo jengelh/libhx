@@ -1,5 +1,5 @@
 ===============================================================================
-assorted - Assorted functions                                        2006-02-25 
+assorted - Assorted functions                                        2006-02-25
 
 
 DESCRIPTION
@@ -18,7 +18,7 @@ SYNOPSIS
 HX_pack()
 
     Mimics perl's pack function. FMT can contain:
-    
+
       A    Pascal-style string: a uint8_t length specifier and a string
            with up to 255 chars
       a    (same)
@@ -34,7 +34,7 @@ HX_pack()
       V    fixed-size string; first argument is string, second is length
 
     Example:
-    
+
       HX_pack(dest, sizeof(dest), "LLSV", 1337, 2006, "64k test string",
               "fixed test", 5);
 
@@ -65,4 +65,4 @@ HX_tofrac()
     then.
 
 
-    
+

@@ -43,7 +43,7 @@ struct HXdir {
 	 */
 	union {
 		struct dirent dentry;
-		char extender[_POSIX_PATH_MAX + sizeof(struct dirent) - 
+		char extender[_POSIX_PATH_MAX + sizeof(struct dirent) -
 			HXsizeof_member(struct dirent, d_name)];
 	};
 #endif

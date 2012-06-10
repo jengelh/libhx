@@ -428,7 +428,7 @@ EXPORT_SYMBOL char *HX_strsep(char **sp, const char *d)
 		*end++ = '\0';
 		*sp = end;
 	}
-	
+
 	return begin;
 }
 

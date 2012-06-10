@@ -95,7 +95,7 @@ static void t_strncat(void)
 {
 	char data[5] = "DATA";
 
-	if (snprintf(data, sizeof(data), "12345678") >= 
+	if (snprintf(data, sizeof(data), "12345678") >=
 	    static_cast(ssize_t, sizeof(data)))
 		printf("Not enough space\n");
 	printf("String: >%s<\n", data);

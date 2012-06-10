@@ -20,7 +20,7 @@ EXPORT_SYMBOL void *HX_dlopen(const char *file)
 #ifdef _WIN32
 	return LoadLibrary(file);
 #else
-	return dlopen(file, RTLD_LAZY); 
+	return dlopen(file, RTLD_LAZY);
 #endif
 }
 
