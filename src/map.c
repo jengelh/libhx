@@ -455,7 +455,7 @@ static struct HXhmap_node *HXhmap_find(const struct HXhmap *hmap,
 	         HXhash_primes[hmap->power];
 #endif
 	HXlist_for_each_entry(drop, &hmap->bk_array[bk_idx], anchor)
-		if (hmap->super.ops.k_compare(key, drop->key,
+		if (hmap->super.ops.k_compare(drop->key, key,
 		    hmap->super.key_size) == 0)
 			return drop;
 	return NULL;
@@ -468,8 +468,8 @@ static const struct HXmap_node *HXrbtree_find(const struct HXrbtree *btree,
 	int res;
 
 	while (node != NULL) {
-		if ((res = btree->super.ops.k_compare(key,
-		    node->key, btree->super.key_size)) == 0)
+		if ((res = btree->super.ops.k_compare(node->key, key,
+		    btree->super.key_size)) == 0)
 			return static_cast(const void *, &node->key);
 		node = node->sub[res > 0];
 	}
@@ -687,8 +687,8 @@ static int HXrbtree_add(struct HXrbtree *btree,
 	node = btree->root;
 
 	while (node != NULL) {
-		int res = btree->super.ops.k_compare(key,
-		          node->key, btree->super.key_size);
+		int res = btree->super.ops.k_compare(node->key, key,
+		          btree->super.key_size);
 		if (res == 0)
 			/*
 			 * The node already exists (found the key), overwrite
@@ -934,8 +934,8 @@ static void *HXrbtree_del(struct HXrbtree *btree, const void *key)
 	node         = btree->root;
 
 	while (node != NULL) {
-		int res = btree->super.ops.k_compare(key,
-		          node->key, btree->super.key_size);
+		int res = btree->super.ops.k_compare(node->key, key,
+		          btree->super.key_size);
 		if (res == 0)
 			break;
 		res          = res > 0;
@@ -1234,8 +1234,8 @@ static struct HXrbtree_node *HXrbtrav_rewalk(struct HXrbtrav *trav)
 
 		while (node != NULL) {
 			newpath[newdepth] = trav->path[trav->depth] = node;
-			res = btree->super.ops.k_compare(trav->checkpoint,
-			      node->key, btree->super.key_size);
+			res = btree->super.ops.k_compare(node->key,
+			      trav->checkpoint, btree->super.key_size);
 			if (res == 0) {
 				++trav->depth;
 				found = true;
