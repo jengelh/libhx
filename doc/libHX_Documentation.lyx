@@ -2598,9 +2598,9 @@ offsetof
 \begin_inset Newline newline
 \end_inset
 
-
+output_type 
 \series bold
-output_type *
+*
 \series default
 containerof(
 \series bold
@@ -2642,11 +2642,7 @@ HXsizeof_member
 \begin_inset Newline newline
 \end_inset
 
-
-\series bold
-output_type
-\series default
- HXtypeof_member(struct_type, member);
+output_type HXtypeof_member(struct_type, member);
 \begin_inset Index idx
 status open
 
@@ -2919,9 +2915,9 @@ BUILD_BUG_ON_EXPR
 \end_inset
 
 
-\end_layout
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout LyX-Code
 
 \series bold
 void
@@ -2978,6 +2974,140 @@ EXPR
  is for when a check is to occur within an expression, that latter of which
  is useful for within macros when one cannot, or does not want to use multiple
  statements.
+\end_layout
+
+\begin_layout LyX-Code
+type DEMOTE_TO_PTR(type expr); 
+\series bold
+/* 
+\family roman
+\series default
+\shape italic
+macro
+\family default
+\series bold
+\shape default
+ */
+\end_layout
+
+\begin_layout Standard
+Changes the type of expr to pointer type: If 
+\family typewriter
+expr
+\family default
+ of array type class, changes it to a pointer to the first element.
+ If 
+\family typewriter
+expr
+\family default
+ of function type class, changes it to a pointer to the function.
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+int
+\series default
+ main(
+\series bold
+void
+\series default
+);
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+int (*
+\series default
+fp
+\series bold
+)
+\series default
+(
+\series bold
+void
+\series default
+);
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+char
+\series default
+ a
+\series bold
+[
+\series default
+123
+\series bold
+]
+\series default
+;
+\begin_inset Newline newline
+\end_inset
+
+DEMOTE_TO_PTR(main); 
+\series bold
+/* 
+\family roman
+\series default
+\shape italic
+yields 
+\series bold
+int (*)
+\series default
+(
+\series bold
+void
+\series default
+);
+\family default
+\series bold
+\shape default
+ */
+\series default
+
+\begin_inset Newline newline
+\end_inset
+
+DEMOTE_TO_PTR(fp);   
+\series bold
+/* 
+\series default
+also yields 
+\family roman
+\series bold
+\shape italic
+int (*)
+\series default
+(
+\series bold
+void
+\series default
+);
+\family default
+\series bold
+\shape default
+ */
+\series default
+
+\begin_inset Newline newline
+\end_inset
+
+DEMOTE_TO_PTR(a);    
+\series bold
+/* 
+\series default
+yields 
+\family roman
+\series bold
+\shape italic
+char *
+\family default
+\shape default
+ */
 \end_layout
 
 \begin_layout Subsection

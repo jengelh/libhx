@@ -15,6 +15,7 @@ F column: Function first seen in version, possibly with different API.
 
 RMV	MinVer	FirstA	Name
 ----------------------------------------------------------------------
+3.13	3.13	3.13	DEMOTE_TO_PTR
 3.13	3.13	3.13	HXTYPE_SIZE_T
 3.13	3.13	3.13	HX_TIMESPEC_EXP
 3.13	3.13	3.13	HX_TIMESPEC_FMT

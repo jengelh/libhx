@@ -140,8 +140,13 @@ static inline new_type signed_cast(unsigned char *expr)
 #endif
 
 #if defined(__GNUC__) && !defined(__cplusplus)
+	/*
+	 * If typeof @a stays the same through a demotion to pointer,
+	 * @a cannot be an array.
+	 */
 #	define __array_size_check(a) BUILD_BUG_ON_EXPR(\
-		__builtin_types_compatible_p(__typeof__(a), __typeof__(&*(a))))
+		__builtin_types_compatible_p(__typeof__(a), \
+		__typeof__(DEMOTE_TO_PTR(a))))
 #else
 #	define __array_size_check(a) 0
 #endif
@@ -153,6 +158,14 @@ static inline new_type signed_cast(unsigned char *expr)
 #endif
 #ifndef BUILD_BUG_ON
 #	define BUILD_BUG_ON(condition) ((void)BUILD_BUG_ON_EXPR(condition))
+#endif
+#ifndef DEMOTE_TO_PTR
+	/*
+	 * An alternative approach is also (p+0), but that does not ensure that
+	 * @p is a pointer. Since functions "support" infinite dereferencing,
+	 * "&*" also works on them.
+	 */
+#	define DEMOTE_TO_PTR(p) (&*(p))
 #endif
 #ifndef O_BINARY
 #	define O_BINARY 0
