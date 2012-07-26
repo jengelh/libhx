@@ -269,8 +269,14 @@ static void tmap_generic_tests(enum HXmap_type type,
 
 static int tmap_strtolcmp(const void *a, const void *b, size_t z)
 {
-	return strtol(static_cast(const char *, a), NULL, 0) -
-	       strtol(static_cast(const char *, b), NULL, 0);
+	long p = strtol(static_cast(const char *, a), NULL, 0);
+	long q = strtol(static_cast(const char *, b), NULL, 0);
+
+	if (p < q)
+		return -1;
+	if (p > q)
+		return 1;
+	return 0;
 }
 
 static const struct HXmap_ops tmap_nstr_ops = {
