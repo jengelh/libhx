@@ -6361,7 +6361,11 @@ size_t
 \begin_inset Newline newline
 \end_inset
 
-        return strcasecmp(a, b);
+        
+\series bold
+return
+\series default
+ strcasecmp(a, b);
 \begin_inset Newline newline
 \end_inset
 
@@ -6397,7 +6401,8 @@ dsize
 \end_layout
 
 \begin_layout Standard
-The hackish way:
+A hackish way (which wholly depends on the C implementation and use of extra
+ safeguards is a must):
 \end_layout
 
 \begin_layout LyX-Code
@@ -6418,9 +6423,33 @@ void *
 \end_inset
 
 };
-\end_layout
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout LyX-Code
+BUILD_BUG_ON(
+\series bold
+sizeof
+\series default
+(DEMOTE_TO_PTR(strcasecmp)) > 
+\series bold
+sizeof
+\series default
+(void *));
+\begin_inset Newline newline
+\end_inset
+
+BUILD_BUG_ON(
+\series bold
+sizeof
+\series default
+(DEMOTE_TO_PTR(strcasecmp)) > 
+\series bold
+sizeof
+\series default
+(icase.k_compare));
+\begin_inset Newline newline
+\end_inset
+
 HXmap_init5(HXMAPT_RBTREE, HXMAP_SKEY, &icase, 0, 
 \shape italic
 dsize
