@@ -18,6 +18,8 @@ typedef struct timespec *(*add_func_t)(struct timespec *,
 	const struct timespec *, const struct timespec *);
 typedef struct timespec *(*mul_func_t)(struct timespec *,
 	const struct timespec *, int);
+typedef struct timespec *(*mulf_func_t)(struct timespec *,
+	const struct timespec *, double);
 
 static const int NANOSECOND = 1000000000;
 static const long long NANOSECOND_LL = 1000000000;
@@ -320,11 +322,30 @@ static void test_muls_1i(const char *text, mul_func_t fn)
 	printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&delta));
 }
 
+static void test_muls_1f(const char *text, mulf_func_t fn)
+{
+	struct timespec r, s, start, delta;
+	unsigned int i;
+
+	printf("%s", text);
+	clock_gettime(clock_id, &start);
+	for (i = 0; i < step_mul; ++i) {
+		r.tv_sec  = -i;
+		r.tv_nsec = -i / 4;
+		(*fn)(&s, &r, 7);
+	}
+	clock_gettime(clock_id, &delta);
+	HX_timespec_sub(&delta, &delta, &start);
+	printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&delta));
+}
+
 static void test_muls(void)
 {
 	printf("# Test multiplication speed\n");
 	test_muls_1i("normal: ", HX_timespec_mul);
 	test_muls_1i("split:  ", HX_timespec_mul_SPL);
+
+	test_muls_1f("float:  ", HX_timespec_mulf);
 	printf("\n");
 }
 
