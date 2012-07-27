@@ -18,6 +18,7 @@ typedef struct timespec *(*add_func_t)(struct timespec *,
 	const struct timespec *, const struct timespec *);
 
 static const int NANOSECOND = 1000000000;
+static const long long NANOSECOND_LL = 1000000000;
 static const unsigned int clock_id = CLOCK_THREAD_CPUTIME_ID;
 static const unsigned int step = 1000;
 
@@ -27,6 +28,28 @@ static const struct timespec pairs[] = {
 	{0, 400000000}, {0, 700000000},
 	{1, 0}, {1, 400000000}, {1, 700000000},
 };
+
+/*
+ * Variant that uses full 64 bit division and is thus slower on
+ * a handful of hardware.
+ */
+static struct timespec *HX_timespec_add_FDIV(struct timespec *r,
+    const struct timespec *a, const struct timespec *b)
+{
+	long long p, q;
+
+	p  = a->tv_sec * NANOSECOND_LL +
+	     ((a->tv_sec >= 0) ? a->tv_nsec : -a->tv_nsec);
+	q  = b->tv_sec * NANOSECOND_LL +
+	     ((b->tv_sec >= 0) ? b->tv_nsec : -b->tv_nsec);
+
+	p += q;
+	r->tv_sec  = p / NANOSECOND;
+	r->tv_nsec = p % NANOSECOND;
+	if (r->tv_sec < 0 && r->tv_nsec < 0)
+		r->tv_nsec = -r->tv_nsec;
+	return r;
+}
 
 static void test_same(void)
 {
@@ -114,15 +137,19 @@ static void print_op2(const struct timespec *r, const struct timespec *a,
 static void test_add(void)
 {
 	const struct timespec *a, *b;
-	struct timespec r;
+	struct timespec r, s;
 
 	printf("# Test addition behavior\n");
 	for (a = pairs; a < pairs + ARRAY_SIZE(pairs); ++a) {
 		for (b = pairs; b < pairs + ARRAY_SIZE(pairs); ++b) {
 			HX_timespec_add(&r, a, b);
-			print_op2(&r, a, "+", b);
+			print_op2(&r, a, "+N", b);
+			HX_timespec_add_FDIV(&s, a, b);
+			print_op2(&r, a, "+F", b);
+			if (r.tv_sec != s.tv_sec || r.tv_nsec != s.tv_nsec)
+				abort();
 			HX_timespec_sub(&r, a, b);
-			print_op2(&r, a, "-", b);
+			print_op2(&r, a, "- ", b);
 			printf("----------\n");
 		}
 	}
@@ -198,7 +225,8 @@ static void test_adds_1(const char *text, add_func_t fn)
 static void test_adds(void)
 {
 	printf("# Test addition speed\n");
-	test_adds_1("normal: ", HX_timespec_add);
+	test_adds_1("normal:  ", HX_timespec_add);
+	test_adds_1("fulldiv: ", HX_timespec_add_FDIV);
 	printf("\n");
 }
 
