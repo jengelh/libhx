@@ -22,6 +22,7 @@ RMV	MinVer	FirstA	Name
 3.13	3.13	3.13	HX_TIMEVAL_EXP
 3.13	3.13	3.13	HX_TIMEVAL_FMT
 3.13	3.13	3.13	HX_timespec_add
+3.13	3.13	3.13	HX_timespec_isneg
 3.13	3.13	3.13	HX_timespec_sub
 3.13	3.13	3.13	HX_timeval_sub
 3.12	3.12	1.10.0	HX_mkdir

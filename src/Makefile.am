@@ -9,7 +9,8 @@ libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c
 libHX_la_LIBADD  = ${libdl_LIBS} ${libpthread_LIBS} ${librt_LIBS}
-libHX_la_LDFLAGS = -version-info 28:0:0 \
+# New in 29 (over 28): HX_timespec_*
+libHX_la_LDFLAGS = -version-info 29:0:1 \
                    -Wl,--version-script=${srcdir}/libHX.map
 libHX_la_DEPENDENCIES = libHX.map
 

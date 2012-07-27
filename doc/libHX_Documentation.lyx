@@ -3476,6 +3476,32 @@ Time functions
 
 
 \series bold
+bool
+\series default
+ HX_timespec_isneg(
+\series bold
+const struct
+\series default
+ timespec 
+\series bold
+*
+\series default
+p);
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+HX_timespec_isneg
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
 struct
 \series default
  timespec 
@@ -3665,6 +3691,15 @@ HX_time_compare
 \end_inset
 
 
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_timespec_isneg
+\family default
+ Determines whether a timespec structure represents (non-zero) negative
+ time.
 \end_layout
 
 \begin_layout Description

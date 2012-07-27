@@ -19,6 +19,11 @@ enum {
 };
 
 #ifdef HAVE_STRUCT_TIMESPEC_TV_NSEC
+EXPORT_SYMBOL bool HX_timespec_isneg(const struct timespec *x)
+{
+	return (x->tv_sec < 0) || (x->tv_nsec < 0);
+}
+
 EXPORT_SYMBOL struct timespec *HX_timespec_add(struct timespec *res,
     const struct timespec *a, const struct timespec *b)
 {
