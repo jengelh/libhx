@@ -5,6 +5,7 @@
  *	modify it under the terms of the WTF Public License version 2 or
  *	(at your option) any later version.
  */
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -80,6 +81,27 @@ HX_timespec_mul_SPL(struct timespec *r, const struct timespec *a, int f)
 	r->tv_nsec = nsec % NANOSECOND;
 	if (neg)
 		HX_timespec_neg(r, r);
+	return r;
+}
+
+/*
+ * Variant for mulf that uses seconds rather than nanosecond as working base.
+ * This shows itself to be detrimental to precision (on IEEE-754).
+ */
+static struct timespec *
+HX_timespec_mulf_S(struct timespec *r, const struct timespec *a, double f)
+{
+	double i, t;
+
+	t  = ((a->tv_sec >= 0) ? a->tv_nsec : -a->tv_nsec) /
+	     static_cast(double, NANOSECOND);
+	t += a->tv_sec;
+	t *= f;
+	t  = modf(t, &i);
+	r->tv_nsec = t * NANOSECOND;
+	r->tv_sec  = i;
+	if (r->tv_sec < 0 && r->tv_nsec < 0)
+		r->tv_nsec = -r->tv_nsec;
 	return r;
 }
 
@@ -295,10 +317,15 @@ static void test_mul(void)
 		}
 
 		for (k = -3; k <= 3; k += 0.1) {
-			printf(HX_TIMESPEC_FMT " *f %f = ",
+			printf(HX_TIMESPEC_FMT " *fN %f = ",
 			       HX_TIMESPEC_EXP(&pairs[i]), k);
 			HX_timespec_mulf(&r, &pairs[i], k);
 			printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&r));
+
+			printf(HX_TIMESPEC_FMT " *fS %f = ",
+			       HX_TIMESPEC_EXP(&pairs[i]), k);
+			HX_timespec_mulf_S(&s, &pairs[i], k);
+			printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&s));
 		}
 	}
 
@@ -346,6 +373,7 @@ static void test_muls(void)
 	test_muls_1i("split:  ", HX_timespec_mul_SPL);
 
 	test_muls_1f("float:  ", HX_timespec_mulf);
+	test_muls_1f("flt-S:  ", HX_timespec_mulf_S);
 	printf("\n");
 }
 
