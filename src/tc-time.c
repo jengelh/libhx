@@ -14,6 +14,13 @@
 #include <libHX/misc.h>
 #include "internal.h"
 
+typedef struct timespec *(*add_func_t)(struct timespec *,
+	const struct timespec *, const struct timespec *);
+
+static const int NANOSECOND = 1000000000;
+static const unsigned int clock_id = CLOCK_THREAD_CPUTIME_ID;
+static const unsigned int step = 1000;
+
 static const struct timespec pairs[] = {
 	{-1, 700000000}, {-1, 400000000}, {-1, 0},
 	{0, -700000000}, {0, -400000000}, {0, 0},
@@ -122,6 +129,79 @@ static void test_add(void)
 	printf("\n");
 }
 
+static void test_adds_nz(time_t s, add_func_t fn)
+{
+	struct timespec a, b, r;
+
+	a.tv_sec = s;
+	for (a.tv_nsec = 0; a.tv_nsec < NANOSECOND;
+	     a.tv_nsec += NANOSECOND / step)
+	{
+		b.tv_sec = -1;
+		for (b.tv_nsec = 0; b.tv_nsec < NANOSECOND;
+		     b.tv_nsec += NANOSECOND / step)
+			(*fn)(&r, &a, &b);
+
+		b.tv_sec = 0;
+		for (b.tv_nsec = -NANOSECOND + NANOSECOND / step;
+		     b.tv_nsec < NANOSECOND; b.tv_nsec += NANOSECOND / step)
+			(*fn)(&r, &a, &b);
+
+		b.tv_sec = 1;
+		for (b.tv_nsec = 0; b.tv_nsec < NANOSECOND;
+		     b.tv_nsec += NANOSECOND / step)
+			(*fn)(&r, &a, &b);
+	}
+}
+
+static void test_adds_z(add_func_t fn)
+{
+	struct timespec a, b, r;
+
+	a.tv_sec = 0;
+	for (a.tv_nsec = -NANOSECOND + NANOSECOND / step;
+	     a.tv_nsec < NANOSECOND; a.tv_nsec += NANOSECOND / step)
+	{
+		b.tv_sec = -1;
+		for (b.tv_nsec = 0; b.tv_nsec < NANOSECOND;
+		     b.tv_nsec += NANOSECOND / step)
+			(*fn)(&r, &a, &b);
+
+		b.tv_sec = 0;
+		for (b.tv_nsec = -NANOSECOND + NANOSECOND / step;
+		     b.tv_nsec < NANOSECOND; b.tv_nsec += NANOSECOND / step)
+			(*fn)(&r, &a, &b);
+
+		b.tv_sec = 1;
+		for (b.tv_nsec = 0; b.tv_nsec < NANOSECOND;
+		     b.tv_nsec += NANOSECOND / step)
+			(*fn)(&r, &a, &b);
+	}
+}
+
+static void test_adds_1(const char *text, add_func_t fn)
+{
+	struct timespec start, delta;
+
+	printf("%s", text);
+	clock_gettime(clock_id, &start);
+	test_adds_nz(-2, fn);
+	test_adds_nz(-1, fn);
+	test_adds_z(fn);
+	test_adds_nz(1, fn);
+	test_adds_nz(2, fn);
+	clock_gettime(clock_id, &delta);
+	HX_timespec_sub(&delta, &delta, &start);
+	printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&delta));
+}
+
+static void test_adds(void)
+{
+	printf("# Test addition speed\n");
+	test_adds_1("normal: ", HX_timespec_add);
+	printf("\n");
+}
+
 int main(void)
 {
 	if (HX_init() <= 0)
@@ -130,6 +210,7 @@ int main(void)
 	test_same();
 	test_neg();
 	test_add();
+	test_adds();
 	HX_exit();
 	return EXIT_SUCCESS;
 }
