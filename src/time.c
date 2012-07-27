@@ -1,5 +1,5 @@
 /*
- *	Copyright © Jan Engelhardt, 2009
+ *	Copyright © Jan Engelhardt, 2012
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU Lesser
@@ -13,52 +13,111 @@
 #include <libHX/misc.h>
 #include "internal.h"
 
-enum {
-	MICROSECOND = 0xf4240,
-	NANOSECOND  = 0x3b9aca00,
-};
+#define MICROSECOND 100000
+#define NANOSECOND 1000000000
+#define NANOSECOND_LL 1000000000LL
 
 #ifdef HAVE_STRUCT_TIMESPEC_TV_NSEC
-EXPORT_SYMBOL struct timespec *HX_timespec_add(struct timespec *res,
-    const struct timespec *a, const struct timespec *b)
+EXPORT_SYMBOL bool HX_timespec_isneg(const struct timespec *x)
 {
-	res->tv_sec  = a->tv_sec + b->tv_sec;
-	res->tv_nsec = a->tv_nsec + b->tv_nsec;
-	if (res->tv_nsec >= NANOSECOND) {
-		res->tv_nsec -= NANOSECOND;
-		++res->tv_sec;
-	}
-	return res;
+	return (x->tv_sec < 0) || (x->tv_nsec < 0);
 }
 
-/**
- * Calculates @future - @past. You can also swap them and correctly
- * get a negative time.
- */
-EXPORT_SYMBOL struct timespec *HX_timespec_sub(struct timespec *delta,
-    const struct timespec *future, const struct timespec *past)
+EXPORT_SYMBOL struct timespec *
+HX_timespec_neg(struct timespec *r, const struct timespec *a)
 {
-	delta->tv_sec  = future->tv_sec  - past->tv_sec;
-	delta->tv_nsec = future->tv_nsec - past->tv_nsec;
-	if (future->tv_sec < past->tv_sec || (future->tv_sec == past->tv_sec &&
-	    future->tv_nsec < past->tv_nsec)) {
-		if (future->tv_nsec > past->tv_nsec) {
-			delta->tv_nsec = -NANOSECOND + delta->tv_nsec;
-			++delta->tv_sec;
-		}
-		if (delta->tv_sec < 0)
-			delta->tv_nsec *= -1;
-	} else if (delta->tv_nsec < 0) {
-		delta->tv_nsec += NANOSECOND;
-		--delta->tv_sec;
+	if (a->tv_sec != 0) {
+		r->tv_sec  = -a->tv_sec;
+		r->tv_nsec = a->tv_nsec;
+	} else {
+		r->tv_sec  = 0;
+		r->tv_nsec = -a->tv_nsec;
 	}
-	return delta;
+	return r;
+}
+
+EXPORT_SYMBOL struct timespec *HX_timespec_add(struct timespec *r,
+    const struct timespec *a, const struct timespec *b)
+{
+	/*
+	 * Split the value represented by the struct into two
+	 * independent values that can be added individually.
+	 */
+	long nsec[2];
+	nsec[0] = (a->tv_sec < 0) ? -a->tv_nsec : a->tv_nsec;
+	nsec[1] = (b->tv_sec < 0) ? -b->tv_nsec : b->tv_nsec;
+
+	r->tv_sec  = a->tv_sec + b->tv_sec;
+	r->tv_nsec = nsec[0] + nsec[1];
+	if (r->tv_nsec >= NANOSECOND) {
+		++r->tv_sec;
+		r->tv_nsec -= NANOSECOND;
+	} else if (r->tv_nsec <= -NANOSECOND) {
+		--r->tv_sec;
+		r->tv_nsec += NANOSECOND;
+	}
+
+	/* Combine again */
+	if (r->tv_sec < 0) {
+		if (r->tv_nsec < 0) {
+			r->tv_nsec = -r->tv_nsec;
+		} else if (r->tv_nsec > 0) {
+			if (++r->tv_sec == 0)
+				r->tv_nsec = -NANOSECOND + r->tv_nsec;
+			else
+				r->tv_nsec = NANOSECOND - r->tv_nsec;
+		}
+	} else if (r->tv_sec > 0 && r->tv_nsec < 0) {
+		--r->tv_sec;
+		r->tv_nsec = NANOSECOND + r->tv_nsec;
+	}
+	return r;
+}
+
+EXPORT_SYMBOL struct timespec *HX_timespec_sub(struct timespec *r,
+    const struct timespec *a, const struct timespec *b)
+{
+	struct timespec b2;
+	return HX_timespec_add(r, a, HX_timespec_neg(&b2, b));
 }
 
 EXPORT_SYMBOL void HX_diff_timespec(struct timespec *delta,
     const struct timespec *future, const struct timespec *past)
 {
 	HX_timespec_sub(delta, future, past);
+}
+
+EXPORT_SYMBOL struct timespec *
+HX_timespec_mul(struct timespec *r, const struct timespec *a, int f)
+{
+	long long t;
+
+	t = a->tv_sec * NANOSECOND_LL +
+	    ((a->tv_sec >= 0) ? a->tv_nsec : -a->tv_nsec);
+	t *= f;
+	r->tv_sec  = t / NANOSECOND;
+	r->tv_nsec = t % NANOSECOND;
+	if (r->tv_sec < 0 && r->tv_nsec < 0)
+		r->tv_nsec = -r->tv_nsec;
+	return r;
+}
+
+EXPORT_SYMBOL struct timespec *
+HX_timespec_mulf(struct timespec *r, const struct timespec *a, double f)
+{
+	double t;
+
+	t = (a->tv_sec * NANOSECOND_LL +
+	    ((a->tv_sec >= 0) ? a->tv_nsec : -a->tv_nsec)) * f;
+	r->tv_sec  = t / NANOSECOND;
+	/*
+	 * This is quite the same as r->tv_nsec = fmod(t, NANOSECOND),
+	 * except that without the library call, we are faster.
+	 */
+	r->tv_nsec = t - r->tv_sec * NANOSECOND_LL;
+	if (r->tv_sec < 0 && r->tv_nsec < 0)
+		r->tv_nsec = -r->tv_nsec;
+	return r;
 }
 #endif
 

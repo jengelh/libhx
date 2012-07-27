@@ -4,6 +4,7 @@
 #ifndef __cplusplus
 #	include <limits.h>
 #	include <stdarg.h>
+#	include <stdbool.h>
 #	include <stdio.h>
 #else
 #	include <climits>
@@ -56,10 +57,17 @@ extern const char *HX_dlerror(void);
 extern int HX_ffs(unsigned long);
 extern int HX_fls(unsigned long);
 extern void HX_hexdump(FILE *, const void *, unsigned int);
+extern bool HX_timespec_isneg(const struct timespec *);
+extern struct timespec *HX_timespec_neg(struct timespec *,
+	const struct timespec *);
 extern struct timespec *HX_timespec_add(struct timespec *,
 	const struct timespec *, const struct timespec *);
 extern struct timespec *HX_timespec_sub(struct timespec *,
 	const struct timespec *, const struct timespec *);
+extern struct timespec *HX_timespec_mul(struct timespec *,
+	const struct timespec *, int);
+extern struct timespec *HX_timespec_mulf(struct timespec *,
+	const struct timespec *, double);
 extern struct timeval *HX_timeval_sub(struct timeval *,
 	const struct timeval *, const struct timeval *);
 extern long HX_time_compare(const struct stat *, const struct stat *, char);
