@@ -147,6 +147,8 @@ stub3(HX_timespec_add, (struct timespec *a, const struct timespec *b,
 	const struct timespec *c));
 stub1(HX_timespec_isneg, (const struct timespec *a));
 stub3(HX_timespec_mul, (struct timespec *a, const struct timespec *b, int c));
+stub3(HX_timespec_mulf, (struct timespec *a, const struct timespec *b,
+	double c));
 stub2(HX_timespec_neg, (struct timespec *a, const struct timespec *b));
 stub3(HX_timespec_sub, (struct timespec *a, const struct timespec *b,
 	const struct timespec *c));

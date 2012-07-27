@@ -272,10 +272,11 @@ static void test_mul(void)
 {
 	struct timespec r, s;
 	unsigned int i;
+	double k;
 	int j;
 
 	printf("# Test multiplication behavior\n");
-	for (i = 0; i < ARRAY_SIZE(pairs); ++i)
+	for (i = 0; i < ARRAY_SIZE(pairs); ++i) {
 		for (j = -3; j <= 3; ++j) {
 			printf(HX_TIMESPEC_FMT " *N %d = ",
 			       HX_TIMESPEC_EXP(&pairs[i]), j);
@@ -290,6 +291,14 @@ static void test_mul(void)
 			if (r.tv_sec != s.tv_sec || r.tv_nsec != s.tv_nsec)
 				abort();
 		}
+
+		for (k = -3; k <= 3; k += 0.1) {
+			printf(HX_TIMESPEC_FMT " *f %f = ",
+			       HX_TIMESPEC_EXP(&pairs[i]), k);
+			HX_timespec_mulf(&r, &pairs[i], k);
+			printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&r));
+		}
+	}
 
 	printf("\n");
 }

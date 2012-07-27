@@ -66,6 +66,8 @@ extern struct timespec *HX_timespec_sub(struct timespec *,
 	const struct timespec *, const struct timespec *);
 extern struct timespec *HX_timespec_mul(struct timespec *,
 	const struct timespec *, int);
+extern struct timespec *HX_timespec_mulf(struct timespec *,
+	const struct timespec *, double);
 extern struct timeval *HX_timeval_sub(struct timeval *,
 	const struct timeval *, const struct timeval *);
 extern long HX_time_compare(const struct stat *, const struct stat *, char);

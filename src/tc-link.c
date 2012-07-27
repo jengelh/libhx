@@ -121,6 +121,7 @@ static void *funcs[] = {
 	HX_timespec_add,
 	HX_timespec_isneg,
 	HX_timespec_mul,
+	HX_timespec_mulf,
 	HX_timespec_neg,
 	HX_timespec_sub,
 	HX_timeval_sub,

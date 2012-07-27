@@ -4054,6 +4054,52 @@ HX_timespec_mul
 \series bold
 struct
 \series default
+ timespec 
+\series bold
+*
+\series default
+HX_timespec_mulf(
+\series bold
+struct
+\series default
+ timespec 
+\series bold
+*
+\series default
+delta,
+\begin_inset Newline newline
+\end_inset
+
+    
+\series bold
+const struct
+\series default
+ timespec 
+\series bold
+*
+\series default
+p, 
+\series bold
+double
+\series default
+ f);
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+HX_timespec_mulf
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+struct
+\series default
  timeval 
 \series bold
 *
@@ -4221,6 +4267,22 @@ struct timespec
 
 \family typewriter
 HX_timespec_mul
+\family default
+ Multiplies the time quantum in 
+\family typewriter
+p
+\family default
+ by 
+\family typewriter
+f
+\family default
+.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_timespec_mulf
 \family default
  Multiplies the time quantum in 
 \family typewriter

@@ -101,6 +101,24 @@ HX_timespec_mul(struct timespec *r, const struct timespec *a, int f)
 		r->tv_nsec = -r->tv_nsec;
 	return r;
 }
+
+EXPORT_SYMBOL struct timespec *
+HX_timespec_mulf(struct timespec *r, const struct timespec *a, double f)
+{
+	double t;
+
+	t = (a->tv_sec * NANOSECOND_LL +
+	    ((a->tv_sec >= 0) ? a->tv_nsec : -a->tv_nsec)) * f;
+	r->tv_sec  = t / NANOSECOND;
+	/*
+	 * This is quite the same as r->tv_nsec = fmod(t, NANOSECOND),
+	 * except that without the library call, we are faster.
+	 */
+	r->tv_nsec = t - r->tv_sec * NANOSECOND_LL;
+	if (r->tv_sec < 0 && r->tv_nsec < 0)
+		r->tv_nsec = -r->tv_nsec;
+	return r;
+}
 #endif
 
 #ifdef HAVE_STRUCT_TIMEVAL_TV_USEC
