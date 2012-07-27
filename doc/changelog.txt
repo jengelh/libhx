@@ -2,10 +2,15 @@
 
 HEAD
 ====
+
+
+v3.13 (2012-07-28)
+==================
 Enhancements:
 - defs: add DEMOTE_TO_PTR
 - option: new HXOPT_RQ_ORDER flag, allows unconditional POSIX-style parsing
   (parsing terminates at first non-option encountered)
+- option: add HXTYPE_SIZE_T
 - time: add functions and macros for arithmetic and handling of timespec
   with support for negative time values
   * time: add HX_TIMESPEC_{EXP,FMT}
@@ -22,8 +27,6 @@ Changes:
 - string: make HX_memmem consider the special case of search_length=0
 - string: optimize search_length=1 case in HX_memmem
 - string: speed up HX_memmem searches for search_length >=2
-Enhancements:
-- option: add HXTYPE_SIZE_T
 
 
 v3.12.1 (2011-12-15)
