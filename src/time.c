@@ -13,10 +13,9 @@
 #include <libHX/misc.h>
 #include "internal.h"
 
-enum {
-	MICROSECOND = 0xf4240,
-	NANOSECOND  = 0x3b9aca00,
-};
+#define MICROSECOND 100000
+#define NANOSECOND 1000000000
+#define NANOSECOND_LL 1000000000LL
 
 #ifdef HAVE_STRUCT_TIMESPEC_TV_NSEC
 EXPORT_SYMBOL bool HX_timespec_isneg(const struct timespec *x)
@@ -86,6 +85,21 @@ EXPORT_SYMBOL void HX_diff_timespec(struct timespec *delta,
     const struct timespec *future, const struct timespec *past)
 {
 	HX_timespec_sub(delta, future, past);
+}
+
+EXPORT_SYMBOL struct timespec *
+HX_timespec_mul(struct timespec *r, const struct timespec *a, int f)
+{
+	long long t;
+
+	t = a->tv_sec * NANOSECOND_LL +
+	    ((a->tv_sec >= 0) ? a->tv_nsec : -a->tv_nsec);
+	t *= f;
+	r->tv_sec  = t / NANOSECOND;
+	r->tv_nsec = t % NANOSECOND;
+	if (r->tv_sec < 0 && r->tv_nsec < 0)
+		r->tv_nsec = -r->tv_nsec;
+	return r;
 }
 #endif
 

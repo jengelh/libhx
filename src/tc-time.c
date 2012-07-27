@@ -84,6 +84,14 @@ static void test_same(void)
 	}
 	printf("\n");
 
+	for (i = 0; i < ARRAY_SIZE(pairs); ++i) {
+		r = pairs[i];
+		printf(HX_TIMESPEC_FMT " * 1 = ", HX_TIMESPEC_EXP(&r));
+		HX_timespec_mul(&r, &r, 1);
+		printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&r));
+	}
+	printf("\n");
+
 	/* 2s */
 	for (i = 0; i < ARRAY_SIZE(pairs); ++i) {
 		r = pairs[i];
@@ -230,6 +238,24 @@ static void test_adds(void)
 	printf("\n");
 }
 
+static void test_mul(void)
+{
+	struct timespec r;
+	unsigned int i;
+	int j;
+
+	printf("# Test multiplication behavior\n");
+	for (i = 0; i < ARRAY_SIZE(pairs); ++i)
+		for (j = -3; j <= 3; ++j) {
+			printf(HX_TIMESPEC_FMT " * %d = ",
+			       HX_TIMESPEC_EXP(&pairs[i]), j);
+			HX_timespec_mul(&r, &pairs[i], j);
+			printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&r));
+		}
+
+	printf("\n");
+}
+
 int main(void)
 {
 	if (HX_init() <= 0)
@@ -238,6 +264,7 @@ int main(void)
 	test_same();
 	test_neg();
 	test_add();
+	test_mul();
 	test_adds();
 	HX_exit();
 	return EXIT_SUCCESS;
