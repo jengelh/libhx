@@ -54,6 +54,33 @@ static struct timespec *HX_timespec_add_FDIV(struct timespec *r,
 	return r;
 }
 
+/*
+ * Variant that does split multiplication.
+ */
+static struct timespec *
+HX_timespec_mul_SPL(struct timespec *r, const struct timespec *a, int f)
+{
+	long long nsec;
+	bool neg = HX_timespec_isneg(a);
+
+	if (neg)
+		HX_timespec_neg(r, a);
+	else
+		*r = *a;
+	if (f < 0) {
+		f = -f;
+		neg = !neg;
+	}
+
+	r->tv_sec *= f;
+	nsec = static_cast(long long, r->tv_nsec) * f;
+	r->tv_sec += nsec / NANOSECOND;
+	r->tv_nsec = nsec % NANOSECOND;
+	if (neg)
+		HX_timespec_neg(r, r);
+	return r;
+}
+
 static void test_same(void)
 {
 	static const struct timespec zero = {0, 0};
@@ -243,17 +270,25 @@ static void test_adds(void)
 
 static void test_mul(void)
 {
-	struct timespec r;
+	struct timespec r, s;
 	unsigned int i;
 	int j;
 
 	printf("# Test multiplication behavior\n");
 	for (i = 0; i < ARRAY_SIZE(pairs); ++i)
 		for (j = -3; j <= 3; ++j) {
-			printf(HX_TIMESPEC_FMT " * %d = ",
+			printf(HX_TIMESPEC_FMT " *N %d = ",
 			       HX_TIMESPEC_EXP(&pairs[i]), j);
 			HX_timespec_mul(&r, &pairs[i], j);
 			printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&r));
+
+			printf(HX_TIMESPEC_FMT " *S %d = ",
+			       HX_TIMESPEC_EXP(&pairs[i]), j);
+			HX_timespec_mul_SPL(&s, &pairs[i], j);
+			printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&s));
+
+			if (r.tv_sec != s.tv_sec || r.tv_nsec != s.tv_nsec)
+				abort();
 		}
 
 	printf("\n");
@@ -280,6 +315,7 @@ static void test_muls(void)
 {
 	printf("# Test multiplication speed\n");
 	test_muls_1i("normal: ", HX_timespec_mul);
+	test_muls_1i("split:  ", HX_timespec_mul_SPL);
 	printf("\n");
 }
 
