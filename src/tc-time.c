@@ -17,6 +17,52 @@
 
 static unsigned int sleep_amt = 1336670;
 
+static const struct timespec pairs[] = {
+	{-1, 700000000}, {-1, 400000000}, {-1, 0},
+	{0, -700000000}, {0, -400000000}, {0, 0},
+	{0, 400000000}, {0, 700000000},
+	{1, 0}, {1, 400000000}, {1, 700000000},
+};
+
+static void test_same(void)
+{
+	struct timespec r;
+	unsigned int i;
+
+	printf("# Test src==dst operand behavior\n");
+
+	/* 1s */
+	for (i = 0; i < ARRAY_SIZE(pairs); ++i) {
+		r = pairs[i];
+		printf("-(" HX_TIMESPEC_FMT ") = ", HX_TIMESPEC_EXP(&r));
+		HX_timespec_neg(&r, &r);
+		printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&r));
+	}
+	printf("\n");
+}
+
+static void print_sgn(const struct timespec *a)
+{
+	printf(HX_timespec_isneg(a) ? "[-]" : "[+]");
+}
+
+static void test_neg(void)
+{
+	const struct timespec *now;
+	struct timespec then;
+
+	printf("# Negation\n");
+	for (now = pairs; now < pairs + ARRAY_SIZE(pairs); ++now) {
+		HX_timespec_neg(&then, now);
+
+		print_sgn(now);
+		printf(HX_TIMESPEC_FMT " -> ", HX_TIMESPEC_EXP(now));
+		print_sgn(&then);
+		printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&then));
+	}
+	printf("\n");
+}
+
 static void zadd(void)
 {
 	static const struct timespec a = {0, 999999999};
@@ -71,6 +117,8 @@ int main(void)
 	if (HX_init() <= 0)
 		abort();
 
+	test_same();
+	test_neg();
 	//zact();
 	zsleep();
 	HX_exit();

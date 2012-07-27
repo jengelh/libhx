@@ -9,6 +9,7 @@ Enhancements:
 - time: add HX_TIMESPEC_{EXP,FMT}
 - time: add HX_TIMEVAL_{EXP,FMT}
 - time: add the HX_timespec_isneg function
+- time: add the HX_timespec_neg function
 Changes:
 - io: remove HX_REALPATH_SYMLINK
 - time: rename HX_diff_timespec to HX_timespec_sub (old ABI kept)

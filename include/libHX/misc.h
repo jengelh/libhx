@@ -58,6 +58,8 @@ extern int HX_ffs(unsigned long);
 extern int HX_fls(unsigned long);
 extern void HX_hexdump(FILE *, const void *, unsigned int);
 extern bool HX_timespec_isneg(const struct timespec *);
+extern struct timespec *HX_timespec_neg(struct timespec *,
+	const struct timespec *);
 extern struct timespec *HX_timespec_add(struct timespec *,
 	const struct timespec *, const struct timespec *);
 extern struct timespec *HX_timespec_sub(struct timespec *,

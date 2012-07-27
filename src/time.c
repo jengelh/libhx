@@ -24,6 +24,19 @@ EXPORT_SYMBOL bool HX_timespec_isneg(const struct timespec *x)
 	return (x->tv_sec < 0) || (x->tv_nsec < 0);
 }
 
+EXPORT_SYMBOL struct timespec *
+HX_timespec_neg(struct timespec *r, const struct timespec *a)
+{
+	if (a->tv_sec != 0) {
+		r->tv_sec  = -a->tv_sec;
+		r->tv_nsec = a->tv_nsec;
+	} else {
+		r->tv_sec  = 0;
+		r->tv_nsec = -a->tv_nsec;
+	}
+	return r;
+}
+
 EXPORT_SYMBOL struct timespec *HX_timespec_add(struct timespec *res,
     const struct timespec *a, const struct timespec *b)
 {

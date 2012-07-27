@@ -3508,6 +3508,48 @@ struct
 \series bold
 *
 \series default
+HX_timespec_neg(
+\series bold
+struct
+\series default
+ timespec 
+\series bold
+*
+\series default
+result,
+\begin_inset Newline newline
+\end_inset
+
+    
+\series bold
+const struct
+\series default
+ timespec 
+\series bold
+*
+\series default
+p);
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+HX_timespec_neg
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+struct
+\series default
+ timespec 
+\series bold
+*
+\series default
 HX_timespec_add(
 \series bold
 struct
@@ -3700,6 +3742,27 @@ HX_timespec_isneg
 \family default
  Determines whether a timespec structure represents (non-zero) negative
  time.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_timespec_neg
+\family default
+ Computes the negation of the time specified by 
+\family typewriter
+p
+\family default
+.
+ 
+\family typewriter
+result
+\family default
+ and 
+\family typewriter
+p
+\family default
+ may point to the same structure.
 \end_layout
 
 \begin_layout Description
