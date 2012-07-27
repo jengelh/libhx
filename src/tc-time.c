@@ -16,11 +16,14 @@
 
 typedef struct timespec *(*add_func_t)(struct timespec *,
 	const struct timespec *, const struct timespec *);
+typedef struct timespec *(*mul_func_t)(struct timespec *,
+	const struct timespec *, int);
 
 static const int NANOSECOND = 1000000000;
 static const long long NANOSECOND_LL = 1000000000;
 static const unsigned int clock_id = CLOCK_THREAD_CPUTIME_ID;
 static const unsigned int step = 1000;
+static const unsigned int step_mul = 10000000;
 
 static const struct timespec pairs[] = {
 	{-1, 700000000}, {-1, 400000000}, {-1, 0},
@@ -256,6 +259,30 @@ static void test_mul(void)
 	printf("\n");
 }
 
+static void test_muls_1i(const char *text, mul_func_t fn)
+{
+	struct timespec r, s, start, delta;
+	unsigned int i;
+
+	printf("%s", text);
+	clock_gettime(clock_id, &start);
+	for (i = 0; i < step_mul; ++i) {
+		r.tv_sec  = -i;
+		r.tv_nsec = -i / 4;
+		(*fn)(&s, &r, 7);
+	}
+	clock_gettime(clock_id, &delta);
+	HX_timespec_sub(&delta, &delta, &start);
+	printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&delta));
+}
+
+static void test_muls(void)
+{
+	printf("# Test multiplication speed\n");
+	test_muls_1i("normal: ", HX_timespec_mul);
+	printf("\n");
+}
+
 int main(void)
 {
 	if (HX_init() <= 0)
@@ -266,6 +293,7 @@ int main(void)
 	test_add();
 	test_mul();
 	test_adds();
+	test_muls();
 	HX_exit();
 	return EXIT_SUCCESS;
 }
