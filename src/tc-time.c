@@ -1,5 +1,5 @@
 /*
- *	Copyright © Jan Engelhardt
+ *	Copyright © Jan Engelhardt, 2012
  *
  *	This program is free software; you can redistribute it and/or
  *	modify it under the terms of the WTF Public License version 2 or
@@ -26,6 +26,7 @@ static const struct timespec pairs[] = {
 
 static void test_same(void)
 {
+	static const struct timespec zero = {0, 0};
 	struct timespec r;
 	unsigned int i;
 
@@ -36,6 +37,24 @@ static void test_same(void)
 		r = pairs[i];
 		printf("-(" HX_TIMESPEC_FMT ") = ", HX_TIMESPEC_EXP(&r));
 		HX_timespec_neg(&r, &r);
+		printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&r));
+	}
+	printf("\n");
+
+	for (i = 0; i < ARRAY_SIZE(pairs); ++i) {
+		r = pairs[i];
+		printf(HX_TIMESPEC_FMT " + 0 = ", HX_TIMESPEC_EXP(&r));
+		HX_timespec_add(&r, &r, &zero);
+		printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&r));
+	}
+	printf("\n");
+
+	/* 2s */
+	for (i = 0; i < ARRAY_SIZE(pairs); ++i) {
+		r = pairs[i];
+		printf(HX_TIMESPEC_FMT " + " HX_TIMESPEC_FMT " = ",
+		       HX_TIMESPEC_EXP(&r), HX_TIMESPEC_EXP(&r));
+		HX_timespec_add(&r, &r, &r);
 		printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&r));
 	}
 	printf("\n");
@@ -63,14 +82,27 @@ static void test_neg(void)
 	printf("\n");
 }
 
-static void zadd(void)
+static void print_op2(const struct timespec *r, const struct timespec *a,
+    const char *op, const struct timespec *b)
 {
-	static const struct timespec a = {0, 999999999};
+	printf(HX_TIMESPEC_FMT " %s ", HX_TIMESPEC_EXP(a), op);
+	printf(HX_TIMESPEC_FMT " = ", HX_TIMESPEC_EXP(b));
+	printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(r));
+}
+
+static void test_add(void)
+{
+	const struct timespec *a, *b;
 	struct timespec r;
 
-	HX_timespec_add(&r, &a, &a);
-	printf(HX_TIMESPEC_FMT " = 2 x " HX_TIMESPEC_FMT "\n",
-	       HX_TIMESPEC_EXP(&r), HX_TIMESPEC_EXP(&a));
+	printf("# Test addition behavior\n");
+	for (a = pairs; a < pairs + ARRAY_SIZE(pairs); ++a) {
+		for (b = pairs; b < pairs + ARRAY_SIZE(pairs); ++b) {
+			HX_timespec_add(&r, a, b);
+			print_op2(&r, a, "+", b);
+		}
+	}
+	printf("\n");
 }
 
 static void zsub(void)
@@ -119,7 +151,7 @@ int main(void)
 
 	test_same();
 	test_neg();
-	//zact();
+	test_add();
 	zsleep();
 	HX_exit();
 	return EXIT_SUCCESS;
