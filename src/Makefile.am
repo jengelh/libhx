@@ -83,5 +83,5 @@ tx_rand_LDADD      = libHX.la ${librt_LIBS}
 tx_string_SOURCES  = tx-string.cpp
 tx_string_LDADD    = libHX.la
 tx_time_SOURCES    = tx-time.cpp
-tx_time_LDADD      = libHX.la -lm ${librt_LIBS}
+tx_time_LDADD      = libHX.la ${librt_LIBS}
 endif
