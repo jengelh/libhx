@@ -7,5 +7,4 @@ if [ ! -e "${topdir}/configure" ]; then
 	./autogen.sh;
 	popd;
 fi;
-exec "$topdir/configure" CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" \
-	--sysconfdir="$abstopdir/src" "$@";
+exec "$topdir/configure" CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" "$@";
