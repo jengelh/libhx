@@ -94,8 +94,9 @@ AM_CONDITIONAL([B_PROC], [test "$b_proc" = 1])
 regular_CPPFLAGS="-D_FILE_OFFSET_BITS=64 -D_REENTRANT"
 regular_CFLAGS="-Wall -Waggregate-return -Wmissing-declarations \
 	-Wmissing-prototypes -Wredundant-decls -Wshadow -Wstrict-prototypes \
-	-Wformat=2 -pipe"
-regular_CXXFLAGS="-Wall -Wno-pointer-arith -Wredundant-decls -pipe";
+	-Wformat=2 -pipe $visibility_CFLAGS"
+regular_CXXFLAGS="-Wall -Wno-pointer-arith -Wredundant-decls -pipe \
+	$visibility_CFLAGS";
 AC_SUBST([regular_CPPFLAGS])
 AC_SUBST([regular_CFLAGS])
 AC_SUBST([regular_CXXFLAGS])
