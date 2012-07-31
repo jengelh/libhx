@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Fixes:
+- time: use C++ static_cast syntax for C++ mode
 
 
 v3.13 (2012-07-28)
