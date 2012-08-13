@@ -110,7 +110,9 @@ EXPORT_SYMBOL unsigned int HX_irand(unsigned int lo, unsigned int hi)
 {
 	unsigned int delta = hi - lo;
 
-	if (delta <= RAND_MAX)
+	if (delta == 0)
+		return lo;
+	else if (delta <= RAND_MAX)
 		return HX_rand() % delta + lo;
 	else
 		return static_cast(unsigned int,

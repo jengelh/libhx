@@ -19,8 +19,11 @@ int main(void)
 
 	if (HX_init() <= 0)
 		abort();
-	for (i = 0; i < 15; ++i)
-		printf("%08x ", HX_irand(0, RAND_MAX));
+	for (i = 0; i < 15; ++i) {
+		printf("%d ", HX_irand(i, i));
+		printf("%.1f ", HX_drand(i, i));
+		printf("%08x, ", HX_irand(0, RAND_MAX));
+	}
 	printf("\n");
 
 	clock_gettime(CLOCK_REALTIME, &past);
