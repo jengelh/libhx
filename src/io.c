@@ -25,6 +25,7 @@
 #	include <unistd.h>
 #endif
 #include <libHX/ctype_helper.h>
+#include <libHX/defs.h>
 #include <libHX/io.h>
 #include <libHX/misc.h>
 #include <libHX/string.h>
@@ -38,14 +39,7 @@ struct HXdir {
 	bool got_first;
 #else
 	DIR *ptr;
-	/*
-	 * Surprise surprise, along comes Solaris with a dirent too short!
-	 */
-	union {
-		struct dirent dentry;
-		char extender[_POSIX_PATH_MAX + sizeof(struct dirent) -
-			HXsizeof_member(struct dirent, d_name)];
-	};
+	struct dirent dentry; /* must be last */
 #endif
 };
 
@@ -73,16 +67,31 @@ static int mkdir_gen(const char *d, unsigned int mode)
 EXPORT_SYMBOL struct HXdir *HXdir_open(const char *s)
 {
 	struct HXdir *d;
-	if ((d = malloc(sizeof(struct HXdir))) == NULL)
-		return NULL;
 
-#if defined(_WIN32)
+#ifdef _WIN32
+	if ((d = malloc(sizeof(*d))) == NULL)
+		return NULL;
 	if ((d->dname = malloc(strlen(s) + 3)) == NULL)
 		goto out;
 	strcpy(d->dname, s);
 	strcat(d->dname, "\\*");
 	d->got_first = false;
 #else
+	/*
+	 * On Linux-glibc, struct dirent contains a big d_name[256],
+	 * but on Solaris, it is d_name[].
+	 */
+	size_t size = sizeof(*d);
+	ssize_t name_max = pathconf(s, _PC_NAME_MAX);
+
+	if (name_max > 0) {
+		size -= sizeof(d->dentry) - offsetof(struct dirent, d_name);
+		size += name_max + 1;
+	} else {
+		size += NAME_MAX;
+	}
+	if ((d = malloc(size)) == NULL)
+		return NULL;
 	if ((d->ptr = opendir(s)) == NULL)
 		goto out;
 #endif

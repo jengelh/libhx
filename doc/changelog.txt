@@ -3,6 +3,7 @@
 HEAD
 ====
 Fixes:
+- io: use pathconf(3) to determine dirent size for dir traversal
 - rand: avoid division by zero when calling HX_irand with lo==hi
 - time: use C++ static_cast syntax for C++ mode
 - headers: improve operability with C89 compile mode
