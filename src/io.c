@@ -496,8 +496,9 @@ EXPORT_SYMBOL int HX_rrmdir(const char *dir)
 	return ret;
 }
 
-EXPORT_SYMBOL ssize_t HXio_fullread(int fd, void *buf, size_t size)
+EXPORT_SYMBOL ssize_t HXio_fullread(int fd, void *vbuf, size_t size)
 {
+	char *buf = vbuf;
 	size_t rem = size;
 	ssize_t ret;
 
@@ -511,8 +512,9 @@ EXPORT_SYMBOL ssize_t HXio_fullread(int fd, void *buf, size_t size)
 	return size;
 }
 
-EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *buf, size_t size)
+EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *vbuf, size_t size)
 {
+	const char *buf = vbuf;
 	size_t rem = size;
 	ssize_t ret;
 
