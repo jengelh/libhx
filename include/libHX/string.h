@@ -84,7 +84,7 @@ extern char *HX_strsep(char **, const char *);
 extern char *HX_strsep2(char **, const char *);
 extern char *HX_strupper(char *);
 
-static inline void *HX_memdup(const void *buf, size_t len)
+static __inline__ void *HX_memdup(const void *buf, size_t len)
 {
 	void *ret;
 	if ((ret = malloc(len)) == NULL)
@@ -99,7 +99,7 @@ static inline void *HX_memdup(const void *buf, size_t len)
 #ifdef __cplusplus
 extern "C++" {
 
-template<typename type> static inline type
+template<typename type> static __inline__ type
 HX_memdup(const void *data, size_t n)
 {
 	return reinterpret_cast<type>(HX_memdup(data, n));

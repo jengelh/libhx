@@ -270,8 +270,8 @@ static void HXmap_ops_setup(struct HXmap_private *super,
  * Calculates @v * (@n / @d) without floating point or risk of overflow
  * (when @n <= @d).
  */
-static inline unsigned int x_frac(unsigned int n, unsigned int d,
-    unsigned int v)
+static __inline__ unsigned int
+x_frac(unsigned int n, unsigned int d, unsigned int v)
 {
 	return (v / d) * n + (v % d) * n / d;
 }

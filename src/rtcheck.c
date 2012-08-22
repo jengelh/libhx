@@ -195,12 +195,12 @@ stub2(HXproc_run_sync, (const char *const *a, unsigned int b));
 stub1(HXproc_wait, (struct HXproc *a));
 
 /* string.h */
-static inline struct memcont *HXmc_base(const hxmc_t *p)
+static __inline__ struct memcont *HXmc_base(const hxmc_t *p)
 {
 	return containerof(p, struct memcont, data);
 }
 
-static inline void HXmc_check(const char *func, const void *cv)
+static __inline__ void HXmc_check(const char *func, const void *cv)
 {
 	const struct memcont *c;
 

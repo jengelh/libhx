@@ -122,13 +122,13 @@ extern unsigned long HXhash_djb2(const void *, size_t);
 
 extern "C++" {
 
-template<typename type> static inline type
+template<typename type> static __inline__ type
 HXmap_get(const struct HXmap *map, const void *key)
 {
 	return reinterpret_cast<type>(HXmap_get(map, key));
 }
 
-template<typename type> static inline type
+template<typename type> static __inline__ type
 HXmap_del(struct HXmap *map, const void *key)
 {
 	return reinterpret_cast<type>(HXmap_del(map, key));

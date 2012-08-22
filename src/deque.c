@@ -15,8 +15,8 @@
 #include <libHX/string.h>
 #include "internal.h"
 
-static inline void HXdeque_add(struct HXdeque_node *af,
-    struct HXdeque_node *nd)
+static __inline__ void
+HXdeque_add(struct HXdeque_node *af, struct HXdeque_node *nd)
 {
 	struct HXdeque *parent = af->parent;
 	nd->next   = af->next;
@@ -27,8 +27,8 @@ static inline void HXdeque_add(struct HXdeque_node *af,
 		parent->last = nd;
 }
 
-static inline void HXdeque_drop(struct HXdeque *parent,
-    struct HXdeque_node *node)
+static __inline__ void
+HXdeque_drop(struct HXdeque *parent, struct HXdeque_node *node)
 {
 	struct HXdeque_node *left = node->prev, *right = node->next;
 

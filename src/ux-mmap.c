@@ -16,8 +16,8 @@
 #include "internal.h"
 #include <libHX/misc.h>
 
-static inline DWORD dw_desired_access(int, int);
-static inline DWORD fl_protect(int, int);
+static __inline__ DWORD dw_desired_access(int, int);
+static __inline__ DWORD fl_protect(int, int);
 
 EXPORT_SYMBOL void *mmap(void *start, size_t length, int prot, int flags,
     int fd, off_t offset)
@@ -48,7 +48,7 @@ EXPORT_SYMBOL int munmap(void *start, size_t length)
 	return 0;
 }
 
-static inline DWORD dw_desired_access(int prot, int flags)
+static __inline__ DWORD dw_desired_access(int prot, int flags)
 {
 	if (flags & MAP_PRIVATE) return FILE_MAP_COPY;
 	if (prot & PROT_WRITE)   return FILE_MAP_WRITE;
@@ -59,7 +59,7 @@ static inline DWORD dw_desired_access(int prot, int flags)
 	return 0;
 }
 
-static inline DWORD fl_protect(int prot, int flags)
+static __inline__ DWORD fl_protect(int prot, int flags)
 {
 	if (flags & MAP_PRIVATE)
 		return PAGE_WRITECOPY;

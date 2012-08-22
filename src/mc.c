@@ -14,19 +14,19 @@
 #include <libHX/string.h>
 #include "internal.h"
 
-static inline size_t __HXmc_request(size_t len)
+static __inline__ size_t __HXmc_request(size_t len)
 {
 	/* The container, data portion, and a trailing \0 */
 	return sizeof(struct memcont) + len + 1;
 }
 
-static inline void HXmc_check(const struct memcont *c)
+static __inline__ void HXmc_check(const struct memcont *c)
 {
 	if (c->id != HXMC_IDENT)
 		fprintf(stderr, "libHX-mc error: not a hxmc object!\n");
 }
 
-static inline struct memcont *HXmc_base(const hxmc_t *p)
+static __inline__ struct memcont *HXmc_base(const hxmc_t *p)
 {
 	return containerof(p, struct memcont, data);
 }

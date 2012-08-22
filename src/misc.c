@@ -34,7 +34,7 @@ EXPORT_SYMBOL int HX_fls(unsigned long n)
 	return -1;
 }
 
-static inline void hexdump_ascii(FILE *fp, unsigned char c, bool tty)
+static __inline__ void hexdump_ascii(FILE *fp, unsigned char c, bool tty)
 {
 	static const unsigned char ct_char[] = "31", up_char[] = "34";
 

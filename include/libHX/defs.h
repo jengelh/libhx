@@ -23,37 +23,37 @@
 #	endif
 
 template<typename new_type>
-static inline new_type signed_cast(const char *expr)
+static __inline__ new_type signed_cast(const char *expr)
 {
 	return reinterpret_cast<new_type>(expr);
 }
 
 template<typename new_type>
-static inline new_type signed_cast(const signed char *expr)
+static __inline__ new_type signed_cast(const signed char *expr)
 {
 	return reinterpret_cast<new_type>(expr);
 }
 
 template<typename new_type>
-static inline new_type signed_cast(const unsigned char *expr)
+static __inline__ new_type signed_cast(const unsigned char *expr)
 {
 	return reinterpret_cast<new_type>(expr);
 }
 
 template<typename new_type>
-static inline new_type signed_cast(char *expr)
+static __inline__ new_type signed_cast(char *expr)
 {
 	return reinterpret_cast<new_type>(expr);
 }
 
 template<typename new_type>
-static inline new_type signed_cast(signed char *expr)
+static __inline__ new_type signed_cast(signed char *expr)
 {
 	return reinterpret_cast<new_type>(expr);
 }
 
 template<typename new_type>
-static inline new_type signed_cast(unsigned char *expr)
+static __inline__ new_type signed_cast(unsigned char *expr)
 {
 	return reinterpret_cast<new_type>(expr);
 }

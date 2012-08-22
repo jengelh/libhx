@@ -60,7 +60,8 @@ EXPORT_SYMBOL int HXproc_wait(struct HXproc *p)
  * Explicitly initialize the @p array with -1 so that we can call close()
  * on all of them without any side effects.
  */
-static inline int HXproc_build_pipes(const struct HXproc *proc, int (*p)[2])
+static __inline__ int
+HXproc_build_pipes(const struct HXproc *proc, int (*p)[2])
 {
 	unsigned int x, y;
 

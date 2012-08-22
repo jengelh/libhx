@@ -29,12 +29,12 @@ struct fmt_entry {
 	unsigned int type;
 };
 
-static inline struct HXformat_map *fmt_export(const struct HXmap *t)
+static __inline__ struct HXformat_map *fmt_export(const struct HXmap *t)
 {
 	return const_cast1(void *, static_cast(const void *, t));
 }
 
-static inline struct HXmap *fmt_import(const struct HXformat_map *t)
+static __inline__ struct HXmap *fmt_import(const struct HXformat_map *t)
 {
 	return const_cast1(void *, static_cast(const void *, t));
 }
@@ -103,7 +103,7 @@ EXPORT_SYMBOL int HXformat_add(struct HXformat_map *ftable, const char *key,
 	return 1;
 }
 
-static inline char *HX_strchr0(const char *s, char c)
+static __inline__ char *HX_strchr0(const char *s, char c)
 {
 	char *ret = strchr(s, c);
 	if (ret != NULL)
@@ -132,7 +132,7 @@ struct HXformat2_fd {
  */
 static char HXformat2_nexp;
 
-static inline void HXformat2_insuf(const char *func, int argc)
+static __inline__ void HXformat2_insuf(const char *func, int argc)
 {
 	fprintf(stderr, "%s: insufficient number of arguments (%d)\n",
 	        func, argc);

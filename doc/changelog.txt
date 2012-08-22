@@ -5,6 +5,7 @@ HEAD
 Fixes:
 - rand: avoid division by zero when calling HX_irand with lo==hi
 - time: use C++ static_cast syntax for C++ mode
+- headers: improve operability with C89 compile mode
 
 
 v3.13 (2012-07-28)

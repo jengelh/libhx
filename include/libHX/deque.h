@@ -41,7 +41,7 @@ extern void HXdeque_free(struct HXdeque *);
 extern void HXdeque_genocide2(struct HXdeque *, void (*)(void *));
 extern void **HXdeque_to_vec(const struct HXdeque *, unsigned int *);
 
-static inline void HXdeque_genocide(struct HXdeque *dq)
+static __inline__ void HXdeque_genocide(struct HXdeque *dq)
 {
 	HXdeque_genocide2(dq, free);
 }
@@ -51,29 +51,30 @@ static inline void HXdeque_genocide(struct HXdeque *dq)
 
 extern "C++" {
 
-template<typename type> static inline type HXdeque_pop(struct HXdeque *dq)
+template<typename type> static __inline__ type HXdeque_pop(struct HXdeque *dq)
 {
 	return reinterpret_cast<type>(HXdeque_pop(dq));
 }
 
-template<typename type> static inline type HXdeque_shift(struct HXdeque *dq)
+template<typename type> static __inline__ type
+HXdeque_shift(struct HXdeque *dq)
 {
 	return reinterpret_cast<type>(HXdeque_shift(dq));
 }
 
-template<typename type> static inline type
+template<typename type> static __inline__ type
 HXdeque_get(struct HXdeque *dq, const void *ptr)
 {
 	return reinterpret_cast<type>(HXdeque_get(dq, ptr));
 }
 
-template<typename type> static inline type
+template<typename type> static __inline__ type
 HXdeque_del(struct HXdeque_node *nd)
 {
 	return reinterpret_cast<type>(HXdeque_del(nd));
 }
 
-template<typename type> static inline type *
+template<typename type> static __inline__ type *
 HXdeque_to_vec(struct HXdeque *dq, unsigned int *n)
 {
 	return reinterpret_cast<type *>(HXdeque_to_vec(dq, n));

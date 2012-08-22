@@ -18,7 +18,7 @@
 #include <libHX/string.h>
 #include "internal.h"
 
-static inline unsigned int min_uint(unsigned int a, unsigned int b)
+static __inline__ unsigned int min_uint(unsigned int a, unsigned int b)
 {
 	return (a < b) ? a : b;
 }

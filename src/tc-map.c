@@ -33,12 +33,12 @@ typedef struct HXmap *(*map_create4_fn_t)(unsigned int,
 
 static unsigned int tmap_indent = 0;
 
-static inline void tmap_ipush(void)
+static __inline__ void tmap_ipush(void)
 {
 	++tmap_indent;
 }
 
-static inline void tmap_ipop(void)
+static __inline__ void tmap_ipop(void)
 {
 	if (tmap_indent > 0)
 		--tmap_indent;
@@ -79,7 +79,7 @@ static unsigned int tmap_smart_rand(unsigned int *left, unsigned int *right)
  * @dest:	char buffer
  * @length:	size of buffer
  */
-static inline void tmap_rword(char *dest, unsigned int length)
+static __inline__ void tmap_rword(char *dest, unsigned int length)
 {
 	while (--length > 0)
 		*dest++ = HX_irand('a', 'z' + 1);

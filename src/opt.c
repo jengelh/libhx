@@ -232,8 +232,8 @@ static void do_assign(struct HXoptcb *cbi, const char *arg0)
 		opt->cb(cbi);
 }
 
-static inline const struct HXoption *lookup_short(const struct HXoption *table,
-    char opt)
+static __inline__ const struct HXoption *
+lookup_short(const struct HXoption *table, char opt)
 {
 	for (; table->type != HXTYPE_XSNTMARK; ++table)
 		if (table->sh == opt)
@@ -241,8 +241,8 @@ static inline const struct HXoption *lookup_short(const struct HXoption *table,
 	return NULL;
 }
 
-static inline const struct HXoption *lookup_long(const struct HXoption *table,
-    const char *key)
+static __inline__ const struct HXoption *
+lookup_long(const struct HXoption *table, const char *key)
 {
 	for (; table->type != HXTYPE_XSNTMARK; ++table)
 		if (table->ln != NULL && strcmp(table->ln, key) == 0)
@@ -250,7 +250,7 @@ static inline const struct HXoption *lookup_long(const struct HXoption *table,
 	return NULL;
 }
 
-static inline bool takes_void(unsigned int t)
+static __inline__ bool takes_void(unsigned int t)
 {
 	t &= HXOPT_TYPEMASK;
 	return t == HXTYPE_NONE || t == HXTYPE_VAL || t == HXTYPE_SVAL ||

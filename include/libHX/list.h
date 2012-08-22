@@ -23,12 +23,12 @@ struct HXlist_head {
 #define HXLIST_HEAD(name) \
 	struct HXlist_head name = HXLIST_HEAD_INIT(name)
 
-static inline void HXlist_init(struct HXlist_head *list)
+static __inline__ void HXlist_init(struct HXlist_head *list)
 {
 	list->next = list->prev = list;
 }
 
-static inline void __HXlist_add(struct HXlist_head *nu,
+static __inline__ void __HXlist_add(struct HXlist_head *nu,
     struct HXlist_head *prev, struct HXlist_head *next)
 {
 	nu->next = next;
@@ -37,19 +37,19 @@ static inline void __HXlist_add(struct HXlist_head *nu,
 	prev->next = nu;
 }
 
-static inline void HXlist_add(struct HXlist_head *head,
-    struct HXlist_head *entry)
+static __inline__ void
+HXlist_add(struct HXlist_head *head, struct HXlist_head *entry)
 {
 	__HXlist_add(entry, head, head->next);
 }
 
-static inline void HXlist_add_tail(struct HXlist_head *head,
-    struct HXlist_head *entry)
+static __inline__ void
+HXlist_add_tail(struct HXlist_head *head, struct HXlist_head *entry)
 {
 	__HXlist_add(entry, head->prev, head);
 }
 
-static inline void HXlist_del(struct HXlist_head *entry)
+static __inline__ void HXlist_del(struct HXlist_head *entry)
 {
 	entry->prev->next = entry->next;
 	entry->next->prev = entry->prev;
@@ -57,7 +57,7 @@ static inline void HXlist_del(struct HXlist_head *entry)
 	entry->prev = NULL;
 }
 
-static inline bool HXlist_empty(const struct HXlist_head *head)
+static __inline__ bool HXlist_empty(const struct HXlist_head *head)
 {
 	return head->next == head;
 }
@@ -109,34 +109,34 @@ struct HXclist_head {
 #define HXCLIST_HEAD(name) \
 	struct HXclist_head name = HXCLIST_HEAD_INIT(name)
 
-static inline void HXclist_init(struct HXclist_head *head)
+static __inline__ void HXclist_init(struct HXclist_head *head)
 {
 	head->list.next = head->list.prev = &head->list;
 	head->items = 0;
 }
 
-static inline void HXclist_del(struct HXclist_head *head,
-    struct HXlist_head *node)
+static __inline__ void
+HXclist_del(struct HXclist_head *head, struct HXlist_head *node)
 {
 	--head->items;
 	HXlist_del(node);
 }
 
-static inline void HXclist_unshift(struct HXclist_head *head,
-    struct HXlist_head *nu)
+static __inline__ void
+HXclist_unshift(struct HXclist_head *head, struct HXlist_head *nu)
 {
 	++head->items;
 	__HXlist_add(nu, &head->list, head->list.next);
 }
 
-static inline void HXclist_push(struct HXclist_head *head,
-    struct HXlist_head *nu)
+static __inline__ void
+HXclist_push(struct HXclist_head *head, struct HXlist_head *nu)
 {
 	++head->items;
 	__HXlist_add(nu, head->list.prev, &head->list);
 }
 
-static inline struct HXlist_head *__HXclist_pop(struct HXclist_head *head)
+static __inline__ struct HXlist_head *__HXclist_pop(struct HXclist_head *head)
 {
 	struct HXlist_head *p;
 	if ((const void *)head == head->list.next)
@@ -150,7 +150,8 @@ static inline struct HXlist_head *__HXclist_pop(struct HXclist_head *head)
 #define HXclist_pop(head, type, member) \
 	HXlist_entry(__HXclist_pop(head), type, member)
 
-static inline struct HXlist_head *__HXclist_shift(struct HXclist_head *head)
+static __inline__ struct HXlist_head *
+__HXclist_shift(struct HXclist_head *head)
 {
 	struct HXlist_head *p;
 	if ((const void *)head == head->list.next)

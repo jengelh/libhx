@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-static inline int xml_strcmp(const xmlChar *a, const char *b)
+static __inline__ int xml_strcmp(const xmlChar *a, const char *b)
 {
 #ifdef __cplusplus
 	return strcmp(signed_cast<const char *>(a), b);
@@ -22,7 +22,7 @@ static inline int xml_strcmp(const xmlChar *a, const char *b)
 #endif
 }
 
-static inline int xml_strcasecmp(const xmlChar *a, const char *b)
+static __inline__ int xml_strcasecmp(const xmlChar *a, const char *b)
 {
 #ifdef __cplusplus
 	return strcasecmp(signed_cast<const char *>(a), b);
@@ -31,7 +31,7 @@ static inline int xml_strcasecmp(const xmlChar *a, const char *b)
 #endif
 }
 
-static inline char *xml_getprop(xmlNode *node, const char *attr)
+static __inline__ char *xml_getprop(xmlNode *node, const char *attr)
 {
 #ifdef __cplusplus
 	return signed_cast<char *>(xmlGetProp(node,
@@ -42,8 +42,8 @@ static inline char *xml_getprop(xmlNode *node, const char *attr)
 #endif
 }
 
-static inline xmlAttr *xml_newprop(xmlNode *node, const char *name,
-    const char *value)
+static __inline__ xmlAttr *
+xml_newprop(xmlNode *node, const char *name, const char *value)
 {
 #ifdef __cplusplus
 	return xmlNewProp(node, signed_cast<const xmlChar *>(name),
@@ -59,8 +59,8 @@ static inline xmlAttr *xml_newprop(xmlNode *node, const char *name,
  * @name:	name of new node
  * @value:	string, or %NULL
  */
-static inline xmlNode *xml_newnode(xmlNode *ptr, const char *name,
-    const char *value)
+static __inline__ xmlNode *
+xml_newnode(xmlNode *ptr, const char *name, const char *value)
 {
 #ifdef __cplusplus
 	return xmlNewTextChild(ptr, NULL, signed_cast<const xmlChar *>(name),
@@ -71,8 +71,8 @@ static inline xmlNode *xml_newnode(xmlNode *ptr, const char *name,
 #endif
 }
 
-static inline xmlAttr *xml_setprop(xmlNode *node, const char *name,
-    const char *value)
+static __inline__ xmlAttr *
+xml_setprop(xmlNode *node, const char *name, const char *value)
 {
 #ifdef __cplusplus
 	return xmlSetProp(node, signed_cast<const xmlChar *>(name),
