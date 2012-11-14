@@ -1,4 +1,4 @@
-AC_INIT([libHX], [3.13])
+AC_INIT([libHX], [3.14])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -8,6 +8,7 @@ AM_INIT_AUTOMAKE([-Wall -Wno-override foreign subdir-objects
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 AC_DISABLE_STATIC
 AC_LIBTOOL_DLOPEN
