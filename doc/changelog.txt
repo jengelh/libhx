@@ -2,6 +2,10 @@
 
 HEAD
 ====
+
+
+v3.14.1 (2012-12-31)
+====================
 Fixes:
 - Restore forward-sorting order of ordered maps
   (revert "map: always have needle as second argument")
