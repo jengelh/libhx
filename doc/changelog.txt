@@ -2,6 +2,9 @@
 
 HEAD
 ====
+Fixes:
+- Restore forward-sorting order of ordered maps
+  (revert "map: always have needle as second argument")
 
 
 v3.14 (2012-11-14)
