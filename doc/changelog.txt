@@ -2,6 +2,9 @@
 
 HEAD
 ====
+Changes:
+- defs: HXsizeof_member becomes FIELD_SIZEOF
+  (to match the Linux kernel's name)
 
 
 v3.14.1 (2012-12-31)

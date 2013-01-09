@@ -2,8 +2,9 @@
 #define _LIBHX_DEFS_H 1
 
 #ifdef __cplusplus
-#	define HXsizeof_member(type, member) \
+#	define FIELD_SIZEOF(type, member) \
 		sizeof(static_cast<type *>(NULL)->member)
+#	define HXsizeof_member(type, member) FIELD_SIZEOF(type, member)
 #	define HXtypeof_member(type, member) \
 		__typeof__(static_cast<type *>(NULL)->member)
 #	if defined(__GNUC__) && __GNUC__ >= 4 && !defined(offsetof)

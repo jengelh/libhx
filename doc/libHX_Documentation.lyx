@@ -2626,14 +2626,14 @@ containerof
 \series bold
 size_t
 \series default
- HXsizeof_member(struct_type, member);
+ FIELD_SIZEOF(struct_type, member);
 \begin_inset Index idx
 status open
 
 \begin_layout Plain Layout
 
 \family typewriter
-HXsizeof_member
+FIELD_SIZEOF
 \end_layout
 
 \end_inset
@@ -2789,9 +2789,25 @@ struct
 \begin_layout Standard
 
 \family typewriter
+FIELD_SIZEOF
+\family default
+ (formerly 
+\family typewriter
 HXsizeof_member
 \family default
- and 
+
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXsizeof_member
+\end_layout
+
+\end_inset
+
+) and 
 \family typewriter
 HXtypeof_member
 \family default
@@ -2804,7 +2820,7 @@ HXtypeof_member
 \series bold
 char
 \series default
- padding[HXsizeof_member(
+ padding[FIELD_SIZEOF(
 \series bold
 struct
 \series default
