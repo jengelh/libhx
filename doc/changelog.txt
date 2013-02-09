@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Enhancements:
+- string: add HX_strchr2
 Changes:
 - defs: HXsizeof_member becomes FIELD_SIZEOF
   (to match the Linux kernel's name)

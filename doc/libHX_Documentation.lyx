@@ -10615,6 +10615,32 @@ HX_strbchr
 
 
 \series bold
+char *
+\series default
+HX_strchr2(
+\series bold
+const char *
+\series default
+s, 
+\series bold
+const char *
+\series default
+accept);
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+HX_strchr2
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
 size_t
 \series default
  HX_strrcspn(
@@ -10720,6 +10746,39 @@ strrchr
 now
 \family default
  rather than the end of the string.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_strchr2
+\family default
+ This function searches the string 
+\family typewriter
+s
+\family default
+ for any set of bytes that are not specified in the second argument, 
+\family typewriter
+n
+\family default
+.
+ In this regard, the function is the opposite to 
+\family typewriter
+strpbrk
+\family default
+(3)
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+strpbrk
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Description

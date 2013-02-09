@@ -66,6 +66,7 @@ extern char **HX_split(const char *, const char *, int *, int);
 extern char **HX_split4(char *, const char *, int *, int);
 extern int HX_split5(char *, const char *, int, char **);
 extern char *HX_strbchr(const char *, const char *, char);
+extern char *HX_strchr2(const char *, const char *);
 extern char *HX_strclone(char **, const char *);
 extern char *HX_strdup(const char *);
 extern char *HX_strlcat(char *, const char *, size_t);

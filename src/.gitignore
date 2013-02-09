@@ -17,5 +17,6 @@
 /t?-rand
 /t?-realpath
 /t?-shconfig
+/t?-strchr2
 /t?-string
 /t?-time

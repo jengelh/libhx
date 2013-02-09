@@ -173,6 +173,7 @@ global:
 	HXmap_init;
 } LIBHX_3.10;
 
+# ABI 29
 LIBHX_3.13 {
 global:
 	HX_timespec_add;
@@ -183,3 +184,9 @@ global:
 	HX_timespec_sub;
 	HX_timeval_sub;
 } LIBHX_3.12;
+
+# ABI 30
+LIBHX_3.15 {
+global:
+	HX_strchr2;
+} LIBHX_3.13;

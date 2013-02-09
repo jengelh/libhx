@@ -259,6 +259,19 @@ EXPORT_SYMBOL char *HX_strbchr(const char *start, const char *now, char d)
 	return NULL;
 }
 
+/**
+ * This is the counterpart to strpbrk(). Returns a pointer to the first
+ * character not in @accept, or otherwise %NULL.
+ */
+EXPORT_SYMBOL char *HX_strchr2(const char *s, const char *accept)
+{
+	size_t seg = strspn(s, accept);
+
+	if (s[seg] == '\0')
+		return NULL;
+	return const_cast1(char *, s + seg);
+}
+
 EXPORT_SYMBOL char *HX_strclone(char **pa, const char *pb)
 {
 	if (*pa == pb)

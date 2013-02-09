@@ -9,8 +9,7 @@ libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c
 libHX_la_LIBADD  = ${libdl_LIBS} ${libpthread_LIBS} ${librt_LIBS}
-# New in 29 (over 28): HX_timespec_*
-libHX_la_LDFLAGS = -version-info 29:0:1 \
+libHX_la_LDFLAGS = -version-info 30:0:2 \
                    -Wl,--version-script=${srcdir}/libHX.map
 libHX_la_DEPENDENCIES = libHX.map
 
@@ -31,7 +30,8 @@ EXTRA_DIST = internal.h map_int.h libHX.map
 check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-link \
                      tc-list tc-list2 tc-map tc-memmem tc-misc tc-netio \
                      tc-option tc-proc tc-rand tc-realpath \
-                     tc-shconfig tc-string tc-time
+                     tc-shconfig tc-strchr2 tc-string tc-time
+TESTS              = tc-strchr2
 tc_cast_CFLAGS     = ${AM_CFLAGS} -std=c99
 tc_cast_LDADD      = libHX.la -lm
 tc_compile_LDADD   = libHX.la
@@ -50,13 +50,15 @@ tc_proc_LDADD      = libHX.la
 tc_rand_LDADD      = libHX.la
 tc_realpath_LDADD  = libHX.la
 tc_shconfig_LDADD  = libHX.la
+tc_strchr2_LDADD   = libHX.la
 tc_string_LDADD    = libHX.la
 tc_time_LDADD      = libHX.la
 
 if HAVE_CXX
 check_PROGRAMS    += tx-compile tx-cast tx-deque tx-dir tx-list tx-list2 \
                      tx-misc tx-netio \
-                     tx-option tx-proc tx-rand tx-string tx-time
+                     tx-option tx-proc tx-rand tx-strchr2 tx-string tx-time
+TESTS             += tx-strchr2
 tx_cast_SOURCES    = tx-cast.cpp
 tx_cast_CXXFLAGS   = ${AM_CXXFLAGS} -std=c++98
 tx_cast_LDADD      = libHX.la -lm
@@ -80,6 +82,8 @@ tx_proc_SOURCES    = tx-proc.cpp
 tx_proc_LDADD      = libHX.la
 tx_rand_SOURCES    = tx-rand.cpp
 tx_rand_LDADD      = libHX.la ${librt_LIBS}
+tx_strchr2_SOURCES = tx-strchr2.cpp
+tx_strchr2_LDADD   = libHX.la
 tx_string_SOURCES  = tx-string.cpp
 tx_string_LDADD    = libHX.la
 tx_time_SOURCES    = tx-time.cpp
