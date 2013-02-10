@@ -19,4 +19,5 @@
 /t?-shconfig
 /t?-strchr2
 /t?-string
+/t?-strquote
 /t?-time

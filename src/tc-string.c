@@ -176,21 +176,6 @@ static void t_split2(void)
 	HX_zvecfree(a);
 }
 
-static void t_quote(void)
-{
-	char *fm = NULL;
-	printf("%p %p\n", "a", HX_strquote("a", 0xffff, &fm));
-	printf("%s\n", HX_strquote("\"Good\" ol' \\'escaped\\' strings", HXQUOTE_SQUOTE, &fm));
-	printf("%s\n", HX_strquote("\"Good\" ol' \\'escaped\\' strings", HXQUOTE_DQUOTE, &fm));
-	printf("%s\n", HX_strquote("<p style=\"height: 1;\">Foo &amp; \"bar\"</p>", HXQUOTE_HTML, &fm));
-	printf("(objectClass=%s)\n", HX_strquote(" #o=foo(*),bar ", HXQUOTE_LDAPFLT, &fm));
-	printf("o=%s\n", HX_strquote(" #o=foo(*),bar ", HXQUOTE_LDAPRDN, &fm));
-	printf("%s\n", HX_strquote("whatever", HXQUOTE_BASE64, &fm));
-	free(fm);
-	if (HX_strquote("", -1, NULL) != NULL)
-		printf("Something is fishy with strquote\n");
-}
-
 int main(int argc, const char **argv)
 {
 	hxmc_t *tx = NULL;
@@ -218,7 +203,6 @@ int main(int argc, const char **argv)
 	t_strsep();
 	t_split();
 	t_split2();
-	t_quote();
 	HXmc_free(tx);
 	HX_exit();
 	return EXIT_SUCCESS;
