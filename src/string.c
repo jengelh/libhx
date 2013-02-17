@@ -18,6 +18,26 @@
 #include <libHX/string.h>
 #include "internal.h"
 
+/**
+ * %HXQUOTE_ACCEPT:	the listed characters are passed through,
+ * 			all others need to be quoted
+ * %HXQUOTE_REJECT:	the listed characters need to be quoted,
+ * 			all others pass through
+ */
+enum HX_quote_selector {
+	HXQUOTE_ACCEPT,
+	HXQUOTE_REJECT,
+};
+
+/**
+ * @selector:	whether this rule is accept- or reject-based
+ * @qchars:	characters that need (no) quoting
+ */
+struct HX_quote_rule {
+	char selector;
+	const char *chars;
+};
+
 static __inline__ unsigned int min_uint(unsigned int a, unsigned int b)
 {
 	return (a < b) ? a : b;
@@ -460,24 +480,48 @@ EXPORT_SYMBOL char *HX_strsep2(char **wp, const char *str)
 	return ret;
 }
 
-static const char *const HX_quote_chars[] = {
-	[HXQUOTE_SQUOTE] = "'\\",
-	[HXQUOTE_DQUOTE] = "\"\\",
-	[HXQUOTE_HTML]   = "\"&<>",
-	[HXQUOTE_LDAPFLT] = "\n*()\\",
-	[HXQUOTE_LDAPRDN] = "\n \"#+,;<=>\\",
+static const struct HX_quote_rule HX_quote_rules[] = {
+	[HXQUOTE_SQUOTE]  = {HXQUOTE_REJECT, "'\\"},
+	[HXQUOTE_DQUOTE]  = {HXQUOTE_REJECT, "\"\\"},
+	[HXQUOTE_HTML]    = {HXQUOTE_REJECT, "\"&<>"},
+	[HXQUOTE_LDAPFLT] = {HXQUOTE_REJECT, "\n*()\\"},
+	[HXQUOTE_LDAPRDN] = {HXQUOTE_REJECT, "\n \"#+,;<=>\\"},
 };
 
 /**
- * HX_qsize_backslash - calculate size of new buffer
+ * HX_qsize_bsa - calculate length of statically expanded string (for accepts)
  * @s:		input string
  * @qchars:	characters that need quoting
  * @cost:	quoting cost per quoted character
  *
- * The cost depends on the quote format (\a vs \07 vs \x07).
+ * The cost depends on the quote format. Typical values:
+ * 	1	when "&" becomes "\&" (programming language-like)
+ * 	2	when "&" becomes "\26" (LDAPRDN/HTTPURI-like hex encoding)
+ * 	3	when "&" becomes "\x26" (hex encoding for programming)
  */
-static size_t HX_qsize_backslash(const char *s, const char *qchars,
-    unsigned int cost)
+static size_t
+HX_qsize_bsa(const char *s, const char *qchars, unsigned int cost)
+{
+	const char *p = s;
+	size_t n = strlen(s);
+
+	while ((p = HX_strchr2(p, qchars)) != NULL) {
+		n += cost;
+		++p;
+	}
+	return n;
+}
+
+/**
+ * HX_qsize_bsr - calculate length of statically expanded string (for rejects)
+ * @s:		input string
+ * @qchars:	characters that need quoting
+ * @cost:	quoting cost per quoted character
+ *
+ * Same as for HX_qsize_bsa, but for HXQUOTE_REJECT-type rules.
+ */
+static size_t
+HX_qsize_bsr(const char *s, const char *qchars, unsigned int cost)
 {
 	const char *p = s;
 	size_t n = strlen(s);
@@ -555,7 +599,7 @@ static size_t HX_qsize_html(const char *s)
 	const char *p = s;
 	size_t n = strlen(s);
 
-	while ((p = strpbrk(p, HX_quote_chars[HXQUOTE_HTML])) != NULL) {
+	while ((p = strpbrk(p, HX_quote_rules[HXQUOTE_HTML].chars)) != NULL) {
 		switch (*p) {
 		/* minus 2: \0 and the original char */
 		case '"':
@@ -584,7 +628,7 @@ static char *HX_quote_html(char *dest, const char *src)
 	char *ret = dest;
 
 	while (*src != '\0') {
-		size_t len = strcspn(src, HX_quote_chars[HXQUOTE_HTML]);
+		size_t len = strcspn(src, HX_quote_rules[HXQUOTE_HTML].chars);
 		if (len > 0) {
 			memcpy(dest, src, len);
 			dest += len;
@@ -641,12 +685,12 @@ static size_t HX_quoted_size(const char *s, unsigned int type)
 	switch (type) {
 	case HXQUOTE_SQUOTE:
 	case HXQUOTE_DQUOTE:
-		return HX_qsize_backslash(s, HX_quote_chars[type], 1);
+		return HX_qsize_bsr(s, HX_quote_rules[type].chars, 1);
 	case HXQUOTE_HTML:
 		return HX_qsize_html(s);
 	case HXQUOTE_LDAPFLT:
 	case HXQUOTE_LDAPRDN:
-		return HX_qsize_backslash(s, HX_quote_chars[type], 2);
+		return HX_qsize_bsr(s, HX_quote_rules[type].chars, 2);
 	case HXQUOTE_BASE64:
 		return (strlen(s) + 2) / 3 * 4;
 	default:
@@ -657,6 +701,7 @@ static size_t HX_quoted_size(const char *s, unsigned int type)
 EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
     char **free_me)
 {
+	const struct HX_quote_rule *rule;
 	bool do_quote;
 	char *tmp;
 
@@ -665,9 +710,15 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 		return NULL;
 	}
 	/* If quote_chars is NULL, it is clear all chars are to be encoded. */
-	do_quote = type >= ARRAY_SIZE(HX_quote_chars) ||
-	           HX_quote_chars[type] == NULL ||
-	           strpbrk(src, HX_quote_chars[type]) != NULL;
+	rule = &HX_quote_rules[type];
+	if (type >= ARRAY_SIZE(HX_quote_rules) || rule->chars == NULL)
+		do_quote = true;
+	else if (rule->selector == HXQUOTE_REJECT)
+		do_quote = strpbrk(src, rule->chars) != NULL;
+	else if (rule->selector == HXQUOTE_ACCEPT)
+		do_quote = HX_strchr2(src, rule->chars) != NULL;
+	else
+		do_quote = false;
 	/*
 	 * free_me == NULL implies that we always allocate, even if
 	 * there is nothing to quote.
@@ -690,12 +741,12 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 	switch (type) {
 	case HXQUOTE_SQUOTE:
 	case HXQUOTE_DQUOTE:
-		return HX_quote_backslash(*free_me, src, HX_quote_chars[type]);
+		return HX_quote_backslash(*free_me, src, rule->chars);
 	case HXQUOTE_HTML:
 		return HX_quote_html(*free_me, src);
 	case HXQUOTE_LDAPFLT:
 	case HXQUOTE_LDAPRDN:
-		return HX_quote_ldap(*free_me, src, HX_quote_chars[type]);
+		return HX_quote_ldap(*free_me, src, rule->chars);
 	case HXQUOTE_BASE64:
 		return HX_quote_base64(*free_me, src);
 	}
