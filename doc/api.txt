@@ -16,6 +16,7 @@ F column: Function first seen in version, possibly with different API.
 RMV	MinVer	FirstA	Name
 ----------------------------------------------------------------------
 3.15	3.15	3.15	FIELD_SIZEOF
+3.15	3.15	3.15	HXQUOTE_URIENC
 3.15	3.15	3.15	HX_strchr2
 3.13	3.13	3.13	DEMOTE_TO_PTR
 3.13	3.13	3.13	HXTYPE_SIZE_T

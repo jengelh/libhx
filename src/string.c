@@ -38,6 +38,8 @@ struct HX_quote_rule {
 	const char *chars;
 };
 
+static const char HX_hexenc[] = "0123456789ABCDEF";
+
 static __inline__ unsigned int min_uint(unsigned int a, unsigned int b)
 {
 	return (a < b) ? a : b;
@@ -486,6 +488,7 @@ static const struct HX_quote_rule HX_quote_rules[] = {
 	[HXQUOTE_HTML]    = {HXQUOTE_REJECT, "\"&<>"},
 	[HXQUOTE_LDAPFLT] = {HXQUOTE_REJECT, "\n*()\\"},
 	[HXQUOTE_LDAPRDN] = {HXQUOTE_REJECT, "\n \"#+,;<=>\\"},
+	[HXQUOTE_URIENC]  = {HXQUOTE_ACCEPT, "-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~"},
 };
 
 /**
@@ -650,7 +653,6 @@ static char *HX_quote_html(char *dest, const char *src)
 
 static char *HX_quote_ldap(char *dest, const char *src, const char *qc)
 {
-	static const char hex[] = "0123456789ABCDEF";
 	char *ret = dest;
 	size_t len;
 
@@ -664,14 +666,36 @@ static char *HX_quote_ldap(char *dest, const char *src, const char *qc)
 				break;
 		}
 		*dest++ = '\\';
-		*dest++ = hex[(*src >> 4) & 0x0F];
-		*dest++ = hex[*src++ & 0x0F];
+		*dest++ = HX_hexenc[(*src >> 4) & 0x0F];
+		*dest++ = HX_hexenc[*src++ & 0x0F];
 	}
 
 	*dest = '\0';
 	return ret;
 }
 
+static char *HX_quote_urlenc(char *dest, const char *src)
+{
+	char *ret = dest;
+	size_t len;
+
+	while (*src != '\0') {
+		len = strspn(src, HX_quote_rules[HXQUOTE_URIENC].chars);
+		if (len > 0) {
+			memcpy(dest, src, len);
+			dest += len;
+			src  += len;
+			if (*src == '\0')
+				break;
+		}
+		*dest++ = '%';
+		*dest++ = HX_hexenc[(*src >> 4) & 0x0F];
+		*dest++ = HX_hexenc[*src++ & 0x0F];
+	}
+
+	*dest = '\0';
+	return ret;
+}
 
 /**
  * HX_quoted_size -
@@ -693,6 +717,8 @@ static size_t HX_quoted_size(const char *s, unsigned int type)
 		return HX_qsize_bsr(s, HX_quote_rules[type].chars, 2);
 	case HXQUOTE_BASE64:
 		return (strlen(s) + 2) / 3 * 4;
+	case HXQUOTE_URIENC:
+		return HX_qsize_bsa(s, HX_quote_rules[type].chars, 2);
 	default:
 		return strlen(s);
 	}
@@ -749,6 +775,8 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 		return HX_quote_ldap(*free_me, src, rule->chars);
 	case HXQUOTE_BASE64:
 		return HX_quote_base64(*free_me, src);
+	case HXQUOTE_URIENC:
+		return HX_quote_urlenc(*free_me, src);
 	}
 	return NULL;
 }

@@ -21,6 +21,8 @@ static const char input3[]   = " #o=foo(*),ba\\r ";
 static const char output3a[] = " #o=foo\\28\\2A\\29,ba\\5Cr ";
 static const char output3b[] = "\\20\\23o\\3Dfoo(*)\\2Cba\\5Cr\\20";
 static const char output3c[] = "ICNvPWZvbygqKSxiYVxyIA==";
+static const char input4[]   = "http://user:pass@host.de/~path/file(msvc);stuff.php?query[phpindex]=value&another=one;stuff";
+static const char output4[]  = "http%3A%2F%2Fuser%3Apass%40host.de%2F~path%2Ffile%28msvc%29%3Bstuff.php%3Fquery%5Bphpindex%5D%3Dvalue%26another%3Done%3Bstuff";
 
 static int test(const char *input, unsigned int mode, const char *expect)
 {
@@ -57,6 +59,7 @@ int main(void)
 	tst(input3, HXQUOTE_LDAPFLT, output3a);
 	tst(input3, HXQUOTE_LDAPRDN, output3b);
 	tst(input3, HXQUOTE_BASE64, output3c);
+	tst(input4, HXQUOTE_URIENC, output4);
 	return 0;
 #undef tst
 }
