@@ -2,12 +2,16 @@
 
 HEAD
 ====
+
+
+v3.15 (2013-03-07)
+==================
 Enhancements:
 - string: add HX_strchr2
 - string: add HXQUOTE_URIENC mechanism for HX_strquote
 Changes:
 - defs: HXsizeof_member becomes FIELD_SIZEOF
-  (to match the Linux kernel's name)
+  (to match the Linux kernel's macro name)
 
 
 v3.14.1 (2012-12-31)
