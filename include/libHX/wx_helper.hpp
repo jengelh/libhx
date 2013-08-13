@@ -11,8 +11,10 @@
 #define wxtu8(s)	static_cast<const char *>((s).ToUTF8())
 
 /* Common frame flags */
-#define wxCFF     (wxCAPTION | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCLOSE_BOX | \
-                  wxMAXIMIZE_BOX | wxMINIMIZE_BOX | wxFRAME_NO_TASKBAR)
+#define wxCFF     (wxCAPTION | wxRESIZE_BORDER | wxSYSTEM_MENU | \
+                  wxCLOSE_BOX | wxMAXIMIZE_BOX | wxMINIMIZE_BOX)
+/* Common dialog flags */
+#define wxCDF     (wxCFF | wxFRAME_NO_TASKBAR)
 #define wxACV     wxALIGN_CENTER_VERTICAL
 #define wxDPOS    wxDefaultPosition
 #define wxDSIZE   wxDefaultSize
