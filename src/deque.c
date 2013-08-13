@@ -160,7 +160,8 @@ EXPORT_SYMBOL void HXdeque_genocide2(struct HXdeque *dq, void (*xfree)(void *))
 	free(dq);
 }
 
-EXPORT_SYMBOL void **HXdeque_to_vec(const struct HXdeque *dq, unsigned int *num)
+EXPORT_SYMBOL void **
+HXdeque_to_vec(const struct HXdeque *dq, unsigned int *num)
 {
 	const struct HXdeque_node *trav;
 	void **ret, **p;

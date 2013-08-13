@@ -109,7 +109,8 @@ static void HXproc_close_pipes(int (*p)[2])
  *
  * Sets up pipes and runs the specified program.
  */
-EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *proc)
+EXPORT_SYMBOL int
+HXproc_run_async(const char *const *argv, struct HXproc *proc)
 {
 	int pipes[3][2], nullfd = -1, ret, saved_errno;
 	unsigned int t;

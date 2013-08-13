@@ -325,7 +325,8 @@ struct HX_realpath_state {
 /**
  * Perform symlink resolution on the currently last component (state->dest).
  */
-static int HX_realpath_symres(struct HX_realpath_state *state, const char *path)
+static int
+HX_realpath_symres(struct HX_realpath_state *state, const char *path)
 {
 	int ret;
 
