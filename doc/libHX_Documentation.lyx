@@ -24195,6 +24195,41 @@ wxDefaultSize
 .
 \end_layout
 
+\begin_layout Description
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxDSPAN
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+wxDSPAN
+\family default
+ Expands to 
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+wxDefaultSpan
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+wxDefaultSpan
+\family default
+.
+\end_layout
+
 \begin_layout Subsubsection
 String conversion
 \end_layout

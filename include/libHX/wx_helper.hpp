@@ -18,5 +18,6 @@
 #define wxACV     wxALIGN_CENTER_VERTICAL
 #define wxDPOS    wxDefaultPosition
 #define wxDSIZE   wxDefaultSize
+#define wxDSPAN   wxDefaultSpan
 
 #endif /* _LIBHX_WXHELPER_HPP */
