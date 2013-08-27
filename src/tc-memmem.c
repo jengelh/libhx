@@ -1,6 +1,6 @@
 /*
  *	speed test HX_memmem
- *	Copyright © Jan Engelhardt
+ *	Copyright Jan Engelhardt
  *
  *	This program is free software; you can redistribute it and/or
  *	modify it under the terms of the WTF Public License version 2 or

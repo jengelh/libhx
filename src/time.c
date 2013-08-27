@@ -1,5 +1,5 @@
 /*
- *	Copyright © Jan Engelhardt, 2012
+ *	Copyright Jan Engelhardt, 2012
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU Lesser
