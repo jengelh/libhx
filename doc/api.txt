@@ -15,6 +15,7 @@ F column: Function first seen in version, possibly with different API.
 
 RMV	MinVer	FirstA	Name
 ----------------------------------------------------------------------
+3.16	3.16	3.16	container_of
 3.16	3.16	3.16	wxCDF
 3.16	3.16	3.16	wxDSPAN
 3.15	3.15	3.15	FIELD_SIZEOF

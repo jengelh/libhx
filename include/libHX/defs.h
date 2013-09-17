@@ -193,4 +193,8 @@ static __inline__ new_type signed_cast(unsigned char *expr)
 #define __HX_STRINGIFY_EXPAND(s) #s
 #define HX_STRINGIFY(s) __HX_STRINGIFY_EXPAND(s)
 
+#ifndef container_of
+#	define container_of(v, s, m) containerof((v), s, m)
+#endif
+
 #endif /* _LIBHX_DEFS_H */
