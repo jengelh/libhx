@@ -2323,8 +2323,25 @@ type
 \end_layout
 
 \begin_layout Standard
-As indirection levels above 3 are really unlikely, having only these three
- type-checking cast macros was deemed sufficient.
+As indirection levels above 3 are really unlikely
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+See 
+\begin_inset Quotes eld
+\end_inset
+
+Three Star Programmer
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+, having only these three type-checking cast macros was deemed sufficient.
  The only place where libHX even uses a level\SpecialChar \nobreakdash-
 3 indirection is in the option
  parser.
@@ -2431,6 +2448,14 @@ Conversion is permitted when expression and target type are from the table.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+It is currently not possible to use 
+\family typewriter
+const_cast
+\family default
+1/2/3 on pointers to structures whose member structure is unknown.
 \end_layout
 
 \begin_layout Standard
