@@ -171,6 +171,25 @@ static __inline__ new_type signed_cast(unsigned char *expr)
 #ifndef O_BINARY
 #	define O_BINARY 0
 #endif
+#ifndef S_IRGRP
+	/* Can happen in mingw */
+#	define S_IRGRP (S_IRUSR >> 3)
+#endif
+#ifndef S_IWGRP
+#	define S_IWGRP (S_IWUSR >> 3)
+#endif
+#ifndef S_IXGRP
+#	define S_IXGRP (S_IXUSR >> 3)
+#endif
+#ifndef S_IROTH
+#	define S_IROTH (S_IRUSR >> 6)
+#endif
+#ifndef S_IWOTH
+#	define S_IWOTH (S_IWUSR >> 6)
+#endif
+#ifndef S_IXOTH
+#	define S_IXOTH (S_IXUSR >> 6)
+#endif
 #ifndef S_IRUGO
 #	define S_IRUGO (S_IRUSR | S_IRGRP | S_IROTH)
 #endif
