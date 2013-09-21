@@ -335,8 +335,17 @@ HX_realpath_symres(struct HX_realpath_state *state, const char *path)
 		return -EINVAL;
 	else if (ret < 0)
 		return -errno;
+#ifdef __MINGW32__
+	else if (state->deref_count++ >= 40)
+		/*
+		 * not that this is ever going to happen on mingw,
+		 * because Windows does not seem to have symlinks, ...
+		 */
+		return -EINVAL;
+#else
 	else if (state->deref_count++ >= 40)
 		return -ELOOP;
+#endif
 
 	if (*state->link_target == '/') {
 		*state->dest = '\0';
