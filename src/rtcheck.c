@@ -11,6 +11,7 @@
  *	LD_PRELOAD environment variable to dynamically add extra checks.
  */
 #define _GNU_SOURCE 1
+#ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #ifdef RTLD_NEXT
 
@@ -272,3 +273,4 @@ stub2(HX_strsep2, (char **a, const char *b));
 stub1(HX_strupper, (char *a));
 
 #endif /* RTLD_NEXT */
+#endif /* HAVE_DLFCN_H */

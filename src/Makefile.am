@@ -4,7 +4,11 @@ AM_CPPFLAGS = ${regular_CPPFLAGS} -I${top_srcdir}/include
 AM_CFLAGS   = ${regular_CFLAGS}
 AM_CXXFLAGS = ${regular_CXXFLAGS}
 
-lib_LTLIBRARIES  = libHX.la libHX_rtcheck.la
+lib_LTLIBRARIES  = libHX.la
+if HAVE_DLFCN_H
+lib_LTLIBRARIES += libHX_rtcheck.la
+endif
+
 libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c
