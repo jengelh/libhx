@@ -11667,7 +11667,27 @@ HXQUOTE_LDAPFLT
 \end_inset
 
  Escape the string using backslash-plus-hexcode notation as described in
- RFC 4515, to make it suitable for use in an LDAP search filter.
+ RFC 4515
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://tools.ietf.org/html/rfc4515
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+, to make it suitable for use in an LDAP search filter.
 \end_layout
 
 \begin_layout Description
@@ -11688,8 +11708,27 @@ HXQUOTE_LDAPRDN
 \end_inset
 
  Escape the string using backslash-plus-hexcode notation as described in
- RFC 4514, to make it suitable for use in an LDAP Relative Distinguished
- Name.
+ RFC 4514
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://tools.ietf.org/html/rfc4514
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+, to make it suitable for use in an LDAP Relative Distinguished Name.
 \end_layout
 
 \begin_layout Description
@@ -11709,7 +11748,27 @@ HXQUOTE_BASE64
 
 \end_inset
 
- Transform the string to BASE64, as described in RFC x.
+ Transform the string to BASE64, as described in RFC 4648
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://tools.ietf.org/html/rfc4648
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Description
