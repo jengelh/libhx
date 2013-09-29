@@ -2,8 +2,14 @@
 
 HEAD
 ====
+
+
+v3.16 (2013-09-29)
+==================
 Enhancements:
 - format: remove 256-char format key length limit
+Fixes:
+- compile errors on mingw were addressed
 
 
 v3.15 (2013-03-07)
