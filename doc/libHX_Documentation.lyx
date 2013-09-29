@@ -11712,6 +11712,26 @@ HXQUOTE_BASE64
  Transform the string to BASE64, as described in RFC x.
 \end_layout
 
+\begin_layout Description
+
+\family typewriter
+HXQUOTE_URIENC
+\family default
+
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXQUOTE_URIENC
+\end_layout
+
+\end_inset
+
+ Escape the string so that it becomes a valid part for an URI.
+\end_layout
+
 \begin_layout Standard
 Specifying an unrecognized type will result in 
 \family typewriter
