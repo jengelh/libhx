@@ -38,7 +38,7 @@ struct HX_quote_rule {
 	const char *chars;
 };
 
-static const char HX_hexenc[] = "0123456789ABCDEF";
+static const char HX_hexenc[16] = "0123456789ABCDEF";
 
 static __inline__ unsigned int min_uint(unsigned int a, unsigned int b)
 {
