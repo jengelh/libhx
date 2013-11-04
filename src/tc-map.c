@@ -6,8 +6,6 @@
  *	modify it under the terms of the WTF Public License version 2 or
  *	(at your option) any later version.
  */
-#include <sys/resource.h>
-#include <sys/time.h>
 #include <errno.h>
 #include <math.h>
 #include <stdarg.h>
@@ -19,6 +17,10 @@
 #include <libHX/map.h>
 #include <libHX/misc.h>
 #include <libHX/string.h>
+#ifdef HAVE_SYS_RESOURCE_H
+#	include <sys/resource.h>
+#endif
+#include <sys/time.h>
 #include "internal.h"
 #include "map_int.h"
 
@@ -58,9 +60,13 @@ static void tmap_printf(const char *fmt, ...)
 
 static void tmap_time(struct timeval *tv)
 {
+#ifdef HAVE_SYS_RESOURCE_H
 	struct rusage r;
 	if (getrusage(RUSAGE_SELF, &r) == 0)
 		*tv = r.ru_utime;
+#else
+	memset(tv, 0, sizeof(*tv));
+#endif
 }
 
 static unsigned int tmap_smart_rand(unsigned int *left, unsigned int *right)
