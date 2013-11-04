@@ -67,6 +67,8 @@ extern "C" {
 #	define S_IWOTH 00002
 #endif
 
+struct stat;
+
 /*
  *	UX-FILE.C
  */
