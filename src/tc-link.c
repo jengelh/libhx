@@ -116,16 +116,24 @@ static void *funcs[] = {
 	HX_strsep2,
 	HX_strquote,
 	HX_strupper,
-	HX_diff_timespec,
+#ifdef HAVE_STRUCT_TIMEVAL_TV_USEC
 	HX_diff_timeval,
+#endif
+#ifdef HAVE_STRUCT_TIMESPEC_TV_NSEC
+	HX_diff_timespec,
+#endif
 	HX_time_compare,
+#ifdef HAVE_STRUCT_TIMESPEC_TV_NSEC
 	HX_timespec_add,
 	HX_timespec_isneg,
 	HX_timespec_mul,
 	HX_timespec_mulf,
 	HX_timespec_neg,
 	HX_timespec_sub,
+#endif
+#ifdef HAVE_STRUCT_TIMEVAL_TV_USEC
 	HX_timeval_sub,
+#endif
 #ifdef _WIN32
 	chown,
 	fchmod,
