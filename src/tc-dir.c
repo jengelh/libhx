@@ -15,19 +15,31 @@
 #include <libHX/init.h>
 #include <libHX/misc.h>
 
-int main(void)
+static void lookatdir(const char *dname)
 {
-	struct HXdir *d;
+	struct HXdir *dh;
 	const char *n;
 
+	dh = HXdir_open(dname);
+	printf("Available files in %s:\n", dname);
+	while ((n = HXdir_read(dh)) != NULL)
+		printf("\t" "%s\n", n);
+	HXdir_close(dh);
+}
+
+int main(int argc, const char **argv)
+{
 	if (HX_init() <= 0)
 		abort();
-	d = HXdir_open("/tmp");
-	printf("Available files in /tmp:\n");
-	while ((n = HXdir_read(d)) != NULL)
-		printf("\t" "%s\n", n);
-
-	HXdir_close(d);
+	if (argc == 1) {
+		/* On Windows VCRT, "/" yields nothing, "c:/" is needed */
+		lookatdir("/");
+		lookatdir("c:/");
+		lookatdir(".");
+	} else {
+		while (*++argv != NULL)
+			lookatdir(*argv);
+	}
 	HX_exit();
 	return EXIT_SUCCESS;
 }
