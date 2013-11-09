@@ -53,6 +53,8 @@ AC_SEARCH_LIBS([pthread_mutex_lock], [pthread], [libpthread_LIBS="$LIBS"; LIBS="
 AC_SUBST([libpthread_LIBS])
 AC_SEARCH_LIBS([getaddrinfo], [socket], [libsocket_LIBS="$LIBS"; LIBS="$LIBS_system"], [])
 if test -z "$libsocket_LIBS"; then
+	dnl AC_SEARCH_LIBS is too dumb, we really need the ws2tcpip
+	dnl include to get a functional prototype and linking success.
 	AC_MSG_CHECKING([non-standard libraries containing getaddrinfo])
 	LIBS="$LIBS_system -lws2_32";
 	AC_LINK_IFELSE([AC_LANG_SOURCE([
