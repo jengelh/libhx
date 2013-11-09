@@ -666,7 +666,7 @@ static void rbt_peel_tree(union HXpoly u, unsigned int range)
 	unsigned int left = 1;
 
 	while (u.map->items != 0) {
-		unsigned long number = tmap_smart_rand(&left, &range);
+		uintptr_t number = tmap_smart_rand(&left, &range);
 
 		HXmap_del(u.map, reinterpret_cast(const void *, number));
 		if (errno == -ENOENT)
@@ -695,7 +695,7 @@ static void tmap_rbt_test_7(void)
 		left  = 1;
 		right = elems + 1;
 		for (i = 0; i < elems; ++i) {
-			unsigned long z = tmap_smart_rand(&left, &right);
+			uintptr_t z = tmap_smart_rand(&left, &right);
 
 			ret = HXmap_add(u.map,
 			      reinterpret_cast(const void *, z), NULL);
