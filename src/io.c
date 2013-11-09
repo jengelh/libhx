@@ -71,35 +71,43 @@ EXPORT_SYMBOL struct HXdir *HXdir_open(const char *s)
 #ifdef _WIN32
 	if ((d = malloc(sizeof(*d))) == NULL)
 		return NULL;
-	if ((d->dname = malloc(strlen(s) + 3)) == NULL)
-		goto out;
+	if ((d->dname = malloc(strlen(s) + 3)) == NULL) {
+		free(d);
+		return NULL;
+	}
 	strcpy(d->dname, s);
 	strcat(d->dname, "\\*");
 	d->got_first = false;
 #else
 	/*
-	 * On Linux-glibc, struct dirent contains a big d_name[256],
-	 * but on Solaris, it is d_name[].
+	 * On Linux-glibc, the struct dirent definition contains a wasteful
+	 * and bug-concealing "char d_name[256]", while on Solaris, it is a
+	 * proper "char d_name[]".
 	 */
 	size_t size = sizeof(*d);
-	ssize_t name_max = pathconf(s, _PC_NAME_MAX);
-
+	ssize_t name_max;
+	DIR *tmp_dh = opendir(s);
+	if (tmp_dh == NULL)
+		return NULL;
+	/*
+	 * dirfd is POSIX.1-2008 and was present earlier in selected
+	 * extensions. In case of !HAVE_DIRFD, use pathconf(s, _PC_NAME_MAX)
+	 * and bite the race bullet.
+	 */
+	name_max = fpathconf(dirfd(tmp_dh), _PC_NAME_MAX);
 	if (name_max > 0) {
 		size -= sizeof(d->dentry) - offsetof(struct dirent, d_name);
 		size += name_max + 1;
 	} else {
-		size += NAME_MAX;
+		size += NAME_MAX; /* "best effort" :-/ */
 	}
-	if ((d = malloc(size)) == NULL)
+	if ((d = malloc(size)) == NULL) {
+		closedir(tmp_dh);
 		return NULL;
-	if ((d->ptr = opendir(s)) == NULL)
-		goto out;
+	}
+	d->ptr = tmp_dh;
 #endif
-
 	return d;
- out:
-	free(d);
-	return NULL;
 }
 
 EXPORT_SYMBOL const char *HXdir_read(struct HXdir *d)
