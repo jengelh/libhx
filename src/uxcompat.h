@@ -1,7 +1,7 @@
 #ifndef _LIBHX_UXCOMPAT_H
 #define _LIBHX_UXCOMPAT_H 1
 
-#ifdef __cplusplus
+#if defined(__cplusplus) && __cplusplus >= 201100UL
 #	include <cstddef>
 #	include <cstdint>
 #else
@@ -66,6 +66,8 @@ extern "C" {
 #ifndef S_IWOTH
 #	define S_IWOTH 00002
 #endif
+
+struct stat;
 
 /*
  *	UX-FILE.C

@@ -6,8 +6,6 @@
  *	modify it under the terms of the WTF Public License version 2 or
  *	(at your option) any later version.
  */
-#include <sys/resource.h>
-#include <sys/time.h>
 #include <errno.h>
 #include <math.h>
 #include <stdarg.h>
@@ -19,6 +17,10 @@
 #include <libHX/map.h>
 #include <libHX/misc.h>
 #include <libHX/string.h>
+#ifdef HAVE_SYS_RESOURCE_H
+#	include <sys/resource.h>
+#endif
+#include <sys/time.h>
 #include "internal.h"
 #include "map_int.h"
 
@@ -58,9 +60,13 @@ static void tmap_printf(const char *fmt, ...)
 
 static void tmap_time(struct timeval *tv)
 {
+#ifdef HAVE_SYS_RESOURCE_H
 	struct rusage r;
 	if (getrusage(RUSAGE_SELF, &r) == 0)
 		*tv = r.ru_utime;
+#else
+	memset(tv, 0, sizeof(*tv));
+#endif
 }
 
 static unsigned int tmap_smart_rand(unsigned int *left, unsigned int *right)
@@ -660,7 +666,7 @@ static void rbt_peel_tree(union HXpoly u, unsigned int range)
 	unsigned int left = 1;
 
 	while (u.map->items != 0) {
-		unsigned long number = tmap_smart_rand(&left, &range);
+		uintptr_t number = tmap_smart_rand(&left, &range);
 
 		HXmap_del(u.map, reinterpret_cast(const void *, number));
 		if (errno == -ENOENT)
@@ -689,7 +695,7 @@ static void tmap_rbt_test_7(void)
 		left  = 1;
 		right = elems + 1;
 		for (i = 0; i < elems; ++i) {
-			unsigned long z = tmap_smart_rand(&left, &right);
+			uintptr_t z = tmap_smart_rand(&left, &right);
 
 			ret = HXmap_add(u.map,
 			      reinterpret_cast(const void *, z), NULL);

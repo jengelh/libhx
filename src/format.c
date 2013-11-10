@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -431,7 +432,7 @@ static hxmc_t *HXformat2_xvar(const struct fmt_entry *entry)
 {
 #define IMM(fmt, type) \
 	snprintf(buf, sizeof(buf), (fmt), \
-		static_cast(type, reinterpret_cast(long, entry->ptr))); \
+		static_cast(type, reinterpret_cast(uintptr_t, entry->ptr))); \
 	break;
 #define PTR(fmt, type) \
 	snprintf(buf, sizeof(buf), (fmt), \
@@ -468,8 +469,8 @@ static hxmc_t *HXformat2_xvar(const struct fmt_entry *entry)
 		case HXTYPE_UINT:   PTR("%u", unsigned int);
 		case HXTYPE_LONG:   PTR("%ld", long);
 		case HXTYPE_ULONG:  PTR("%lu", unsigned long);
-		case HXTYPE_LLONG:  PTR("%lld", long long);
-		case HXTYPE_ULLONG: PTR("%llu", unsigned long long);
+		case HXTYPE_LLONG:  PTR("%" HX_LONGLONG_FMT "d", long long);
+		case HXTYPE_ULLONG: PTR("%" HX_LONGLONG_FMT "u", unsigned long long);
 		case HXTYPE_FLOAT:  PTR("%f", float);
 		case HXTYPE_DOUBLE: PTR("%f", double);
 

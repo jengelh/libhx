@@ -28,16 +28,16 @@ static void t_mc(void)
 	hxmc_t *s, *old_s;
 
 	s = HXmc_meminit(NULL, 4096);
-	printf("%zu\n", HXmc_length(s));
+	printf("%" HX_SIZET_FMT "u\n", HXmc_length(s));
 	if (HXmc_length(s) != 0)
 		abort();
 	old_s = s;
 	HXmc_trunc(&s, 8192);
 	if (old_s != s)
 		fprintf(stderr, "INFO: HXmc: no reallocation took place.\n");
-	printf("Length is now %zu\n", HXmc_length(s));
+	printf("Length is now %" HX_SIZET_FMT "u\n", HXmc_length(s));
 	HXmc_setlen(&s, 16384);
-	printf("Length is now %zu\n", HXmc_length(s));
+	printf("Length is now %" HX_SIZET_FMT "u\n", HXmc_length(s));
 	HXmc_free(s);
 }
 
@@ -115,7 +115,8 @@ static void t_strncat(void)
 static void t_strnlen(void)
 {
 	static const char s[] = "Hello world";
-	printf("# strnlen: %zu %zu %zu %zu %zu\n",
+	printf("# strnlen: %" HX_SIZET_FMT "u %" HX_SIZET_FMT "u "
+	       "%" HX_SIZET_FMT "u %" HX_SIZET_FMT "u %" HX_SIZET_FMT "u\n",
 		HX_strnlen(s, -1), HX_strnlen(s, 0), HX_strnlen(s, 1),
 		HX_strnlen(s, strlen(s)), HX_strnlen(s, 999));
 }

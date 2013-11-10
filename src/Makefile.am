@@ -36,7 +36,7 @@ check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-link \
                      tc-option tc-proc tc-rand tc-realpath \
                      tc-shconfig tc-strchr2 tc-string tc-strquote tc-time
 TESTS              = tc-strchr2 tc-strquote
-tc_cast_CFLAGS     = ${AM_CFLAGS} -std=c99
+tc_cast_CFLAGS     = ${AM_CFLAGS} -std=gnu99
 tc_cast_LDADD      = libHX.la -lm
 tc_compile_LDADD   = libHX.la
 tc_dir_LDADD       = libHX.la

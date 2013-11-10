@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Enhancements:
+- defs: add HX_SIZET_FMT and HX_LONGLONG_FMT
 
 
 v3.16 (2013-09-29)

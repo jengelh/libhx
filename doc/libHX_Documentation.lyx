@@ -3269,6 +3269,131 @@ S_IRUSR
 .
 \end_layout
 
+\begin_layout Subsection
+VC runtime format specifiers
+\end_layout
+
+\begin_layout Standard
+The Microsoft Visual C runtime (a weak libc) uses non-standard format specifiers
+ for certain types.
+ Whereas C99 specifies 
+\begin_inset Quotes eld
+\end_inset
+
+z
+\begin_inset Quotes erd
+\end_inset
+
+ for 
+\family typewriter
+size_t
+\family default
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+ll
+\begin_inset Quotes erd
+\end_inset
+
+ for long long, MSVCRT users must use 
+\begin_inset Quotes eld
+\end_inset
+
+I
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+I64
+\begin_inset Quotes erd
+\end_inset
+
+ (forming 
+\family typewriter
+%Id
+\family default
+ instead of 
+\family typewriter
+%zd
+\family default
+ for 
+\family typewriter
+ssize_t
+\family default
+, for example).
+ libHX provides two convenience macros for this:
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+#define
+\series default
+ HX_SIZET_FMT    "z"
+\family roman
+\shape italic
+ or 
+\family default
+\shape default
+"I"
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+HX_SIZET_FMT
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+#define
+\series default
+ HX_LONGLONG_FMT "ll"
+\family roman
+\shape italic
+ or 
+\family default
+\shape default
+"I64"
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+HX_LONGLONG_FMT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+These may be used together with printf or scanf:
+\end_layout
+
+\begin_layout LyX-Code
+printf("struct timespec is of size %" HX_SIZET_FMT "u
+\backslash
+n",
+\begin_inset Newline newline
+\end_inset
+
+       
+\series bold
+sizeof
+\series default
+(struct timespec));
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage clearpage
 \end_inset

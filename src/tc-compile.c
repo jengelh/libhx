@@ -18,15 +18,15 @@ int main(void)
 
 	if (HX_init() <= 0)
 		abort();
-	printf("sizeof bmllong:\t%zu, array_size: %zu\n",
+	printf("sizeof bmllong:\t%" HX_SIZET_FMT "u, array_size: %" HX_SIZET_FMT "u\n",
 	       sizeof(bmllong), ARRAY_SIZE(bmllong));
-	printf("sizeof bmlong:\t%zu, array_size: %zu\n",
+	printf("sizeof bmlong:\t%" HX_SIZET_FMT "u, array_size: %" HX_SIZET_FMT "u\n",
 	       sizeof(bmlong), ARRAY_SIZE(bmlong));
-	printf("sizeof bmint:\t%zu, array_size: %zu\n",
+	printf("sizeof bmint:\t%" HX_SIZET_FMT "u, array_size: %" HX_SIZET_FMT "u\n",
 	       sizeof(bmint), ARRAY_SIZE(bmint));
-	printf("sizeof bmshort:\t%zu, array_size: %zu\n",
+	printf("sizeof bmshort:\t%" HX_SIZET_FMT "u, array_size: %" HX_SIZET_FMT "u\n",
 	       sizeof(bmshort), ARRAY_SIZE(bmshort));
-	printf("sizeof bmchar:\t%zu, array_size: %zu\n",
+	printf("sizeof bmchar:\t%" HX_SIZET_FMT "u, array_size: %" HX_SIZET_FMT "u\n",
 	       sizeof(bmchar), ARRAY_SIZE(bmchar));
 	HXbitmap_set(bmllong, 255);
 	HXbitmap_set(bmlong, 255);
