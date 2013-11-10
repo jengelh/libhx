@@ -4,6 +4,9 @@ HEAD
 ====
 Enhancements:
 - defs: add HX_SIZET_FMT and HX_LONGLONG_FMT
+- support for Win64
+Fixes:
+- compile warnings on mingw were addressed
 
 
 v3.16 (2013-09-29)
