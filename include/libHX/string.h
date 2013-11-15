@@ -14,17 +14,6 @@
 #endif
 #include <sys/types.h>
 
-#ifdef _WIN32
-	/*
-	 * Sufficiently old versions of the VC runtime do not even support %ll.
-	 */
-#	define HX_LONGLONG_FMT "I64"
-#	define HX_SIZET_FMT "I"
-#else
-#	define HX_LONGLONG_FMT "ll"
-#	define HX_SIZET_FMT "z"
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif

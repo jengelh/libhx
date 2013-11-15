@@ -216,4 +216,15 @@ static __inline__ new_type signed_cast(unsigned char *expr)
 #	define container_of(v, s, m) containerof((v), s, m)
 #endif
 
+#ifdef _WIN32
+	/*
+	 * Sufficiently old versions of the VC runtime do not even support %ll.
+	 */
+#	define HX_LONGLONG_FMT "I64"
+#	define HX_SIZET_FMT "I"
+#else
+#	define HX_LONGLONG_FMT "ll"
+#	define HX_SIZET_FMT "z"
+#endif
+
 #endif /* _LIBHX_DEFS_H */
