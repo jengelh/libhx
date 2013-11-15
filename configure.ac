@@ -51,10 +51,17 @@ AC_SEARCH_LIBS([clock_gettime], [rt pthread], [librt_LIBS="$LIBS"; LIBS="$LIBS_s
 AC_SUBST([librt_LIBS])
 AC_SEARCH_LIBS([pthread_mutex_lock], [pthread], [libpthread_LIBS="$LIBS"; LIBS="$LIBS_system"])
 AC_SUBST([libpthread_LIBS])
-AC_SEARCH_LIBS([getaddrinfo], [socket], [libsocket_LIBS="$LIBS"; LIBS="$LIBS_system"], [])
-if test -z "$libsocket_LIBS"; then
+
+libsocket_ok=0
+AC_SEARCH_LIBS([getaddrinfo], [socket],
+	[libsocket_LIBS="$LIBS"; LIBS="$LIBS_system"; libsocket_ok=1], [])
+if test $libsocket_ok = 0; then
+	dnl socket: Need to distinguish between "none required" and
+	dnl "no"(ne found), and only in the latter case try ws2_32.
+	dnl
 	dnl AC_SEARCH_LIBS is too dumb, we really need the ws2tcpip
-	dnl include to get a functional prototype and linking success.
+	dnl include to get a functional prototype (which is stdcall, sadly)
+	dnl for successful linking.
 	AC_MSG_CHECKING([non-standard libraries containing getaddrinfo])
 	LIBS="$LIBS_system -lws2_32";
 	AC_LINK_IFELSE([AC_LANG_SOURCE([
