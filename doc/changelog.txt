@@ -2,6 +2,10 @@
 
 HEAD
 ====
+
+
+v3.17 (2013-11-16)
+==================
 Enhancements:
 - defs: add HX_SIZET_FMT and HX_LONGLONG_FMT
 - support for Win64
