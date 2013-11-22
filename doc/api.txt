@@ -135,7 +135,6 @@ RMV	MinVer	FirstA	Name
 2.8	2.8	2.8	HXPROC_NULL_STDOUT
 2.6	2.6	2.6	HX_fls
 2.6	2.6	2.6	wxACV
-2.6	2.6	2.6	wxCFF
 2.6	2.6	2.6	wxDPOS
 2.6	2.6	2.6	wxDSIZE
 2.6	2.6	2.6	wxfu8

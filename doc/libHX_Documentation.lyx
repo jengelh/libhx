@@ -24293,38 +24293,6 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-wxCFF
-\end_layout
-
-\end_inset
-
-
-\family typewriter
-wxCFF
-\family default
- Expands to a set of 
-\begin_inset Quotes eld
-\end_inset
-
-common frame flags
-\begin_inset Quotes erd
-\end_inset
-
- for 
-\family typewriter
-wxFrame
-\family default
-s, which includes having a caption, resizable border, system menu, as well
- as buttons for close, minimze and maximize.
-\end_layout
-
-\begin_layout Description
-\begin_inset Index idx
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
 wxCDF
 \end_layout
 
@@ -24334,24 +24302,24 @@ wxCDF
 \family typewriter
 wxCDF
 \family default
- Expands to a set of 
-\begin_inset Quotes eld
-\end_inset
-
-common dialog flags
-\begin_inset Quotes erd
-\end_inset
-
- for 
+ Expands to a set of common dialog flags for 
 \family typewriter
 wxDialog
 \family default
 s, which includes 
 \family typewriter
-wxCFF
+wxDEFAULT_\SpecialChar \-
+FRAME_\SpecialChar \-
+STYLE
 \family default
  and a flag such that the dialog does not create a new window in the task
- bar.
+ bar (
+\family typewriter
+wxFRAME_\SpecialChar \-
+NO_\SpecialChar \-
+TASKBAR
+\family default
+).
 \end_layout
 
 \begin_layout Description
