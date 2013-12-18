@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Fixes:
+- Make HX_strltrim move the correct number of bytes
 Changes:
 - remove wxCFF from wx_helper.hpp
 

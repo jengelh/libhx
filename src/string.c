@@ -360,7 +360,7 @@ EXPORT_SYMBOL size_t HX_strltrim(char *expr)
 	while (*travp != '\0' && HX_isspace(*travp))
 		++travp;
 	if ((diff = travp - expr) > 0)
-		memmove(expr, travp, diff);
+		memmove(expr, travp, strlen(travp) + 1);
 	return diff;
 }
 

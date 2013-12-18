@@ -131,6 +131,17 @@ static void t_strsep(void)
 		printf("%s\n", ret);
 }
 
+static void t_strtrim(void)
+{
+	char a[] = "  a and b  ", b[] = "  a and b  ";
+
+	printf("Trim >%s<", a);
+	HX_strltrim(a);
+	printf(" on the left produces >%s< ", a);
+	HX_strrtrim(b);
+	printf("and on the right >%s<\n", b);
+}
+
 static void t_split(void)
 {
 	char t1[] = "root:x:0:0:root:/root:/bin/bash";
@@ -202,6 +213,7 @@ int main(int argc, const char **argv)
 	t_strnlen();
 	t_strdup();
 	t_strsep();
+	t_strtrim();
 	t_split();
 	t_split2();
 	HXmc_free(tx);
