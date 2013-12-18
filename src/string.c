@@ -357,7 +357,7 @@ EXPORT_SYMBOL size_t HX_strltrim(char *expr)
 	size_t diff = 0;
 	travp = expr;
 
-	while (*travp != '\0' && HX_isspace(*travp))
+	while (HX_isspace(*travp))
 		++travp;
 	if ((diff = travp - expr) > 0)
 		memmove(expr, travp, strlen(travp) + 1);
