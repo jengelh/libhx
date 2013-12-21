@@ -7,11 +7,13 @@
  *	(at your option) any later version.
  */
 #ifndef __cplusplus
+#	include <assert.h>
 #	include <errno.h>
 #	include <stddef.h>
 #	include <stdio.h>
 #	include <stdlib.h>
 #else
+#	include <cassert>
 #	include <cerrno>
 #	include <cstddef>
 #	include <cstdio>
@@ -133,13 +135,26 @@ static void t_strsep(void)
 
 static void t_strtrim(void)
 {
-	char a[] = "  a and b  ", b[] = "  a and b  ";
+	char a[] = "  a and b  ", aexp[] = "a and b  ";
+	char b[] = "  a and b  ", bexp[] = "  a and b";
+	char c[] = "a&b", cexp[] = "a&b";
+	const char *r;
 
-	printf("Trim >%s<", a);
-	HX_strltrim(a);
-	printf(" on the left produces >%s< ", a);
-	HX_strrtrim(b);
-	printf("and on the right >%s<\n", b);
+	r = HX_stpltrim(a);
+	printf("HX_stpltrim(\"%s\") = \"%s\"\n", a, r);
+	assert(strcmp(r, aexp) == 0);
+
+	printf("HX_strltrim(\"%s\") = ", a);
+	printf("\"%s\"\n", (HX_strltrim(a), a));
+	assert(strcmp(a, aexp) == 0);
+
+	printf("HX_strrtrim(\"%s\") = ", b);
+	printf("\"%s\"\n", (HX_strrtrim(b), b));
+	assert(strcmp(b, bexp) == 0);
+
+	assert(strcmp(cexp, HX_stpltrim(c)) == 0);
+	assert(strcmp(cexp, (HX_strltrim(c), c)) == 0);
+	assert(strcmp(cexp, (HX_strrtrim(c), c)) == 0);
 }
 
 static void t_split(void)

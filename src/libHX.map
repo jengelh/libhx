@@ -190,3 +190,9 @@ LIBHX_3.15 {
 global:
 	HX_strchr2;
 } LIBHX_3.13;
+
+# ABI 31
+LIBHX_3.18 {
+global:
+	HX_stpltrim;
+} LIBHX_3.15;

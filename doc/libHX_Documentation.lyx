@@ -11350,6 +11350,28 @@ HX_strltrim
 \series bold
 char *
 \series default
+HX_stpltrim(
+\series bold
+const char *
+\series default
+s);
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+HX_stpltrim
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+char *
+\series default
 HX_strlower(
 \series bold
 char *
@@ -11481,6 +11503,18 @@ isspace
 \family default
 (3) return true) on the left edge of the string.
  Returns the number of characters that were stripped.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HX_stpltrim
+\family default
+ Returns a pointer to the first non-whitespace character in 
+\family typewriter
+s
+\family default
+.
 \end_layout
 
 \begin_layout Description

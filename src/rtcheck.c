@@ -257,6 +257,8 @@ stub4(HX_memmem, (const void *a, size_t b, const void *c, size_t d));
 stub4(HX_split, (const char *a, const char *b, int *c, int d));
 stub4(HX_split4, (char *a, const char *b, int *c, int d));
 stub4(HX_split5, (char *a, const char *b, int c, char **d));
+stub1(HX_stpltrim, (const char *a));
+stub1(HX_stprtrim, (char *a));
 stub3(HX_strbchr, (const char *a, const char *b, char c));
 stub2(HX_strclone, (char **a, const char *b));
 stub1(HX_strlower, (char *a));

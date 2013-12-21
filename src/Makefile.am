@@ -13,7 +13,7 @@ libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c
 libHX_la_LIBADD  = ${libdl_LIBS} ${libpthread_LIBS} ${librt_LIBS}
-libHX_la_LDFLAGS = -no-undefined -version-info 30:0:2 \
+libHX_la_LDFLAGS = -no-undefined -version-info 31:0:3 \
                    -Wl,--version-script=${srcdir}/libHX.map
 libHX_la_DEPENDENCIES = libHX.map
 

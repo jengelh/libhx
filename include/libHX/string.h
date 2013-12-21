@@ -75,6 +75,7 @@ extern char *HX_strlcpy(char *, const char *, size_t);
 extern char *HX_strlncat(char *, const char *, size_t, size_t);
 extern char *HX_strlower(char *);
 extern size_t HX_strltrim(char *);
+extern char *HX_stpltrim(const char *);
 extern char *HX_strmid(const char *, long, long);
 extern char *HX_strndup(const char *, size_t);
 extern size_t HX_strnlen(const char *, size_t);

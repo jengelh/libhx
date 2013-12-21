@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Enhancements:
+- string: add the HX_stpltrim function
 Fixes:
 - Make HX_strltrim move the correct number of bytes
 Changes:
