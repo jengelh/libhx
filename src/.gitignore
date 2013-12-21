@@ -21,3 +21,7 @@
 /t?-string
 /t?-strquote
 /t?-time
+
+# automake tests
+*.log
+*.trs
