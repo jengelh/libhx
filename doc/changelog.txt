@@ -2,6 +2,10 @@
 
 HEAD
 ====
+
+
+v3.18 (2014-03-01)
+==================
 Enhancements:
 - string: add the HX_stpltrim function
 Fixes:
