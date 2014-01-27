@@ -941,7 +941,9 @@ EXPORT_SYMBOL struct HXmap *HX_shconfig_map(const char *file)
 		return NULL;
 
 	if ((fp = fopen(file, "r")) == NULL) {
-		free(map);
+		int saved_errno = errno;
+		HXmap_free(map);
+		errno = saved_errno;
 		return NULL;
 	}
 
