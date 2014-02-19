@@ -106,7 +106,7 @@ static __inline__ char *HX_strchr0(const char *s, char c)
 	char *ret = strchr(s, c);
 	if (ret != NULL)
 		return ret;
-	return const_cast1(char *, &s[strlen(s)]);
+	return const_cast1(char *, s) + strlen(s);
 }
 
 /*

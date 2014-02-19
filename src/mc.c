@@ -148,7 +148,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcat(hxmc_t **vp, const void *ptr, size_t len)
 	if (ptr == NULL)
 		return *vp = ctx->data;
 
-	memcpy(&ctx->data[ctx->length], ptr, len);
+	memcpy(ctx->data + ctx->length, ptr, len);
 	ctx->length = nl;
 	ctx->data[nl] = '\0';
 	return *vp = ctx->data;
@@ -196,8 +196,8 @@ EXPORT_SYMBOL hxmc_t *HXmc_memins(hxmc_t **vp, size_t pos, const void *ptr,
 	if (ptr == NULL)
 		return *vp = ctx->data;
 
-	memmove(&ctx->data[pos + len], &ctx->data[pos], ctx->length - pos);
-	memcpy(&ctx->data[pos], ptr, len);
+	memmove(ctx->data + pos + len, ctx->data + pos, ctx->length - pos);
+	memcpy(ctx->data + pos, ptr, len);
 	ctx->length += len;
 	ctx->data[ctx->length] = '\0';
 	return *vp = ctx->data;
@@ -211,7 +211,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_memdel(hxmc_t *vp, size_t pos, size_t len)
 	if (pos + len > ctx->length)
 		len = ctx->length - pos;
 
-	memmove(&ctx->data[pos], &ctx->data[pos + len],
+	memmove(ctx->data + pos, ctx->data + pos + len,
 	        ctx->length - pos - len);
 	ctx->length -= len;
 	ctx->data[ctx->length] = '\0';
