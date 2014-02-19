@@ -14,6 +14,7 @@
 static const char input1[]   = "\"Good\" ol' \\'escaped\\' strings";
 static const char output1a[] = "\"Good\" ol\\' \\\\\\'escaped\\\\\\' strings";
 static const char output1b[] = "\\\"Good\\\" ol' \\\\'escaped\\\\' strings";
+static const char output1c[] = "\"Good\" ol'' \\''escaped\\'' strings";
 static const char input2[]   = "<p style=\"height: 1;\">Foo &amp; \"bar\"</p>";
 static const char output2[]  =
 	"&lt;p style=&quot;height: 1;&quot;&gt;Foo &amp;amp; &quot;bar&quot;&lt;/p&gt;";
@@ -55,6 +56,7 @@ int main(void)
 		return EXIT_FAILURE;
 	tst(input1, HXQUOTE_SQUOTE, output1a);
 	tst(input1, HXQUOTE_DQUOTE, output1b);
+	tst(input1, HXQUOTE_SQLSQUOTE, output1c);
 	tst(input2, HXQUOTE_HTML, output2);
 	tst(input3, HXQUOTE_LDAPFLT, output3a);
 	tst(input3, HXQUOTE_LDAPRDN, output3b);

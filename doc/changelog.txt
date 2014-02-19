@@ -2,6 +2,8 @@
 
 HEAD
 ====
+Enhancements:
+- string: add the HXQUOTE_SQLSQUOTE quoting variant
 
 
 v3.18 (2014-03-01)

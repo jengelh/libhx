@@ -15,6 +15,7 @@ F column: Function first seen in version, possibly with different API.
 
 RMV	MinVer	FirstA	Name
 ----------------------------------------------------------------------
+3.19	3.19	3.19	HXQUOTE_SQLSQUOTE
 3.17	3.17	3.17	HX_LONGLONG_FMT
 3.17	3.17	3.17	HX_SIZET_FMT
 3.16	3.16	3.16	container_of

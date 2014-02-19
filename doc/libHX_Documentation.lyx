@@ -11950,6 +11950,29 @@ HXQUOTE_URIENC
  Escape the string so that it becomes a valid part for an URI.
 \end_layout
 
+\begin_layout Description
+
+\family typewriter
+HXQUOTE_SQLSQUOTE
+\family default
+
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXQUOTE_SQLSQUOTE
+\end_layout
+
+\end_inset
+
+ Escape all single quotes in the string by double single-quotes, as required
+ for using it in a single-quoted SQL string.
+ No surrounding quotes will be generated to facilitate concatenating of
+ HX_strquote results.
+\end_layout
+
 \begin_layout Standard
 Specifying an unrecognized type will result in 
 \family typewriter
