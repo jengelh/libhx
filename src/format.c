@@ -28,8 +28,22 @@ struct fmt_entry {
 	unsigned int type;
 };
 
+struct func_entry {
+	hxmc_t *(*proc)(int, const hxmc_t *const *);
+	char *delim;
+	bool (*check)(const struct HXmap *);
+};
+
+struct HXformat2_fd {
+	const char *name;
+	hxmc_t *(*proc)(int, const hxmc_t *const *);
+	const char *delim;
+	bool (*check)(const struct HXmap *);
+};
+
 struct HXformat_map {
 	struct HXmap *vars;
+	struct HXmap *funcs;
 };
 
 static void fmt_entry_free(void *e)
@@ -45,28 +59,46 @@ static const struct HXmap_ops fmt_entry_ops = {
 	.d_free = fmt_entry_free,
 };
 
-EXPORT_SYMBOL struct HXformat_map *HXformat_init(void)
+static void *func_entry_clone(const void *data, size_t size)
 {
-	struct HXformat_map *blk;
+	const struct HXformat2_fd *in = data;
+	struct func_entry *out;
+	int saved_errno;
 
-	blk = malloc(sizeof(*blk));
-	if (blk == NULL)
+	out = malloc(sizeof(*out));
+	if (out == NULL)
 		return NULL;
+	out->delim = HX_strdup(in->delim);
+	if (out->delim == NULL)
+		goto out;
+	out->proc = in->proc;
+	out->check = in->check;
+	return out;
 
-	blk->vars = HXmap_init5(HXMAPT_DEFAULT, HXMAP_SCKEY, &fmt_entry_ops,
-	            0, sizeof(struct fmt_entry));
-	if (blk->vars == NULL) {
-		int saved_errno = errno;
-		free(blk);
-		errno = saved_errno;
-		return NULL;
-	}
-	return blk;
+ out:
+	saved_errno = errno;
+	free(out);
+	errno = saved_errno;
+	return NULL;
 }
+
+static void func_entry_free(void *e)
+{
+	struct func_entry *entry = e;
+
+	free(entry->delim);
+	free(entry);
+}
+
+static const struct HXmap_ops func_entry_ops = {
+	.d_clone = func_entry_clone,
+	.d_free  = func_entry_free,
+};
 
 EXPORT_SYMBOL void HXformat_free(struct HXformat_map *blk)
 {
 	HXmap_free(blk->vars);
+	HXmap_free(blk->funcs);
 	free(blk);
 }
 
@@ -110,20 +142,6 @@ static __inline__ char *HX_strchr0(const char *s, char c)
 		return ret;
 	return const_cast1(char *, s) + strlen(s);
 }
-
-/*
- *	HXformat2
- *
- *	Compared to the first-generation, this variant provides make(1)-style
- *	function calls.
- */
-
-struct HXformat2_fd {
-	const char *name;
-	hxmc_t *(*proc)(int, const hxmc_t *const *);
-	const char *delim;
-	bool (*check)(const struct HXmap *);
-};
 
 /*
  * Used as an unique object for "expanded to nothing", to distinguish it from
@@ -326,7 +344,6 @@ static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv)
 }
 
 static const struct HXformat2_fd HXformat2_fmap[] = {
-	/* Need to be alphabetically sorted */
 	{"echo",	HXformat2_echo,		S_CLOSE " ,"},
 	{"env",		HXformat2_env,		S_CLOSE " ,"},
 	{"exec",	HXformat2_exec,		S_CLOSE " ", HXformat2_execchk},
@@ -337,13 +354,6 @@ static const struct HXformat2_fd HXformat2_fmap[] = {
 	{"substr",	HXformat2_substr,	S_CLOSE ","},
 	{"upper",	HXformat2_upper,	S_CLOSE},
 };
-
-static int HXformat2_fmap_compare(const void *pa, const void *pb)
-{
-	const char *a_name = pa;
-	const struct HXformat2_fd *b = pb;
-	return strcmp(a_name, b->name);
-}
 
 /**
  * HXformat2_xcall - expand function call (gather args)
@@ -357,7 +367,7 @@ static int HXformat2_fmap_compare(const void *pa, const void *pb)
 static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
     const struct HXformat_map *blk)
 {
-	const struct HXformat2_fd *entry;
+	const struct func_entry *entry;
 	hxmc_t *ret, *ret2, **argv;
 	struct HXdeque *dq;
 	const char *s, *delim;
@@ -367,8 +377,7 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 	if (dq == NULL)
 		return NULL;
 
-	entry = bsearch(name, HXformat2_fmap, ARRAY_SIZE(HXformat2_fmap),
-	        sizeof(*HXformat2_fmap), HXformat2_fmap_compare);
+	entry = HXmap_get(blk->funcs, name);
 	delim = (entry != NULL) ? entry->delim : S_CLOSE;
 	if (**pptr == C_CLOSE)
 		++*pptr;
@@ -566,6 +575,43 @@ HXformat2_xany(const char **pptr, const struct HXformat_map *blk)
 
 	HXmc_free(name);
 	return ret;
+}
+
+EXPORT_SYMBOL struct HXformat_map *HXformat_init(void)
+{
+	struct HXformat_map *blk;
+	unsigned int i;
+	int saved_errno, ret;
+
+	blk = calloc(1, sizeof(*blk));
+	if (blk == NULL)
+		return NULL;
+
+	blk->vars = HXmap_init5(HXMAPT_DEFAULT, HXMAP_SCKEY, &fmt_entry_ops,
+	            0, sizeof(struct fmt_entry));
+	if (blk->vars == NULL)
+		goto out;
+	blk->funcs = HXmap_init5(HXMAPT_DEFAULT, HXMAP_SCKEY, &func_entry_ops,
+	             0, sizeof(struct func_entry));
+	if (blk->funcs == NULL)
+		goto out;
+	for (i = 0; i < ARRAY_SIZE(HXformat2_fmap); ++i) {
+		ret = HXmap_add(blk->funcs, HXformat2_fmap[i].name,
+		      &HXformat2_fmap[i]);
+		if (ret < 0)
+			goto out;
+	}
+	return blk;
+
+ out:
+	saved_errno = errno;
+	if (blk->vars != NULL)
+		HXmap_free(blk->vars);
+	if (blk->funcs != NULL)
+		HXmap_free(blk->funcs);
+	free(blk);
+	errno = saved_errno;
+	return NULL;
 }
 
 EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *blk,
