@@ -31,14 +31,12 @@ struct fmt_entry {
 struct func_entry {
 	hxmc_t *(*proc)(int, const hxmc_t *const *, const struct HXformat_map *);
 	char *delim;
-	bool (*check)(const struct HXmap *);
 };
 
 struct HXformat2_fd {
 	const char *name;
 	hxmc_t *(*proc)(int, const hxmc_t *const *, const struct HXformat_map *);
 	const char *delim;
-	bool (*check)(const struct HXmap *);
 };
 
 struct HXformat_map {
@@ -72,7 +70,6 @@ static void *func_entry_clone(const void *data, size_t size)
 	if (out->delim == NULL)
 		goto out;
 	out->proc = in->proc;
-	out->check = in->check;
 	return out;
 
  out:
@@ -213,18 +210,17 @@ static hxmc_t *HXformat2_lower(int argc, const hxmc_t *const *argv,
 	return ret;
 }
 
-static bool HXformat2_execchk(const struct HXmap *table)
-{
-	return HXmap_find(table, "/libhx/exec") != NULL;
-}
-
-static hxmc_t *HXformat2_exec1(const hxmc_t *const *argv)
+static hxmc_t *HXformat2_exec1(const hxmc_t *const *argv,
+			       const struct HXformat_map *blk)
 {
 	struct HXproc proc = {
 		.p_flags = HXPROC_NULL_STDIN | HXPROC_STDOUT | HXPROC_VERBOSE,
 	};
 	hxmc_t *slurp, *complete = NULL;
 	ssize_t ret;
+
+	if (HXmap_find(blk->vars, "/libhx/exec") == NULL)
+		return &HXformat2_nexp;
 
 	slurp = HXmc_meminit(NULL, BUFSIZ);
 	if (slurp == NULL)
@@ -254,7 +250,7 @@ static hxmc_t *HXformat2_exec(int argc, const hxmc_t *const *argv,
 {
 	if (argc == 0)
 		return &HXformat2_nexp;
-	return HXformat2_exec1(argv);
+	return HXformat2_exec1(argv, blk);
 }
 
 static hxmc_t *HXformat2_shell(int argc, const hxmc_t *const *argv,
@@ -264,7 +260,7 @@ static hxmc_t *HXformat2_shell(int argc, const hxmc_t *const *argv,
 	if (argc == 0)
 		return &HXformat2_nexp;
 	cmd[2] = argv[0];
-	return HXformat2_exec1(cmd);
+	return HXformat2_exec1(cmd, blk);
 }
 
 static hxmc_t *HXformat2_snl(int argc, const hxmc_t *const *argv,
@@ -355,10 +351,10 @@ static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv,
 static const struct HXformat2_fd HXformat2_fmap[] = {
 	{"echo",	HXformat2_echo,		S_CLOSE " ,"},
 	{"env",		HXformat2_env,		S_CLOSE " ,"},
-	{"exec",	HXformat2_exec,		S_CLOSE " ", HXformat2_execchk},
+	{"exec",	HXformat2_exec,		S_CLOSE " "},
 	{"if",		HXformat2_if,		S_CLOSE ","}, /* no sp: ok */
 	{"lower",	HXformat2_lower,	S_CLOSE},
-	{"shell",	HXformat2_shell,	S_CLOSE, HXformat2_execchk},
+	{"shell",	HXformat2_shell,	S_CLOSE},
 	{"snl",		HXformat2_snl,		S_CLOSE},
 	{"substr",	HXformat2_substr,	S_CLOSE ","},
 	{"upper",	HXformat2_upper,	S_CLOSE},
@@ -422,7 +418,7 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 
 	ret = &HXformat2_nexp;
 	/* Unknown functions are silently expanded to nothing, like in make. */
-	if (entry != NULL && (entry->check == NULL || entry->check(blk->vars)))
+	if (entry != NULL)
 		ret = entry->proc(dq->items,
 		      const_cast2(const hxmc_t *const *, argv),
 		      blk);
