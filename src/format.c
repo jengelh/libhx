@@ -28,15 +28,9 @@ struct fmt_entry {
 	unsigned int type;
 };
 
-static __inline__ struct HXformat_map *fmt_export(const struct HXmap *t)
-{
-	return const_cast1(void *, static_cast(const void *, t));
-}
-
-static __inline__ struct HXmap *fmt_import(const struct HXformat_map *t)
-{
-	return const_cast1(void *, static_cast(const void *, t));
-}
+struct HXformat_map {
+	struct HXmap *vars;
+};
 
 static void fmt_entry_free(void *e)
 {
@@ -53,24 +47,32 @@ static const struct HXmap_ops fmt_entry_ops = {
 
 EXPORT_SYMBOL struct HXformat_map *HXformat_init(void)
 {
-	struct HXmap *table;
+	struct HXformat_map *blk;
 
-	table = HXmap_init5(HXMAPT_DEFAULT, HXMAP_SCKEY, &fmt_entry_ops,
-	        0, sizeof(struct fmt_entry));
-	if (table == NULL)
+	blk = malloc(sizeof(*blk));
+	if (blk == NULL)
 		return NULL;
-	return fmt_export(table);
+
+	blk->vars = HXmap_init5(HXMAPT_DEFAULT, HXMAP_SCKEY, &fmt_entry_ops,
+	            0, sizeof(struct fmt_entry));
+	if (blk->vars == NULL) {
+		int saved_errno = errno;
+		free(blk);
+		errno = saved_errno;
+		return NULL;
+	}
+	return blk;
 }
 
-EXPORT_SYMBOL void HXformat_free(struct HXformat_map *ftable)
+EXPORT_SYMBOL void HXformat_free(struct HXformat_map *blk)
 {
-	HXmap_free(fmt_import(ftable));
+	HXmap_free(blk->vars);
+	free(blk);
 }
 
-EXPORT_SYMBOL int HXformat_add(struct HXformat_map *ftable, const char *key,
+EXPORT_SYMBOL int HXformat_add(struct HXformat_map *blk, const char *key,
     const void *ptr, unsigned int ptr_type)
 {
-	struct HXmap *table = fmt_import(ftable);
 	struct fmt_entry *entry;
 	int ret;
 
@@ -92,7 +94,7 @@ EXPORT_SYMBOL int HXformat_add(struct HXformat_map *ftable, const char *key,
 		entry->ptr = ptr;
 	}
 
-	ret = HXmap_add(table, key, entry);
+	ret = HXmap_add(blk->vars, key, entry);
 	if (ret <= 0) {
 		free(entry);
 		return ret;
@@ -353,7 +355,7 @@ static int HXformat2_fmap_compare(const void *pa, const void *pb)
  * function.
  */
 static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
-    const struct HXmap *table)
+    const struct HXformat_map *blk)
 {
 	const struct HXformat2_fd *entry;
 	hxmc_t *ret, *ret2, **argv;
@@ -379,7 +381,7 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 			goto out_h_errno;
 		if (strstr(ret, "%" S_OPEN) != NULL) {
 			ret2 = NULL;
-			err = HXformat_aprintf(fmt_export(table), &ret2, ret);
+			err = HXformat_aprintf(blk, &ret2, ret);
 			if (err < 0 || ret2 == NULL)
 				goto out_h_neg;
 			HXmc_free(ret);
@@ -401,8 +403,8 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 		goto out_h_errno;
 
 	ret = &HXformat2_nexp;
-	/* Unknown functions are silently expanded to nothing, like make. */
-	if (entry != NULL && (entry->check == NULL || entry->check(table)))
+	/* Unknown functions are silently expanded to nothing, like in make. */
+	if (entry != NULL && (entry->check == NULL || entry->check(blk->vars)))
 		ret = entry->proc(dq->items,
 		      const_cast2(const hxmc_t *const *, argv));
 	/*
@@ -501,7 +503,8 @@ static hxmc_t *HXformat2_xvar(const struct fmt_entry *entry)
  *
  * @*pptr has to point to the first character after the "%(" opener.
  */
-static hxmc_t *HXformat2_xany(const char **pptr, const struct HXmap *table)
+static hxmc_t *
+HXformat2_xany(const char **pptr, const struct HXformat_map *blk)
 {
 	const char *s = *pptr;
 	hxmc_t *name, *ret;
@@ -538,13 +541,13 @@ static hxmc_t *HXformat2_xany(const char **pptr, const struct HXmap *table)
 		int eret;
 
 		*pptr = ++s;
-		eret  = HXformat_aprintf(fmt_export(table), &new_name, name);
+		eret  = HXformat_aprintf(blk, &new_name, name);
 		if (eret <= 0) {
 			ret = NULL;
 		} else if (*new_name == '\0') {
 			ret = &HXformat2_nexp;
 		} else {
-			entry = HXmap_get(table, new_name);
+			entry = HXmap_get(blk->vars, new_name);
 			ret   = (entry == NULL) ? &HXformat2_nexp :
 			        HXformat2_xvar(entry);
 		}
@@ -558,17 +561,16 @@ static hxmc_t *HXformat2_xany(const char **pptr, const struct HXmap *table)
 		 * Note that %() is not expanded in function names. This
 		 * follows make(1) behavior.
 		 */
-		ret = HXformat2_xcall(name, pptr, table);
+		ret = HXformat2_xcall(name, pptr, blk);
 	}
 
 	HXmc_free(name);
 	return ret;
 }
 
-EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
+EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *blk,
     hxmc_t **resultp, const char *fmt)
 {
-	const struct HXmap *table = fmt_import(ftable);
 	hxmc_t *ex, *ts, *out;
 	const char *current;
 	int ret = 0;
@@ -592,7 +594,7 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *ftable,
 		}
 
 		current += 2; /* skip % and opening parenthesis */
-		ex = HXformat2_xany(&current, table);
+		ex = HXformat2_xany(&current, blk);
 		if (ex == NULL)
 			goto out;
 		if (ex != &HXformat2_nexp) {
