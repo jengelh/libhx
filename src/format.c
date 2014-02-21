@@ -118,15 +118,14 @@ static __inline__ char *HX_strchr0(const char *s, char c)
 
 struct HXformat2_fd {
 	const char *name;
-	hxmc_t *(*proc)(int, const char *const *);
+	hxmc_t *(*proc)(int, const hxmc_t *const *);
 	const char *delim;
 	bool (*check)(const struct HXmap *);
 };
 
 /*
  * Used as an unique object for "expanded to nothing", to distinguish it from
- * %NULL indicating some error. This is cheaper than allocating an empty hxmc
- * everytime.
+ * %NULL indicating some error.
  */
 static char HXformat2_nexp;
 
