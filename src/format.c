@@ -23,6 +23,19 @@
 #define S_OPEN  "("
 #define S_CLOSE ")"
 
+/**
+ * %HXFMT_ARGSEP_NONE:	function takes only a single argument
+ * %HXFMT_ARGSEP_SPACE: split arguments at whitespace
+ * 			e.g. %(exec /bin/ls foo)
+ * %HXFMT_ARGSEP_COMMA:	split arguments at comma
+ * 			e.g. %(if %(this),%(then),%(else))
+ */
+enum {
+	HXFMT_ARGSEP_NONE  = 0,
+	HXFMT_ARGSEP_SPACE = 1 << 0,
+	HXFMT_ARGSEP_COMMA = 1 << 1,
+};
+
 struct fmt_entry {
 	const void *ptr;
 	unsigned int type;
@@ -30,13 +43,13 @@ struct fmt_entry {
 
 struct func_entry {
 	hxmc_t *(*proc)(int, const hxmc_t *const *, const struct HXformat_map *);
-	char *delim;
+	char delim[4];
 };
 
 struct HXformat2_fd {
 	const char *name;
 	hxmc_t *(*proc)(int, const hxmc_t *const *, const struct HXformat_map *);
-	const char *delim;
+	unsigned int flags;
 };
 
 struct HXformat_map {
@@ -61,35 +74,23 @@ static void *func_entry_clone(const void *data, size_t size)
 {
 	const struct HXformat2_fd *in = data;
 	struct func_entry *out;
-	int saved_errno;
+	unsigned int i = 0;
 
 	out = malloc(sizeof(*out));
 	if (out == NULL)
 		return NULL;
-	out->delim = HX_strdup(in->delim);
-	if (out->delim == NULL)
-		goto out;
 	out->proc = in->proc;
+	memset(out->delim, '\0', sizeof(out->delim));
+	out->delim[i++] = C_CLOSE;
+	if (in->flags & HXFMT_ARGSEP_COMMA)
+		out->delim[i++] = ',';
+	if (in->flags & HXFMT_ARGSEP_SPACE)
+		out->delim[i++] = ' ';
 	return out;
-
- out:
-	saved_errno = errno;
-	free(out);
-	errno = saved_errno;
-	return NULL;
-}
-
-static void func_entry_free(void *e)
-{
-	struct func_entry *entry = e;
-
-	free(entry->delim);
-	free(entry);
 }
 
 static const struct HXmap_ops func_entry_ops = {
 	.d_clone = func_entry_clone,
-	.d_free  = func_entry_free,
 };
 
 EXPORT_SYMBOL void HXformat_free(struct HXformat_map *blk)
@@ -349,15 +350,15 @@ static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv,
 }
 
 static const struct HXformat2_fd HXformat2_fmap[] = {
-	{"echo",	HXformat2_echo,		S_CLOSE " ,"},
-	{"env",		HXformat2_env,		S_CLOSE " ,"},
-	{"exec",	HXformat2_exec,		S_CLOSE " "},
-	{"if",		HXformat2_if,		S_CLOSE ","}, /* no sp: ok */
-	{"lower",	HXformat2_lower,	S_CLOSE},
-	{"shell",	HXformat2_shell,	S_CLOSE},
-	{"snl",		HXformat2_snl,		S_CLOSE},
-	{"substr",	HXformat2_substr,	S_CLOSE ","},
-	{"upper",	HXformat2_upper,	S_CLOSE},
+	{"echo",   HXformat2_echo,   HXFMT_ARGSEP_COMMA | HXFMT_ARGSEP_SPACE},
+	{"env",    HXformat2_env,    HXFMT_ARGSEP_COMMA | HXFMT_ARGSEP_SPACE},
+	{"exec",   HXformat2_exec,   HXFMT_ARGSEP_SPACE},
+	{"if",     HXformat2_if,     HXFMT_ARGSEP_COMMA},
+	{"lower",  HXformat2_lower,  HXFMT_ARGSEP_NONE},
+	{"shell",  HXformat2_shell,  HXFMT_ARGSEP_NONE},
+	{"snl",    HXformat2_snl,    HXFMT_ARGSEP_NONE},
+	{"substr", HXformat2_substr, HXFMT_ARGSEP_COMMA},
+	{"upper",  HXformat2_upper,  HXFMT_ARGSEP_NONE},
 };
 
 /**
