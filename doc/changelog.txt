@@ -2,8 +2,14 @@
 
 HEAD
 ====
+
+
+v3.19 (2014-02-21)
+==================
 Enhancements:
 - string: add the HXQUOTE_SQLSQUOTE quoting variant
+Internal changes:
+- format: rework function calling code to support extending with functions
 
 
 v3.18 (2014-03-01)
