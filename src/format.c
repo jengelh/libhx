@@ -29,14 +29,14 @@ struct fmt_entry {
 };
 
 struct func_entry {
-	hxmc_t *(*proc)(int, const hxmc_t *const *);
+	hxmc_t *(*proc)(int, const hxmc_t *const *, const struct HXformat_map *);
 	char *delim;
 	bool (*check)(const struct HXmap *);
 };
 
 struct HXformat2_fd {
 	const char *name;
-	hxmc_t *(*proc)(int, const hxmc_t *const *);
+	hxmc_t *(*proc)(int, const hxmc_t *const *, const struct HXformat_map *);
 	const char *delim;
 	bool (*check)(const struct HXmap *);
 };
@@ -158,7 +158,8 @@ static __inline__ void HXformat2_insuf(const char *func, int argc)
 /*
  * Echo input back, with markers. This is strictly for testing only.
  */
-static hxmc_t *HXformat2_echo(int argc, const hxmc_t *const *argv)
+static hxmc_t *HXformat2_echo(int argc, const hxmc_t *const *argv,
+                              const struct HXformat_map *blk)
 {
 	hxmc_t *ret = HXmc_meminit(NULL, 0);
 	int i;
@@ -173,7 +174,8 @@ static hxmc_t *HXformat2_echo(int argc, const hxmc_t *const *argv)
 	return ret;
 }
 
-static hxmc_t *HXformat2_env(int argc, const hxmc_t *const *argv)
+static hxmc_t *HXformat2_env(int argc, const hxmc_t *const *argv,
+                             const struct HXformat_map *blk)
 {
 	const char *s;
 
@@ -183,7 +185,8 @@ static hxmc_t *HXformat2_env(int argc, const hxmc_t *const *argv)
 	return (s == NULL) ? &HXformat2_nexp : HXmc_strinit(s);
 }
 
-static hxmc_t *HXformat2_if(int argc, const hxmc_t *const *argv)
+static hxmc_t *HXformat2_if(int argc, const hxmc_t *const *argv,
+                            const struct HXformat_map *blk)
 {
 	if (argc < 2) {
 		HXformat2_insuf(__func__, argc);
@@ -198,7 +201,8 @@ static hxmc_t *HXformat2_if(int argc, const hxmc_t *const *argv)
 	       HXmc_strinit(argv[2]) : &HXformat2_nexp;
 }
 
-static hxmc_t *HXformat2_lower(int argc, const hxmc_t *const *argv)
+static hxmc_t *HXformat2_lower(int argc, const hxmc_t *const *argv,
+                               const struct HXformat_map *blk)
 {
 	hxmc_t *ret;
 
@@ -245,14 +249,16 @@ static hxmc_t *HXformat2_exec1(const hxmc_t *const *argv)
 	return &HXformat2_nexp;
 }
 
-static hxmc_t *HXformat2_exec(int argc, const hxmc_t *const *argv)
+static hxmc_t *HXformat2_exec(int argc, const hxmc_t *const *argv,
+                              const struct HXformat_map *blk)
 {
 	if (argc == 0)
 		return &HXformat2_nexp;
 	return HXformat2_exec1(argv);
 }
 
-static hxmc_t *HXformat2_shell(int argc, const hxmc_t *const *argv)
+static hxmc_t *HXformat2_shell(int argc, const hxmc_t *const *argv,
+                               const struct HXformat_map *blk)
 {
 	const char *cmd[] = {"/bin/sh", "-c", NULL, NULL};
 	if (argc == 0)
@@ -261,7 +267,8 @@ static hxmc_t *HXformat2_shell(int argc, const hxmc_t *const *argv)
 	return HXformat2_exec1(cmd);
 }
 
-static hxmc_t *HXformat2_snl(int argc, const hxmc_t *const *argv)
+static hxmc_t *HXformat2_snl(int argc, const hxmc_t *const *argv,
+                             const struct HXformat_map *blk)
 {
 	hxmc_t *s;
 	char *p;
@@ -277,7 +284,8 @@ static hxmc_t *HXformat2_snl(int argc, const hxmc_t *const *argv)
 	return s;
 }
 
-static hxmc_t *HXformat2_substr(int argc, const hxmc_t *const *argv)
+static hxmc_t *HXformat2_substr(int argc, const hxmc_t *const *argv,
+                                const struct HXformat_map *blk)
 {
 	ssize_t offset, length, z;
 	hxmc_t *ret;
@@ -332,7 +340,8 @@ static hxmc_t *HXformat2_substr(int argc, const hxmc_t *const *argv)
 	return ret;
 }
 
-static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv)
+static hxmc_t *HXformat2_upper(int argc, const hxmc_t *const *argv,
+                               const struct HXformat_map *blk)
 {
 	hxmc_t *ret;
 
@@ -415,7 +424,8 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 	/* Unknown functions are silently expanded to nothing, like in make. */
 	if (entry != NULL && (entry->check == NULL || entry->check(blk->vars)))
 		ret = entry->proc(dq->items,
-		      const_cast2(const hxmc_t *const *, argv));
+		      const_cast2(const hxmc_t *const *, argv),
+		      blk);
 	/*
 	 * Pointers in argv are shared with those in dq.
 	 * Free only the outer shell of one.
