@@ -46,31 +46,22 @@ static void t_mc(void)
 static void t_path(void)
 {
 	static const char *const paths[] = {
-		".", "..", "/", "//", "/.", "/./", "/./.",
+		".", "..", "/", "//", "/.", "/./", "/.//", "/./.",
 		"/mnt", "//mnt", "/mnt/", "//mnt/", "//mnt//", "//mnt//root",
 		"/mnt/.", "/mnt/./", "mnt", "mnt/", "mnt/root", "mnt/root/",
 		"mnt//root", NULL
 	};
 	const char *const *iter;
-	char *item;
 
-	printf("# dirname\n");
+	printf("#\tname\tbn\tbne\tdn\n");
 	for (iter = paths; *iter != NULL; ++iter) {
-		item = HX_dirname(*iter);
-		printf("\t%s -> %s\n", *iter, item);
-		free(item);
+		char *bn = HX_basename(*iter);
+		char *bne = HX_basename_exact(*iter);
+		char *dn = HX_dirname(*iter);
+		printf("\t%s\t%s\t%s\t%s\n", *iter, bn, bne, dn);
+		free(bne);
+		free(dn);
 	}
-
-	printf("# basename_exact\n");
-	for (iter = paths; *iter != NULL; ++iter) {
-		item = HX_basename_exact(*iter);
-		printf("\t%s -> %s\n", *iter, item);
-		free(item);
-	}
-
-	printf("# basename_fast\n");
-	for (iter = paths; *iter != NULL; ++iter)
-		printf("\t%s -> %s\n", *iter, HX_basename(*iter));
 }
 
 static void t_strcpy(void)
