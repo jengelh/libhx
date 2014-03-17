@@ -11014,7 +11014,7 @@ HX_basename
 \series bold
 char *
 \series default
-HX_basename_safe(
+HX_basename_exact(
 \series bold
 const char *
 \series default
@@ -11025,7 +11025,7 @@ status open
 \begin_layout Plain Layout
 
 \family typewriter
-HX_basename_safe
+HX_basename_exact
 \end_layout
 
 \end_inset
