@@ -48,9 +48,15 @@ static __inline__ unsigned int min_uint(unsigned int a, unsigned int b)
 EXPORT_SYMBOL char *HX_basename(const char *s)
 {
 	const char *p;
+	/* ignore trailing slashes */
 	for (p = s + strlen(s) - 1; p >= s && *p == '/'; --p)
 		;
 	if (p < s)
+		/*
+		 * String contained only slashes - this must be the root
+		 * directory. Since we have the opportunity, rather than
+		 * returning "////", just give the cleaned-up "/".
+		 */
 		return const_cast1(char *, s + strlen(s) - 1);
 	if ((p = HX_strbchr(s, p, '/')) != NULL)
 		return const_cast1(char *, p + 1);
@@ -65,9 +71,11 @@ EXPORT_SYMBOL char *HX_basename_exact(const char *s)
 
 	if (*s == '\0')
 		return HX_strdup(".");
+	/* ignore trailing slashes */
 	for (end = s + strlen(s) - 1; end >= s && *end == '/'; --end)
 		;
 	if (end < s)
+		/* string consisted of only slashes */
 		return HX_strdup("/");
 
 	start = HX_strbchr(s, end, '/');
