@@ -13,8 +13,10 @@ libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c
 libHX_la_LIBADD  = ${libdl_LIBS} ${libpthread_LIBS} ${librt_LIBS}
-libHX_la_LDFLAGS = -no-undefined -version-info 31:0:3 \
-                   -Wl,--version-script=${srcdir}/libHX.map
+libHX_la_LDFLAGS = -no-undefined -version-info 31:0:3
+if WITH_GNU_LD
+libHX_la_LDFLAGS += -Wl,--version-script=${srcdir}/libHX.map
+endif
 libHX_la_DEPENDENCIES = libHX.map
 
 if MINGW32
@@ -26,8 +28,10 @@ endif
 
 libHX_rtcheck_la_SOURCES = rtcheck.c
 libHX_rtcheck_la_LIBADD  = ${libdl_LIBS}
-libHX_rtcheck_la_LDFLAGS = -no-undefined -avoid-version -module \
-                           -Wl,--version-script=${srcdir}/libHX.map
+libHX_rtcheck_la_LDFLAGS = -no-undefined -avoid-version -module
+if WITH_GNU_LD
+libHX_rtcheck_la_LDFLAGS += -Wl,--version-script=${srcdir}/libHX.map
+endif
 
 EXTRA_DIST = internal.h map_int.h libHX.map
 

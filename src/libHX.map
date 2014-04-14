@@ -33,7 +33,6 @@ global:
 	HX_strsep;
 	HX_strupper;
 	HX_zvecfree;
-	HX_zveclen;
 	HXdeque_del;
 	HXdeque_find;
 	HXdeque_free;
