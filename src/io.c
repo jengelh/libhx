@@ -99,7 +99,16 @@ EXPORT_SYMBOL struct HXdir *HXdir_open(const char *s)
 		size -= sizeof(d->dentry) - offsetof(struct dirent, d_name);
 		size += name_max + 1;
 	} else {
+#ifdef NAME_MAX
 		size += NAME_MAX; /* "best effort" :-/ */
+#elif defined(MAXNAMELEN)
+		size += MAXNAMELEN;
+#else
+		fprintf(stderr, "libHX-warning: Cannot determine buffer size for readdir\n");
+		closedir(tmp_dh);
+		errno = EINVAL;
+		return NULL;
+#endif
 	}
 	if ((d = malloc(size)) == NULL) {
 		closedir(tmp_dh);

@@ -41,6 +41,8 @@ AC_ARG_WITH([pkgconfigdir], AS_HELP_STRING([--with-pkgconfigdir=PATH],
 AC_SUBST([pkgconfigdir])
 
 CHECK_GCC_FVISIBILITY
+AM_CONDITIONAL([WITH_GNU_LD], [test "$with_gnu_ld" = yes])
+
 LIBS_system="$LIBS"
 AC_CHECK_HEADERS([dlfcn.h])
 AM_CONDITIONAL([HAVE_DLFCN_H], [test "$ac_cv_header_dlfcn_h" = "yes"])
