@@ -4,6 +4,12 @@ HEAD
 ====
 
 
+v3.20 (2014-04-18)
+==================
+Enhancements:
+- resolve some link errors when built with Solaris ld
+
+
 v3.19 (2014-02-21)
 ==================
 Enhancements:
