@@ -34,7 +34,10 @@ static unsigned int HXrand_obtain_seed(void)
 
 	clock_gettime(CLOCK_REALTIME, &tv);
 	s  = tv.tv_sec;
-	s ^= tv.tv_nsec << 2;
+	s ^= ~tv.tv_nsec;
+	clock_gettime(CLOCK_MONOTONIC, &tv);
+	s ^= tv.tv_sec;
+	s ^= ~tv.tv_nsec;
 #else
 	s = time(NULL);
 #endif
