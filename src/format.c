@@ -61,8 +61,14 @@ static void fmt_entry_free(void *e)
 {
 	struct fmt_entry *entry = e;
 
-	if (entry->type == (HXTYPE_STRING | HXFORMAT_IMMED))
+	switch (entry->type) {
+	case HXTYPE_STRING | HXFORMAT_IMMED:
 		free(const_cast1(void *, entry->ptr));
+		break;
+	case HXTYPE_MCSTR | HXFORMAT_IMMED:
+		HXmc_free(const_cast1(void *, entry->ptr));
+		break;
+	}
 	free(entry);
 }
 
@@ -117,6 +123,11 @@ EXPORT_SYMBOL int HXformat_add(struct HXformat_map *blk, const char *key,
 	entry->type = ptr_type;
 	if (ptr_type == (HXTYPE_STRING | HXFORMAT_IMMED)) {
 		if ((entry->ptr = HX_strdup(ptr)) == NULL) {
+			free(entry);
+			return -errno;
+		}
+	} else if (ptr_type == (HXTYPE_MCSTR | HXFORMAT_IMMED)) {
+		if ((entry->ptr = HXmc_meminit(ptr, HXmc_length(ptr))) == NULL) {
 			free(entry);
 			return -errno;
 		}
@@ -469,6 +480,12 @@ static hxmc_t *HXformat2_xvar(const struct fmt_entry *entry)
 		case HXTYPE_STRP:
 			HXmc_strcpy(&wp, *static_cast(const char *const *, entry->ptr));
 			break;
+		case HXTYPE_MCSTR:
+		case HXTYPE_MCSTR | HXFORMAT_IMMED: {
+			const hxmc_t *input = entry->ptr;
+			HXmc_memcpy(&wp, input, HXmc_length(input));
+			break;
+		}
 		case HXTYPE_BOOL:
 			HXmc_strcpy(&wp, tf[!!*static_cast(const int *,
 			           entry->ptr)]);
@@ -651,7 +668,7 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *blk,
 		if (ex == NULL)
 			goto out;
 		if (ex != &HXformat2_nexp) {
-			ts = HXmc_strcat(&out, ex);
+			ts = HXmc_memcat(&out, ex, HXmc_length(ex));
 			HXmc_free(ex);
 			if (ts == NULL)
 				goto out;
@@ -660,7 +677,7 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *blk,
 	}
 
 	*resultp = out;
-	return strlen(out);
+	return HXmc_length(out);
 
  out:
 	ret = -errno;
@@ -696,6 +713,7 @@ EXPORT_SYMBOL int HXformat_sprintf(const struct HXformat_map *ftable,
 		return 0;
 	}
 	strncpy(dest, str, size);
+	ret = HXmc_length(dest);
 	HXmc_free(str);
-	return strlen(dest);
+	return ret;
 }

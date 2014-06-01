@@ -2,6 +2,8 @@
 
 HEAD
 ====
+- HXformat_add() now supports HXTYPE_MCSTR objects (with and without
+  HXTYPE_IMMED)
 
 
 v3.20 (2014-04-18)
