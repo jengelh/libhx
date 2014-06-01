@@ -24082,6 +24082,32 @@ xml_getprop
 \begin_inset Newline newline
 \end_inset
 
+char *xml_getnsprop(
+\series bold
+xmlNode *
+\series default
+node, 
+\series bold
+const char *
+\series default
+nsprefix, 
+\series bold
+const char *
+\series default
+attr);
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+xml_getnsprop
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
 xmlAttr 
 \series bold
 *
@@ -24280,6 +24306,23 @@ Set\SpecialChar \-
 Prop
 \family default
 , respectively.
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+xml_getnsprop
+\family default
+ works similar to 
+\family typewriter
+xmlGetNsProp
+\family default
+, but instead of taking a namespace URI, it does a lookup by namespace prefix.
+ The argument order is also different compared to 
+\family typewriter
+xmlGetNsProp
+\family default
+.
 \end_layout
 
 \begin_layout Subsection

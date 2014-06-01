@@ -42,6 +42,29 @@ static __inline__ char *xml_getprop(xmlNode *node, const char *attr)
 #endif
 }
 
+/**
+ * xmlGetNsProp takes, as 3rd argument, a full namespace string.
+ * That is unwieldy.
+ */
+static __inline__ char *xml_getnsprop(xmlNode *node, const char *nsprefix,
+    const char *key)
+{
+	const struct _xmlAttr *attr = NULL;
+	for (attr = node->properties; attr != NULL; attr = attr->next)
+		if (attr->ns != NULL && attr->ns->prefix != NULL &&
+		    xml_strcmp(attr->ns->prefix, nsprefix) == 0)
+			break;
+	if (attr == NULL)
+		return NULL;
+#ifdef __cplusplus
+	return signed_cast<char *>(xmlGetNsProp(node,
+	       signed_cast<const xmlChar *>(key), attr->ns->href));
+#else
+	return signed_cast(char *, xmlGetNsProp(node,
+	       signed_cast(const xmlChar *, key), attr->ns->href));
+#endif
+}
+
 static __inline__ xmlAttr *
 xml_newprop(xmlNode *node, const char *name, const char *value)
 {

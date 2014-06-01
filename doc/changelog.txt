@@ -4,6 +4,8 @@ HEAD
 ====
 - HXformat_add() now supports HXTYPE_MCSTR objects (with and without
   HXTYPE_IMMED)
+- libxml_helper: New xml_getnsprop() function that gets the value of a
+  property (element attribute) by namespace prefix
 
 
 v3.20 (2014-04-18)
