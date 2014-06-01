@@ -1,4 +1,4 @@
-AC_INIT([libHX], [3.20])
+AC_INIT([libHX], [3.21])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
