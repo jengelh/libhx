@@ -408,6 +408,12 @@ EXPORT_SYMBOL struct HXmap *HXmap_init5(enum HXmap_type type,
     unsigned int flags, const struct HXmap_ops *ops, size_t key_size,
     size_t data_size)
 {
+	if ((flags & HXMAP_SINGULAR) &&
+	    (flags & (HXMAP_CDATA | HXMAP_SDATA) || data_size != 0))
+		fprintf(stderr, "WARNING: libHX-map: When HXMAP_SINGULAR is "
+		        "set, HXMAP_CDATA, HXMAP_SDATA and/or data_size != 0 "
+		        "has no effect.\n");
+
 	switch (type) {
 	case HXMAPT_HASH:
 		return HXhashmap_init4(flags, ops, key_size, data_size);
