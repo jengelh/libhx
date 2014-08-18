@@ -12395,6 +12395,11 @@ char
 HX_zvecfree
 \family default
  or equivalent.
+ An empty string (zero-length string) for 
+\family typewriter
+s
+\family default
+ yields a single field.
 \end_layout
 
 \begin_layout Description
