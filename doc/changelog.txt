@@ -2,6 +2,10 @@
 
 HEAD
 ====
+
+
+v3.22 (2014-08-25)
+==================
 Enhancements:
 - string: add the HXQUOTE_SQLBQUOTE quoting variant
 
