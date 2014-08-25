@@ -15,6 +15,7 @@ F column: Function first seen in version, possibly with different API.
 
 RMV	MinVer	FirstA	Name
 ----------------------------------------------------------------------
+3.22	3.22	3.22	HXQUOTE_SQLBQUOTE
 3.21	3.21	3.21	xml_getnsprop
 3.19	3.19	3.19	HXQUOTE_SQLSQUOTE
 3.18	3.18	3.18	HX_stpltrim

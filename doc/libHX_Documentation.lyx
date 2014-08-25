@@ -11970,7 +11970,33 @@ HXQUOTE_SQLSQUOTE
  Escape all single quotes in the string by double single-quotes, as required
  for using it in a single-quoted SQL string.
  No surrounding quotes will be generated to facilitate concatenating of
- HX_strquote results.
+ 
+\family typewriter
+HX_strquote
+\family default
+ results.
+\end_layout
+
+\begin_layout Description
+
+\family typewriter
+HXQUOTE_SQLBQUOTE
+\family default
+
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+HXQUOTE_SQLBQUOTE
+\end_layout
+
+\end_inset
+
+ Escape all backticks in the string by double backticks, as required for
+ using it in a backtick-quoted SQL string (used for table names and columns).
+ No surrounding ticks will be generated to facilitate concatenation.
 \end_layout
 
 \begin_layout Standard

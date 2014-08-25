@@ -505,6 +505,7 @@ static const struct HX_quote_rule HX_quote_rules[] = {
 	[HXQUOTE_LDAPRDN] = {HXQUOTE_REJECT, "\n \"#+,;<=>\\"},
 	[HXQUOTE_URIENC]  = {HXQUOTE_ACCEPT, "-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~"},
 	[HXQUOTE_SQLSQUOTE] = {HXQUOTE_REJECT, "'"},
+	[HXQUOTE_SQLBQUOTE] = {HXQUOTE_REJECT, "`"},
 };
 
 /**
@@ -750,6 +751,7 @@ static size_t HX_quoted_size(const char *s, unsigned int type)
 	case HXQUOTE_SQUOTE:
 	case HXQUOTE_DQUOTE:
 	case HXQUOTE_SQLSQUOTE:
+	case HXQUOTE_SQLBQUOTE:
 		return HX_qsize_bsr(s, HX_quote_rules[type].chars, 1);
 	case HXQUOTE_HTML:
 		return HX_qsize_html(s);
@@ -819,6 +821,7 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 	case HXQUOTE_URIENC:
 		return HX_quote_urlenc(*free_me, src);
 	case HXQUOTE_SQLSQUOTE:
+	case HXQUOTE_SQLBQUOTE:
 		return HX_quote_sqlbackslash(*free_me, src, rule->chars);
 	}
 	return NULL;
