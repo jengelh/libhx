@@ -56,7 +56,7 @@ static void HXhmap_free(struct HXhmap *hmap)
 	struct HXhmap_node *drop, *dnext;
 	unsigned int i;
 
-	for (unsigned int i = 0; i < HXhash_primes[hmap->power]; ++i) {
+	for (i = 0; i < HXhash_primes[hmap->power]; ++i) {
 		HXlist_for_each_entry_safe(drop, dnext,
 		    &hmap->bk_array[i], anchor) {
 			if (hmap->super.ops.k_free != NULL)
