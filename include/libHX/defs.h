@@ -91,24 +91,15 @@ static __inline__ new_type signed_cast(unsigned char *expr)
 			((struct { type x; }){(expr)}.x)
 #	endif
 #	if defined(__GNUC__) && !defined(__clang__) && !defined(const_cast1)
-#		define __const_cast_strip1(expr) \
-			__typeof__(*(union { int z; __typeof__(expr) x; }){0}.x)
-#		define __const_cast_strip2(expr) \
-			__typeof__(**(union { int z; __typeof__(expr) x; }){0}.x)
-#		define __const_cast_strip3(expr) \
-			__typeof__(***(union { int z; __typeof__(expr) x; }){0}.x)
-#		define const_cast1(new_type, expr) ({ \
-			BUILD_BUG_ON(!__builtin_types_compatible_p(__const_cast_strip1(expr), __const_cast_strip1(new_type))); \
+#		define __const_cast_strip(ptrs, expr) \
+			__typeof__(ptrs(union { int z; __typeof__(expr) x; }){0}.x)
+#		define __const_cast_p(ptrs, new_type, expr) ({ \
+			BUILD_BUG_ON(!__builtin_types_compatible_p(__const_cast_strip(ptrs, expr), __const_cast_strip(ptrs, new_type))); \
 			(new_type)(expr); \
 		})
-#		define const_cast2(new_type, expr) ({ \
-			BUILD_BUG_ON(!__builtin_types_compatible_p(__const_cast_strip2(expr), __const_cast_strip2(new_type))); \
-			(new_type)(expr); \
-		})
-#		define const_cast3(new_type, expr) ({ \
-			BUILD_BUG_ON(!__builtin_types_compatible_p(__const_cast_strip3(expr), __const_cast_strip3(new_type))); \
-			(new_type)(expr); \
-		})
+#		define const_cast1(new_type, expr) __const_cast_p(*, new_type, expr)
+#		define const_cast2(new_type, expr) __const_cast_p(**, new_type, expr)
+#		define const_cast3(new_type, expr) __const_cast_p(***, new_type, expr)
 #	endif
 #	ifndef signed_cast
 #		define signed_cast(type, expr)      ((type)(expr))
