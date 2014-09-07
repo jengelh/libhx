@@ -15,6 +15,8 @@
 #include "internal.h"
 #define UNUSED __attribute__((unused))
 
+static int *v_1 UNUSED = const_cast1(int *, (const int *)NULL);
+
 static void c_signed(void)
 {
 	const char *si_00 = "foo";

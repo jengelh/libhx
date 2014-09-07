@@ -93,10 +93,10 @@ static __inline__ new_type signed_cast(unsigned char *expr)
 #	if defined(__GNUC__) && !defined(__clang__) && !defined(const_cast1)
 #		define __const_cast_strip(ptrs, expr) \
 			__typeof__(ptrs(union { int z; __typeof__(expr) x; }){0}.x)
-#		define __const_cast_p(ptrs, new_type, expr) ({ \
-			BUILD_BUG_ON(!__builtin_types_compatible_p(__const_cast_strip(ptrs, expr), __const_cast_strip(ptrs, new_type))); \
-			(new_type)(expr); \
-		})
+#		define __const_cast_p(ptrs, new_type, expr) ((new_type)( \
+			(expr) + \
+			BUILD_BUG_ON_EXPR(!__builtin_types_compatible_p(__const_cast_strip(ptrs, expr), __const_cast_strip(ptrs, new_type))) \
+		))
 #		define const_cast1(new_type, expr) __const_cast_p(*, new_type, expr)
 #		define const_cast2(new_type, expr) __const_cast_p(**, new_type, expr)
 #		define const_cast3(new_type, expr) __const_cast_p(***, new_type, expr)
