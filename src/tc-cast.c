@@ -53,7 +53,7 @@ static void c_const2(void)
 {
 	const int **co_02 = NULL;
 	int **co_03 UNUSED = const_cast2(int **, co_02);
-	int *const *co_04 = const_cast2(int *const *, co_02);
+	int *const *co_04 UNUSED = const_cast2(int *const *, co_02);
 	const int *const *co_05 = const_cast2(const int *const *, co_02);
 	co_02 = const_cast2(const int **, co_05);
 	co_04 = const_cast2(int *const *, co_05);
