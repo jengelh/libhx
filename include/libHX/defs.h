@@ -91,6 +91,24 @@ static __inline__ new_type signed_cast(unsigned char *expr)
 			((struct { type x; }){(expr)}.x)
 #	endif
 #	if defined(__GNUC__) && !defined(__clang__) && !defined(const_cast1)
+		/*
+		 * The idea starts with (in abstract notation)
+		 * 	typeof deref typeof expr
+		 * To deref something, we need an object, which we can get by
+		 * creating a temporary aggregate, such as a union, of which
+		 * the member is accessed and dereferenced.
+		 * 	*(union { __typeof__(expr) x; }){init}.x
+		 * union has two nice properties:
+		 * - with an additional dummy member, we do not have to
+		 *   initialize x according to its type, which, if expr is
+		 *   an array type, may want extra braces.
+		 * - and with that dummy member, we also avoid the ugly
+		 *   "literal 0 is implicitly convertible to a pointer".
+		 * Unfortunately, this all requires C99 compound initializers.
+		 * That's ok - gcc and clang only treat it as a warning even
+		 * under strict C89 - and if you still force strict C89 on
+		 * yourself, you have a lot to answer for either way.
+		 */
 #		define __const_cast_strip(ptrs, expr) \
 			__typeof__(ptrs(union { int z; __typeof__(expr) x; }){0}.x)
 #		define __const_cast_p(ptrs, new_type, expr) ((new_type)( \
