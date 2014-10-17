@@ -16649,38 +16649,12 @@ name "sec:dir-ops1"
 \begin_layout Standard
 libHX provides a minimal readdir-style wrapper for cross-platform directory
  traversal.
- This is needed because platforms such as do not have readdir (e.
-\begin_inset space \thinspace{}
-\end_inset
-
-g.
-\begin_inset space \space{}
-\end_inset
-
-Win32), or to work around peculiarities in the lower implementation.
- Solaris's 
+ This is needed because the Win32 platforms does not have readdir, and there
+ is some housekeeping to do on Unixish platforms, since the 
 \family typewriter
-struct dirent
+dirent
 \family default
- for example is 
-\begin_inset Quotes eld
-\end_inset
-
-too small
-\begin_inset Quotes erd
-\end_inset
-
-, that is, 
-\family typewriter
-readdir
-\family default
- will cause a buffer overrun when Linux code is directly ported to it without
- anticipating for this scenario.
- libHX's 
-\family typewriter
-io.c
-\family default
- mitigates this.
+ structure needs allocation of a path-specific size.
 \end_layout
 
 \begin_layout Subsection
