@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 topdir="${0%/*}";
 abstopdir=$(readlink -f "$topdir");
