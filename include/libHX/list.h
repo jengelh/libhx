@@ -63,35 +63,37 @@ static __inline__ bool HXlist_empty(const struct HXlist_head *head)
 }
 
 #define HXlist_for_each(pos, head) \
-	for ((pos) = (head)->next; (pos) != (void *)(head); \
+	for ((pos) = (head)->next; (pos) != static_cast(void *, (head)); \
 	     (pos) = (pos)->next)
 
 #define HXlist_for_each_rev(pos, head) \
-	for ((pos) = (head)->prev; (pos) != (void *)(head); \
+	for ((pos) = (head)->prev; (pos) != static_cast(void *, (head)); \
 	     (pos) = (pos)->prev)
 
 #define HXlist_for_each_safe(pos, n, head) \
-	for ((pos) = (head)->next, (n) = (pos)->next; (pos) != (void *)(head); \
+	for ((pos) = (head)->next, (n) = (pos)->next; \
+	     (pos) != static_cast(void *, (head)); \
 	     (pos) = (n), (n) = (pos)->next)
 
 #define HXlist_for_each_rev_safe(pos, n, head) \
-	for ((pos) = (head)->prev, (n) = (pos)->prev; (pos) != (void *)(head); \
+	for ((pos) = (head)->prev, (n) = (pos)->prev; \
+	     (pos) != static_cast(void *, (head)); \
 	     (pos) = (n), (n) = (pos)->prev)
 
 #define HXlist_for_each_entry(pos, head, member) \
 	for ((pos) = HXlist_entry((head)->next, __typeof__(*(pos)), member); \
-	     &(pos)->member != (void *)(head); \
+	     &(pos)->member != static_cast(void *, (head)); \
 	     (pos) = HXlist_entry((pos)->member.next, __typeof__(*(pos)), member))
 
 #define HXlist_for_each_entry_rev(pos, head, member) \
 	for ((pos) = HXlist_entry((head)->prev, __typeof__(*(pos)), member); \
-	     &(pos)->member != (void *)(head); \
+	     &(pos)->member != static_cast(void *, (head)); \
 	     (pos) = HXlist_entry((pos)->member.prev, __typeof__(*(pos)), member))
 
 #define HXlist_for_each_entry_safe(pos, n, head, member) \
 	for ((pos) = HXlist_entry((head)->next, __typeof__(*(pos)), member), \
 	     (n) = HXlist_entry((pos)->member.next, __typeof__(*(pos)), member); \
-	     &(pos)->member != (void *)(head); \
+	     &(pos)->member != static_cast(void *, (head)); \
 	     (pos) = (n), (n) = HXlist_entry((n)->member.next, __typeof__(*(n)), \
 	     member))
 
@@ -154,7 +156,7 @@ static __inline__ struct HXlist_head *
 __HXclist_shift(struct HXclist_head *head)
 {
 	struct HXlist_head *p;
-	if ((const void *)head == head->list.next)
+	if (static_cast(const void *, head) == head->list.next)
 		return NULL;
 	p = head->list.next;
 	HXlist_del(p);
