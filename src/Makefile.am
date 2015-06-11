@@ -17,7 +17,7 @@ libHX_la_LDFLAGS = -no-undefined -version-info 31:0:3
 if WITH_GNU_LD
 libHX_la_LDFLAGS += -Wl,--version-script=${srcdir}/libHX.map
 endif
-libHX_la_DEPENDENCIES = libHX.map
+EXTRA_libHX_la_DEPENDENCIES = libHX.map
 
 if MINGW32
 libHX_la_SOURCES += ux-file.c ux-mmap.c
