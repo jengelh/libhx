@@ -12,12 +12,14 @@
 #	include <stddef.h>
 #	include <stdio.h>
 #	include <stdlib.h>
+#	include <time.h>
 #else
 #	include <cassert>
 #	include <cerrno>
 #	include <cstddef>
 #	include <cstdio>
 #	include <cstdlib>
+#	include <ctime>
 #endif
 #include <libHX/defs.h>
 #include <libHX/init.h>
@@ -194,6 +196,20 @@ static void t_split2(void)
 	HX_zvecfree(a);
 }
 
+static void t_strlcpy(void)
+{
+	volatile char buf[2048];
+	size_t i, max = 10000000 + HX_irand(0, 1);
+	struct timespec start, stop, delta;
+	clock_gettime(CLOCK_MONOTONIC, &start);
+	for (i = 0; i < max; ++i)
+		HX_strlcpy(reinterpret_cast(char *, buf),
+			"technically possible", sizeof(buf));
+	clock_gettime(CLOCK_MONOTONIC, &stop);
+	HX_timespec_sub(&delta, &stop, &start);
+	printf("strlcpy: %lu.%09lu\n", static_cast(unsigned long, delta.tv_sec), delta.tv_nsec);
+}
+
 int main(int argc, const char **argv)
 {
 	hxmc_t *tx = NULL;
@@ -222,6 +238,7 @@ int main(int argc, const char **argv)
 	t_strtrim();
 	t_split();
 	t_split2();
+	t_strlcpy();
 	HXmc_free(tx);
 	HX_exit();
 	return EXIT_SUCCESS;
