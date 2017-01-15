@@ -215,7 +215,7 @@ EXPORT_SYMBOL char *f_strlcpy_mem(char *dest, const char *src, size_t dsize)
 	if (dsize > 0) {
 		memcpy(dest, src, dsize - 1);
 		dest[dsize-1] = '\0';
-	}}
+	}
 	return dest;
 }
 
