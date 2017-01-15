@@ -22,6 +22,9 @@
 #		define containerof(var, type, member) reinterpret_cast<type *>( \
 			reinterpret_cast<char *>(var) - offsetof(type, member))
 #	endif
+#	ifndef static_cast
+#		define static_cast(T, x) static_cast<T>(x)
+#	endif
 
 template<typename new_type>
 static __inline__ new_type signed_cast(const char *expr)
