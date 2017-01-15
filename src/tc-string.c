@@ -211,7 +211,7 @@ EXPORT_SYMBOL char *f_strlcpy_mem(char *dest, const char *src, size_t dsize)
 {
 	size_t slen = strlen(src);
 	if (slen < dsize)
-		return memcpy(dest, src, slen + 1);
+		return static_cast(char *, memcpy(dest, src, slen + 1));
 	if (dsize > 0) {
 		memcpy(dest, src, dsize - 1);
 		dest[dsize-1] = '\0';
