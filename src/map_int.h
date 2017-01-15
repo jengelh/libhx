@@ -86,8 +86,8 @@ enum {
  * @sub:	leaves
  * @color:	RBtree-specific node color
  */
-struct HXrbtree_node {
-	struct HXrbtree_node *sub[2];
+struct HXrbnode {
+	struct HXrbnode *sub[2];
 	/* HXmap_node */
 	union {
 		void *key;
@@ -102,7 +102,7 @@ struct HXrbtree_node {
 
 struct HXrbtree {
 	struct HXmap_private super;
-	struct HXrbtree_node *root;
+	struct HXrbnode *root;
 	unsigned int tid;
 };
 
@@ -110,9 +110,9 @@ struct HXrbtrav {
 	struct HXmap_trav super;
 	unsigned int tid; /* last seen btree transaction */
 	const struct HXrbtree *tree;
-	struct HXrbtree_node *current; /* last visited node */
+	struct HXrbnode *current; /* last visited node */
 	char *checkpoint;
-	struct HXrbtree_node *path[RBT_MAXDEP]; /* stored path */
+	struct HXrbnode *path[RBT_MAXDEP]; /* stored path */
 	unsigned char dir[RBT_MAXDEP];
 	unsigned char depth;
 };

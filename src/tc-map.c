@@ -468,7 +468,7 @@ static void tmap_hmap_test_1(void)
 	tmap_ipop();
 }
 
-static void __rbt_walk_tree(const struct HXrbtree_node *node,
+static void __rbt_walk_tree(const struct HXrbnode *node,
     char *buf, size_t s)
 {
 	bool has_children = node->sub[0] != NULL || node->sub[1] != NULL;
@@ -494,7 +494,7 @@ static void __rbt_walk_tree(const struct HXrbtree_node *node,
  * @buf:	buffer for texitree representation
  * @size:	size for @buf
  */
-static void rbt_walk_tree(const struct HXrbtree_node *node,
+static void rbt_walk_tree(const struct HXrbnode *node,
     char *buf, size_t size)
 {
 	*buf = '\0';
@@ -517,7 +517,7 @@ static struct HXmap *rbt_new_perfect_tree(unsigned int height,
 	return tree;
 }
 
-static unsigned int rbt_tree_height(const struct HXrbtree_node *node)
+static unsigned int rbt_tree_height(const struct HXrbnode *node)
 {
 	unsigned int a = 1, b = 1;
 	if (node->sub[0] != NULL)
@@ -593,7 +593,7 @@ static void tmap_rbt_test_1(void)
  *
  * Verify that there are no red nodes with red children.
  */
-static bool rbt_no_2red_children(const struct HXrbtree_node *node)
+static bool rbt_no_2red_children(const struct HXrbnode *node)
 {
 	if (node->sub[RBT_LEFT] != NULL) {
 		if (node->color == RBT_RED &&
@@ -618,7 +618,7 @@ static bool rbt_no_2red_children(const struct HXrbtree_node *node)
  *
  * Returns the black height, or -1 if the black height is not consistent.
  */
-static int rbt_black_height(const struct HXrbtree_node *node)
+static int rbt_black_height(const struct HXrbnode *node)
 {
 	int lh = 0, rh = 0;
 
@@ -637,7 +637,7 @@ static int rbt_black_height(const struct HXrbtree_node *node)
 		return rh + (node->color == RBT_BLACK);
 }
 
-static bool rbt_verify_tree(const struct HXrbtree_node *root)
+static bool rbt_verify_tree(const struct HXrbnode *root)
 {
 	/* Root is black */
 	if (root->color != RBT_BLACK) {

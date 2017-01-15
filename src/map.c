@@ -72,7 +72,7 @@ static void HXhmap_free(struct HXhmap *hmap)
 }
 
 static void HXrbtree_free_dive(const struct HXrbtree *btree,
-    struct HXrbtree_node *node)
+    struct HXrbnode *node)
 {
 	/*
 	 * Recursively dives into the tree and destroys elements. Note that you
@@ -379,7 +379,7 @@ static struct HXmap *HXrbtree_init4(unsigned int flags,
 	struct HXrbtree *btree;
 
 	BUILD_BUG_ON(offsetof(struct HXrbtree, root) +
-	             offsetof(struct HXrbtree_node, sub[0]) !=
+	             offsetof(struct HXrbnode, sub[0]) !=
 	             offsetof(struct HXrbtree, root));
 
 	if ((btree = calloc(1, sizeof(*btree))) == NULL)
@@ -470,7 +470,7 @@ static struct HXhmap_node *HXhmap_find(const struct HXhmap *hmap,
 static const struct HXmap_node *HXrbtree_find(const struct HXrbtree *btree,
     const void *key)
 {
-	struct HXrbtree_node *node = btree->root;
+	struct HXrbnode *node = btree->root;
 	int res;
 
 	while (node != NULL) {
@@ -592,10 +592,10 @@ static int HXhmap_add(struct HXhmap *hmap, const void *key, const void *value)
  * @depth:	current index in @path and @dir
  * @tid:	pointer to transaction ID which may need updating
  */
-static void HXrbtree_amov(struct HXrbtree_node **path,
+static void HXrbtree_amov(struct HXrbnode **path,
     const unsigned char *dir, unsigned int depth, unsigned int *tid)
 {
-	struct HXrbtree_node *uncle, *parent, *grandp, *newnode;
+	struct HXrbnode *uncle, *parent, *grandp, *newnode;
 
 	/*
 	 * The newly inserted node (or the last rebalanced node) at
@@ -657,7 +657,7 @@ static void HXrbtree_amov(struct HXrbtree_node **path,
 }
 
 static int HXrbtree_replace(const struct HXrbtree *btree,
-    struct HXrbtree_node *node, const void *value)
+    struct HXrbnode *node, const void *value)
 {
 	void *old_value, *new_value;
 
@@ -677,18 +677,18 @@ static int HXrbtree_replace(const struct HXrbtree *btree,
 static int HXrbtree_add(struct HXrbtree *btree,
     const void *key, const void *value)
 {
-	struct HXrbtree_node *node, *path[RBT_MAXDEP];
+	struct HXrbnode *node, *path[RBT_MAXDEP];
 	unsigned char dir[RBT_MAXDEP];
 	unsigned int depth = 0;
 	int saved_errno;
 
 	/*
-	 * Since our struct HXrbtree_node runs without a ->parent pointer,
+	 * Since our struct HXrbnode runs without a ->parent pointer,
 	 * the path "upwards" from @node needs to be recorded somehow,
 	 * here with @path. Another array, @dir is used to speedup direction
 	 * decisions. (WP's "n->parent == grandparent(n)->left" is just slow.)
 	 */
-	path[depth]  = reinterpret_cast(struct HXrbtree_node *, &btree->root);
+	path[depth]  = reinterpret_cast(struct HXrbnode *, &btree->root);
 	dir[depth++] = 0;
 	node = btree->root;
 
@@ -708,7 +708,7 @@ static int HXrbtree_add(struct HXrbtree *btree,
 		node         = node->sub[res];
 	}
 
-	if ((node = malloc(sizeof(struct HXrbtree_node))) == NULL)
+	if ((node = malloc(sizeof(struct HXrbnode))) == NULL)
 		return -errno;
 
 	/* New node, push data into it */
@@ -803,11 +803,11 @@ static void *HXhmap_del(struct HXhmap *hmap, const void *key)
 	return value;
 }
 
-static unsigned int HXrbtree_del_mm(struct HXrbtree_node **path,
+static unsigned int HXrbtree_del_mm(struct HXrbnode **path,
     unsigned char *dir, unsigned int depth)
 {
 	/* Both subtrees exist */
-	struct HXrbtree_node *io_node, *io_parent, *orig_node = path[depth];
+	struct HXrbnode *io_node, *io_parent, *orig_node = path[depth];
 	unsigned char color;
 	unsigned int spos;
 
@@ -858,10 +858,10 @@ static unsigned int HXrbtree_del_mm(struct HXrbtree_node **path,
 	return depth;
 }
 
-static void HXrbtree_dmov(struct HXrbtree_node **path, unsigned char *dir,
+static void HXrbtree_dmov(struct HXrbnode **path, unsigned char *dir,
     unsigned int depth)
 {
-	struct HXrbtree_node *w, *x;
+	struct HXrbnode *w, *x;
 
 	while (true) {
 		unsigned char LR = dir[depth - 1];
@@ -906,7 +906,7 @@ static void HXrbtree_dmov(struct HXrbtree_node **path, unsigned char *dir,
 
 		if (w->sub[!LR] == NULL || w->sub[!LR]->color == RBT_BLACK) {
 			/* Case 5 */
-			struct HXrbtree_node *y = w->sub[LR];
+			struct HXrbnode *y = w->sub[LR];
 			y->color = RBT_BLACK;
 			w->color = RBT_RED;
 			w->sub[LR] = y->sub[!LR];
@@ -927,7 +927,7 @@ static void HXrbtree_dmov(struct HXrbtree_node **path, unsigned char *dir,
 
 static void *HXrbtree_del(struct HXrbtree *btree, const void *key)
 {
-	struct HXrbtree_node *path[RBT_MAXDEP], *node;
+	struct HXrbnode *path[RBT_MAXDEP], *node;
 	unsigned char dir[RBT_MAXDEP];
 	unsigned int depth = 0;
 	void *itemptr;
@@ -935,7 +935,7 @@ static void *HXrbtree_del(struct HXrbtree *btree, const void *key)
 	if (btree->root == NULL)
 		return NULL;
 
-	path[depth]  = reinterpret_cast(struct HXrbtree_node *, &btree->root);
+	path[depth]  = reinterpret_cast(struct HXrbnode *, &btree->root);
 	dir[depth++] = 0;
 	node         = btree->root;
 
@@ -1029,7 +1029,7 @@ static void HXhmap_keysvalues(const struct HXhmap *hmap,
 		}
 }
 
-static struct HXmap_node *HXrbtree_keysvalues(const struct HXrbtree_node *node,
+static struct HXmap_node *HXrbtree_keysvalues(const struct HXrbnode *node,
     struct HXmap_node *array)
 {
 	if (node->sub[0] != NULL)
@@ -1150,7 +1150,7 @@ static const struct HXmap_node *HXhmap_traverse(struct HXhmap_trav *trav)
 }
 
 static void HXrbtrav_checkpoint(struct HXrbtrav *trav,
-    const struct HXrbtree_node *node)
+    const struct HXrbnode *node)
 {
 	const struct HXrbtree *tree = trav->tree;
 
@@ -1166,11 +1166,11 @@ static void HXrbtrav_checkpoint(struct HXrbtrav *trav,
 	}
 }
 
-static struct HXrbtree_node *HXrbtrav_next(struct HXrbtrav *trav)
+static struct HXrbnode *HXrbtrav_next(struct HXrbtrav *trav)
 {
 	if (trav->current->sub[RBT_RIGHT] != NULL) {
 		/* Got a right child */
-		struct HXrbtree_node *node;
+		struct HXrbnode *node;
 
 		trav->dir[trav->depth++] = RBT_RIGHT;
 		node = trav->current->sub[RBT_RIGHT];
@@ -1210,7 +1210,7 @@ static struct HXrbtree_node *HXrbtrav_next(struct HXrbtrav *trav)
 	return trav->current;
 }
 
-static struct HXrbtree_node *HXrbtrav_rewalk(struct HXrbtrav *trav)
+static struct HXrbnode *HXrbtrav_rewalk(struct HXrbtrav *trav)
 {
 	/*
 	 * When the binary tree has been distorted (or the traverser is
@@ -1219,7 +1219,7 @@ static struct HXrbtree_node *HXrbtrav_rewalk(struct HXrbtrav *trav)
 	 * find the node we were last at.
 	 */
 	const struct HXrbtree *btree = trav->tree;
-	struct HXrbtree_node *node   = btree->root;
+	struct HXrbnode *node   = btree->root;
 	bool go_next = false;
 
 	trav->depth = 0;
@@ -1233,7 +1233,7 @@ static struct HXrbtree_node *HXrbtrav_rewalk(struct HXrbtrav *trav)
 		}
 	} else {
 		/* Search for the specific node to rebegin traversal at. */
-		const struct HXrbtree_node *newpath[RBT_MAXDEP];
+		const struct HXrbnode *newpath[RBT_MAXDEP];
 		unsigned char newdir[RBT_MAXDEP];
 		int newdepth = 0, res;
 		bool found = false;
@@ -1312,7 +1312,7 @@ static struct HXrbtree_node *HXrbtrav_rewalk(struct HXrbtrav *trav)
 
 static const struct HXmap_node *HXrbtree_traverse(struct HXrbtrav *trav)
 {
-	const struct HXrbtree_node *node;
+	const struct HXrbnode *node;
 
 	if (trav->tid != trav->tree->tid || trav->current == NULL)
 		/*
@@ -1380,7 +1380,7 @@ static void HXhmap_qfe(const struct HXhmap *hmap, qfe_fn_t fn, void *arg)
 				return;
 }
 
-static void HXrbtree_qfe(const struct HXrbtree_node *node,
+static void HXrbtree_qfe(const struct HXrbnode *node,
     qfe_fn_t fn, void *arg)
 {
 	if (node->sub[RBT_LEFT] != NULL)
