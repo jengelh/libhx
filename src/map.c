@@ -21,6 +21,8 @@
 #include <libHX/string.h>
 #include "internal.h"
 #include "map_int.h"
+#define N_LEFT  sub[RBT_LEFT]
+#define N_RIGHT sub[RBT_RIGHT]
 
 typedef void *(*clonefunc_t)(const void *, size_t);
 
@@ -80,10 +82,10 @@ static void HXrbtree_free_dive(const struct HXrbtree *btree,
 	 * deletion with HXrbtree_del(). Since this functions is meant to free
 	 * it all, it does not need to care about rebalancing.
 	 */
-	if (node->sub[RBT_LEFT] != NULL)
-		HXrbtree_free_dive(btree, node->sub[RBT_LEFT]);
-	if (node->sub[RBT_RIGHT] != NULL)
-		HXrbtree_free_dive(btree, node->sub[RBT_RIGHT]);
+	if (node->N_LEFT != NULL)
+		HXrbtree_free_dive(btree, node->N_LEFT);
+	if (node->N_RIGHT != NULL)
+		HXrbtree_free_dive(btree, node->N_RIGHT);
 	if (btree->super.ops.k_free != NULL)
 		btree->super.ops.k_free(node->key);
 	if (btree->super.ops.d_free != NULL)
@@ -724,7 +726,7 @@ static int HXrbtree_add(struct HXrbtree *btree,
 	 * (each simple path has the same number of black nodes), it is colored
 	 * red so that below we only need to check for rule 1 violations.
 	 */
-	node->sub[RBT_LEFT] = node->sub[RBT_RIGHT] = NULL;
+	node->N_LEFT = node->N_RIGHT = NULL;
 	node->color = RBT_RED;
 	path[depth-1]->sub[dir[depth-1]] = node;
 	++btree->super.items;
@@ -811,12 +813,12 @@ static unsigned int HXrbtree_del_mm(struct HXrbnode **path,
 	unsigned char color;
 	unsigned int spos;
 
-	io_node    = orig_node->sub[RBT_RIGHT];
+	io_node    = orig_node->N_RIGHT;
 	dir[depth] = RBT_RIGHT;
 
-	if (io_node->sub[RBT_LEFT] == NULL) {
+	if (io_node->N_LEFT == NULL) {
 		/* Right subtree node is direct inorder */
-		io_node->sub[RBT_LEFT] = orig_node->sub[RBT_LEFT];
+		io_node->N_LEFT = orig_node->N_LEFT;
 		color                = io_node->color;
 		io_node->color       = orig_node->color;
 		orig_node->color     = color;
@@ -836,14 +838,14 @@ static unsigned int HXrbtree_del_mm(struct HXrbnode **path,
 		io_parent    = io_node;
 		path[depth]  = io_parent;
 		dir[depth++] = RBT_LEFT;
-		io_node      = io_parent->sub[RBT_LEFT];
-	} while (io_node->sub[RBT_LEFT] != NULL);
+		io_node      = io_parent->N_LEFT;
+	} while (io_node->N_LEFT != NULL);
 
 	/* move node up */
 	path[spos-1]->sub[dir[spos-1]] = path[spos] = io_node;
-	io_parent->sub[RBT_LEFT]         = io_node->sub[RBT_RIGHT];
-	io_node->sub[RBT_LEFT]           = orig_node->sub[RBT_LEFT];
-	io_node->sub[RBT_RIGHT]          = orig_node->sub[RBT_RIGHT];
+	io_parent->N_LEFT         = io_node->N_RIGHT;
+	io_node->N_LEFT           = orig_node->N_LEFT;
+	io_node->N_RIGHT          = orig_node->N_RIGHT;
 
 	color          = io_node->color;
 	io_node->color = orig_node->color;
@@ -966,12 +968,12 @@ static void *HXrbtree_del(struct HXrbtree *btree, const void *key)
 	++btree->tid;
 
 	path[depth] = node;
-	if (node->sub[RBT_RIGHT] == NULL)
+	if (node->N_RIGHT == NULL)
 		/* Simple case: No right subtree, replace by left subtree. */
-		path[depth-1]->sub[dir[depth-1]] = node->sub[RBT_LEFT];
-	else if (node->sub[RBT_LEFT] == NULL)
+		path[depth-1]->sub[dir[depth-1]] = node->N_LEFT;
+	else if (node->N_LEFT == NULL)
 		/* Simple case: No left subtree, replace by right subtree. */
-		path[depth-1]->sub[dir[depth-1]] = node->sub[RBT_RIGHT];
+		path[depth-1]->sub[dir[depth-1]] = node->N_RIGHT;
 	else
 		/*
 		 * Find minimum/maximum element in right/left subtree and
@@ -1168,17 +1170,17 @@ static void HXrbtrav_checkpoint(struct HXrbtrav *trav,
 
 static struct HXrbnode *HXrbtrav_next(struct HXrbtrav *trav)
 {
-	if (trav->current->sub[RBT_RIGHT] != NULL) {
+	if (trav->current->N_RIGHT != NULL) {
 		/* Got a right child */
 		struct HXrbnode *node;
 
 		trav->dir[trav->depth++] = RBT_RIGHT;
-		node = trav->current->sub[RBT_RIGHT];
+		node = trav->current->N_RIGHT;
 
 		/* Which might have left childs (our inorder successors!) */
 		while (node != NULL) {
 			trav->path[trav->depth] = node;
-			node = node->sub[RBT_LEFT];
+			node = node->N_LEFT;
 			trav->dir[trav->depth++] = RBT_LEFT;
 		}
 		trav->current = trav->path[--trav->depth];
@@ -1228,7 +1230,7 @@ static struct HXrbnode *HXrbtrav_rewalk(struct HXrbtrav *trav)
 		/* Walk down the tree to the smallest element */
 		while (node != NULL) {
 			trav->path[trav->depth] = node;
-			node = node->sub[RBT_LEFT];
+			node = node->N_LEFT;
 			trav->dir[trav->depth++] = RBT_LEFT;
 		}
 	} else {
@@ -1383,12 +1385,12 @@ static void HXhmap_qfe(const struct HXhmap *hmap, qfe_fn_t fn, void *arg)
 static void HXrbtree_qfe(const struct HXrbnode *node,
     qfe_fn_t fn, void *arg)
 {
-	if (node->sub[RBT_LEFT] != NULL)
-		HXrbtree_qfe(node->sub[RBT_LEFT], fn, arg);
+	if (node->N_LEFT != NULL)
+		HXrbtree_qfe(node->N_LEFT, fn, arg);
 	if (!(*fn)(static_cast(const void *, &node->key), arg))
 		return;
-	if (node->sub[RBT_RIGHT] != NULL)
-		HXrbtree_qfe(node->sub[RBT_RIGHT], fn, arg);
+	if (node->N_RIGHT != NULL)
+		HXrbtree_qfe(node->N_RIGHT, fn, arg);
 }
 
 EXPORT_SYMBOL void HXmap_qfe(const struct HXmap *xmap, qfe_fn_t fn, void *arg)
