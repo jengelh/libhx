@@ -53,9 +53,9 @@ EXPORT_SYMBOL const unsigned int HXhash_primes[] = {
 };
 #endif
 
-static void HXhmap_free(struct HXhmap *hmap)
+static void HXumap_free(struct HXumap *hmap)
 {
-	struct HXhmap_node *drop, *dnext;
+	struct HXumap_node *drop, *dnext;
 	unsigned int i;
 
 	for (i = 0; i < HXhash_primes[hmap->power]; ++i) {
@@ -107,7 +107,7 @@ EXPORT_SYMBOL void HXmap_free(struct HXmap *xmap)
 
 	switch (map->type) {
 	case HXMAPT_HASH:
-		return HXhmap_free(vmap);
+		return HXumap_free(vmap);
 	case HXMAPT_RBTREE:
 		return HXrbtree_free(vmap);
 	default:
@@ -279,15 +279,15 @@ x_frac(unsigned int n, unsigned int d, unsigned int v)
 }
 
 /**
- * HXhmap_move - move elements from one map to another
+ * HXumap_move - move elements from one map to another
  * @bk_array:	target bucket array
  * @bk_number:	number of buckets
  * @hmap:	old hash table
  */
-static void HXhmap_move(struct HXlist_head *bk_array, unsigned int bk_number,
-    struct HXhmap *hmap)
+static void HXumap_move(struct HXlist_head *bk_array, unsigned int bk_number,
+    struct HXumap *hmap)
 {
-	struct HXhmap_node *drop, *dnext;
+	struct HXumap_node *drop, *dnext;
 	unsigned int bk_idx, i;
 
 #ifdef NONPRIME_HASH
@@ -309,11 +309,11 @@ static void HXhmap_move(struct HXlist_head *bk_array, unsigned int bk_number,
 }
 
 /**
- * HXhmap_layout - resize and rehash table
+ * HXumap_layout - resize and rehash table
  * @hmap:	hash map
  * @prime_idx:	requested new table size (prime power thereof)
  */
-static int HXhmap_layout(struct HXhmap *hmap, unsigned int power)
+static int HXumap_layout(struct HXumap *hmap, unsigned int power)
 {
 	const unsigned int bk_number = HXhash_primes[power];
 	struct HXlist_head *bk_array, *old_array = NULL;
@@ -325,7 +325,7 @@ static int HXhmap_layout(struct HXhmap *hmap, unsigned int power)
 	for (i = 0; i < bk_number; ++i)
 		HXlist_init(&bk_array[i]);
 	if (hmap->bk_array != NULL) {
-		HXhmap_move(bk_array, bk_number, hmap);
+		HXumap_move(bk_array, bk_number, hmap);
 		old_array = hmap->bk_array;
 		/*
 		 * It is ok to increment the TID this late. @map->bk_array is
@@ -346,7 +346,7 @@ static struct HXmap *HXhashmap_init4(unsigned int flags,
     const struct HXmap_ops *ops, size_t key_size, size_t data_size)
 {
 	struct HXmap_private *super;
-	struct HXhmap *hmap;
+	struct HXumap *hmap;
 	int saved_errno;
 
 	if ((hmap = calloc(1, sizeof(*hmap))) == NULL)
@@ -360,7 +360,7 @@ static struct HXmap *HXhashmap_init4(unsigned int flags,
 	super->data_size = data_size;
 	HXmap_ops_setup(super, ops);
 	hmap->tid = 1;
-	errno = HXhmap_layout(hmap, 0);
+	errno = HXumap_layout(hmap, 0);
 	if (hmap->bk_array == NULL)
 		goto out;
 
@@ -369,7 +369,7 @@ static struct HXmap *HXhashmap_init4(unsigned int flags,
 
  out:
 	saved_errno = errno;
-	HXhmap_free(hmap);
+	HXumap_free(hmap);
 	errno = saved_errno;
 	return NULL;
 }
@@ -449,10 +449,10 @@ EXPORT_SYMBOL struct HXmap *HXmap_init(enum HXmap_type type,
 	return HXmap_init5(type, flags, NULL, 0, 0);
 }
 
-static struct HXhmap_node *HXhmap_find(const struct HXhmap *hmap,
+static struct HXumap_node *HXumap_find(const struct HXumap *hmap,
     const void *key)
 {
-	struct HXhmap_node *drop;
+	struct HXumap_node *drop;
 	unsigned int bk_idx;
 
 #ifdef NONPRIME_HASH
@@ -493,7 +493,7 @@ HXmap_find(const struct HXmap *xmap, const void *key)
 
 	switch (map->type) {
 	case HXMAPT_HASH: {
-		const struct HXhmap_node *node = HXhmap_find(vmap, key);
+		const struct HXumap_node *node = HXumap_find(vmap, key);
 		if (node == NULL)
 			return NULL;
 		return static_cast(const void *, &node->key);
@@ -519,9 +519,9 @@ EXPORT_SYMBOL void *HXmap_get(const struct HXmap *map, const void *key)
 }
 
 /**
- * HXhmap_replace - replace value in a drop
+ * HXumap_replace - replace value in a drop
  */
-static int HXhmap_replace(const struct HXhmap *hmap, struct HXhmap_node *drop,
+static int HXumap_replace(const struct HXumap *hmap, struct HXumap_node *drop,
     const void *value)
 {
 	void *old_value, *new_value;
@@ -539,21 +539,21 @@ static int HXhmap_replace(const struct HXhmap *hmap, struct HXhmap_node *drop,
 	return 1;
 }
 
-static int HXhmap_add(struct HXhmap *hmap, const void *key, const void *value)
+static int HXumap_add(struct HXumap *hmap, const void *key, const void *value)
 {
-	struct HXhmap_node *drop;
+	struct HXumap_node *drop;
 	unsigned int bk_idx;
 	int ret, saved_errno;
 
-	if ((drop = HXhmap_find(hmap, key)) != NULL)
-		return HXhmap_replace(hmap, drop, value);
+	if ((drop = HXumap_find(hmap, key)) != NULL)
+		return HXumap_replace(hmap, drop, value);
 
 	if (hmap->super.items >= hmap->max_load &&
 	    hmap->power < ARRAY_SIZE(HXhash_primes) - 1) {
-		if ((ret = HXhmap_layout(hmap, hmap->power + 1)) <= 0)
+		if ((ret = HXumap_layout(hmap, hmap->power + 1)) <= 0)
 			return ret;
 	} else if (hmap->super.items < hmap->min_load && hmap->power > 0) {
-		if ((ret = HXhmap_layout(hmap, hmap->power - 1)) <= 0)
+		if ((ret = HXumap_layout(hmap, hmap->power - 1)) <= 0)
 			return ret;
 	}
 
@@ -767,7 +767,7 @@ EXPORT_SYMBOL int HXmap_add(struct HXmap *xmap,
 
 	switch (map->type) {
 	case HXMAPT_HASH:
-		return HXhmap_add(vmap, key, value);
+		return HXumap_add(vmap, key, value);
 	case HXMAPT_RBTREE:
 		return HXrbtree_add(vmap, key, value);
 	default:
@@ -775,12 +775,12 @@ EXPORT_SYMBOL int HXmap_add(struct HXmap *xmap,
 	}
 }
 
-static void *HXhmap_del(struct HXhmap *hmap, const void *key)
+static void *HXumap_del(struct HXumap *hmap, const void *key)
 {
-	struct HXhmap_node *drop;
+	struct HXumap_node *drop;
 	void *value;
 
-	if ((drop = HXhmap_find(hmap, key)) == NULL) {
+	if ((drop = HXumap_find(hmap, key)) == NULL) {
 		errno = ENOENT;
 		return NULL;
 	}
@@ -793,7 +793,7 @@ static void *HXhmap_del(struct HXhmap *hmap, const void *key)
 		 * Ignore return value. If it failed, it will continue to use
 		 * the current bk_array.
 		 */
-		HXhmap_layout(hmap, hmap->power - 1);
+		HXumap_layout(hmap, hmap->power - 1);
 
 	value = drop->data;
 	if (hmap->super.ops.k_free != NULL)
@@ -1008,7 +1008,7 @@ EXPORT_SYMBOL void *HXmap_del(struct HXmap *xmap, const void *key)
 
 	switch (map->type) {
 	case HXMAPT_HASH:
-		return HXhmap_del(vmap, key);
+		return HXumap_del(vmap, key);
 	case HXMAPT_RBTREE:
 		return HXrbtree_del(vmap, key);
 	default:
@@ -1017,10 +1017,10 @@ EXPORT_SYMBOL void *HXmap_del(struct HXmap *xmap, const void *key)
 	}
 }
 
-static void HXhmap_keysvalues(const struct HXhmap *hmap,
+static void HXumap_keysvalues(const struct HXumap *hmap,
     struct HXmap_node *array)
 {
-	const struct HXhmap_node *node;
+	const struct HXumap_node *node;
 	unsigned int i;
 
 	for (i = 0; i < HXhash_primes[hmap->power]; ++i)
@@ -1064,7 +1064,7 @@ EXPORT_SYMBOL struct HXmap_node *HXmap_keysvalues(const struct HXmap *xmap)
 
 	switch (map->type) {
 	case HXMAPT_HASH:
-		HXhmap_keysvalues(vmap, array);
+		HXumap_keysvalues(vmap, array);
 		break;
 	case HXMAPT_RBTREE:
 		HXrbtree_keysvalues(
@@ -1075,9 +1075,9 @@ EXPORT_SYMBOL struct HXmap_node *HXmap_keysvalues(const struct HXmap *xmap)
 	return array;
 }
 
-static void *HXhmap_travinit(const struct HXhmap *hmap, unsigned int flags)
+static void *HXumap_travinit(const struct HXumap *hmap, unsigned int flags)
 {
-	struct HXhmap_trav *trav;
+	struct HXumap_trav *trav;
 
 	if ((trav = malloc(sizeof(*trav))) == NULL)
 		return NULL;
@@ -1111,7 +1111,7 @@ EXPORT_SYMBOL struct HXmap_trav *HXmap_travinit(const struct HXmap *xmap,
 
 	switch (map->type) {
 	case HXMAPT_HASH:
-		return HXhmap_travinit(vmap, flags);
+		return HXumap_travinit(vmap, flags);
 	case HXMAPT_RBTREE:
 		return HXrbtrav_init(vmap, flags);
 	default:
@@ -1120,10 +1120,10 @@ EXPORT_SYMBOL struct HXmap_trav *HXmap_travinit(const struct HXmap *xmap,
 	}
 }
 
-static const struct HXmap_node *HXhmap_traverse(struct HXhmap_trav *trav)
+static const struct HXmap_node *HXumap_traverse(struct HXumap_trav *trav)
 {
-	const struct HXhmap *hmap = trav->hmap;
-	const struct HXhmap_node *drop;
+	const struct HXumap *hmap = trav->hmap;
+	const struct HXumap_node *drop;
 
 	if (trav->head == NULL) {
 		trav->head = hmap->bk_array[trav->bk_current].next;
@@ -1147,7 +1147,7 @@ static const struct HXmap_node *HXhmap_traverse(struct HXhmap_trav *trav)
 		trav->head = hmap->bk_array[trav->bk_current].next;
 	}
 
-	drop = HXlist_entry(trav->head, struct HXhmap_node, anchor);
+	drop = HXlist_entry(trav->head, struct HXumap_node, anchor);
 	return static_cast(const void *, &drop->key);
 }
 
@@ -1337,7 +1337,7 @@ EXPORT_SYMBOL const struct HXmap_node *HXmap_traverse(struct HXmap_trav *trav)
 
 	switch (trav->type) {
 	case HXMAPT_HASH:
-		return HXhmap_traverse(xtrav);
+		return HXumap_traverse(xtrav);
 	case HXMAPT_RBTREE:
 		return HXrbtree_traverse(xtrav);
 	default:
@@ -1371,9 +1371,9 @@ EXPORT_SYMBOL void HXmap_travfree(struct HXmap_trav *trav)
 	}
 }
 
-static void HXhmap_qfe(const struct HXhmap *hmap, qfe_fn_t fn, void *arg)
+static void HXumap_qfe(const struct HXumap *hmap, qfe_fn_t fn, void *arg)
 {
-	const struct HXhmap_node *hnode;
+	const struct HXumap_node *hnode;
 	unsigned int i;
 
 	for (i = 0; i < HXhash_primes[hmap->power]; ++i)
@@ -1400,7 +1400,7 @@ EXPORT_SYMBOL void HXmap_qfe(const struct HXmap *xmap, qfe_fn_t fn, void *arg)
 
 	switch (map->type) {
 	case HXMAPT_HASH:
-		HXhmap_qfe(vmap, fn, arg);
+		HXumap_qfe(vmap, fn, arg);
 		errno = 0;
 		break;
 	case HXMAPT_RBTREE: {

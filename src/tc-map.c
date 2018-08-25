@@ -28,7 +28,7 @@
 
 union HXpoly {
 	struct HXmap *map;
-	struct HXhmap *hmap;
+	struct HXumap *hmap;
 	struct HXrbtree *rbt;
 };
 
@@ -354,9 +354,9 @@ static void tmap_new_perfect_tree(struct HXmap *map,
  * Compute an "agglomeration" index that models the lack of distributedness
  * in hash maps. Range is 0-100%.
  */
-static double hmap_agg_index(const struct HXhmap *hmap, bool verbose)
+static double hmap_agg_index(const struct HXumap *hmap, bool verbose)
 {
-	const struct HXhmap_node *hnode;
+	const struct HXumap_node *hnode;
 	unsigned int i;
 	int f = 0, j;
 
@@ -366,7 +366,7 @@ static double hmap_agg_index(const struct HXhmap *hmap, bool verbose)
 		printf("{");
 
 	/*
-	 * HXhmap is written such that the number of buckets is always equal or
+	 * HXumap is written such that the number of buckets is always equal or
 	 * greater than the element count. This is done because, in practice,
 	 * buckets will be populated with more than a few (two/three) entries
 	 * before elements/buckets >= grow_trigger_ratio.

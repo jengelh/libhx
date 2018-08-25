@@ -29,7 +29,7 @@ struct HXmap_private {
  * @min_load:	minimum number of elements before table gets shrunk
  * @tid:	transaction ID, used to track relayouts
  */
-struct HXhmap {
+struct HXumap {
 	struct HXmap_private super;
 
 	struct HXlist_head *bk_array;
@@ -37,11 +37,11 @@ struct HXhmap {
 };
 
 /**
- * @anchor:	anchor point in struct HXhmap_node
+ * @anchor:	anchor point in struct HXumap_node
  * @key:	data that works as key
  * @data:	data that works as value
  */
-struct HXhmap_node {
+struct HXumap_node {
 	struct HXlist_head anchor;
 	/* HXmap_node */
 	union {
@@ -59,9 +59,9 @@ struct HXmap_trav {
 	unsigned int flags;
 };
 
-struct HXhmap_trav {
+struct HXumap_trav {
 	struct HXmap_trav super;
-	const struct HXhmap *hmap;
+	const struct HXumap *hmap;
 	const struct HXlist_head *head;
 	unsigned int bk_current, tid;
 };
