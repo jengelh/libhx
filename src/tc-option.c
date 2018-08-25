@@ -49,6 +49,8 @@ static struct HXoption table[] = {
 	 .cb = opt_cbf, .help = "Mutually exclusive selection: either | or"},
 	{.ln = "quiet", .sh = 'q', .type = HXOPT_DEC, .ptr = &opt_v,
 	 .cb = opt_cbf, .help = "Decrease verbosity"},
+	{.ln = "quack", .type = HXOPT_INC, .ptr = &opt_v,
+	 .cb = opt_cbf, .help = "Increase verbosity"},
 	{.ln = "verbose", .sh = 'v', .type = HXOPT_INC, .ptr = &opt_v,
 	 .cb = opt_cbf, .help = "Increase verbosity"},
 	{.sh = 'A', .type = HXTYPE_INT | HXOPT_AND, .ptr = &opt_mask,

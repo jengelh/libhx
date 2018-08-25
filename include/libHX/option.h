@@ -160,12 +160,14 @@ enum {
  * %HXOPT_ERR_UNKN:	unknown option was encountered
  * %HXOPT_ERR_VOID:	long option takes no value
  * %HXOPT_ERR_MIS:	option requires a value argument
+ * %HXOPT_ERR_AMBIG:	long option abbreviation was ambiguous
  */
 enum {
 	HXOPT_ERR_SUCCESS = 0,
 	HXOPT_ERR_UNKN,
 	HXOPT_ERR_VOID,
 	HXOPT_ERR_MIS,
+	HXOPT_ERR_AMBIG,
 };
 
 /**

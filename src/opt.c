@@ -70,6 +70,7 @@ enum {
  * %HXOPT_E_LONG_MISSING:	long option requires an argument
  * %HXOPT_E_SHORT_UNKNOWN:	unknown short option
  * %HXOPT_E_SHORT_MISSING:	short option requires an argument
+ * %HXOPT_E_AMBIG_PREFIX:	used abbreviated long option but had multiple results
  */
 enum {
 	HXOPT_E_LONG_UNKNOWN = 1,
@@ -77,6 +78,7 @@ enum {
 	HXOPT_E_LONG_MISSING,
 	HXOPT_E_SHORT_UNKNOWN,
 	HXOPT_E_SHORT_MISSING,
+	HXOPT_E_AMBIG_PREFIX,
 };
 
 /**
@@ -126,6 +128,8 @@ struct HX_getopt_vars {
 	struct HXoptcb cbi;
 	unsigned int flags;
 };
+
+struct HXoption HXopt_ambig_prefix;
 
 static bool posix_me_harder(void)
 {
@@ -239,6 +243,27 @@ lookup_short(const struct HXoption *table, char opt)
 		if (table->sh == opt)
 			return table;
 	return NULL;
+}
+
+static const struct HXoption *
+lookup_long_pfx(const struct HXoption *table, const char *key)
+{
+	const struct HXoption *cand = NULL;
+	size_t klen = strlen(key);
+
+	for (; table->type != HXTYPE_XSNTMARK; ++table) {
+		if (table->ln == NULL)
+			continue;
+		if (strncmp(table->ln, key, klen) != 0)
+			continue;
+		/* Prefix match */
+		if (table->ln[klen] == '\0')
+			return table; /* Exact match */
+		if (cand != NULL)
+			return &HXopt_ambig_prefix;
+		cand = table;
+	}
+	return cand;
 }
 
 static __inline__ const struct HXoption *
@@ -462,6 +487,10 @@ static int HX_getopt_error(int err, const char *key, unsigned int flags)
 			fprintf(stderr, "Option -%c requires an "
 			        "argument\n", *key);
 		return HXOPT_I_ERROR | HXOPT_ERR_MIS;
+	case HXOPT_E_AMBIG_PREFIX:
+		if (!(flags & HXOPT_QUIET))
+			fprintf(stderr, "Option %s is ambiguous\n", key);
+		return HXOPT_I_ERROR | HXOPT_ERR_AMBIG;
 	}
 	return HXOPT_I_ERROR;
 }
@@ -471,7 +500,9 @@ static int HX_getopt_twolong(const char *const *opt,
 {
 	const char *key = opt[0], *value = opt[1];
 
-	par->cbi.current = lookup_long(par->cbi.table, key + 2);
+	par->cbi.current = lookup_long_pfx(par->cbi.table, key + 2);
+	if (par->cbi.current == &HXopt_ambig_prefix)
+		return HX_getopt_error(HXOPT_E_AMBIG_PREFIX, key, par->flags);
 	if (par->cbi.current == NULL) {
 		if (par->flags & HXOPT_PTHRU) {
 			char *tmp = HX_strdup(key);
@@ -521,7 +552,12 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 
 	value = strchr(key, '=');
 	*value++ = '\0';
-	par->cbi.current = lookup_long(par->cbi.table, key + 2);
+	par->cbi.current = lookup_long_pfx(par->cbi.table, key + 2);
+	if (par->cbi.current == &HXopt_ambig_prefix) {
+		ret = HX_getopt_error(HXOPT_E_AMBIG_PREFIX, key, par->flags);
+		free(key);
+		return ret;
+	}
 	if (par->cbi.current == NULL) {
 		if (par->flags & HXOPT_PTHRU) {
 			/* Undo nuke of '=' and reuse alloc */
