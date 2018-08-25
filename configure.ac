@@ -44,7 +44,7 @@ CHECK_GCC_FVISIBILITY
 AM_CONDITIONAL([WITH_GNU_LD], [test "$with_gnu_ld" = yes])
 
 LIBS_system="$LIBS"
-AC_CHECK_HEADERS([dlfcn.h])
+AC_CHECK_HEADERS([dlfcn.h sys/resource.h])
 AM_CONDITIONAL([HAVE_DLFCN_H], [test "$ac_cv_header_dlfcn_h" = "yes"])
 AC_SEARCH_LIBS([dlopen], [dl], [libdl_LIBS="$LIBS"; LIBS="$LIBS_system"])
 AC_SUBST([libdl_LIBS])
