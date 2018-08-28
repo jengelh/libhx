@@ -39,7 +39,7 @@ struct HXdir {
 	bool got_first;
 #else
 	DIR *ptr;
-	struct dirent dentry; /* must be last */
+	struct dirent *dentry;
 #endif
 };
 
@@ -96,7 +96,7 @@ EXPORT_SYMBOL struct HXdir *HXdir_open(const char *s)
 	 */
 	name_max = fpathconf(dirfd(tmp_dh), _PC_NAME_MAX);
 	if (name_max > 0) {
-		size -= sizeof(d->dentry) - offsetof(struct dirent, d_name);
+		size -= sizeof(struct dirent) - offsetof(struct dirent, d_name);
 		size += name_max + 1;
 	} else {
 #ifdef NAME_MAX
@@ -135,13 +135,10 @@ EXPORT_SYMBOL const char *HXdir_read(struct HXdir *d)
 	}
 	return d->dentry.cFileName;
 #else
-	{
-		struct dirent *checkptr;
-		int i = readdir_r(d->ptr, &d->dentry, &checkptr);
-		if (checkptr == NULL || i < 0)
-			return NULL;
-	}
-	return d->dentry.d_name;
+	d->dentry = readdir(d->ptr);
+	if (d->dentry == NULL)
+		return NULL;
+	return d->dentry->d_name;
 #endif
 }
 
