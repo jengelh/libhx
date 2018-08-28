@@ -1,7 +1,9 @@
-#LyX 2.0 created this file. For more info see http://www.lyx.org/
-\lyxformat 413
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass article
 \use_default_options true
 \maintain_unincluded_children false
@@ -9,16 +11,18 @@
 \language_package default
 \inputencoding utf8
 \fontencoding global
-\font_roman lmodern
-\font_sans lmss
-\font_typewriter lmtt
+\font_roman "lmodern" "default"
+\font_sans "lmss" "default"
+\font_typewriter "lmtt" "default"
+\font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
-
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -38,16 +42,26 @@
 \pdf_pdfusetitle true
 \papersize a4paper
 \use_geometry true
-\use_amsmath 1
-\use_esint 1
-\use_mhchem 1
-\use_mathdots 1
-\cite_engine natbib_numerical
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type numerical
+\biblio_style plainnat
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
 \suppress_date false
+\justification true
 \use_refstyle 0
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
@@ -60,7 +74,10 @@
 \tocdepth 1
 \paragraph_separation indent
 \paragraph_indentation default
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
@@ -228,7 +245,7 @@ Scripting-like invocation for string handling
 \begin_inset space ~
 \end_inset
 
---- automatically doing (re)allocations as needed.
+— automatically doing (re)allocations as needed.
 \end_layout
 
 \begin_layout Itemize
@@ -309,7 +326,7 @@ Getopt::Long
 \begin_inset space ~
 \end_inset
 
---- no open-coding but a single 
+— no open-coding but a single 
 \begin_inset Quotes eld
 \end_inset
 
@@ -346,7 +363,7 @@ configuration
 
  files with key-value pairs, as usually foudn in 
 \family typewriter
-/etc\SpecialChar \slash{}
+/etc\SpecialChar breakableslash
 sysconfig
 \family default
 .
@@ -421,7 +438,7 @@ git://libhx.git.sf.net/gitroot/libhx/libhx
 \begin_inset space ~
 \end_inset
 
---- clone URL
+— clone URL
 \end_layout
 
 \begin_layout Itemize
@@ -439,7 +456,7 @@ http://libhx.git.sf.net/
 \begin_inset space ~
 \end_inset
 
---- gitweb interface
+— gitweb interface
 \end_layout
 
 \begin_layout Itemize
@@ -457,7 +474,7 @@ http://libhx.sf.net/
 \begin_inset space ~
 \end_inset
 
---- home page (and link to tarballs)
+— home page (and link to tarballs)
 \end_layout
 
 \begin_layout Itemize
@@ -475,7 +492,7 @@ http://freecode.com/projects/libhx/
 \begin_inset space ~
 \end_inset
 
---- Freecode page (useful for automatic notification of new releases)
+— Freecode page (useful for automatic notification of new releases)
 \end_layout
 
 \begin_layout Section
@@ -550,11 +567,11 @@ GNU C Compiler 3.3.5 or newer.
 \begin_inset space ~
 \end_inset
 
---- use at your own risk.
+— use at your own risk.
 \end_layout
 
 \begin_layout Itemize
-approximately 80--160
+approximately 80–160
 \begin_inset space ~
 \end_inset
 
@@ -572,7 +589,7 @@ A C++ compiler is only needed if you want to build the C++ test programs
 No external libraries are needed for compilation of libHX.
  Helper files, like 
 \family typewriter
-libxml_\SpecialChar \-
+libxml_\SpecialChar softhyphen
 helper.h
 \family default
 , may reference their include files, but they are not used during compilation.
@@ -932,7 +949,7 @@ dynamic_cast<>
 \begin_inset space ~
 \end_inset
 
---- Actually, it 
+— Actually, it 
 \shape italic
 is
 \shape default
@@ -1102,7 +1119,7 @@ s of pointers to char
 \begin_inset space ~
 \end_inset
 
---- and only those.
+— and only those.
  No integers etc.
  The intention is to facilitate working with libraries that use 
 \family typewriter
@@ -1187,13 +1204,13 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="7">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
@@ -1552,7 +1569,7 @@ const char *
 \begin_inset Text
 
 \begin_layout Plain Layout
---
+–
 \end_layout
 
 \end_inset
@@ -1561,7 +1578,7 @@ const char *
 \begin_inset Text
 
 \begin_layout Plain Layout
---
+–
 \end_layout
 
 \end_inset
@@ -1570,7 +1587,7 @@ const char *
 \begin_inset Text
 
 \begin_layout Plain Layout
---
+–
 \end_layout
 
 \end_inset
@@ -1629,7 +1646,7 @@ const signed char *
 \begin_inset Text
 
 \begin_layout Plain Layout
---
+–
 \end_layout
 
 \end_inset
@@ -1638,7 +1655,7 @@ const signed char *
 \begin_inset Text
 
 \begin_layout Plain Layout
---
+–
 \end_layout
 
 \end_inset
@@ -1647,7 +1664,7 @@ const signed char *
 \begin_inset Text
 
 \begin_layout Plain Layout
---
+–
 \end_layout
 
 \end_inset
@@ -1706,7 +1723,7 @@ const unsigned char *
 \begin_inset Text
 
 \begin_layout Plain Layout
---
+–
 \end_layout
 
 \end_inset
@@ -1715,7 +1732,7 @@ const unsigned char *
 \begin_inset Text
 
 \begin_layout Plain Layout
---
+–
 \end_layout
 
 \end_inset
@@ -1724,7 +1741,7 @@ const unsigned char *
 \begin_inset Text
 
 \begin_layout Plain Layout
---
+–
 \end_layout
 
 \end_inset
@@ -1774,7 +1791,7 @@ const unsigned char *
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset CommandInset label
@@ -1804,7 +1821,7 @@ signed_cast()
 static_cast
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:defs-static_cast"
+name "subsec:defs-static_cast"
 
 \end_inset
 
@@ -2342,7 +2359,7 @@ Three Star Programmer
 \end_inset
 
 , having only these three type-checking cast macros was deemed sufficient.
- The only place where libHX even uses a level\SpecialChar \nobreakdash-
+ The only place where libHX even uses a level\SpecialChar nobreakdash
 3 indirection is in the option
  parser.
 \end_layout
@@ -2359,8 +2376,8 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="2" columns="2">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -2417,7 +2434,7 @@ const int *const *
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Accepted expr/target types for 
@@ -2592,9 +2609,9 @@ Expands to the size needed for a buffer (including '
 \backslash
 0
 \family default
-') to hold the base-10 string representation of a 16\SpecialChar \nobreakdash-
-, 32\SpecialChar \nobreakdash-
- or 64\SpecialChar \nobreakdash-
+') to hold the base-10 string representation of a 16\SpecialChar nobreakdash
+, 32\SpecialChar nobreakdash
+ or 64\SpecialChar nobreakdash
 bit integer.
 \end_layout
 
@@ -2716,7 +2733,7 @@ defs.h
 \family default
  will use GCC's 
 \family typewriter
-__builtin_\SpecialChar \-
+__builtin_\SpecialChar softhyphen
 offsetof
 \family default
  if available, which does some extra sanity checks in C++ mode.
@@ -3007,9 +3024,9 @@ BUILD_BUG_ON
 \family default
  is meant to be used as a standalone statement, while 
 \family typewriter
-BUILD_\SpecialChar \-
-BUG_\SpecialChar \-
-ON_\SpecialChar \-
+BUILD_\SpecialChar softhyphen
+BUG_\SpecialChar softhyphen
+ON_\SpecialChar softhyphen
 EXPR
 \family default
  is for when a check is to occur within an expression, that latter of which
@@ -3668,6 +3685,10 @@ n", (long)ts.tv_sec, ts.tv_nsec);
 The number of combinations of a (non-zero) negative number, zero and a (non-zero
 ) positive number is small, so we can actually just exhaustively list them
  all.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3676,12 +3697,12 @@ The number of combinations of a (non-zero) negative number, zero and a (non-zero
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="6">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -4959,7 +4980,7 @@ hash
 \begin_layout Standard
 To access any map-related functions, 
 \family typewriter
-#include <libHX\SpecialChar \slash{}
+#include <libHX\SpecialChar breakableslash
 map.h>
 \family default
 .
@@ -4969,7 +4990,7 @@ map.h>
 Structural definition
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:maps-def"
+name "subsec:maps-def"
 
 \end_inset
 
@@ -5286,7 +5307,7 @@ HX_MAPT_HASH
 \begin_inset space ~
 \end_inset
 
--- Amortized 
+– Amortized 
 \begin_inset Formula $\mathcal{O}\left(1\right)$
 \end_inset
 
@@ -5314,7 +5335,7 @@ HX_MAPT_RBTREE
 \begin_inset space ~
 \end_inset
 
--- 
+– 
 \begin_inset Formula $\mathcal{O}\left(\log\left(n\right)\right)$
 \end_inset
 
@@ -5518,7 +5539,7 @@ g.
 
 with the 
 \family typewriter
-HXhashmap_\SpecialChar \-
+HXhashmap_\SpecialChar softhyphen
 init4
 \family default
  function call), or 
@@ -5659,12 +5680,12 @@ HXMAP_SCKEY
 
  Mnemonic for the combination of 
 \family typewriter
-HXMAP_\SpecialChar \-
+HXMAP_\SpecialChar softhyphen
 SKEY
 \family default
  OR'ed with 
 \family typewriter
-HXMAP_\SpecialChar \-
+HXMAP_\SpecialChar softhyphen
 CKEY
 \family default
 .
@@ -5689,12 +5710,12 @@ HXMAP_SCDATA
 
  Mnemonic for the combination of 
 \family typewriter
-HXMAP_\SpecialChar \-
+HXMAP_\SpecialChar softhyphen
 SDATA
 \family default
  OR'ed with 
 \family typewriter
-HXMAP_\SpecialChar \-
+HXMAP_\SpecialChar softhyphen
 SDATA
 \family default
 .
@@ -5928,17 +5949,17 @@ The
 \family typewriter
 HXMAP_SKEY
 \family default
-\SpecialChar \slash{}
+\SpecialChar breakableslash
 
 \family typewriter
 CKEY
 \family default
-\SpecialChar \slash{}
+\SpecialChar breakableslash
 
 \family typewriter
 SDATA
 \family default
-\SpecialChar \slash{}
+\SpecialChar breakableslash
 
 \family typewriter
 CDATA
@@ -6556,7 +6577,7 @@ node->sdata
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:maps-def"
+reference "subsec:maps-def"
 
 \end_inset
 
@@ -6828,7 +6849,7 @@ struct HXmap_node
 \begin_inset space ~
 \end_inset
 
-\SpecialChar \slash{}
+\SpecialChar breakableslash
  key-value pair from the map, or 
 \family typewriter
 NULL
@@ -6984,6 +7005,10 @@ HXmap_traverse
 
 \begin_layout Itemize
 Insertion or deletion may cause internal data structure to re-layout.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -7335,7 +7360,7 @@ dsize
 Keys with non-unique data
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:maps-examples-bigkey"
+name "subsec:maps-examples-bigkey"
 
 \end_inset
 
@@ -7348,7 +7373,7 @@ Keys can actually store non-unique data, as long as this extra fields does
 \begin_inset space ~
 \end_inset
 
---- the parts that do uniquely identify it.
+— the parts that do uniquely identify it.
  In the following example, the 
 \family typewriter
 notes
@@ -8261,12 +8286,12 @@ HXdeque_del
 \begin_layout Standard
 
 \family typewriter
-HXdeque_\SpecialChar \-
+HXdeque_\SpecialChar softhyphen
 push
 \family default
  and 
 \family typewriter
-HXdeque_\SpecialChar \-
+HXdeque_\SpecialChar softhyphen
 unshift
 \family default
  add the data item in a new node at the end (
@@ -8301,12 +8326,12 @@ errno
 \begin_layout Standard
 
 \family typewriter
-HXdeque_\SpecialChar \-
+HXdeque_\SpecialChar softhyphen
 pop
 \family default
  and 
 \family typewriter
-HXdeque_\SpecialChar \-
+HXdeque_\SpecialChar softhyphen
 shift
 \family default
  remove the last (
@@ -8332,7 +8357,7 @@ shift
 \begin_layout Standard
 
 \family typewriter
-HXdeque_\SpecialChar \-
+HXdeque_\SpecialChar softhyphen
 move
 \family default
  will unlink a node from its list, and reinsert it after the given target
@@ -8480,7 +8505,7 @@ HXdeque_get
 \begin_inset space ~
 \end_inset
 
---- however, since that is just what the 
+— however, since that is just what the 
 \family typewriter
 ptr
 \family default
@@ -8696,7 +8721,7 @@ void *
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Example use of HXdeque to store and sort a list
@@ -8915,7 +8940,7 @@ indirect_data;
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Classic linked-list implementations with direct/indirect data blocks.
@@ -8975,7 +9000,7 @@ int
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 List head (next,prev pointers) inlined into the data block
@@ -8994,8 +9019,8 @@ List head (next,prev pointers) inlined into the data block
 \begin_layout Standard
 At first glance, an inline list does not look much different from 
 \family typewriter
-struct classic_\SpecialChar \-
-direct_\SpecialChar \-
+struct classic_\SpecialChar softhyphen
+direct_\SpecialChar softhyphen
 data
 \family default
 , it is mostly a viewpoint decision which struct is in the foreground.
@@ -9917,7 +9942,7 @@ return
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Storing strings in a HXdeque
@@ -10052,7 +10077,7 @@ return
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Storing strings in a HXlist
@@ -10082,7 +10107,7 @@ With HXlist, one needs to have a struct with a HXlist_head in it, and if
 \begin_inset space ~
 \end_inset
 
----e.
+—e.
 \begin_inset space \thinspace{}
 \end_inset
 
@@ -10094,8 +10119,8 @@ by means of wanting to store more than just one value
 \begin_inset space ~
 \end_inset
 
---- one will need to create it first, as shown, and this may lead to an
- expansion of code.
+— one will need to create it first, as shown, and this may lead to an expansion
+ of code.
 \end_layout
 
 \begin_layout Standard
@@ -10132,7 +10157,7 @@ HXdeque_push(dq, &p);
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Data can be added multiple times in a HXdeque without ill effects
@@ -13173,7 +13198,7 @@ Examples
 Using HX_split5
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:string-ex-HX_split5"
+name "subsec:string-ex-HX_split5"
 
 \end_inset
 
@@ -13735,7 +13760,7 @@ HXmc_strcat(&s, ".txt");
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Improvement of string safety over time
@@ -14847,7 +14872,7 @@ user
 \begin_inset space ~
 \end_inset
 
---- 
+— 
 \family typewriter
 sizeof(const char *)
 \family default
@@ -14880,7 +14905,7 @@ user
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 
@@ -15121,7 +15146,7 @@ section
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:option-types"
+reference "subsec:option-types"
 
 \end_inset
 
@@ -15129,7 +15154,7 @@ reference "sub:option-types"
 \begin_inset space ~
 \end_inset
 
---- not all constants can be used, though, and their meaning also differs
+— not all constants can be used, though, and their meaning also differs
  from what 
 \family typewriter
 HX_getopt
@@ -15142,7 +15167,7 @@ HX_shconfig
 \begin_inset space ~
 \end_inset
 
---- the two could be seen as 
+— the two could be seen as 
 \begin_inset Quotes eld
 \end_inset
 
@@ -15203,7 +15228,7 @@ HXTYPE_STRING
 \begin_inset space ~
 \end_inset
 
---- 
+— 
 \family typewriter
 ptr
 \family default
@@ -15251,7 +15276,7 @@ LLONG
 \begin_inset space ~
 \end_inset
 
---- mapping to the standard types
+— mapping to the standard types
 \end_layout
 
 \begin_layout Subsubsection
@@ -15308,7 +15333,7 @@ HXTYPE_STRP
 \begin_inset space ~
 \end_inset
 
---- 
+— 
 \family typewriter
 ptr
 \family default
@@ -15347,7 +15372,7 @@ HXTYPE_BOOL
 \begin_inset space ~
 \end_inset
 
---- 
+— 
 \family typewriter
 ptr
 \family default
@@ -15515,7 +15540,7 @@ HXTYPE_ULLONG
 \begin_inset space ~
 \end_inset
 
---- mapping to the standard types with one indirection (e.
+— mapping to the standard types with one indirection (e.
 \begin_inset space \thinspace{}
 \end_inset
 
@@ -15575,7 +15600,7 @@ HXTYPE_DOUBLE
 \begin_inset space ~
 \end_inset
 
---- mapping to the two floating-point types with one indirection (e.
+— mapping to the two floating-point types with one indirection (e.
 \begin_inset space \thinspace{}
 \end_inset
 
@@ -15927,7 +15952,7 @@ exec
  expansion (wildcards, etc.) takes place.
  stdin is set to 
 \family typewriter
-/dev\SpecialChar \slash{}
+/dev\SpecialChar breakableslash
 null
 \family default
 .
@@ -15936,11 +15961,11 @@ null
 \begin_inset space ~
 \end_inset
 
---- as it is relevant to security
+— as it is relevant to security
 \begin_inset space ~
 \end_inset
 
---- the fmt table needs to have a key called 
+— the fmt table needs to have a key called 
 \begin_inset Quotes eld
 \end_inset
 
@@ -16290,7 +16315,7 @@ Hello Home
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset CommandInset label
@@ -16339,7 +16364,7 @@ HXformat_aprintf(table, &result, "%(exec uname -s)");
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset CommandInset label
@@ -16522,21 +16547,21 @@ HX_REALPATH_DEFAULT
 
  A mnemonic for a set of standard flags: 
 \family typewriter
-HX_\SpecialChar \-
-REALPATH_\SpecialChar \-
+HX_\SpecialChar softhyphen
+REALPATH_\SpecialChar softhyphen
 SELF
 \begin_inset space ~
 \end_inset
 
-| HX_\SpecialChar \-
-REALPATH_\SpecialChar \-
+| HX_\SpecialChar softhyphen
+REALPATH_\SpecialChar softhyphen
 PARENT
 \family default
 .
  Note that 
 \family typewriter
-HX_\SpecialChar \-
-REALPATH_\SpecialChar \-
+HX_\SpecialChar softhyphen
+REALPATH_\SpecialChar softhyphen
 ABSOLUTE
 \family default
 , which would also be required to get libc's 
@@ -17369,11 +17394,11 @@ write
 \begin_inset space ~
 \end_inset
 
---- even more likely so with sockets
+— even more likely so with sockets
 \begin_inset space ~
 \end_inset
 
----, libHX provides two functions that calls these in a loop to retry said
+—, libHX provides two functions that calls these in a loop to retry said
  operations until the full amount has been processed.
  Since 
 \family typewriter
@@ -17513,7 +17538,7 @@ getopt
 Synopsis
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:option-synopsis"
+name "subsec:option-synopsis"
 
 \end_inset
 
@@ -17873,7 +17898,7 @@ It is a sad fact that C++ has not gotten around to implement these yet.
 Type map
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:option-types"
+name "subsec:option-types"
 
 \end_inset
 
@@ -17913,12 +17938,12 @@ HXTYPE_NONE
  to 1.
  Other rules apply when 
 \family typewriter
-HXOPT_\SpecialChar \-
+HXOPT_\SpecialChar softhyphen
 INC
 \family default
  or 
 \family typewriter
-HXOPT_\SpecialChar \-
+HXOPT_\SpecialChar softhyphen
 DEC
 \family default
  are specified as flags (see section
@@ -17928,7 +17953,7 @@ DEC
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:option-flags"
+reference "subsec:option-flags"
 
 \end_inset
 
@@ -18170,7 +18195,7 @@ NULL
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:option-pitfalls-static"
+reference "subsec:option-pitfalls-static"
 
 \end_inset
 
@@ -18217,22 +18242,22 @@ strtoul
  indicates hexadecimal (16) base, and decimal (10) otherwise.
  
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 LLONG
 \family default
 ,
 \family typewriter
- HXTYPE_\SpecialChar \-
+ HXTYPE_\SpecialChar softhyphen
 ULLONG
 \family default
 ,
 \family typewriter
- HXTYPE_\SpecialChar \-
+ HXTYPE_\SpecialChar softhyphen
 INT64
 \family default
  and
 \family typewriter
- HXTYPE_\SpecialChar \-
+ HXTYPE_\SpecialChar softhyphen
 UINT64
 \family default
  use
@@ -18244,6 +18269,10 @@ UINT64
  strtoull
 \family default
 , which may not be available on all platforms.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -18259,10 +18288,10 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="12" columns="4">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="bottom" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="bottom">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -19074,7 +19103,7 @@ size_t
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Integral and floating-point types for the libHX option parser
@@ -19093,12 +19122,12 @@ Integral and floating-point types for the libHX option parser
 \begin_layout Standard
 
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 FLOAT
 \family default
  and 
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 DOUBLE
 \family default
  make use of 
@@ -19130,7 +19159,7 @@ long double
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:option-example-cb"
+reference "subsec:option-example-cb"
 
 \end_inset
 
@@ -19141,7 +19170,7 @@ reference "sub:option-example-cb"
 Flags
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:option-flags"
+name "subsec:option-flags"
 
 \end_inset
 
@@ -19217,17 +19246,17 @@ HXOPT_DEC
 \begin_layout Standard
 Only one of 
 \family typewriter
-HXOPT_\SpecialChar \-
+HXOPT_\SpecialChar softhyphen
 INC
 \family default
  and 
 \family typewriter
-HXOPT_\SpecialChar \-
+HXOPT_\SpecialChar softhyphen
 DEC
 \family default
  may be specified at a time, and they require that the base type is 
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 NONE
 \family default
 , or they will have no effect.
@@ -19238,7 +19267,7 @@ NONE
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:option-example-incdec"
+reference "subsec:option-example-incdec"
 
 \end_inset
 
@@ -19300,7 +19329,7 @@ OR
 \begin_inset Quotes erd
 \end_inset
 
-s the pointee with the specified\SpecialChar \slash{}
+s the pointee with the specified\SpecialChar breakableslash
 transformed value.
 \end_layout
 
@@ -19333,7 +19362,7 @@ AND
 \begin_inset Quotes erd
 \end_inset
 
-s the pointee with the specified\SpecialChar \slash{}
+s the pointee with the specified\SpecialChar breakableslash
 transformed value.
 \end_layout
 
@@ -19366,7 +19395,7 @@ XOR
 \begin_inset Quotes erd
 \end_inset
 
-s the pointee with the specified\SpecialChar \slash{}
+s the pointee with the specified\SpecialChar breakableslash
 transformed value.
 \end_layout
 
@@ -19377,12 +19406,12 @@ HXOPT_OR
 \family default
 , 
 \family typewriter
-HXOPT_\SpecialChar \-
+HXOPT_\SpecialChar softhyphen
 AND
 \family default
 , 
 \family typewriter
-HXOPT_\SpecialChar \-
+HXOPT_\SpecialChar softhyphen
 XOR
 \family default
 ) may be specified at a time, but they can be used with any integral 
@@ -19391,12 +19420,12 @@ type
 \family default
  (
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 UINT
 \family default
 , 
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 ULONG
 \family default
 , etc.).
@@ -19407,7 +19436,7 @@ ULONG
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:option-example-mask"
+reference "subsec:option-example-mask"
 
 \end_inset
 
@@ -19487,8 +19516,8 @@ iptables
 \begin_inset space ~
 \end_inset
 
---- things that look like an option take precedence over an option with
- an optional argument.
+— things that look like an option take precedence over an option with an
+ optional argument.
  
 \begin_inset Quotes eld
 \end_inset
@@ -19944,17 +19973,17 @@ HXOPT_ERR_VOID
 \family default
  is of type 
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 NONE
 \family default
 , 
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 VAL
 \family default
  or 
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 SVAL
 \family default
 .
@@ -20010,6 +20039,30 @@ HXOPT_ERR_MIS
 \end_layout
 
 \begin_layout Description
+
+\family typewriter
+HXOPT_ERR_AMBIG
+\series medium
+
+\begin_inset Index idx
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+\series medium
+HXOPT_ERR_AMBIG
+\end_layout
+
+\end_inset
+
+
+\family default
+\series default
+ An abbreviation of a long option was ambiguous.
+\end_layout
+
+\begin_layout Description
 negative
 \begin_inset space ~
 \end_inset
@@ -20025,7 +20078,7 @@ Pitfalls
 Staticness of tables
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:option-pitfalls-static"
+name "subsec:option-pitfalls-static"
 
 \end_inset
 
@@ -20033,9 +20086,9 @@ name "sub:option-pitfalls-static"
 \end_layout
 
 \begin_layout Standard
-The following is an example of a trap regarding 
+The following is an example of a possible pitfall regarding 
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 STRDQ
 \family default
 :
@@ -20168,7 +20221,7 @@ return
 \begin_layout Standard
 The problem here is that 
 \family typewriter
-options_\SpecialChar \-
+options_\SpecialChar softhyphen
 table
 \family default
  is, due to the 
@@ -20191,7 +20244,7 @@ static
 \family default
  qualifier on the options table when used with 
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 STRDQ
 \family default
 , so that it will be evaluated when it is first executed.
@@ -20200,7 +20253,7 @@ STRDQ
 \begin_layout Standard
 It was not deemed worthwhile to have 
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 STRDQ
 \family default
  take an indirect HXdeque (
@@ -20312,7 +20365,7 @@ Options using a
 \begin_inset space ~
 \end_inset
 
---- by GNU standards, a negator is named 
+— by GNU standards, a negator is named 
 \begin_inset Quotes eld
 \end_inset
 
@@ -20351,7 +20404,7 @@ Table nesting like implemented in popt.
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:option-example-chained"
+reference "subsec:option-example-chained"
 
 \end_inset
 
@@ -20590,7 +20643,7 @@ return
 Verbosity levels
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:option-example-incdec"
+name "subsec:option-example-incdec"
 
 \end_inset
 
@@ -20790,7 +20843,7 @@ static const struct
 Mask operations
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:option-example-mask"
+name "subsec:option-example-mask"
 
 \end_inset
 
@@ -20902,7 +20955,7 @@ net_mask |= y
 Support for non-standard actions
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:option-example-cb"
+name "subsec:option-example-cb"
 
 \end_inset
 
@@ -20913,7 +20966,7 @@ name "sub:option-example-cb"
 Supporting additional types or custom storage formats is easy, by simply
  using 
 \family typewriter
-HXTYPE_\SpecialChar \-
+HXTYPE_\SpecialChar softhyphen
 STRING
 \family default
 , 
@@ -21091,7 +21144,7 @@ static const struct
 Chained argument processing
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:option-example-chained"
+name "subsec:option-example-chained"
 
 \end_inset
 
@@ -21110,8 +21163,8 @@ On the first run, only
  is considered, which is then used to select the next set of accepted options.
  Note that 
 \family typewriter
-HXOPT_\SpecialChar \-
-DESTROY_\SpecialChar \-
+HXOPT_\SpecialChar softhyphen
+DESTROY_\SpecialChar softhyphen
 OLD
 \family default
  is used here, which causes the argv that is produced by the first invocation
@@ -21131,7 +21184,7 @@ HX_getopt
 \family typewriter
 get_cakes
 \family default
-\SpecialChar \slash{}
+\SpecialChar breakableslash
 
 \family typewriter
 get_fruit
@@ -21139,8 +21192,8 @@ get_fruit
 .
  
 \family typewriter
-HXOPT_\SpecialChar \-
-DESTROY_\SpecialChar \-
+HXOPT_\SpecialChar softhyphen
+DESTROY_\SpecialChar softhyphen
 OLD
 \family default
  is however 
@@ -21653,7 +21706,7 @@ struct HXoption
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:option-synopsis"
+reference "subsec:option-synopsis"
 
 \end_inset
 
@@ -21701,7 +21754,7 @@ ptr
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:option-types"
+reference "subsec:option-types"
 
 \end_inset
 
@@ -21754,7 +21807,7 @@ other
  direction (actually you have to turn the array around) and stopping at
  the first existing file by use of the 
 \family typewriter
-SHCONF_\SpecialChar \-
+SHCONF_\SpecialChar softhyphen
 ONE
 \family default
  flag.
@@ -22182,7 +22235,7 @@ srand
 \begin_inset space ~
 \end_inset
 
---- usually this will be before a program's 
+— usually this will be before a program's 
 \family typewriter
 main
 \family default
@@ -22438,8 +22491,8 @@ bool
 When creating a new process with the intent of running it asynchronously
  (using 
 \family typewriter
-HXproc_\SpecialChar \-
-run_\SpecialChar \-
+HXproc_\SpecialChar softhyphen
+run_\SpecialChar softhyphen
 async
 \family default
 ), the first three fields must be filled in by the user.
@@ -22579,7 +22632,7 @@ p_exited
 \begin_inset space \space{}
 \end_inset
 
-signalled\SpecialChar \slash{}
+signalled\SpecialChar breakableslash
 terminated).
 \end_layout
 
@@ -22603,7 +22656,7 @@ p_status
 Flags
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:proc-pflags"
+name "subsec:proc-pflags"
 
 \end_inset
 
@@ -22642,8 +22695,8 @@ HXPROC_STDIN
  program, that is, not inherit the stdin of the master.
  Cannot be used for 
 \family typewriter
-HXproc_\SpecialChar \-
-run_\SpecialChar \-
+HXproc_\SpecialChar softhyphen
+run_\SpecialChar softhyphen
 sync
 \family default
  (because there would be no one to provide data in a sync operation).
@@ -22726,19 +22779,19 @@ HXPROC_NULL_STDIN
 
  The subprocess's stdin file descriptor shall be connected to 
 \family typewriter
-/dev\SpecialChar \slash{}
+/dev\SpecialChar breakableslash
 null
 \family default
 .
  
 \family typewriter
-HXPROC_\SpecialChar \-
+HXPROC_\SpecialChar softhyphen
 STDIN
 \family default
  and 
 \family typewriter
-HXPROC_\SpecialChar \-
-NULL_\SpecialChar \-
+HXPROC_\SpecialChar softhyphen
+NULL_\SpecialChar softhyphen
 STDIN
 \family default
  are mutually exclusive.
@@ -22763,19 +22816,19 @@ HXPROC_NULL_STDOUT
 
  Connect the stdout file descriptor of the subprocess to 
 \family typewriter
-/dev\SpecialChar \slash{}
+/dev\SpecialChar breakableslash
 null
 \family default
 , thereby essentially discarding its output.
  
 \family typewriter
-HXPROC_\SpecialChar \-
+HXPROC_\SpecialChar softhyphen
 STDOUT
 \family default
  and 
 \family typewriter
-HXPROC_\SpecialChar \-
-NULL_\SpecialChar \-
+HXPROC_\SpecialChar softhyphen
+NULL_\SpecialChar softhyphen
 STDOUT
 \family default
  are mutuall exclusive.
@@ -22800,19 +22853,19 @@ HXPROC_NULL_STDERR
 
  Connect the stderr file descriptor of the subprocess to 
 \family typewriter
-/dev\SpecialChar \slash{}
+/dev\SpecialChar breakableslash
 null
 \family default
 , thereby essentially discarding its output.
  
 \family typewriter
-HXPROC_\SpecialChar \-
+HXPROC_\SpecialChar softhyphen
 STDERR
 \family default
  and 
 \family typewriter
-HXPROC_\SpecialChar \-
-NULL_\SpecialChar \-
+HXPROC_\SpecialChar softhyphen
+NULL_\SpecialChar softhyphen
 STDERR
 \family default
  are mutually exclusive.
@@ -23247,7 +23300,7 @@ flags
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:proc-pflags"
+reference "subsec:proc-pflags"
 
 \end_inset
 
@@ -23397,7 +23450,7 @@ letters) have no notion of signedness
 \begin_inset space ~
 \end_inset
 
---- there is no 
+— there is no 
 \begin_inset Quotes eld
 \end_inset
 
@@ -23474,8 +23527,8 @@ unfortunate
 
 .
  Characters, when interpreted as the 8-bit signed numeric quantity they
- are implicitly convertable to, run from 0 to 127 and \SpecialChar \nobreakdash-
-128 to \SpecialChar \nobreakdash-
+ are implicitly convertable to, run from 0 to 127 and \SpecialChar nobreakdash
+128 to \SpecialChar nobreakdash
 1.
  Since the 
 \family typewriter
@@ -23568,9 +23621,9 @@ signed char
 \begin_inset Quotes erd
 \end_inset
 
-, see above), producing 0xffffffc3 (\SpecialChar \nobreakdash-
+, see above), producing 0xffffffc3 (\SpecialChar nobreakdash
 61).
- But passing \SpecialChar \nobreakdash-
+ But passing \SpecialChar nobreakdash
 61 is not what was intended.
 \end_layout
 
@@ -23593,7 +23646,7 @@ unsigned
 \family typewriter
 isalpha
 \family default
-'s domain only goes from 0--255.
+'s domain only goes from 0–255.
  The implication is that you cannot pass 
 \family typewriter
 EOF
@@ -24287,9 +24340,9 @@ xmlNewTextNode
 
 
 \family typewriter
-xml\SpecialChar \-
-New\SpecialChar \-
-Text\SpecialChar \-
+xml\SpecialChar softhyphen
+New\SpecialChar softhyphen
+Text\SpecialChar softhyphen
 Node
 \family default
  and 
@@ -24306,8 +24359,8 @@ xmlSetProp
 
 
 \family typewriter
-xml\SpecialChar \-
-Set\SpecialChar \-
+xml\SpecialChar softhyphen
+Set\SpecialChar softhyphen
 Prop
 \family default
 , respectively.
@@ -24413,15 +24466,15 @@ wxDialog
 \family default
 s, which includes 
 \family typewriter
-wxDEFAULT_\SpecialChar \-
-FRAME_\SpecialChar \-
+wxDEFAULT_\SpecialChar softhyphen
+FRAME_\SpecialChar softhyphen
 STYLE
 \family default
  and a flag such that the dialog does not create a new window in the task
  bar (
 \family typewriter
-wxFRAME_\SpecialChar \-
-NO_\SpecialChar \-
+wxFRAME_\SpecialChar softhyphen
+NO_\SpecialChar softhyphen
 TASKBAR
 \family default
 ).
@@ -24692,6 +24745,8 @@ Appendix
 \begin_inset CommandInset index_print
 LatexCommand printindex
 type "idx"
+name "Index"
+literal "true"
 
 \end_inset
 
