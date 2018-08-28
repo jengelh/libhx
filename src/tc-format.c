@@ -70,7 +70,7 @@ static void t_format(int argc)
 	HXformat_add(fmt, "TWOARG", "a, b", HXTYPE_STRING | HXFORMAT_IMMED);
 	++argc;
 	printf("# HXformat2\n");
-	for (s = fmt2_strings; *s != '\0'; ++s)
+	for (s = fmt2_strings; *s != NULL; ++s)
 		HXformat_fprintf(fmt, stdout, *s);
 	HXformat_free(fmt);
 }
