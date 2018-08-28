@@ -1,7 +1,10 @@
 
 
-HEAD
-====
+v3.23 (2018-08-28)
+==================
+Enhancements:
+- opt: the option parser now recognizes long option abbreviations
+- io: use modern readdir rather than readdir_r
 
 
 v3.22 (2014-08-25)
