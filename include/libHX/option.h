@@ -254,8 +254,10 @@ extern void HX_shconfig_free(const struct HXoption *);
 #	define HXOPT_TABLEEND {.type = HXTYPE_XSNTMARK}
 #else
 #	define HXOPT_AUTOHELP \
-		{NULL, '?', HXTYPE_XHELP, NULL, NULL, HX_getopt_help_cb, \
-		0, "Show this help message"}
+		{"help", '?', HXTYPE_XHELP, NULL, NULL, HX_getopt_help_cb, \
+		0, "Show this help message"}, \
+		{"usage", 0, HXTYPE_NONE, NULL, NULL, HX_getopt_usage_cb, \
+		0, "Display brief usage message"}
 #	define HXOPT_TABLEEND {NULL, 0, HXTYPE_XSNTMARK}
 #endif
 
