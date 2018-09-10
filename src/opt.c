@@ -304,22 +304,20 @@ static void opt_to_text(const struct HXoption *opt, char *buf, size_t len,
 		buf[i++] = opt->sh;
 		if (!takes_void(opt->type))
 			i += snprintf(buf + i, len - i, " %s", htyp);
+	} else if (opt->sh == '\0') {
+		if (takes_void(opt->type))
+			i += snprintf(buf + i, len - i,
+			     "--%s", opt->ln);
+		else
+			i += snprintf(buf + i, len - i,
+			     "--%s=%s", opt->ln, htyp);
 	} else {
-		if (opt->sh == '\0') {
-			if (takes_void(opt->type))
-				i += snprintf(buf + i, len - i,
-				     "--%s", opt->ln);
-			else
-				i += snprintf(buf + i, len - i,
-				     "--%s=%s", opt->ln, htyp);
-		} else {
-			if (takes_void(opt->type))
-				i += snprintf(buf + i, len - i, "-%c%s--%s",
-				     opt->sh, alt, opt->ln);
-			else
-				i += snprintf(buf + i, len - i, "-%c%s--%s%c%s",
-				     opt->sh, alt, opt->ln, equ, htyp);
-		}
+		if (takes_void(opt->type))
+			i += snprintf(buf + i, len - i, "-%c%s--%s",
+			     opt->sh, alt, opt->ln);
+		else
+			i += snprintf(buf + i, len - i, "-%c%s--%s%c%s",
+			     opt->sh, alt, opt->ln, equ, htyp);
 	}
 
 	if (flags & W_BRACKET)
