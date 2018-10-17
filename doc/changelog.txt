@@ -1,5 +1,12 @@
 
 
+v3.24 (2018-10-17)
+==================
+Fixes:
+- defs: avoid compiler warning when using HX_list_for_each when used in C++
+- opt: synchronize HXOPT_AUTOHELP C behavior to C++ mode
+
+
 v3.23 (2018-08-28)
 ==================
 Enhancements:
