@@ -210,6 +210,17 @@ EXPORT_SYMBOL long HX_time_compare(const struct stat *a,
 		return a->st_atime - b->st_atime;
 	else if (sel == 'c')
 		return a->st_ctime - b->st_ctime;
+#elif defined(HAVE_STRUCT_STAT_ST_MTIM)
+	if (sel == 'm')
+		return a->st_mtim - b->st_mtim;
+#ifdef HAVE_STRUCT_STAT_ST_OTIM
+	else if (sel == 'o')
+		return a->st_otim - b->st_otim;
+#endif
+	else if (sel == 'a')
+		return a->st_atim - b->st_atim;
+	else if (sel == 'c')
+		return a->st_ctim - b->st_ctim;
 #else
 #	error Tis not ending well.
 #endif
