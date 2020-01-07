@@ -1236,7 +1236,7 @@ static struct HXrbnode *HXrbtrav_rewalk(struct HXrbtrav *trav)
 	} else {
 		/* Search for the specific node to rebegin traversal at. */
 		const struct HXrbnode *newpath[RBT_MAXDEP];
-		unsigned char newdir[RBT_MAXDEP];
+		unsigned char newdir[RBT_MAXDEP] = {};
 		int newdepth = 0, res;
 		bool found = false;
 
