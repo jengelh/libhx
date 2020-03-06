@@ -11,8 +11,6 @@
 #	include <cstdarg>
 #	include <cstdio>
 #endif
-#include <libHX/defs.h>
-#include <libHX/io.h>
 
 #ifdef __cplusplus
 extern "C" {
