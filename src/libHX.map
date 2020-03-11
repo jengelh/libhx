@@ -1,4 +1,4 @@
-LIBHX_1.10.0 {
+LIBHX_3.25 {
 global:
 	HX_basename;
 	HX_chomp;
@@ -47,12 +47,6 @@ global:
 	HXdir_close;
 	HXdir_open;
 	HXdir_read;
-local:
-	*;
-};
-
-LIBHX_1.25 {
-global:
 	HX_getl;
 	HXmc_free;
 	HXmc_length;
@@ -68,39 +62,15 @@ global:
 	HXmc_strins;
 	HXmc_strpcat;
 	HXmc_trunc;
-} LIBHX_1.10.0;
-
-LIBHX_1.26 {
-global:
 	HX_hexdump;
 	HX_time_compare;
-} LIBHX_1.25;
-
-LIBHX_2.0 {
-global:
 	HXmc_setlen;
-} LIBHX_1.26;
-
-LIBHX_2.2 {
-global:
 	HX_split4;
 	HXproc_run_async;
 	HXproc_run_sync;
 	HXproc_wait;
-} LIBHX_2.0;
-
-LIBHX_2.6 {
-global:
 	HX_fls;
-} LIBHX_2.2;
-
-LIBHX_2.9 {
-global:
 	HX_basename_exact;
-} LIBHX_2.6;
-
-LIBHX_3.0 {
-global:
 	HXformat_add;
 	HXformat_free;
 	HXformat_init;
@@ -118,42 +88,18 @@ global:
 	HXmap_traverse;
 	HXmap_travfree;
 	HXmap_travinit;
-} LIBHX_2.9;
-
-LIBHX_3.2 {
-global:
 	HX_strquote;
-} LIBHX_3.0;
-
-LIBHX_3.3 {
-global:
 	HX_drand;
 	HX_shconfig_map;
 	HXdeque_genocide2;
 	HXmc_zvecfree;
-} LIBHX_3.2;
-
-LIBHX_3.4 {
-global:
 	HX_exit;
 	HX_init;
 	HX_memmem;
-} LIBHX_3.3;
-
-LIBHX_3.9 {
-global:
 	HXio_fullread;
 	HXio_fullwrite;
-} LIBHX_3.4;
-
-LIBHX_3.10 {
-global:
 	HX_readlink;
 	HX_realpath;
-} LIBHX_3.9;
-
-LIBHX_3.12 {
-global:
 	HX_getopt_help_cb;
 	HX_getopt_usage_cb;
 	HX_mkdir;
@@ -168,11 +114,6 @@ global:
 	HXformat_sprintf;
 	HXmap_init5;
 	HXmap_init;
-} LIBHX_3.10;
-
-# ABI 29
-LIBHX_3.13 {
-global:
 	HX_timespec_add;
 	HX_timespec_isneg;
 	HX_timespec_mul;
@@ -180,16 +121,8 @@ global:
 	HX_timespec_neg;
 	HX_timespec_sub;
 	HX_timeval_sub;
-} LIBHX_3.12;
-
-# ABI 30
-LIBHX_3.15 {
-global:
 	HX_strchr2;
-} LIBHX_3.13;
-
-# ABI 31
-LIBHX_3.18 {
-global:
 	HX_stpltrim;
-} LIBHX_3.15;
+local:
+	*;
+};
