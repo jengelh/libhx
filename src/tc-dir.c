@@ -13,6 +13,7 @@
 #	include <cstdlib>
 #endif
 #include <libHX/init.h>
+#include <libHX/io.h>
 #include <libHX/misc.h>
 
 static void lookatdir(const char *dname)

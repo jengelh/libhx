@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <libHX/defs.h>
 #include <libHX/init.h>
 #include <libHX/misc.h>
 #include <libHX/string.h>
