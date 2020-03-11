@@ -81,12 +81,6 @@ EXPORT_SYMBOL struct timespec *HX_timespec_sub(struct timespec *r,
 	return HX_timespec_add(r, a, HX_timespec_neg(&b2, b));
 }
 
-EXPORT_SYMBOL void HX_diff_timespec(struct timespec *delta,
-    const struct timespec *future, const struct timespec *past)
-{
-	HX_timespec_sub(delta, future, past);
-}
-
 EXPORT_SYMBOL struct timespec *
 HX_timespec_mul(struct timespec *r, const struct timespec *a, int f)
 {
@@ -140,12 +134,6 @@ EXPORT_SYMBOL struct timeval *HX_timeval_sub(struct timeval *delta,
 		--delta->tv_sec;
 	}
 	return delta;
-}
-
-EXPORT_SYMBOL void HX_diff_timeval(struct timeval *delta,
-    const struct timeval *future, const struct timeval *past)
-{
-	HX_timeval_sub(delta, future, past);
 }
 #endif
 

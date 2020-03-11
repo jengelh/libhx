@@ -116,8 +116,6 @@ RMV	MinVer	FirstA	Name
 3.0	3.0	3.0	HXMAPT_RBTREE
 3.0	3.0	3.0	HXMAP_DTRAV
 3.0	3.0	3.0	HXMAP_NOREPLACE
-3.0	3.0	3.0	HX_diff_timespec
-3.0	3.0	3.0	HX_diff_timeval
 3.0	3.0	3.0	HXhash_djb2
 3.0	3.0	3.0	HXhash_jlookup3
 3.0	3.0	3.0	HXhash_jlookup3s

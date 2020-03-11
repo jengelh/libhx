@@ -153,11 +153,7 @@ stub3(HX_timespec_mulf, (struct timespec *a, const struct timespec *b,
 stub2(HX_timespec_neg, (struct timespec *a, const struct timespec *b));
 stub3(HX_timespec_sub, (struct timespec *a, const struct timespec *b,
 	const struct timespec *c));
-stub3(HX_diff_timespec, (struct timespec *a, const struct timespec *b,
-	const struct timespec *c));
 stub3(HX_timeval_sub, (struct timeval *a, const struct timeval *b,
-	const struct timeval *c));
-stub3(HX_diff_timeval, (struct timeval *a, const struct timeval *b,
 	const struct timeval *c));
 stub3(HX_time_compare, (const struct stat *a, const struct stat *b, char c));
 stub1v(HX_zvecfree, (char **a));

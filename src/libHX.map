@@ -101,8 +101,6 @@ global:
 
 LIBHX_3.0 {
 global:
-	HX_diff_timespec;
-	HX_diff_timeval;
 	HXformat_add;
 	HXformat_free;
 	HXformat_init;

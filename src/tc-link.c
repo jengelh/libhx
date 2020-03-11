@@ -117,12 +117,6 @@ static void *funcs[] = {
 	HX_strsep2,
 	HX_strquote,
 	HX_strupper,
-#ifdef HAVE_STRUCT_TIMEVAL_TV_USEC
-	HX_diff_timeval,
-#endif
-#ifdef HAVE_STRUCT_TIMESPEC_TV_NSEC
-	HX_diff_timespec,
-#endif
 	HX_time_compare,
 #ifdef HAVE_STRUCT_TIMESPEC_TV_NSEC
 	HX_timespec_add,

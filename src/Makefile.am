@@ -13,7 +13,7 @@ libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c
 libHX_la_LIBADD  = ${libdl_LIBS} ${libpthread_LIBS} ${librt_LIBS}
-libHX_la_LDFLAGS = -no-undefined -version-info 31:0:3
+libHX_la_LDFLAGS = -no-undefined -version-info 32:0:0
 if WITH_GNU_LD
 libHX_la_LDFLAGS += -Wl,--version-script=${srcdir}/libHX.map
 endif
