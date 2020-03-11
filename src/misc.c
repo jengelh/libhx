@@ -82,6 +82,8 @@ EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
 EXPORT_SYMBOL void HX_zvecfree(char **args)
 {
 	char **travp;
+	if (args == NULL)
+		return;
 	for (travp = args; *travp != NULL; ++travp)
 		free(*travp);
 	free(args);
