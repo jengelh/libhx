@@ -66,8 +66,10 @@ extern char *HX_dirname(const char *);
 extern hxmc_t *HX_getl(hxmc_t **, FILE *);
 extern void *HX_memmem(const void *, size_t, const void *, size_t);
 extern char **HX_split(const char *, const char *, int *, int);
-extern char **HX_split4(char *, const char *, int *, int);
-extern int HX_split5(char *, const char *, int, char **);
+extern int HX_split_fixed(char *, const char *, int, char **);
+extern char **HX_split_inplace(char *, const char *, int *, int);
+#define HX_split4(a, b, c, d) HX_split_inplace((a), (b), (c), (d))
+#define HX_split5(a, b, c, d) HX_split_fixed((a), (b), (c), (d))
 extern char *HX_strbchr(const char *, const char *, char);
 extern char *HX_strchr2(const char *, const char *);
 extern char *HX_strclone(char **, const char *);

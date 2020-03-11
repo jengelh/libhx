@@ -33,9 +33,9 @@ global:
 	HX_shconfig_free;
 	HX_shconfig_map;
 	HX_shconfig_pv;
-	HX_split4;
-	HX_split5;
 	HX_split;
+	HX_split_fixed;
+	HX_split_inplace;
 	HX_stpltrim;
 	HX_strbchr;
 	HX_strchr2;

@@ -160,8 +160,8 @@ static void t_split(void)
 
 	memcpy(t2, t1, sizeof(t1));
 	a0 = HX_split(t1, ":", &f0, 0);
-	a1 = HX_split4(t1, ":", &f1, 0);
-	f2 = HX_split5(t2, ":", ARRAY_SIZE(a2), a2);
+	a1 = HX_split_inplace(t1, ":", &f1, 0);
+	f2 = HX_split_fixed(t2, ":", ARRAY_SIZE(a2), a2);
 
 	/* complete allocation */
 	printf("HX_split1: a0[%p]:", a0);
@@ -170,7 +170,7 @@ static void t_split(void)
 	printf("\n");
 
 	/* array allocated */
-	printf("HX_split4: a1[%p]:", a1);
+	printf("HX_split_inplace: a1[%p]:", a1);
 	for (wp = a1; *wp != NULL; ++wp)
 		printf(" %s[%p]", *wp, *wp);
 	printf("\n");

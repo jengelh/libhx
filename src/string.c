@@ -232,7 +232,7 @@ EXPORT_SYMBOL char **HX_split(const char *str, const char *delim,
 	return ret;
 }
 
-EXPORT_SYMBOL char **HX_split4(char *s, const char *delim, int *fld, int max)
+EXPORT_SYMBOL char **HX_split_inplace(char *s, const char *delim, int *fld, int max)
 {
 	char **stk;
 	const char *p = s;
@@ -248,22 +248,22 @@ EXPORT_SYMBOL char **HX_split4(char *s, const char *delim, int *fld, int max)
 	if (stk == NULL)
 		return NULL;
 	stk[count] = NULL;
-	count = HX_split5(s, delim, count, stk);
+	count = HX_split_fixed(s, delim, count, stk);
 	if (fld != NULL)
 		*fld = count;
 	return stk;
 }
 
-EXPORT_SYMBOL int HX_split5(char *s, const char *delim, int max, char **stk)
+EXPORT_SYMBOL int HX_split_fixed(char *s, const char *delim, int max, char **stk)
 {
 	/*
-	 * HX_split5 - the "stack split" (we try to avoid using the heap):
+	 * HX_split_fixed - the "stack split" (we try to avoid using the heap):
 	 * Split @s (modifies it, so must be writable!) at @delim with at most
 	 * @max fields and putting the results into @stk[0..@max-1].
 	 *
 	 * Example on @max:
 	 *	char *stk[max];
-	 *	HX_split5(s, delim, max, stk);
+	 *	HX_split_fixed(s, delim, max, stk);
 	 */
 	int i = 0;
 	char *p;

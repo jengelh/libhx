@@ -91,7 +91,7 @@
 \begin_body
 
 \begin_layout Title
-libHX 3.24
+libHX 3.25
 \begin_inset Newline newline
 \end_inset
 
@@ -12252,7 +12252,7 @@ HX_split
 \series bold
 char **
 \series default
-HX_split4(
+HX_split_inplace(
 \series bold
 char *
 \series default
@@ -12277,7 +12277,7 @@ status open
 \family typewriter
 \size normal
 \color none
-HX_split4
+HX_split_inplace
 \end_layout
 
 \end_inset
@@ -12290,7 +12290,7 @@ HX_split4
 \series bold
 int
 \series default
- HX_split5(
+ HX_split_fixed(
 \series bold
 char *
 \series default
@@ -12306,7 +12306,7 @@ int
 \series bold
 char **
 \series default
-stack);
+arr);
 \begin_inset Index idx
 status open
 
@@ -12315,7 +12315,7 @@ status open
 \family typewriter
 \size normal
 \color none
-HX_split5
+HX_split_fixed
 \end_layout
 
 \end_inset
@@ -12456,7 +12456,7 @@ s
 \begin_layout Description
 
 \family typewriter
-HX_split4
+HX_split_inplace
 \family default
  Split the string 
 \family typewriter
@@ -12499,7 +12499,7 @@ HX_split
 \begin_layout Description
 
 \family typewriter
-HX_split5
+HX_split_fixed
 \family default
  Split the string 
 \family typewriter
@@ -12521,7 +12521,7 @@ delimiters
  The array for the substring pointers must be provided by the user through
  the 
 \family typewriter
-stack
+arr
 \family default
  argument.
  
@@ -13195,10 +13195,10 @@ Examples
 \end_layout
 
 \begin_layout Subsubsection
-Using HX_split5
+Using HX_split_fixed
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:string-ex-HX_split5"
+name "subsec:string-ex-HX_split_fixed"
 
 \end_inset
 
@@ -13208,31 +13208,10 @@ name "subsec:string-ex-HX_split5"
 \begin_layout Standard
 
 \family typewriter
-HX_split5
+HX_split_fixed
 \family default
-, where the 
-\begin_inset Quotes eld
-\end_inset
-
-5
-\begin_inset Quotes erd
-\end_inset
-
- should be interpreted (with a bit of imagination and the knowledge of leetspeak
-) as an 
-\begin_inset Quotes eld
-\end_inset
-
-S
-\begin_inset Quotes erd
-\end_inset
-
- for stack, as 
-\family typewriter
-HX_split5
-\family default
- is often used only with on-stack variables and where the field count of
- interest is fixed, as the example for parsing 
+ is often used just with scoped automatic-storage variables and where the
+ field count of interest is fixed, as the example for parsing 
 \family typewriter
 /etc/passwd
 \family default
@@ -13292,7 +13271,7 @@ while
 \series bold
 if
 \series default
- (HX_split5(line, ":", ARRAY_SIZE(field), field) < 7) {
+ (HX_split_fixed(line, ":", ARRAY_SIZE(field), field) < 7) {
 \begin_inset Newline newline
 \end_inset
 
@@ -13324,14 +13303,14 @@ n", field[0]);
 \end_layout
 
 \begin_layout Subsubsection
-Using HX_split4
+Using HX_split_inplace
 \end_layout
 
 \begin_layout Standard
 Where the number of fields is not previously known and/or estimatable, but
  the string can be modified in place, one uses 
 \family typewriter
-HX_split4
+HX_split_inplace
 \family default
  as follows:
 \end_layout
@@ -13377,7 +13356,7 @@ while
 \series bold
 char **
 \series default
-field = HX_split4(line, ":", NULL, 0);
+field = HX_split_inplace(line, ":", NULL, 0);
 \begin_inset Newline newline
 \end_inset
 
