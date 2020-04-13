@@ -6,7 +6,6 @@
 #else
 #	include <string.h>
 #endif
-#include <libHX/defs.h>
 #include <libxml/parser.h>
 
 #ifdef __cplusplus
