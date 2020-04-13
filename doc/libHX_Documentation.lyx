@@ -2668,14 +2668,14 @@ containerof
 \series bold
 size_t
 \series default
- FIELD_SIZEOF(struct_type, member);
+ HXsizeof_member(struct_type, member);
 \begin_inset Index idx
 status open
 
 \begin_layout Plain Layout
 
 \family typewriter
-FIELD_SIZEOF
+HXsizeof_member
 \end_layout
 
 \end_inset
@@ -2831,30 +2831,14 @@ struct
 \begin_layout Standard
 
 \family typewriter
-FIELD_SIZEOF
-\family default
- (formerly 
-\family typewriter
 HXsizeof_member
 \family default
-
-\begin_inset Index idx
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-HXsizeof_member
-\end_layout
-
-\end_inset
-
-) and 
+ and 
 \family typewriter
 HXtypeof_member
 \family default
- are convenient shortcuts to get the size or type of a named member in a
- given struct:
+ are shortcuts (mainly for the C language) to get the size or type of a
+ named member in a given struct:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2867,6 +2851,18 @@ char
 struct
 \series default
  foo, baz)];
+\end_layout
+
+\begin_layout Standard
+In C++, one can simply use 
+\family typewriter
+sizeof(foo::baz)
+\family default
+ and 
+\family typewriter
+decltype(foo::baz)
+\family default
+.
 \end_layout
 
 \begin_layout Subsection

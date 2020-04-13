@@ -4,6 +4,7 @@ v3.25
 Changes:
 * string: HX_split4 renamed to HX_split_inplace
 * string: HX_split5 renamed to HX_split_fixed
+* defs.h: removed partially implementation of FIELD_SIZEOF
 
 
 v3.24 (2018-10-17)
