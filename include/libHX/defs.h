@@ -2,9 +2,12 @@
 #define _LIBHX_DEFS_H 1
 
 #ifdef __cplusplus
-#	define HXsizeof_member(type, member) sizeof(static_cast<type *>(NULL)->member)
-#	define HXtypeof_member(type, member) \
-		__typeof__(static_cast<type *>(NULL)->member)
+#	define HXsizeof_member(type, member) sizeof(type::member)
+#	if __cplusplus >= 201100L
+#		define HXtypeof_member(type, member) decltype(type::member)
+#	else
+#		define HXtypeof_member(type, member) __typeof__(type::member))
+#	endif
 #	if defined(__GNUC__) && __GNUC__ >= 4 && !defined(offsetof)
 		/*
 		 * This is here so most programs can skip inclusion
