@@ -5,6 +5,8 @@ Changes:
 * string: HX_split4 renamed to HX_split_inplace
 * string: HX_split5 renamed to HX_split_fixed
 * defs.h: removed partially implementation of FIELD_SIZEOF
+* defs.h: removed custom offsetof definition; you will need to include
+  <stddef.h> or <cstddef> now.
 
 
 v3.24 (2018-10-17)

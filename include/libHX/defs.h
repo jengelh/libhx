@@ -8,18 +8,8 @@
 #	else
 #		define HXtypeof_member(type, member) __typeof__(type::member))
 #	endif
-#	if defined(__GNUC__) && __GNUC__ >= 4 && !defined(offsetof)
-		/*
-		 * This is here so most programs can skip inclusion
-		 * of stddef.h just to get offsetof.
-		 */
-#		define offsetof(type, member) __builtin_offsetof(type, member)
-#	endif
-#	ifndef offsetof
-#		define offsetof(type, member) \
-			reinterpret_cast<long>(&(static_cast<type *>(NULL)->member))
-#	endif
 #	ifndef containerof
+#		include <cstddef>
 #		define containerof(var, type, member) reinterpret_cast<type *>( \
 			reinterpret_cast<char *>(var) - offsetof(type, member))
 #	endif
@@ -140,14 +130,8 @@ static __inline__ new_type signed_cast(unsigned char *expr)
 #	ifndef reinterpret_cast
 #		define reinterpret_cast(type, expr) ((type)(expr))
 #	endif
-#	if defined(__GNUC__) && __GNUC__ >= 4 && !defined(offsetof)
-#		define offsetof(type, member) __builtin_offsetof(type, member)
-#	endif
-#	ifndef offsetof
-#		define offsetof(type, member) \
-			reinterpret_cast(long, &(static_cast(type *, NULL)->member))
-#	endif
 #	ifndef containerof
+#		include <stddef.h>
 #		define containerof(var, type, member) reinterpret_cast(type *, \
 			reinterpret_cast(char *, var) - offsetof(type, member))
 #	endif

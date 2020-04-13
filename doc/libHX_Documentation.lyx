@@ -2620,26 +2620,6 @@ Locators
 \end_layout
 
 \begin_layout LyX-Code
-
-\series bold
-long
-\series default
- offsetof(type, member);
-\begin_inset Index idx
-status open
-
-\begin_layout Plain Layout
-
-\family typewriter
-offsetof
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
 output_type 
 \series bold
 *
@@ -2697,55 +2677,6 @@ HXtypeof_member
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-In case 
-\family typewriter
-offsetof
-\family default
- and 
-\family typewriter
-containerof
-\family default
- have not already defined by inclusion of another header file, libHX's defs.h
- will define these accessors.
- 
-\family typewriter
-offsetof
-\family default
- is defined in 
-\family typewriter
-stddef.h
-\family default
- (for C) or 
-\family typewriter
-cstddef
-\family default
- (C++), but inclusion of these is not necessary if you have included 
-\family typewriter
-defs.h
-\family default
-.
- 
-\family typewriter
-defs.h
-\family default
- will use GCC's 
-\family typewriter
-__builtin_\SpecialChar softhyphen
-offsetof
-\family default
- if available, which does some extra sanity checks in C++ mode.
-\end_layout
-
-\begin_layout Standard
-
-\family typewriter
-offsetof
-\family default
- calculates the offset of the specified member in the type, which needs
- to be a struct or union.
 \end_layout
 
 \begin_layout Standard
