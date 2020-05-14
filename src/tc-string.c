@@ -202,6 +202,8 @@ extern char *f_strlcpy_mem(char *, const char *, size_t);
 
 EXPORT_SYMBOL char *f_strlcpy_str(char *d, const char *s, size_t n)
 {
+	if (n == 0)
+		return d;
 	strncpy(d, s, n);
 	d[n-1] = '\0';
 	return d;
@@ -279,6 +281,13 @@ static void t_strlcpy(void)
 	}
 }
 
+static void t_strlcpy2(void)
+{
+	char a[3] = {49, 49, 49};
+	HX_strlcpy(&a[1], &a[1], 0);
+	assert(a[0] == 49 && a[0] == a[1] && a[1] == a[2]);
+}
+
 int main(int argc, const char **argv)
 {
 	hxmc_t *tx = NULL;
@@ -308,6 +317,7 @@ int main(int argc, const char **argv)
 	t_split();
 	t_split2();
 	t_strlcpy();
+	t_strlcpy2();
 	HXmc_free(tx);
 	HX_exit();
 	return EXIT_SUCCESS;

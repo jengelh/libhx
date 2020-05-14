@@ -336,6 +336,8 @@ EXPORT_SYMBOL char *HX_strlcat(char *dest, const char *src, size_t len)
 
 EXPORT_SYMBOL char *HX_strlcpy(char *dest, const char *src, size_t n)
 {
+	if (n == 0)
+		return dest;
 	strncpy(dest, src, n);
 	dest[n-1] = '\0';
 	return dest;
