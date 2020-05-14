@@ -1,6 +1,8 @@
 
-v3.25
-=====
+v3.25 (2020-05-14)
+==================
+Fixes:
+* string: fix out-of-bounds access when calling HX_strlcpy(x,y,0)
 Changes:
 * string: HX_split4 renamed to HX_split_inplace
 * string: HX_split5 renamed to HX_split_fixed
