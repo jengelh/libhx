@@ -102,6 +102,8 @@ static void HXrbtree_free(struct HXrbtree *btree)
 
 EXPORT_SYMBOL void HXmap_free(struct HXmap *xmap)
 {
+	if (xmap == NULL)
+		return;
 	void *vmap = xmap;
 	const struct HXmap_private *map = vmap;
 
