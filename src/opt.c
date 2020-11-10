@@ -1011,6 +1011,8 @@ EXPORT_SYMBOL int HX_shconfig_pv(const char **path, const char *file,
 
 EXPORT_SYMBOL void HX_shconfig_free(const struct HXoption *table)
 {
+	if (table == NULL)
+		return;
 	for (; table->ln != NULL; ++table) {
 		char **ptr = table->ptr;
 		if (table->type == HXTYPE_STRING &&
