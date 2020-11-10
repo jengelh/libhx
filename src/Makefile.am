@@ -64,7 +64,8 @@ tc_strquote_LDADD  = libHX.la
 tc_time_LDADD      = libHX.la
 
 if HAVE_CXX
-check_PROGRAMS    += tx-compile tx-cast tx-deque tx-dir tx-list tx-list2 \
+check_PROGRAMS    += tx-compile tx-cast tx-deque tx-dir \
+                     tx-intdiff tx-list tx-list2 \
                      tx-misc tx-netio \
                      tx-option tx-proc tx-rand tx-strchr2 tx-string \
                      tx-strquote tx-time
@@ -77,6 +78,7 @@ tx_compile_LDADD   = libHX.la
 tx_deque_SOURCES   = tx-deque.cpp
 tx_dir_SOURCES     = tx-dir.cpp
 tx_dir_LDADD       = libHX.la
+tx_intdiff_SOURCES = tx-intdiff.cpp
 tx_list_SOURCES    = tx-list.cpp
 tx_list_LDADD      = libHX.la
 tx_list2_SOURCES   = tx-list2.cpp
