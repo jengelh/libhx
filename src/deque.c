@@ -122,6 +122,8 @@ EXPORT_SYMBOL void *HXdeque_del(struct HXdeque_node *node)
 
 EXPORT_SYMBOL void HXdeque_free(struct HXdeque *dq)
 {
+	if (dq == NULL)
+		return;
 	struct HXdeque_node *node, *next;
 	for (node = dq->first; node != NULL; node = next) {
 		next = node->next;
