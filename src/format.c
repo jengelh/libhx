@@ -101,6 +101,8 @@ static const struct HXmap_ops func_entry_ops = {
 
 EXPORT_SYMBOL void HXformat_free(struct HXformat_map *blk)
 {
+	if (blk == NULL)
+		return;
 	HXmap_free(blk->vars);
 	HXmap_free(blk->funcs);
 	free(blk);
