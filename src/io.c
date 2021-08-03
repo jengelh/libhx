@@ -540,6 +540,8 @@ EXPORT_SYMBOL ssize_t HXio_fullread(int fd, void *vbuf, size_t size)
 		ret = read(fd, buf, size - done);
 		if (ret < 0)
 			return ret;
+		else if (ret == 0)
+			break;
 		done += ret;
 		buf += ret;
 	}
@@ -556,6 +558,8 @@ EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *vbuf, size_t size)
 		ret = write(fd, buf, size - done);
 		if (ret < 0)
 			return ret;
+		else if (ret == 0)
+			break;
 		done += ret;
 		buf += ret;
 	}
