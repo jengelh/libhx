@@ -543,7 +543,7 @@ EXPORT_SYMBOL ssize_t HXio_fullread(int fd, void *vbuf, size_t size)
 		done += ret;
 		buf += ret;
 	}
-	return size;
+	return done;
 }
 
 EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *vbuf, size_t size)
@@ -559,5 +559,5 @@ EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *vbuf, size_t size)
 		done += ret;
 		buf += ret;
 	}
-	return size;
+	return done;
 }
