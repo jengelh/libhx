@@ -36,8 +36,10 @@ static const struct timespec pairs[] = {
 };
 
 /*
- * Variant that uses full 64 bit division and is thus slower on
- * a handful of hardware.
+ * The playing fields it not level at all!
+ * HX_timespec_add_DIVQ benefits from inlining and near jumps,
+ * while HX_timespec_add has to go via PLT, and also has the PIC tax.
+ * It is actually worse by 7% on i7-8250U/-m64.
  */
 static struct timespec *HX_timespec_add_DIVQ(struct timespec *r,
     const struct timespec *a, const struct timespec *b)
