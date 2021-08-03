@@ -1,3 +1,18 @@
+v3.26 (2021-08-03)
+==================
+
+Fixes:
+
+* io: cure a potential infinite loop on EOF with HXio_fullread()
+* io: HXio_fullread() now returns actual bytes read rather than bytes requested
+* time: rectified HX_timeval_sub producing wrong results
+
+Changes:
+
+* nullptr checks were added to HXshconfig_free, HXformat_free, HXdeque_free and
+  HXmap_free to make their behavior be in line with free(3).
+* Documentation has been switched to reStructured Text.
+
 
 v3.25 (2020-05-14)
 ==================
