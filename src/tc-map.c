@@ -60,12 +60,14 @@ static void tmap_printf(const char *fmt, ...)
 	va_end(args);
 }
 
-static void tmap_time(struct timeval *tv)
+static void tmap_time(struct timespec *tv)
 {
 #ifdef HAVE_SYS_RESOURCE_H
 	struct rusage r;
-	if (getrusage(RUSAGE_SELF, &r) == 0)
-		*tv = r.ru_utime;
+	if (getrusage(RUSAGE_SELF, &r) == 0) {
+		tv->tv_sec = r.ru_utime.tv_sec;
+		tv->tv_nsec = r.ru_utime.tv_usec * 1000;
+	}
 #else
 	memset(tv, 0, sizeof(*tv));
 #endif
@@ -134,7 +136,7 @@ static void tmap_flush(struct HXmap *map, bool verbose)
 
 static void tmap_add_speed(struct HXmap *map)
 {
-	struct timeval start, stop, delta;
+	struct timespec start, stop, delta;
 	unsigned int threshold;
 
 	tmap_printf("MAP test 1: Timing add operation\n");
@@ -143,20 +145,20 @@ static void tmap_add_speed(struct HXmap *map)
 	do {
 		tmap_add_rand(map, 1);
 		tmap_time(&stop);
-		HX_timeval_sub(&delta, &stop, &start);
+		HX_timespec_sub(&delta, &stop, &start);
 	} while (!(delta.tv_sec >= 1 || map->items >= 1000000));
-	tmap_printf("%u elements in " HX_TIMEVAL_FMT
+	tmap_printf("%u elements in " HX_TIMESPEC_FMT
 		" (plus time measurement overhead)\n",
-		map->items, HX_TIMEVAL_EXP(&delta));
+		map->items, HX_TIMESPEC_EXP(&delta));
 	threshold = map->items;
 	tmap_flush(map, false);
 
 	tmap_time(&start);
 	tmap_add_rand(map, threshold);
 	tmap_time(&stop);
-	HX_timeval_sub(&delta, &stop, &start);
-	tmap_printf("%u elements in " HX_TIMEVAL_FMT " (w/o overhead)\n",
-		map->items, HX_TIMEVAL_EXP(&delta));
+	HX_timespec_sub(&delta, &stop, &start);
+	tmap_printf("%u elements in " HX_TIMESPEC_FMT " (w/o overhead)\n",
+		map->items, HX_TIMESPEC_EXP(&delta));
 	tmap_ipop();
 }
 
@@ -167,7 +169,7 @@ static bool tmap_each_fn(const struct HXmap_node *node, void *arg)
 
 static void tmap_trav_speed(struct HXmap *map)
 {
-	struct timeval start, stop, delta, delta2;
+	struct timespec start, stop, delta, delta2;
 	const struct HXmap_node *node;
 	struct HXmap_trav *iter;
 
@@ -178,17 +180,17 @@ static void tmap_trav_speed(struct HXmap *map)
 	while ((node = HXmap_traverse(iter)) != NULL)
 		;
 	tmap_time(&stop);
-	HX_timeval_sub(&delta, &stop, &start);
+	HX_timespec_sub(&delta, &stop, &start);
 	HXmap_travfree(iter);
-	tmap_printf("Open traversal of %u nodes: " HX_TIMEVAL_FMT "s\n",
-		map->items, HX_TIMEVAL_EXP(&delta));
+	tmap_printf("Open traversal of %u nodes: " HX_TIMESPEC_FMT "s\n",
+		map->items, HX_TIMESPEC_EXP(&delta));
 
 	tmap_time(&start);
 	HXmap_qfe(map, tmap_each_fn, NULL);
 	tmap_time(&stop);
-	HX_timeval_sub(&delta, &stop, &start);
-	tmap_printf("QFE traversal of %u nodes: " HX_TIMEVAL_FMT "s\n",
-		map->items, HX_TIMEVAL_EXP(&delta));
+	HX_timespec_sub(&delta, &stop, &start);
+	tmap_printf("QFE traversal of %u nodes: " HX_TIMESPEC_FMT "s\n",
+		map->items, HX_TIMESPEC_EXP(&delta));
 	tmap_ipop();
 
 	tmap_printf("MAP test 2a: Timing lookup\n");
@@ -198,14 +200,14 @@ static void tmap_trav_speed(struct HXmap *map)
 	while ((node = HXmap_traverse(iter)) != NULL)
 		HXmap_find(map, node->key);
 	tmap_time(&stop);
-	HX_timeval_sub(&delta2, &stop, &start);
+	HX_timespec_sub(&delta2, &stop, &start);
 	HXmap_travfree(iter);
 	/* delta2 includes traversal time */
 	start = delta;
 	stop  = delta2;
-	HX_timeval_sub(&delta, &stop, &start);
-	tmap_printf("Lookup of %u nodes: " HX_TIMEVAL_FMT "s\n",
-		map->items, HX_TIMEVAL_EXP(&delta));
+	HX_timespec_sub(&delta, &stop, &start);
+	tmap_printf("Lookup of %u nodes: " HX_TIMESPEC_FMT "s\n",
+		map->items, HX_TIMESPEC_EXP(&delta));
 	tmap_ipop();
 }
 
