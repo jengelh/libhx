@@ -536,10 +536,9 @@ EXPORT_SYMBOL ssize_t HXio_fullread(int fd, void *vbuf, size_t size)
 	size_t done = 0;
 	if (size > SSIZE_MAX)
 		size = SSIZE_MAX;
-	ssize_t ret;
 
 	while (done < size) {
-		ret = read(fd, buf, size - done);
+		ssize_t ret = read(fd, buf, size - done);
 		if (ret < 0)
 			return ret;
 		else if (ret == 0)
@@ -556,10 +555,9 @@ EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *vbuf, size_t size)
 	size_t done = 0;
 	if (size > SSIZE_MAX)
 		size = SSIZE_MAX;
-	ssize_t ret;
 
 	while (done < size) {
-		ret = write(fd, buf, size - done);
+		ssize_t ret = write(fd, buf, size - done);
 		if (ret < 0)
 			return ret;
 		else if (ret == 0)
