@@ -39,7 +39,7 @@ static const struct timespec pairs[] = {
  * Variant that uses full 64 bit division and is thus slower on
  * a handful of hardware.
  */
-static struct timespec *HX_timespec_add_FDIV(struct timespec *r,
+static struct timespec *HX_timespec_add_DIVQ(struct timespec *r,
     const struct timespec *a, const struct timespec *b)
 {
 	long long p, q;
@@ -205,9 +205,9 @@ static void test_add(void)
 	for (a = pairs; a < pairs + ARRAY_SIZE(pairs); ++a) {
 		for (b = pairs; b < pairs + ARRAY_SIZE(pairs); ++b) {
 			HX_timespec_add(&r, a, b);
-			print_op2(&r, a, "+N", b);
-			HX_timespec_add_FDIV(&s, a, b);
-			print_op2(&r, a, "+F", b);
+			print_op2(&r, a, "+L", b);
+			HX_timespec_add_DIVQ(&s, a, b);
+			print_op2(&r, a, "+Q", b);
 			if (r.tv_sec != s.tv_sec || r.tv_nsec != s.tv_nsec)
 				abort();
 			HX_timespec_sub(&r, a, b);
@@ -288,7 +288,7 @@ static void test_adds(void)
 {
 	printf("# Test addition speed\n");
 	test_adds_1("normal:  ", HX_timespec_add);
-	test_adds_1("fulldiv: ", HX_timespec_add_FDIV);
+	test_adds_1("div64:   ", HX_timespec_add_DIVQ);
 	printf("\n");
 }
 
