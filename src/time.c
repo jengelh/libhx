@@ -119,20 +119,14 @@ HX_timespec_mulf(struct timespec *r, const struct timespec *a, double f)
 EXPORT_SYMBOL struct timeval *HX_timeval_sub(struct timeval *delta,
     const struct timeval *future, const struct timeval *past)
 {
-	delta->tv_sec  = future->tv_sec  - past->tv_sec;
-	delta->tv_usec = future->tv_usec - past->tv_usec;
-	if (future->tv_sec < past->tv_sec || (future->tv_sec == past->tv_sec &&
-	    future->tv_usec < past->tv_usec)) {
-		if (future->tv_usec > past->tv_usec) {
-			delta->tv_usec = -MICROSECOND + delta->tv_usec;
-			++delta->tv_sec;
-		}
-		if (delta->tv_sec < 0)
-			delta->tv_usec *= -1;
-	} else if (delta->tv_usec < 0) {
-		delta->tv_usec += MICROSECOND;
-		--delta->tv_sec;
-	}
+	struct timespec d, f, p;
+	f.tv_sec = future->tv_sec;
+	f.tv_nsec = future->tv_usec * 1000;
+	p.tv_sec = past->tv_sec;
+	p.tv_nsec = past->tv_usec * 1000;
+	HX_timespec_sub(&d, &f, &p);
+	delta->tv_sec = d.tv_sec;
+	delta->tv_usec = d.tv_nsec / 1000;
 	return delta;
 }
 #endif

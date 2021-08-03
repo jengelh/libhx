@@ -5,6 +5,7 @@
  *	modify it under the terms of the WTF Public License version 2 or
  *	(at your option) any later version.
  */
+#include <assert.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -105,6 +106,20 @@ HX_timespec_mulf_S(struct timespec *r, const struct timespec *a, double f)
 	if (r->tv_sec < 0 && r->tv_nsec < 0)
 		r->tv_nsec = -r->tv_nsec;
 	return r;
+}
+
+static void test_basic(void)
+{
+	struct timeval a = {1, 769298}, b = {2, 430520}, c;
+	struct timespec p = {1, 769298000}, q = {2, 430520000}, r;
+	HX_timeval_sub(&c, &b, &a);
+	HX_timespec_sub(&r, &q, &p);
+	printf(HX_TIMEVAL_FMT "\n", HX_TIMEVAL_EXP(&c));
+	printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&r));
+	assert(c.tv_sec == 0);
+	assert(c.tv_usec == 661222);
+	assert(r.tv_sec == 0);
+	assert(r.tv_nsec == 661222000);
 }
 
 static void test_same(void)
@@ -384,6 +399,7 @@ int main(void)
 	if (HX_init() <= 0)
 		abort();
 
+	test_basic();
 	test_same();
 	test_neg();
 	test_add();
