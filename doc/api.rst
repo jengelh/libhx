@@ -9,6 +9,8 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+3.27    3.27    3.27    HX_slurp_fd
+3.27    3.27    3.27    HX_slurp_file
 3.25    3.25    3.25    HX_split_fixed
 3.25    3.25    3.25    HX_split_inplace
 3.22    3.22    3.22    HXQUOTE_SQLBQUOTE

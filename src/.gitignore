@@ -5,6 +5,7 @@
 /t?-dir
 /t?-format
 /t?-intdiff
+/t?-io
 /t?-link
 /t?-list
 /t?-list2

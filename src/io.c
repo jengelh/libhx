@@ -300,27 +300,38 @@ EXPORT_SYMBOL int HX_mkdir(const char *idir, unsigned int mode)
 /* Readlink - with a trailing zero (provided by HXmc) */
 EXPORT_SYMBOL int HX_readlink(hxmc_t **target, const char *path)
 {
-	bool dnull = *target == NULL;
-	char *tb;
-	int ret;
+	bool allocate = *target == NULL;
+	size_t linkbuf_size;
 
-	if (dnull) {
-		*target = HXmc_meminit(NULL, PATH_MAX);
+	if (allocate) {
+		linkbuf_size = 32;
+		*target = HXmc_meminit(NULL, 32);
 		if (*target == NULL)
 			return -errno;
+	} else {
+		linkbuf_size = HXmc_length(*target);
 	}
-	tb  = *target;
-	ret = readlink(path, tb, PATH_MAX);
-	if (ret < 0) {
-		ret = -errno;
-		if (!dnull) {
-			HXmc_free(*target);
-			*target = NULL;
+	while (true) {
+		ssize_t ret = readlink(path, *target, linkbuf_size);
+		if (ret < 0) {
+			int saved_errno = errno;
+			if (allocate)
+				HXmc_free(*target);
+			return -(errno = saved_errno);
 		}
-		return ret;
+		if (static_cast(size_t, ret) < linkbuf_size) {
+			HXmc_setlen(target, ret);
+			return ret;
+		}
+		linkbuf_size *= 2;
+		if (HXmc_setlen(target, linkbuf_size) == NULL) {
+			int saved_errno = errno;
+			if (allocate)
+				HXmc_free(*target);
+			return -(errno = saved_errno);
+		}
 	}
-	HXmc_setlen(target, ret);
-	return ret;
+	return 0;
 }
 
 /**
@@ -566,4 +577,44 @@ EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *vbuf, size_t size)
 		buf += ret;
 	}
 	return done;
+}
+
+EXPORT_SYMBOL void *HX_slurp_fd(int fd, size_t *outsize)
+{
+	struct stat sb;
+	if (fstat(fd, &sb) < 0)
+		return NULL;
+	size_t fsize = sb.st_size; /* may truncate from loff_t to size_t */
+	void *buf = malloc(fsize);
+	if (buf == NULL)
+		return NULL;
+	ssize_t rdret = HXio_fullread(fd, buf, fsize);
+	if (rdret < 0) {
+		int se = errno;
+		free(buf);
+		errno = se;
+		return NULL;
+	}
+	if (outsize != NULL)
+		*outsize = rdret;
+	return buf;
+}
+
+EXPORT_SYMBOL void *HX_slurp_file(const char *file, size_t *outsize)
+{
+	int fd = open(file, O_RDONLY | O_BINARY | O_CLOEXEC);
+	if (fd < 0)
+		return NULL;
+	size_t tmpsize;
+	if (outsize == NULL)
+		outsize = &tmpsize;
+	void *buf = HX_slurp_fd(fd, outsize);
+	if (buf == NULL) {
+		int se = errno;
+		close(fd);
+		errno = se;
+		return NULL;
+	}
+	close(fd);
+	return buf;
 }

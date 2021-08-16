@@ -13,7 +13,7 @@ libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c \
                    rand.c string.c time.c
 libHX_la_LIBADD  = ${libdl_LIBS} ${libpthread_LIBS} ${librt_LIBS}
-libHX_la_LDFLAGS = -no-undefined -version-info 32:0:0
+libHX_la_LDFLAGS = -no-undefined -version-info 33:0:1
 if WITH_GNU_LD
 libHX_la_LDFLAGS += -Wl,--version-script=${srcdir}/libHX.map
 endif
@@ -35,7 +35,7 @@ endif
 
 EXTRA_DIST = internal.h map_int.h libHX.map
 
-check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-link \
+check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-io tc-link \
                      tc-list tc-list2 tc-map tc-memmem tc-misc tc-netio \
                      tc-option tc-proc tc-rand tc-realpath \
                      tc-shconfig tc-strchr2 tc-string tc-strquote tc-time
@@ -45,6 +45,7 @@ tc_cast_LDADD      = libHX.la -lm
 tc_compile_LDADD   = libHX.la
 tc_dir_LDADD       = libHX.la
 tc_format_LDADD    = libHX.la
+tc_io_LDADD        = libHX.la
 tc_link_LDADD      = libHX.la
 tc_list_LDADD      = libHX.la
 tc_list2_LDADD     = libHX.la

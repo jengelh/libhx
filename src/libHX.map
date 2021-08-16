@@ -126,3 +126,9 @@ global:
 local:
 	*;
 };
+
+LIBHX_3.27 {
+global:
+	HX_slurp_fd;
+	HX_slurp_file;
+} LIBHX_3.25;

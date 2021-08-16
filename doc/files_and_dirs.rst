@@ -121,10 +121,24 @@ Operations on files
 
 	#include <libHX/io.h>
 
+	#define HXF_KEEP ...
+	#define HXF_UID ...
+	#define HXF_GID ...
+
 	int HX_copy_file(const char *src, const char *dest, unsigned int flags, ...);
 	int HX_copy_dir(const char *src, const char *dest, unsigned int flags, ...);
+	void *HX_slurp_fd(int fd, size_t *outsize);
+	void *HX_slurp_file(const char *file, size_t *outsize);
 
-Possible flags that can be used with the functions:
+``HX_copy_file``
+	Copies one named file to a new location. Possible ``flags`` are
+	``HXF_KEEP``, ``HXF_UID`` and ``HXF_GID``. Error checking by
+	``HX_copy_file`` is flakey. ``HX_copy_file`` will return >0 on success,
+	or ``-errno`` on failure. Errors can arise from the use of the syscalls
+	``open``, ``read`` and ``write``. The return value of ``fchmod``, which
+	is used to set the UID and GID, is actually ignored, which means
+	verifying that the owner has been set cannot be detected with
+	``HX_copy_file`` alone (historic negligience?).
 
 ``HXF_KEEP``
 	Do not overwrite existing files.
@@ -137,13 +151,20 @@ Possible flags that can be used with the functions:
 	Change the new file's group owner to the GID given in the varargs
 	section. This is processed after ``HXF_UID``.
 
-Error checking is flakey.
+``HX_copy_dir``
+	Copies one named directory to a new location, recursively.
+	(Uses ``HX_copy_file`` and ``HX_copy_dir``.) Error checking by
+	``HX_copy_dir`` is flakey.
 
-``HX_copy_file`` will return >0 on success, or ``-errno`` on failure. Errors
-can arise from the use of the syscalls ``open``, ``read`` and ``write``. The
-return value of ``fchmod``, which is used to set the UID and GID, is actually
-ignored, which means verifying that the owner has been set cannot be detected
-with ``HX_copy_file`` alone (historic negligience?).
+``HX_slurp_fd``
+	Read all remaining bytes from the given filedescriptor ``fd`` and
+	return a pointer to the content buffer. If ``outsize`` is not ``NULL``,
+	the size of the buffer will be written to it.
+
+``HX_slurp_file``
+	Read all bytes from the given filename and return a pointer to the
+	content buffer. If ``outsize`` is not ``NULL``, the size of the buffer
+	will be written to it.
 
 
 Filedescriptor helpers
