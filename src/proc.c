@@ -10,31 +10,8 @@
 #include "config.h"
 #include "internal.h"
 
-#if !defined(HAVE_FORK) || !defined(HAVE_PIPE) || !defined(HAVE_EXECV) || \
-    !defined(HAVE_EXECVP)
-#include <errno.h>
-#include <libHX/proc.h>
-
-struct HXproc;
-
-EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *p)
-{
-	return -ENOSYS;
-}
-
-EXPORT_SYMBOL int HXproc_run_sync(const char *const *argv, unsigned int flags)
-{
-	/* Might use system() here... */
-	return -ENOSYS;
-}
-
-EXPORT_SYMBOL int HXproc_wait(struct HXproc *p)
-{
-	return -ENOSYS;
-}
-
-#else /* HAVE_FORK, HAVE_PIPE, HAVE_EXECVE */
-
+#if defined(HAVE_FORK) && defined(HAVE_PIPE) && defined(HAVE_EXECV) && \
+    defined(HAVE_EXECVP)
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -264,6 +241,29 @@ EXPORT_SYMBOL int HXproc_wait(struct HXproc *proc)
 		return static_cast(unsigned int,
 		       static_cast(unsigned char, proc->p_status)) << 16;
 	return static_cast(unsigned char, proc->p_status);
+}
+
+#else
+
+#include <errno.h>
+#include <libHX/proc.h>
+
+struct HXproc;
+
+EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *p)
+{
+	return -ENOSYS;
+}
+
+EXPORT_SYMBOL int HXproc_run_sync(const char *const *argv, unsigned int flags)
+{
+	/* Might use system() here... */
+	return -ENOSYS;
+}
+
+EXPORT_SYMBOL int HXproc_wait(struct HXproc *p)
+{
+	return -ENOSYS;
 }
 
 #endif /* HAVE_lots */
