@@ -15,6 +15,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -65,18 +66,20 @@ HXproc_build_pipes(const struct HXproc *proc, int (*p)[2])
  */
 static void HXproc_close_pipes(int (*p)[2])
 {
+#define xc(fd) do { close(fd); (fd) = -1; } while (false)
 	if (p[0][0] >= 0)
-		close(p[0][0]);
+		xc(p[0][0]);
 	if (p[0][1] >= 0)
-		close(p[0][1]);
+		xc(p[0][1]);
 	if (p[1][0] >= 0)
-		close(p[1][0]);
+		xc(p[1][0]);
 	if (p[1][1] >= 0)
-		close(p[1][1]);
+		xc(p[1][1]);
 	if (p[2][0] >= 0)
-		close(p[2][0]);
+		xc(p[2][0]);
 	if (p[2][1] >= 0)
-		close(p[2][1]);
+		xc(p[2][1]);
+#undef xc
 }
 
 /**
@@ -113,6 +116,7 @@ HXproc_run_async(const char *const *argv, struct HXproc *proc)
 	}
 	if ((ret = HXproc_build_pipes(proc, pipes)) <= 0) {
 		saved_errno = errno;
+		HXproc_close_pipes(pipes);
 		if (nullfd >= 0)
 			close(nullfd);
 		errno = saved_errno;
