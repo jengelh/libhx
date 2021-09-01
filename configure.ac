@@ -103,10 +103,9 @@ AC_CHECK_MEMBERS(
 	#include <sys/time.h>
 	#include <time.h>
 	])
-AC_CHECK_FUNCS([fork execv execvp pipe], [b_proc="1"])
+AC_CHECK_FUNCS([fork execv execvp pipe])
 AC_CHECK_FUNCS([getegid geteuid getpid getppid])
-AM_CONDITIONAL([B_PROC], [test "$b_proc" = 1])
-
+AC_CHECK_FUNCS([initgroups setgid])
 AC_CHECK_PROGS([LYX], [lyx])
 AM_CONDITIONAL([BUILD_DOCS], [test -n "$LYX"])
 

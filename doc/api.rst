@@ -9,6 +9,14 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+3.27    3.27    3.27    HXproc_switch_user
+3.27    3.27    3.27    HXPROC_SU_SUCCESS
+3.27    3.27    3.27    HXPROC_SU_NOOP
+3.27    3.27    3.27    HXPROC_USER_NOT_FOUND
+3.27    3.27    3.27    HXPROC_GROUP_NOT_FOUND
+3.27    3.27    3.27    HXPROC_SETUID_FAILED
+3.27    3.27    3.27    HXPROC_SETGID_FAILED
+3.27    3.27    3.27    HXPROC_INITGROUPS_FAILED
 3.27    3.27    3.27    HX_slurp_fd
 3.27    3.27    3.27    HX_slurp_file
 3.25    3.25    3.25    HX_split_fixed

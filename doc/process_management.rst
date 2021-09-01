@@ -193,3 +193,30 @@ error. Underlying system function's errors are returned, plus:
 
 ``EINVAL``
 	Flags were not accepted.
+
+
+User identity control
+=====================
+
+.. code-block: c
+
+	#include <libHX/proc.h>
+
+	int HXproc_switch_user(const char *user, const char *group);
+
+``HXproc_switch_user`` is a wrapper for changing process identity to an
+unprivileged user. This utilizes ``setuid``, and possibly ``setgid`` plus
+``initgroups``.
+
+``user`` can either be a username or a numeric UID in string form, the latter
+of which will be parsed with strtoul in automatic base. If ``user`` is ``NULL``
+or the empty string, no change of process user identity occurs.
+
+``group`` can likewise be a name or GID. When ``group`` is ``NULL``, the
+process group(s) will change to the the user's group(s) — both primary and
+secondary — provided a user was specified (see above). When ``gruop`` is the
+empty string, no change of process group identity occurs.
+
+``HXproc_switch_user`` also implicitly issues a ``chdir("/")`` to not
+unnecessarily hold a reference to a mount point or directory in the old user's
+context (if any).

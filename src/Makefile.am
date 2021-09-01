@@ -10,7 +10,7 @@ lib_LTLIBRARIES += libHX_rtcheck.la
 endif
 
 libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
-                   mc.c misc.c opt.c \
+                   mc.c misc.c opt.c proc.c \
                    rand.c string.c time.c
 libHX_la_LIBADD  = ${libdl_LIBS} ${libpthread_LIBS} ${librt_LIBS}
 libHX_la_LDFLAGS = -no-undefined -version-info 33:0:1
@@ -21,9 +21,6 @@ EXTRA_libHX_la_DEPENDENCIES = libHX.map
 
 if MINGW32
 libHX_la_SOURCES += ux-file.c ux-mmap.c
-endif
-if B_PROC
-libHX_la_SOURCES += proc.c
 endif
 
 libHX_rtcheck_la_SOURCES = rtcheck.c
@@ -38,7 +35,8 @@ EXTRA_DIST = internal.h map_int.h libHX.map
 check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-io tc-link \
                      tc-list tc-list2 tc-map tc-memmem tc-misc tc-netio \
                      tc-option tc-proc tc-rand tc-realpath \
-                     tc-shconfig tc-strchr2 tc-string tc-strquote tc-time
+                     tc-shconfig tc-strchr2 tc-string tc-strquote \
+                     tc-switchuser tc-time
 TESTS              = tc-strchr2 tc-strquote
 tc_cast_CFLAGS     = ${AM_CFLAGS} -std=gnu99
 tc_cast_LDADD      = libHX.la -lm
@@ -62,6 +60,7 @@ tc_shconfig_LDADD  = libHX.la
 tc_strchr2_LDADD   = libHX.la
 tc_string_LDADD    = libHX.la
 tc_strquote_LDADD  = libHX.la
+tc_switchuser_LDADD = libHX.la
 tc_time_LDADD      = libHX.la
 
 if HAVE_CXX

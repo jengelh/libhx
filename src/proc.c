@@ -7,8 +7,95 @@
  *	General Public License as published by the Free Software Foundation;
  *	either version 2.1 or (at your option) any later version.
  */
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#	include "config.h"
+#endif
 #include "internal.h"
+
+#if defined(HAVE_INITGROUPS) && defined(HAVE_SETGID)
+#include <errno.h>
+#include <grp.h>
+#include <pwd.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <libHX/proc.h>
+
+static int HXproc_switch_gid(const struct passwd *pw, gid_t gr_gid)
+{
+	bool do_setgid = getgid() != gr_gid || getegid() != gr_gid;
+	if (do_setgid && setgid(gr_gid) != 0) {
+		if (errno == 0)
+			errno = -EINVAL;
+		return HXPROC_SETGID_FAILED;
+	}
+	if (pw == NULL)
+		return do_setgid ? HXPROC_SU_SUCCESS : HXPROC_SU_NOOP;
+
+	/* pw!=NULL: user switch requested, do initgroups now. */
+
+	if (geteuid() == pw->pw_uid) {
+		/*
+		 * Target identity (usually unprivileged) already reached.
+		 * initgroups is unlikely to succeed.
+		 */
+		if (initgroups(pw->pw_name, gr_gid) < 0)
+			/* ignore */;
+		return do_setgid ? HXPROC_SU_SUCCESS : HXPROC_SU_NOOP;
+	}
+	if (initgroups(pw->pw_name, gr_gid) != 0)
+		return HXPROC_INITGROUPS_FAILED;
+	return do_setgid ? HXPROC_SU_SUCCESS : HXPROC_SU_NOOP;
+}
+
+static int HXproc_switch_group(const struct passwd *pw, const char *group)
+{
+	char *end;
+	unsigned long gid = strtoul(group, &end, 10);
+	const struct group *gr = *end == '\0' ? getgrgid(gid) : getgrnam(group);
+	if (gr == NULL) {
+		if (errno == 0)
+			errno = ENOENT;
+		return HXPROC_GROUP_NOT_FOUND;
+	}
+	return HXproc_switch_gid(pw, gr->gr_gid);
+}
+
+EXPORT_SYMBOL int HXproc_switch_user(const char *user, const char *group)
+{
+	if (chdir("/") != 0)
+		/* ignore */;
+	const struct passwd *pw = NULL;
+	if (user != NULL && *user != '\0') {
+		char *end;
+		unsigned long uid = strtoul(user, &end, 10);
+		pw = *end == '\0' ? getpwuid(uid) : getpwnam(user);
+		if (pw == NULL) {
+			if (errno == 0)
+				errno = ENOENT;
+			return HXPROC_USER_NOT_FOUND;
+		}
+	}
+	int ret = HXPROC_SU_NOOP;
+	if (group != NULL && *group != '\0') {
+		ret = HXproc_switch_group(pw, group);
+		if (ret < 0)
+			return ret;
+	} else if (group == NULL && pw != NULL) {
+		ret = HXproc_switch_gid(pw, pw->pw_gid);
+		if (ret < 0)
+			return ret;
+	}
+	bool do_setuid = pw != NULL && (getuid() != pw->pw_uid || geteuid() != pw->pw_uid);
+	if (do_setuid && setuid(pw->pw_uid) != 0) {
+		if (errno == 0)
+			errno = -EINVAL;
+		return HXPROC_SETUID_FAILED;
+	}
+	return do_setuid ? HXPROC_SU_SUCCESS : ret;
+}
+
+#endif /* HAVE_lots */
 
 #if defined(HAVE_FORK) && defined(HAVE_PIPE) && defined(HAVE_EXECV) && \
     defined(HAVE_EXECVP)

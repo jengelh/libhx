@@ -22,6 +22,7 @@
 /t?-strchr2
 /t?-string
 /t?-strquote
+/t?-switchuser
 /t?-time
 
 # automake tests

@@ -21,6 +21,16 @@ enum {
 	HXPROC_NULL_STDERR = 1 << 8,
 };
 
+enum HXproc_su_status {
+	HXPROC_INITGROUPS_FAILED = -5,
+	HXPROC_SETGID_FAILED = -4,
+	HXPROC_SETUID_FAILED = -3,
+	HXPROC_GROUP_NOT_FOUND = -2,
+	HXPROC_USER_NOT_FOUND = -1,
+	HXPROC_SU_NOOP = 0,
+	HXPROC_SU_SUCCESS = 1,
+};
+
 struct HXproc_ops {
 	void (*p_prefork)(void *);
 	void (*p_postfork)(void *);
@@ -41,6 +51,7 @@ struct HXproc {
 extern int HXproc_run_async(const char *const *, struct HXproc *);
 extern int HXproc_run_sync(const char *const *, unsigned int);
 extern int HXproc_wait(struct HXproc *);
+extern enum HXproc_su_status HXproc_switch_user(const char *user, const char *group);
 
 #ifdef __cplusplus
 } /* extern "C" */
