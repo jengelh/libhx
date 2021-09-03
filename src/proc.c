@@ -11,15 +11,15 @@
 #	include "config.h"
 #endif
 #include "internal.h"
+#include <errno.h>
+#include <libHX/proc.h>
 
 #if defined(HAVE_INITGROUPS) && defined(HAVE_SETGID)
-#include <errno.h>
 #include <grp.h>
 #include <pwd.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <libHX/proc.h>
 
 static int HXproc_switch_gid(const struct passwd *pw, gid_t gr_gid)
 {
@@ -95,19 +95,24 @@ EXPORT_SYMBOL int HXproc_switch_user(const char *user, const char *group)
 	return do_setuid ? HXPROC_SU_SUCCESS : ret;
 }
 
+#else
+
+EXPORT_SYMBOL int HXproc_switch_user(const char *user, const char *group)
+{
+	return -ENOSYS;
+}
+
 #endif /* HAVE_lots */
 
 #if defined(HAVE_FORK) && defined(HAVE_PIPE) && defined(HAVE_EXECV) && \
     defined(HAVE_EXECVP)
 #include <sys/wait.h>
 #include <fcntl.h>
-#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <libHX/defs.h>
-#include <libHX/proc.h>
 #include "internal.h"
 
 #ifdef _WIN32
@@ -335,11 +340,6 @@ EXPORT_SYMBOL int HXproc_wait(struct HXproc *proc)
 }
 
 #else
-
-#include <errno.h>
-#include <libHX/proc.h>
-
-struct HXproc;
 
 EXPORT_SYMBOL int HXproc_run_async(const char *const *argv, struct HXproc *p)
 {
