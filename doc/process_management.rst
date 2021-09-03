@@ -220,3 +220,18 @@ empty string, no change of process group identity occurs.
 ``HXproc_switch_user`` also implicitly issues a ``chdir("/")`` to not
 unnecessarily hold a reference to a mount point or directory in the old user's
 context (if any).
+
+
+Process information
+===================
+
+.. code-block:: c
+
+	#include <libHX/proc.h>
+
+	int HXproc_top_fd(void);
+
+``HXproc_top_fd``
+	This function gives a heuristic for the highest fd in the process.
+	The returned number may be higher than the highest live fd actually.
+	On error, negative errno is returned.

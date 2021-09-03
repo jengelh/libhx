@@ -132,4 +132,5 @@ global:
 	HX_slurp_fd;
 	HX_slurp_file;
 	HXproc_switch_user;
+	HXproc_top_fd;
 } LIBHX_3.25;

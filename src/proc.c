@@ -12,6 +12,11 @@
 #endif
 #include "internal.h"
 #include <errno.h>
+#include <limits.h>
+#include <unistd.h>
+#ifdef HAVE_SYS_RESOURCE_H
+#	include <sys/resource.h>
+#endif
 #include <libHX/proc.h>
 
 #if defined(HAVE_INITGROUPS) && defined(HAVE_SETGID)
@@ -358,3 +363,22 @@ EXPORT_SYMBOL int HXproc_wait(struct HXproc *p)
 }
 
 #endif /* HAVE_lots */
+
+EXPORT_SYMBOL int HXproc_top_fd(void)
+{
+#ifndef _WIN32
+	struct rlimit r;
+	if (getrlimit(RLIMIT_NOFILE, &r) == 0) {
+		if (r.rlim_max > INT_MAX)
+			r.rlim_max = INT_MAX;
+		return r.rlim_max;
+	}
+	long v = sysconf(_SC_OPEN_MAX);
+	if (v >= 0) {
+		if (v > INT_MAX)
+			v = INT_MAX;
+		return v;
+	}
+#endif
+	return FD_SETSIZE;
+}

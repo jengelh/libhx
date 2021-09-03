@@ -52,6 +52,7 @@ extern int HXproc_run_async(const char *const *, struct HXproc *);
 extern int HXproc_run_sync(const char *const *, unsigned int);
 extern int HXproc_wait(struct HXproc *);
 extern enum HXproc_su_status HXproc_switch_user(const char *user, const char *group);
+extern int HXproc_top_fd(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

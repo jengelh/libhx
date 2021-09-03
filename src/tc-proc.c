@@ -7,10 +7,12 @@
  */
 #ifdef __cplusplus
 #	include <cerrno>
+#	include <cstdio>
 #	include <cstdlib>
 #	include <cstring>
 #else
 #	include <errno.h>
+#	include <stdio.h>
 #	include <stdlib.h>
 #	include <string.h>
 #endif
@@ -56,6 +58,7 @@ int main(void)
 {
 	if (HX_init() <= 0)
 		abort();
+	printf("top fd: %d\n", HXproc_top_fd());
 
 	/* let it fail - test verbosity */
 	HXproc_run_sync(t_args1 + 2, HXPROC_VERBOSE);

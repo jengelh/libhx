@@ -9,6 +9,7 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+3.27    3.27    3.27    HXproc_top_fd
 3.27    3.27    3.27    HXproc_switch_user
 3.27    3.27    3.27    HXPROC_SU_SUCCESS
 3.27    3.27    3.27    HXPROC_SU_NOOP
