@@ -129,6 +129,7 @@ local:
 
 LIBHX_3.27 {
 global:
+	HX_socket_from_env;
 	HX_slurp_fd;
 	HX_slurp_file;
 	HXproc_switch_user;

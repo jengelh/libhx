@@ -42,6 +42,7 @@
 #define MAXLNLEN 1024 /* max length for usual line */
 
 #define HXMC_IDENT 0x200571AF
+#define nullptr NULL
 
 struct memcont {
 	size_t alloc, length;
