@@ -15,12 +15,9 @@ correctly handled[#f4], as in ``-f -``.
 
 .. [#f4] popt failed to do this for a long time.
 
-A table-based approach allows for the parser to run as one atomic block of code
-(callbacks are, by definition, “special” exceptions), making it more opaque
-than an open-coded ``getopt``(3) loop. You give it your argument vector and the
-table, snip the finger (call the parser function once), and it is done. In
-getopt on the other hand, the getopt function returns for every argument it
-parsed and needs to be called repeatedly.
+A table-based approach allows for the parser to run as one unit, quite unlike
+the open-coded ``getopt``(3) loop where the function returns for every argument
+it parsed and needs to be called repeatedly.
 
 
 Synopsis
@@ -30,7 +27,7 @@ Synopsis
 
 	#include <libHX/option.h>
 
-	struct HXoption {struct HXoption
+	struct HXoption {
 		const char *ln;
 		char sh;
 		unsigned int type;
@@ -278,10 +275,11 @@ Invoking the parser
 
 ``HX_getopt`` is the actual parsing function. It takes the option table, and a
 pointer to your argc and argv variables that you get from the main function.
-The parser will, unlike GNU getopt, literally “eat” all options and their
-arguments, leaving only non-options in ``argv``, and ``argc`` updated, when
-finished. This is similar to how Perl's ``Getopt::Long`` module works.
-Additional flags can control the exact behavior of ``HX_getopt``:
+The parser will, by default, consume all options and their arguments, similar
+to Perl's ``Getopt::Long`` module. ``*argv`` is then updated to point to a new
+array of strings (to be deallocated with ``HX_zvecfree``) and ``*argc`` is
+updated accordingly. Additional flags can control the exact behavior of
+``HX_getopt``:
 
 ``HXOPT_PTHRU``
 	“Passthrough mode”. Any unknown options are not “eaten” and are instead
@@ -302,6 +300,9 @@ Additional flags can control the exact behavior of ``HX_getopt``:
 	Specifying this option terminates option processing when the first
 	non-option argument in argv is encountered. This behavior is also
 	implicit when the environment variable ``POSIXLY_CORRECT`` is set.
+
+``HXOPT_KEEP_ARGV``
+	Do not modify ``argc`` and ``argv`` at all.
 
 The return value can be one of the following:
 

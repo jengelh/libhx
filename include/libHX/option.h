@@ -144,6 +144,7 @@ enum {
  * %HXOPT_USAGEONERR:	print out short usage when a parsing error occurs
  * %HXOPT_RQ_ORDER:	require option order/POSIX mode:
  * 			first non-option terminates option processing
+ * %HXOPT_KEEP_ARGV:	do not replace argc/argv at all
  */
 enum {
 	HXOPT_PTHRU       = 1 << 0,
@@ -152,6 +153,7 @@ enum {
 	HXOPT_HELPONERR   = 1 << 3,
 	HXOPT_USAGEONERR  = 1 << 4,
 	HXOPT_RQ_ORDER    = 1 << 5,
+	HXOPT_KEEP_ARGV   = 1 << 6,
 };
 
 /**
