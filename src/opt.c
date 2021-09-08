@@ -758,7 +758,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 
  out:
 	if (ret == HXOPT_ERR_SUCCESS) {
-		if (ps.flags & HXOPT_KEEP_ARGV) {
+		if (!(ps.flags & HXOPT_KEEP_ARGV)) {
 		const char **nvec = reinterpret_cast(const char **,
 		                    HXdeque_to_vec(ps.remaining, &argk));
 		if (nvec == NULL)
