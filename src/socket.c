@@ -73,6 +73,7 @@ EXPORT_SYMBOL int HX_socket_from_env(const struct addrinfo *ai, const char *intf
 	const char *env_limit = getenv("LISTEN_FDS");
 	int top_fd = env_limit != nullptr ? 3 + strtol(env_limit, nullptr, 0) : HXproc_top_fd();
 	env_limit = getenv("HX_LISTEN_TOP_FD");
+	if (env_limit != nullptr)
 		top_fd = strtol(env_limit, nullptr, 0);
 	for (int fd = 3; fd < top_fd; ++fd)
 		if (try_sk_from_env(fd, ai, intf) == fd)
