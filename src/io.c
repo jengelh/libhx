@@ -579,13 +579,13 @@ EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *vbuf, size_t size)
 	return done;
 }
 
-EXPORT_SYMBOL void *HX_slurp_fd(int fd, size_t *outsize)
+EXPORT_SYMBOL char *HX_slurp_fd(int fd, size_t *outsize)
 {
 	struct stat sb;
 	if (fstat(fd, &sb) < 0)
 		return NULL;
 	size_t fsize = sb.st_size; /* may truncate from loff_t to size_t */
-	void *buf = malloc(fsize);
+	char *buf = malloc(fsize);
 	if (buf == NULL)
 		return NULL;
 	ssize_t rdret = HXio_fullread(fd, buf, fsize);
@@ -600,7 +600,7 @@ EXPORT_SYMBOL void *HX_slurp_fd(int fd, size_t *outsize)
 	return buf;
 }
 
-EXPORT_SYMBOL void *HX_slurp_file(const char *file, size_t *outsize)
+EXPORT_SYMBOL char *HX_slurp_file(const char *file, size_t *outsize)
 {
 	int fd = open(file, O_RDONLY | O_BINARY | O_CLOEXEC);
 	if (fd < 0)
@@ -608,7 +608,7 @@ EXPORT_SYMBOL void *HX_slurp_file(const char *file, size_t *outsize)
 	size_t tmpsize;
 	if (outsize == NULL)
 		outsize = &tmpsize;
-	void *buf = HX_slurp_fd(fd, outsize);
+	char *buf = HX_slurp_fd(fd, outsize);
 	if (buf == NULL) {
 		int se = errno;
 		close(fd);

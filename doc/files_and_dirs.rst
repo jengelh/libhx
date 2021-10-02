@@ -127,8 +127,8 @@ Operations on files
 
 	int HX_copy_file(const char *src, const char *dest, unsigned int flags, ...);
 	int HX_copy_dir(const char *src, const char *dest, unsigned int flags, ...);
-	void *HX_slurp_fd(int fd, size_t *outsize);
-	void *HX_slurp_file(const char *file, size_t *outsize);
+	char *HX_slurp_fd(int fd, size_t *outsize);
+	char *HX_slurp_file(const char *file, size_t *outsize);
 
 ``HX_copy_file``
 	Copies one named file to a new location. Possible ``flags`` are
