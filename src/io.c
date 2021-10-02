@@ -14,6 +14,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -585,7 +586,9 @@ EXPORT_SYMBOL char *HX_slurp_fd(int fd, size_t *outsize)
 	if (fstat(fd, &sb) < 0)
 		return NULL;
 	size_t fsize = sb.st_size; /* may truncate from loff_t to size_t */
-	char *buf = malloc(fsize);
+	if (fsize == SIZE_MAX)
+		--fsize;
+	char *buf = malloc(fsize + 1);
 	if (buf == NULL)
 		return NULL;
 	ssize_t rdret = HXio_fullread(fd, buf, fsize);
@@ -595,6 +598,7 @@ EXPORT_SYMBOL char *HX_slurp_fd(int fd, size_t *outsize)
 		errno = se;
 		return NULL;
 	}
+	buf[rdret] = '\0';
 	if (outsize != NULL)
 		*outsize = rdret;
 	return buf;

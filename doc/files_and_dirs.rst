@@ -157,14 +157,16 @@ Operations on files
 	``HX_copy_dir`` is flakey.
 
 ``HX_slurp_fd``
-	Read all remaining bytes from the given filedescriptor ``fd`` and
-	return a pointer to the content buffer. If ``outsize`` is not ``NULL``,
-	the size of the buffer will be written to it.
+	Reads all remaining bytes from the given filedescriptor ``fd`` and
+	returns a pointer to a newly-allocated content buffer. If ``outsize``
+	is not ``NULL``, the size of the buffer will be written to it. The
+	buffer is always terminated by a gratuitious NUL (not counted in
+	``outsize``). Once no longer needed, the buffer should be released with
+	``free``.
 
 ``HX_slurp_file``
-	Read all bytes from the given filename and return a pointer to the
-	content buffer. If ``outsize`` is not ``NULL``, the size of the buffer
-	will be written to it.
+	Reads all bytes from the given filename and returns a pointer to the
+	content buffer. Inherits all the characteristics from ``HX_slurp_fd``.
 
 
 Filedescriptor helpers
