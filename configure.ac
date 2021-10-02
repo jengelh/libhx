@@ -118,6 +118,5 @@ regular_CXXFLAGS="-Wall -Wno-pointer-arith -Wredundant-decls -pipe \
 AC_SUBST([regular_CPPFLAGS])
 AC_SUBST([regular_CFLAGS])
 AC_SUBST([regular_CXXFLAGS])
-AC_CONFIG_FILES([Makefile assorted/Makefile src/Makefile
-	include/Makefile libHX.pc])
+AC_CONFIG_FILES([Makefile src/Makefile include/Makefile libHX.pc])
 AC_OUTPUT
