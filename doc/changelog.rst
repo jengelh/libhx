@@ -1,3 +1,19 @@
+v4.0 (2021-10-03)
+=================
+
+Enhancements:
+
+* lib: add ``HX_slurp_fd``, ``HX_slurp_file``
+* proc: add ``HXproc_switch_user``
+* proc: add ``HXproc_top_fd``
+* socket: add ``HX_socket_from_env``
+* opt: add ``HXOPT_KEEP_ARGV`` flag
+
+Fixes:
+
+* proc: re-close pipes when ``HXproc_build_pipes`` failed
+
+
 v3.26 (2021-08-03)
 ==================
 
