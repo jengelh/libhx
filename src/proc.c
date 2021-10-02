@@ -68,8 +68,6 @@ static int HXproc_switch_group(const struct passwd *pw, const char *group)
 
 EXPORT_SYMBOL int HXproc_switch_user(const char *user, const char *group)
 {
-	if (chdir("/") != 0)
-		/* ignore */;
 	const struct passwd *pw = NULL;
 	if (user != NULL && *user != '\0') {
 		char *end;

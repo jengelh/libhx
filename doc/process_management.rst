@@ -217,10 +217,6 @@ process group(s) will change to the the user's group(s) — both primary and
 secondary — provided a user was specified (see above). When ``gruop`` is the
 empty string, no change of process group identity occurs.
 
-``HXproc_switch_user`` also implicitly issues a ``chdir("/")`` to not
-unnecessarily hold a reference to a mount point or directory in the old user's
-context (if any).
-
 
 Process information
 ===================
