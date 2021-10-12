@@ -316,8 +316,10 @@ EXPORT_SYMBOL int HX_readlink(hxmc_t **target, const char *path)
 		ssize_t ret = readlink(path, *target, linkbuf_size);
 		if (ret < 0) {
 			int saved_errno = errno;
-			if (allocate)
+			if (allocate) {
 				HXmc_free(*target);
+				*target = nullptr;
+			}
 			return -(errno = saved_errno);
 		}
 		if (static_cast(size_t, ret) < linkbuf_size) {
@@ -327,8 +329,10 @@ EXPORT_SYMBOL int HX_readlink(hxmc_t **target, const char *path)
 		linkbuf_size *= 2;
 		if (HXmc_setlen(target, linkbuf_size) == NULL) {
 			int saved_errno = errno;
-			if (allocate)
+			if (allocate) {
 				HXmc_free(*target);
+				*target = nullptr;
+			}
 			return -(errno = saved_errno);
 		}
 	}

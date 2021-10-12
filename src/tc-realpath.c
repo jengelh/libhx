@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <libHX/io.h>
 #include <libHX/option.h>
+#include <libHX/string.h>
 
 static unsigned int rp_flags;
 static unsigned int rp_absolute;
@@ -42,6 +43,14 @@ static bool rp_get_options(int *argc, const char ***argv)
 	return true;
 }
 
+static void t_1(void)
+{
+	hxmc_t *tmp = HXmc_strinit("");
+	/* two components, so that HX_readlink gets called twice */
+	HX_realpath(&tmp, "/dev/tty", HX_REALPATH_DEFAULT);
+	HXmc_free(tmp);
+}
+
 int main(int argc, const char **argv)
 {
 	hxmc_t *res;
@@ -49,6 +58,7 @@ int main(int argc, const char **argv)
 
 	if (!rp_get_options(&argc, &argv))
 		return EXIT_FAILURE;
+	t_1();
 
 	res = NULL;
 	while (--argc > 0) {
