@@ -1,3 +1,12 @@
+v4.1 (2021-10-13)
+=================
+
+Fixes:
+
+* io: fix a use-after-free in conjunction with HX_realpath /
+  fix missing NULLing of a pointer within HX_readlink
+
+
 v4.0 (2021-10-03)
 =================
 
