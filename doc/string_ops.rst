@@ -316,7 +316,7 @@ Allocation-related
 
 .. code-block:: c
 
-	#include <libHX/string.h>libHX/string.h
+	#include <libHX/string.h>
 
 	void *HX_memdup(const void *ptr, size_t length);
 	char *HX_strdup(const char *str);
@@ -350,6 +350,60 @@ Allocation-related
 	freed), or, if ``malloc`` fails, returns ``NULL`` and leaves ``errno``
 	at what ``malloc`` had set it to. The use of this function is
 	deprecated, albeit no replacement is proposed.
+
+
+Numbers to human-readable sizes with units
+==========================================
+
+.. code-block:: c
+
+	#include <libHX/string.h>
+
+	char *HX_unit_size(char *out, size_t outsize, unsigned long long number,
+	                   unsigned int divisor, unsigned int cutoff);
+	char *HX_unit_size_p90(char *out, size_t outsize,
+	                       unsigned long long number, unsigned int divisor);
+
+``HX_unit_size`` takes an arbitrary number and and produces a more
+readily-readable shortened (string) representation with a unit suffix. It does
+this by dividing ``number`` by ``pow(divisor, i)`` for some integer _i_ such
+that the resulting (integer) quotient is the highest possible value _v_ that is
+less than ``cutoff``. This value _v_ is then emitted into ``out`` together with
+the corresponding SI prefix.
+
+Note that the SI prefix for one iteration (i==1), i.e. kilo, is a lower-case
+``'k'``. If you need consistent upper-case output in your program, (i.e. K/M/G
+instead of k/M/G), use a subsequent call to ``HX_strupper``.
+
+When ``divisor`` is 0, it defaults to 1000. When ``cutoff`` is 0, an
+implementation-defined cutoff point is used. When ``cutoff`` is less than
+``divisor``, the result is implementation-defined.
+
+The output number of ``HX_unit_size`` is always integer; no fractions are
+emitted. This is rooted in the following idea:
+
+* An output like ``1G`` is quite broad and some precision would be nice. The
+  author has historically preferred 3 digits instead of just 2, thanks to wget
+  and rsync.
+
+* ``1.34G`` has the same string length as ``1340M``, i.e. both occupy the same
+  visual space in console outputs, but the latter has another digit of
+  precision.
+
+* By ditching fractions this way, ``HX_unit_size`` also sidesteps the issue of
+  excess digits being emitted (usually up to 5) from the trivial use (by
+  wget/rsync) of ``printf("%.2f", v)``.
+
+The ``HX_unit_size_cu`` function will instead mimic the behavior of coreutils
+(/usr/bin/df, /usr/bin/ls). That is, it divides ``number`` by ``pow(divisor,
+i)`` for some integer _i_ such that the resulting (real) quotient is
+less-than-or-equal ``divisor-1``. It rounds the value up to the next integer if
+the fractional part is >90%, and if the quotient is greater-or-equal 10, the
+fractional part is stripped and not emitted to ``out``.
+
+In practice, the rounding up of ``HX_unit_size_cu`` lends itself to display
+occupying sizes, whereas the implicit rounding down (of integer divisions)
+in ``HX_unit_size`` lend itself to sizes in progress meters.
 
 
 Examples

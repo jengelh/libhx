@@ -135,3 +135,9 @@ global:
 	HXproc_switch_user;
 	HXproc_top_fd;
 } LIBHX_3.25;
+
+LIBHX_4.2 {
+global:
+	HX_unit_size;
+	HX_unit_size_cu;
+} LIBHX_3.27;

@@ -90,6 +90,8 @@ extern size_t HX_strrtrim(char *);
 extern char *HX_strsep(char **, const char *);
 extern char *HX_strsep2(char **, const char *);
 extern char *HX_strupper(char *);
+extern char *HX_unit_size(char *out, size_t bufsize, unsigned long long size, unsigned int divisor, unsigned int cutoff);
+extern char *HX_unit_size_cu(char *out, size_t bufsize, unsigned long long size, unsigned int divisor);
 
 static __inline__ void *HX_memdup(const void *buf, size_t len)
 {

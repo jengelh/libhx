@@ -9,6 +9,8 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+4.2     4.2     4.2     HX_unit_size
+4.2     4.2     4.2     HX_unit_size_cu
 3.27    3.27    3.27    HXOPT_KEEP_ARGV
 3.27    3.27    3.27    HXproc_top_fd
 3.27    3.27    3.27    HXproc_switch_user

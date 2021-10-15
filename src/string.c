@@ -836,3 +836,76 @@ EXPORT_SYMBOL char *HX_strupper(char *orig)
 		*expr = HX_toupper(*expr);
 	return orig;
 }
+
+EXPORT_SYMBOL char *HX_unit_size(char *buf, size_t bufsize,
+    unsigned long long size, unsigned int divisor, unsigned int cutoff)
+{
+	static const char unit_names[] = "\0kMGTPEZYRQ";
+	unsigned int unit_idx = 0;
+	if (divisor == 0)
+		divisor = 1000;
+	if (cutoff == 0) {
+		cutoff = 10000;
+		if (cutoff < divisor)
+			cutoff = divisor;
+	}
+	while (unit_idx < ARRAY_SIZE(unit_names) - 1 && size >= cutoff) {
+		++unit_idx;
+		size /= divisor;
+	}
+	snprintf(buf, bufsize, "%llu%.1s", size, &unit_names[unit_idx]);
+	return buf;
+}
+
+static inline unsigned long long p_90(unsigned long long x)
+{
+	/* Perform x*9/10, but without the risk of overflow. */
+	return x - x / 10 - !!(x % 10);
+}
+
+EXPORT_SYMBOL char *HX_unit_size_cu(char *buf, size_t bufsize,
+    unsigned long long orig_size, unsigned int divisor)
+{
+	/* No floating point. Take that, coreutils! */
+	static const char unit_names[] = "\0kMGTPEZYRQ";
+	unsigned int unit_idx = 0, last_rem = 0;
+	unsigned long long size = orig_size, gpow = 1, grand_rem;
+	if (divisor == 0)
+		divisor = 1000;
+
+	while (unit_idx < ARRAY_SIZE(unit_names) - 1 && size >= divisor) {
+		++unit_idx;
+		last_rem = size % divisor;
+		size /= divisor;
+		gpow *= divisor;
+	}
+	if (unit_idx == 0) {
+		snprintf(buf, bufsize, "%llu%.1s", size, &unit_names[unit_idx]);
+		return buf;
+	}
+	grand_rem = orig_size - size * gpow;
+	if (grand_rem != 0) {
+		if (grand_rem > p_90(gpow)) {
+			++size;
+			last_rem = 0;
+		} else {
+			last_rem *= 10;
+			last_rem /= divisor;
+			++last_rem;
+			if (last_rem == 10 || (size >= 10 && last_rem > 0)) {
+				++size;
+				last_rem = 0;
+			}
+		}
+		if (unit_idx < ARRAY_SIZE(unit_names) - 1 && size == divisor) {
+			/* ++size from above may brought size to @divisor again */
+			++unit_idx;
+			size /= divisor;
+		}
+	}
+	if (size >= 10 && last_rem == 0)
+		snprintf(buf, bufsize, "%llu%.1s", size, &unit_names[unit_idx]);
+	else
+		snprintf(buf, bufsize, "%llu.%01u%.1s", size, last_rem, &unit_names[unit_idx]);
+	return buf;
+}

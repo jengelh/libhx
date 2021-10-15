@@ -288,6 +288,86 @@ static void t_strlcpy2(void)
 	assert(a[0] == 49 && a[0] == a[1] && a[1] == a[2]);
 }
 
+static void t_units(void)
+{
+	static const struct {
+		unsigned long long num;
+		const char exp_1024[6], exp_1000[6];
+	} vt[] = {
+		{1023, "1023", "1023"},
+		{1024, "1024", "1024"},
+		{1945, "1945", "1945"},
+		{1946, "1946", "1946"},
+		{1022975, "998k", "1022k"},
+		{1022976, "999k", "1022k"},
+		{1022977, "999k", "1022k"},
+		{1047552, "1023k", "1047k"},
+		{1047553, "1023k", "1047k"},
+		{1992294, "1945k", "1992k"},
+		{1992295, "1945k", "1992k"},
+		{1072693248, "1023M", "1072M"},
+		{1072693249, "1023M", "1072M"},
+		{ULLONG_MAX, "15E", "18E"},
+	};
+	char buf[HXSIZEOF_Z64+3];
+	printf("unit_size:\n");
+
+	for (size_t i = 0; i < ARRAY_SIZE(vt); ++i) {
+		HX_unit_size(buf, ARRAY_SIZE(buf), vt[i].num, 1024, 9120);
+		printf("\t%llu -> %s\n", vt[i].num, buf);
+		if (strcmp(buf, vt[i].exp_1024) != 0) {
+			printf("\texpected %s\n", vt[i].exp_1024);
+			abort();
+		}
+		HX_unit_size(buf, ARRAY_SIZE(buf), vt[i].num, 1000, 9120);
+		printf("\t%llu -> %s\n", vt[i].num, buf);
+		if (strcmp(buf, vt[i].exp_1000) != 0) {
+			printf("\texpected %s\n", vt[i].exp_1000);
+			abort();
+		}
+	}
+}
+
+static void t_units_cu(void)
+{
+	static const struct {
+		unsigned long long num;
+		const char exp_1024[6], exp_1000[6];
+	} vt[] = {
+		{1023, "1023", "1.1k"},
+		{1024, "1.0k", "1.1k"},
+		{1945, "1.9k", "2.0k"},
+		{1946, "2.0k", "2.0k"},
+		{1022975, "999k", "1.1M"},
+		{1022976, "999k", "1.1M"},
+		{1022977, "1000k", "1.1M"},
+		{1047552, "1023k", "1.1M"},
+		{1047553, "1.0M", "1.1M"},
+		{1992294, "1.9M", "2.0M"},
+		{1992295, "2.0M", "2.0M"},
+		{1072693248, "1023M", "1.1G"},
+		{1072693249, "1.0G", "1.1G"},
+		{ULLONG_MAX, "16E", "19E"},
+	};
+	char buf[80];
+	printf("unit_size_cu:\n");
+
+	for (size_t i = 0; i < ARRAY_SIZE(vt); ++i) {
+		HX_unit_size_cu(buf, ARRAY_SIZE(buf), vt[i].num, 1024);
+		printf("\t%llu -> %s\n", vt[i].num, buf);
+		if (strcmp(buf, vt[i].exp_1024) != 0) {
+			printf("\texpected %s\n", vt[i].exp_1024);
+			abort();
+		}
+		HX_unit_size_cu(buf, ARRAY_SIZE(buf), vt[i].num, 1000);
+		printf("\t%llu -> %s\n", vt[i].num, buf);
+		if (strcmp(buf, vt[i].exp_1000) != 0) {
+			printf("\texpected %s\n", vt[i].exp_1000);
+			abort();
+		}
+	}
+}
+
 int main(int argc, const char **argv)
 {
 	hxmc_t *tx = NULL;
@@ -316,6 +396,8 @@ int main(int argc, const char **argv)
 	t_strtrim();
 	t_split();
 	t_split2();
+	t_units();
+	t_units_cu();
 	t_strlcpy();
 	t_strlcpy2();
 	HXmc_free(tx);
