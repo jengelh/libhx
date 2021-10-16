@@ -11,6 +11,8 @@ RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
 4.2     4.2     4.2     HX_unit_size
 4.2     4.2     4.2     HX_unit_size_cu
+4.2     4.2     4.2     HX_strtod_unit
+4.2     4.2     4.2     HX_strtoull_unit
 3.27    3.27    3.27    HXOPT_KEEP_ARGV
 3.27    3.27    3.27    HXproc_top_fd
 3.27    3.27    3.27    HXproc_switch_user

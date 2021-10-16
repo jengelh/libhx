@@ -406,6 +406,33 @@ occupying sizes, whereas the implicit rounding down (of integer divisions)
 in ``HX_unit_size`` lend itself to sizes in progress meters.
 
 
+Unit-suffixed numbers to full numbers
+=====================================
+
+.. code-block:: c
+
+	#include <libHX/string.h>
+
+	double HX_strtod_unit(const char *s, char **end,
+	                      unsigned int exponent);
+	unsigned long long HX_strtoull_unit(const char *s, char **end,
+	                                    unsigned int exponent);
+
+The ``HX_strtod_unit`` and ``HX_strtoull_unit`` functions behave similar to
+``strtod`` and ``strtoul``, respectively, in that they convert the initial part
+of the string in ``s`` to a ``double`` and ``unsigned long long``,
+respectively, and apply the selected multiplication factor from ``exponent`` in
+resolving an optional unit suffix.
+
+Upon overflow, ``errno`` is set to ``ERANGE`` just like the stdlib functions.
+Unlike some implementations of ``strtoul``, negative numbers are outright
+rejected.
+
+.. code-block:: c
+
+	unsigned long long bytes = HX_strtoull_unit("1.5G", NULL, 1024);
+
+
 Examples
 ========
 

@@ -368,6 +368,55 @@ static void t_units_cu(void)
 	}
 }
 
+static void t_units_strto(void)
+{
+	static const struct {
+		const char input[24];
+		unsigned int exponent;
+		unsigned long long expect_out;
+		const char expect_rem[8];
+	} vt[] = {
+		{"-5k", 1000, ULLONG_MAX, "-5k"},
+		{" -5.2k", 1000, ULLONG_MAX, "-5.2k"},
+		{"1", 9999, 1, ""},
+		{"1024", 9999, 1ULL << 10, ""},
+		{"1048576", 9999, 1ULL << 20, ""},
+		{"1073741824", 9999, 1ULL << 30, ""},
+		{"1099511627776", 9999, 1ULL << 40, ""},
+		{"1125899906842624", 9999, 1ULL << 50, ""},
+		{"1152921504606846976", 9999, 1ULL << 60, ""},
+		{"18446744073709551615", 9, ULLONG_MAX, ""},
+		{"1k", 1000, 1000ULL, ""},
+		{"1M", 1000, 1000000ULL, ""},
+		{"1G", 1000, 1000000000ULL, ""},
+		{"1T", 1000, 1000000000000ULL, ""},
+		{"1P", 1000, 1000000000000000ULL, ""},
+		{"1E", 1000, 1000000000000000000ULL, ""},
+		{"1k", 1024, 1ULL << 10, ""},
+		{"1M", 1024, 1ULL << 20, ""},
+		{"1G", 1024, 1ULL << 30, ""},
+		{"1T", 1024, 1ULL << 40, ""},
+		{"1P", 1024, 1ULL << 50, ""},
+		{"1E", 1024, 1ULL << 60, ""},
+		{"0", 0, 0, ""},
+		{"0k", 0, 0, ""},
+		{"0  Z", 0, 0, ""},
+		{"0.1k", 1000, 100, ""},
+		{"0.1k", 1024, 102, ""},
+		{" 0.1k", 1024, 102, ""},
+		{"0.00000000000000001E", 1024, 11, ""},
+		{"1.525444GiB", 1000, 1525444000, "iB"},
+		{"1.525444GiB", 1024, 1637933022, "iB"},
+	};
+	char *end;
+	for (size_t i = 0; i < ARRAY_SIZE(vt); ++i) {
+		unsigned long long q = HX_strtoull_unit(vt[i].input, &end, vt[i].exponent);
+		printf("%s -> %llu __ %s\n", vt[i].input, q, end);
+		if (q != vt[i].expect_out || strcmp(end, vt[i].expect_rem) != 0)
+			printf("BUG\n");
+	}
+}
+
 int main(int argc, const char **argv)
 {
 	hxmc_t *tx = NULL;
@@ -398,6 +447,7 @@ int main(int argc, const char **argv)
 	t_split2();
 	t_units();
 	t_units_cu();
+	t_units_strto();
 	t_strlcpy();
 	t_strlcpy2();
 	HXmc_free(tx);

@@ -138,6 +138,8 @@ global:
 
 LIBHX_4.2 {
 global:
+	HX_strtod_unit;
+	HX_strtoull_unit;
 	HX_unit_size;
 	HX_unit_size_cu;
 } LIBHX_3.27;

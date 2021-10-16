@@ -8,6 +8,8 @@
  *	either version 2.1 or (at your option) any later version.
  */
 #include <errno.h>
+#include <limits.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -908,4 +910,97 @@ EXPORT_SYMBOL char *HX_unit_size_cu(char *buf, size_t bufsize,
 	else
 		snprintf(buf, bufsize, "%llu.%01u%.1s", size, last_rem, &unit_names[unit_idx]);
 	return buf;
+}
+
+static unsigned int suffix_power(char u)
+{
+	switch (HX_toupper(u)) {
+	case 'K': return 1;
+	case 'M': return 2;
+	case 'G': return 3;
+	case 'T': return 4;
+	case 'P': return 5;
+	case 'E': return 6;
+	case 'Z': return 7;
+	case 'Y': return 8;
+	case 'R': return 9;
+	case 'Q': return 10;
+	default: return 0;
+	}
+}
+
+EXPORT_SYMBOL double HX_strtod_unit(const char *s, char **out_end, unsigned int exponent)
+{
+	char *end;
+	double q;
+
+	while (HX_isspace(*s))
+		++s;
+	if (*s == '-') {
+		if (out_end != nullptr)
+			*out_end = const_cast(char *, s);
+		errno = ERANGE;
+		return ULLONG_MAX;
+	}
+	q = strtod(s, &end);
+	if (exponent == 0)
+		exponent = 1000;
+	if (end == s) {
+		if (out_end != nullptr)
+			*out_end = end;
+		return q;
+	}
+	while (HX_isspace(*end))
+		++end;
+	unsigned int pwr = suffix_power(*end);
+	if (pwr == 0) {
+		if (out_end != nullptr)
+			*out_end = const_cast(char *, end);
+		return q;
+	}
+	if (out_end != nullptr)
+		*out_end = const_cast(char *, end + 1);
+	return q * pow(exponent, pwr);
+}
+
+EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
+    char **out_end, unsigned int exponent)
+{
+	char *end;
+	unsigned long long ipart;
+	unsigned int pwr = 0;
+
+	while (HX_isspace(*s))
+		++s;
+	if (*s == '-') {
+		if (out_end != nullptr)
+			*out_end = const_cast(char *, s);
+		errno = ERANGE;
+		return ULLONG_MAX;
+	}
+	ipart = strtoull(s, &end, 10);
+	if (*end == '.') {
+		double q = HX_strtod_unit(s, out_end, exponent);
+		return q < ULLONG_MAX ? q : ULLONG_MAX;
+	}
+	if (exponent == 0)
+		exponent = 1000;
+	while (HX_isspace(*end))
+		++end;
+	pwr = suffix_power(*end);
+	if (pwr == 0) {
+		if (out_end != nullptr)
+			*out_end = end;
+		return ipart;
+	}
+	if (out_end != nullptr)
+		*out_end = const_cast(char *, end + 1);
+	while (pwr-- > 0) {
+		if (ipart >= ULLONG_MAX / exponent) {
+			errno = ERANGE;
+			return ULLONG_MAX;
+		}
+		ipart *= exponent;
+	}
+	return ipart;
 }
