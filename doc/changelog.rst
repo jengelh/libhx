@@ -1,3 +1,13 @@
+v4.2 (2021-10-17)
+=================
+
+Enhancements:
+
+* string: New functions ``HX_strtod_unit``, ``HX_strtoull_unit``,
+  ``HX_unit_size``, ``HX_unit_size_cu`` for converting between
+  sizes and human-readable sizes like 1457664 <-> "1.45M"/"1.39M".
+
+
 v4.1 (2021-10-13)
 =================
 

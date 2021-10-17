@@ -1,4 +1,4 @@
-AC_INIT([libHX], [4.1])
+AC_INIT([libHX], [4.2])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -106,8 +106,6 @@ AC_CHECK_MEMBERS(
 AC_CHECK_FUNCS([fork execv execvp pipe])
 AC_CHECK_FUNCS([getegid geteuid getpid getppid])
 AC_CHECK_FUNCS([initgroups setgid])
-AC_CHECK_PROGS([LYX], [lyx])
-AM_CONDITIONAL([BUILD_DOCS], [test -n "$LYX"])
 
 regular_CPPFLAGS="-D_FILE_OFFSET_BITS=64 -D_REENTRANT"
 regular_CFLAGS="-Wall -Waggregate-return -Wmissing-declarations \
