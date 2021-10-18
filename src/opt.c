@@ -777,6 +777,9 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		*argv = nvec;
 		if (argc != NULL)
 			*argc = argk;
+		/* pointers are owned by nvec/argv now */
+		HXdeque_free(ps.remaining);
+		ps.remaining = nullptr;
 		}
 	} else if (ret < 0) {
 		if (!(ps.flags & HXOPT_QUIET))
@@ -788,8 +791,8 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		else if (ps.flags & HXOPT_USAGEONERR)
 			HX_getopt_usage(&ps.cbi, stderr);
 	}
-
-	HXdeque_free(ps.remaining);
+	if (ps.remaining != nullptr)
+		HXdeque_genocide2(ps.remaining, free);
 	return ret;
 
  out_errno:
