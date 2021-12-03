@@ -188,27 +188,24 @@ EXPORT_SYMBOL int
 HXproc_run_async(const char *const *argv, struct HXproc *proc)
 {
 	int pipes[3][2], nullfd = -1, ret, saved_errno;
-	unsigned int t;
 
 	if (argv == NULL || *argv == NULL)
 		return -EFAULT;
-
-	proc->p_stdin = proc->p_stdout = proc->p_stderr = -1;
-
-	t  = (proc->p_flags & (HXPROC_STDIN | HXPROC_NULL_STDIN)) ==
-	     (HXPROC_STDIN | HXPROC_NULL_STDIN);
-	t |= (proc->p_flags & (HXPROC_STDOUT | HXPROC_NULL_STDOUT)) ==
-	     (HXPROC_STDOUT | HXPROC_NULL_STDOUT);
-	t |= (proc->p_flags & (HXPROC_STDERR | HXPROC_NULL_STDERR)) ==
-	     (HXPROC_STDERR | HXPROC_NULL_STDERR);
-	if (t > 0)
+	if ((proc->p_flags & (HXPROC_STDIN | HXPROC_NULL_STDIN)) ==
+	    (HXPROC_STDIN | HXPROC_NULL_STDIN))
 		return -EINVAL;
-
+	if ((proc->p_flags & (HXPROC_STDOUT | HXPROC_NULL_STDOUT)) ==
+	    (HXPROC_STDOUT | HXPROC_NULL_STDOUT))
+		return -EINVAL;
+	if ((proc->p_flags & (HXPROC_STDERR | HXPROC_NULL_STDERR)) ==
+	    (HXPROC_STDERR | HXPROC_NULL_STDERR))
+		return -EINVAL;
 	if (proc->p_flags & (HXPROC_NULL_STDIN | HXPROC_NULL_STDOUT |
 	    HXPROC_NULL_STDERR)) {
 		if ((nullfd = open(NULL_DEVICE, O_RDWR)) < 0)
 			return -errno;
 	}
+	proc->p_stdin = proc->p_stdout = proc->p_stderr = -1;
 	if ((ret = HXproc_build_pipes(proc, pipes)) <= 0) {
 		saved_errno = errno;
 		HXproc_close_pipes(pipes);
