@@ -178,9 +178,13 @@ Filedescriptor helpers
 
 	ssize_t HXio_fullread(int fd, void *buf, size_t size, unsigned int flags);
 	ssize_t HXio_fullwrite(int fd, const void *buf, size_t size, unsigned int flags);
+	ssize_t HX_sendfile(int dst, int src, size_t count);
 
 Since plain ``read``(2) and ``write``(2) may process only part of the buffer —
 even more likely so with sockets —, libHX provides two functions that calls
 these in a loop to retry said operations until the full amount has been
 processed. Since read and write can also be used with socket file descriptors,
 so can these.
+
+``HX_sendfile`` wraps ``sendfile``(2) for the same reason; in addition, it
+falls back to a read-write loop on platforms which do not offer sendfile.

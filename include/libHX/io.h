@@ -35,6 +35,7 @@ extern int HX_mkdir(const char *, unsigned int);
 extern int HX_readlink(hxmc_t **, const char *);
 extern int HX_realpath(hxmc_t **, const char *, unsigned int);
 extern int HX_rrmdir(const char *);
+extern ssize_t HX_sendfile(int dst, int src, size_t count);
 extern char *HX_slurp_fd(int fd, size_t *outsize);
 extern char *HX_slurp_file(const char *file, size_t *outsize);
 

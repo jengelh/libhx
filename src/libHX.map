@@ -143,3 +143,8 @@ global:
 	HX_unit_size;
 	HX_unit_size_cu;
 } LIBHX_3.27;
+
+LIBHX_4.3 {
+global:
+	HX_sendfile;
+} LIBHX_4.2;

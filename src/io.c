@@ -26,6 +26,9 @@
 #	include <dirent.h>
 #	include <unistd.h>
 #endif
+#if __linux__
+#	include <sys/sendfile.h>
+#endif
 #include <libHX/ctype_helper.h>
 #include <libHX/defs.h>
 #include <libHX/io.h>
@@ -589,6 +592,71 @@ EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *vbuf, size_t size)
 		buf += ret;
 	}
 	return done;
+}
+
+#if __linux__
+static ssize_t HX_sendfile_linux(int dst, int src, size_t count)
+{
+	long pagesize = sysconf(_SC_PAGE_SIZE);
+	size_t xfersize;
+	ssize_t ret, xferd = 0;
+
+	if (pagesize < 0)
+		pagesize = 4096;
+	xfersize = SSIZE_MAX - pagesize;
+	if (count > xfersize)
+		count = xfersize;
+	while ((ret = sendfile(dst, src, nullptr, count)) > 0)
+		xferd += ret;
+	if (xferd > 0)
+		return xferd;
+	if (ret < 0)
+		return -errno;
+	return 0;
+}
+#endif
+
+static ssize_t HX_sendfile_rw(int dst, int src, size_t count)
+{
+	static const size_t bufsize = 0x10000;
+	size_t xferd = 0;
+	ssize_t ret;
+	void *buf = malloc(bufsize);
+	if (buf == nullptr)
+		return -ENOMEM;
+	while (count > 0) {
+		size_t readsize = bufsize;
+		if (count < readsize)
+			readsize = count;
+		ret = HXio_fullread(src, buf, readsize);
+		if (ret < 0) {
+			errno = -ret;
+			break;
+		}
+		ret = HXio_fullwrite(dst, buf, ret);
+		if (ret < 0) {
+			errno = -ret;
+			break;
+		}
+		xferd += ret;
+		count -= ret;
+	}
+	if (xferd > 0)
+		return xferd;
+	if (ret < 0)
+		return -errno;
+	return 0;
+}
+
+EXPORT_SYMBOL ssize_t HX_sendfile(int dst, int src, size_t count)
+{
+	ssize_t ret;
+#if __linux__
+	ret = HX_sendfile_linux(dst, src, count);
+	if (ret != -ENOSYS)
+		return ret;
+#endif
+	return HX_sendfile_rw(dst, src, count);
 }
 
 EXPORT_SYMBOL char *HX_slurp_fd(int fd, size_t *outsize)
