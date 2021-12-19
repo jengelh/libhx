@@ -160,24 +160,32 @@ EXPORT_SYMBOL void HXdir_close(struct HXdir *d)
 EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
     unsigned int opts, ...)
 {
-	char buf[MAXLNLEN];
+	static const size_t bufsize = 0x10000;
+	void *buf;
 	unsigned int extra_flags = 0;
 	int dd, eax = 0, sd, l;
 
-	if ((sd = open(src, O_RDONLY | O_BINARY)) < 0)
+	buf = malloc(bufsize);
+	if (buf == nullptr)
 		return -errno;
+	sd = open(src, O_RDONLY | O_BINARY);
+	if (sd < 0) {
+		free(buf);
+		return -errno;
+	}
 	if (opts & HXF_KEEP)
 		extra_flags = O_EXCL;
 	dd = open(dest, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC |
 	     extra_flags, S_IRUGO | S_IWUGO);
 	if (dd < 0) {
 		eax = errno;
+		free(buf);
 		close(sd);
 		errno = eax;
 		return -errno;
 	}
 
-	while ((l = read(sd, buf, MAXLNLEN)) > 0 && write(dd, buf, l) > 0)
+	while ((l = read(sd, buf, bufsize)) > 0 && write(dd, buf, l) > 0)
 		;
 	close(sd);
 
@@ -198,6 +206,7 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 		va_end(argp);
 	}
 	close(dd);
+	free(buf);
 	return 1;
 }
 
