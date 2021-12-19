@@ -167,7 +167,6 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 	void *buf;
 	unsigned int extra_flags = 0;
 	int srcfd, dstfd;
-	ssize_t rdret;
 
 	buf = malloc(bufsize);
 	if (buf == nullptr)
@@ -216,8 +215,17 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 		va_end(argp);
 	}
 
-	while ((rdret = read(srcfd, buf, bufsize)) > 0 && write(dstfd, buf, rdret) > 0)
-		;
+	while (true) {
+		ssize_t rdret = HX_sendfile(dstfd, srcfd, SIZE_MAX);
+		if (rdret == 0)
+			break;
+		if (rdret < 0 && errno != EINTR) {
+			int saved_errno = errno;
+			close(srcfd);
+			close(dstfd);
+			return -(errno = saved_errno);
+		}
+	}
 	close(srcfd);
 	close(dstfd);
 	free(buf);

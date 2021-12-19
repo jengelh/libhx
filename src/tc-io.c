@@ -1,6 +1,8 @@
+#include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <libHX/io.h>
 
@@ -28,5 +30,10 @@ int main(void)
 	printf("Dumped %zu bytes\n", z);
 
 	sf();
+	int ret = HX_copy_file("tc-io.c", "tciocopy.txt", 0);
+	if (ret <= 0)
+		fprintf(stderr, "HX_copy_file: %s\n", strerror(errno));
+	else
+		fprintf(stderr, "copy_file ok\n");
 	return 0;
 }
