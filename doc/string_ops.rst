@@ -433,6 +433,36 @@ rejected.
 	unsigned long long bytes = HX_strtoull_unit("1.5G", NULL, 1024);
 
 
+Conversion from/to human-readable durations with units
+======================================================
+
+.. code-block:: c
+
+	#include <libHX/string.h>
+
+	unsigned long long HX_strtoull_sec(const char *s, char **end);
+	char *HX_unit_seconds(char *out, size_t outsize,
+	                      unsigned long long seconds,
+	                      unsigned int flags);
+
+``HX_strtoull_sec`` converts a time duration with units, such as ``"15min30s"``
+into an all-seconds value. The recognized unit strings are: ``years``,
+``year``, ``y``, ``months``, ``month``, ``days``, ``day``, ``d``, ``hours``,
+``hour``, ``h``, ``minutes``, ``minute``, ``min``, ``seconds``, ``second``,
+``s`` and the empty string (for seconds). When parsing stops at any point,
+``*end`` is set to the location, similar to how the ``strtoull`` C function
+would.
+
+One year is defined to be 365.25 days of 86400 seconds; one month is defined to
+be 1/12 such a year. This is consistent with the units employed by systemd.
+
+``HX_unit_seconds`` is the reverse and transforms the duration given by
+``seconds`` into a string representation broken into days, hours, minutes, and
+remaining seconds as appropriate. By default, only the d/h/min/s units are
+emitted. The ``flags`` argument specifies if any other units should be emitted;
+``HXUNIT_YEARS``, ``HXUNIT_MONTHS`` and ``HXUNIT_WEEKS`` are available.
+
+
 Examples
 ========
 

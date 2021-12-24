@@ -31,6 +31,12 @@ enum {
 	_HXQUOTE_MAX,
 };
 
+enum {
+	HXUNIT_YEARS = 0x1U,
+	HXUNIT_MONTHS = 0x2U,
+	HXUNIT_WEEKS = 0x4U,
+};
+
 #ifndef __libhx_internal_hxmc_t_defined
 #define __libhx_internal_hxmc_t_defined 1
 typedef char hxmc_t;
@@ -94,6 +100,8 @@ extern double HX_strtod_unit(const char *, char **, unsigned int exponent);
 extern unsigned long long HX_strtoull_unit(const char *, char **, unsigned int exponent);
 extern char *HX_unit_size(char *out, size_t bufsize, unsigned long long size, unsigned int divisor, unsigned int cutoff);
 extern char *HX_unit_size_cu(char *out, size_t bufsize, unsigned long long size, unsigned int divisor);
+extern unsigned long long HX_strtoull_sec(const char *s, char **);
+extern char *HX_unit_seconds(char *out, size_t bufsize, unsigned long long seconds, unsigned int flags);
 
 static __inline__ void *HX_memdup(const void *buf, size_t len)
 {

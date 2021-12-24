@@ -422,6 +422,64 @@ static void t_units_strto(void)
 	}
 }
 
+static void t_time_units(void)
+{
+	static const struct {
+		unsigned long long input;
+		unsigned int flags;
+		const char expect_out[24];
+	} vt[] = {
+		{31536000, 0, "365d"},
+		{31622400, 0, "366d"},
+		{31622400, HXUNIT_YEARS, "1y18h"},
+		{31622400, HXUNIT_MONTHS, "1y"},
+		{31622400, HXUNIT_WEEKS, "1y"},
+		{31622400, HXUNIT_MONTHS | HXUNIT_WEEKS, "1y"},
+		{2678400, HXUNIT_MONTHS, "1month13h30min"},
+		{2592000, HXUNIT_MONTHS, "30d"},
+		{608400, HXUNIT_WEEKS, "1week1h"},
+		{90061, 0, "1d1h1min1s"},
+		{3692, 0, "1h1min32s"},
+		{67, 0, "1min7s"},
+		{1, 0, "1s"},
+		{0, 0, "0s"},
+	};
+	printf("===== HX_unit_seconds\n");
+	for (size_t i = 0; i < ARRAY_SIZE(vt); ++i) {
+		char out[60];
+		char *ret = HX_unit_seconds(out, ARRAY_SIZE(out), vt[i].input, vt[i].flags);
+		printf("%llus => \"%s\"\n", vt[i].input, ret);
+		if (strcmp(ret, vt[i].expect_out) != 0)
+			printf("\tBUG, expected \"%s\"\n", vt[i].expect_out);
+	}
+}
+
+static void t_time_strto(void)
+{
+	static const struct {
+		const char *input;
+		unsigned long long expect_out;
+		const char expect_rem[4];
+	} vt[] = {
+		{"1y1month1week1d1h1min1s ", 31557600+2629800+86400*8+3600+60+1, ""},
+		{" -1d", 0, "-1d"},
+		{"1 -", 1, "-"},
+		{"1s", 1, ""},
+		{"1min", 60, ""},
+		{"0", 0, ""},
+	};
+	char *end;
+	printf("===== t_time_strto\n");
+	for (size_t i = 0; i < ARRAY_SIZE(vt); ++i) {
+		unsigned long long q = HX_strtoull_sec(vt[i].input, &end);
+		printf("\"%s\" => %llus + \"%s\"\n", vt[i].input, q, end);
+		if (q != vt[i].expect_out)
+			printf("\tBUG: expected %llus\n", vt[i].expect_out);
+		if (strcmp(end, vt[i].expect_rem) != 0)
+			printf("\tBUG: expected remainder \"%s\"\n", vt[i].expect_rem);
+	}
+}
+
 int main(int argc, const char **argv)
 {
 	hxmc_t *tx = NULL;
@@ -453,6 +511,8 @@ int main(int argc, const char **argv)
 	t_units();
 	t_units_cu();
 	t_units_strto();
+	t_time_units();
+	t_time_strto();
 	t_strlcpy();
 	t_strlcpy2();
 	HXmc_free(tx);

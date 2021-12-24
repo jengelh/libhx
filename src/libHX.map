@@ -147,4 +147,6 @@ global:
 LIBHX_4.3 {
 global:
 	HX_sendfile;
+	HX_unit_seconds;
+	HX_strtoull_sec;
 } LIBHX_4.2;

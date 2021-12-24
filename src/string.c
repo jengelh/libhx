@@ -1004,3 +1004,131 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 	}
 	return ipart;
 }
+
+#define SECONDS_PER_YEAR 31557600
+#define SECONDS_PER_MONTH 2629800
+
+static const struct {
+	const char name[8];
+	unsigned int len;
+	uint32_t mult;
+} time_multiplier[] = {
+	{"seconds", 7, 1},
+	{"second",  6, 1},
+	{"sec",     3, 1},
+	{"s",       1, 1},
+	{"minutes", 7, 60},
+	{"minute",  6, 60},
+	{"min",     3, 60},
+	{"hours",   5, 3600},
+	{"hour",    4, 3600},
+	{"h",       1, 3600},
+	{"days",    4, 86400},
+	{"day",     3, 86400},
+	{"d",       1, 86400},
+	{"weeks",   5, 604800},
+	{"week",    4, 604800},
+	{"months",  6, SECONDS_PER_MONTH},
+	{"month",   5, SECONDS_PER_MONTH},
+	{"years",   5, SECONDS_PER_YEAR},
+	{"year",    4, SECONDS_PER_YEAR},
+	{"y",       1, SECONDS_PER_YEAR},
+};
+
+EXPORT_SYMBOL unsigned long long HX_strtoull_sec(const char *s, char **out_end)
+{
+	unsigned long long seconds = 0;
+
+	while (*s != '\0') {
+		while (HX_isspace(*s))
+			++s;
+		if (*s == '-') {
+			break;
+		}
+		char *end = nullptr;
+		unsigned long long num = strtoull(s, &end, 10);
+		if (end == s)
+			break;
+		s = end;
+		while (HX_isspace(*s))
+			++s;
+		if (!HX_isalpha(*s)) {
+			seconds += num;
+			continue;
+		}
+		unsigned int i;
+		for (i = 0; i < ARRAY_SIZE(time_multiplier); ++i)
+			if (strncmp(s, time_multiplier[i].name,
+			    time_multiplier[i].len) == 0 &&
+			    !HX_isalpha(s[time_multiplier[i].len]))
+				break;
+		if (i == ARRAY_SIZE(time_multiplier))
+			break;
+		seconds += num * time_multiplier[i].mult;
+		s += time_multiplier[i].len;
+	}
+	if (out_end != nullptr)
+		*out_end = const_cast(char *, s);
+	return seconds;
+}
+
+EXPORT_SYMBOL char *HX_unit_seconds(char *out, size_t outsize,
+    unsigned long long secs, unsigned int flags)
+{
+	unsigned long years = 0, months = 0, weeks = 0, days, hours, mins;
+	char buf[HXSIZEOF_Z64+4];
+	if (flags & HXUNIT_YEARS) {
+		years = secs / SECONDS_PER_YEAR;
+		secs %= SECONDS_PER_YEAR;
+	}
+	if (flags & HXUNIT_MONTHS) {
+		months = secs / SECONDS_PER_MONTH;
+		secs %= SECONDS_PER_MONTH;
+	}
+	if (flags & HXUNIT_WEEKS) {
+		weeks = secs / 604800;
+		secs %= 604800;
+	}
+	days = secs / 86400;
+	secs %= 86400;
+	hours = secs / 3600;
+	secs %= 3600;
+	mins = secs / 60;
+	secs %= 60;
+	*out = '\0';
+	if (years > 0) {
+		snprintf(buf, ARRAY_SIZE(buf), "%luy", years);
+		HX_strlcat(out, buf, outsize);
+	}
+	if (months == 1) {
+		HX_strlcat(out, "1month", outsize);
+	} else if (months > 0) {
+		snprintf(buf, ARRAY_SIZE(buf), "%lumonths", months);
+		HX_strlcat(out, buf, outsize);
+	}
+	if (weeks == 1) {
+		HX_strlcat(out, "1week", outsize);
+	} else if (weeks > 0) {
+		snprintf(buf, ARRAY_SIZE(buf), "%luweeks", weeks);
+		HX_strlcat(out, buf, outsize);
+	}
+	if (days > 0) {
+		snprintf(buf, ARRAY_SIZE(buf), "%lud", days);
+		HX_strlcat(out, buf, outsize);
+	}
+	if (hours > 0) {
+		snprintf(buf, ARRAY_SIZE(buf), "%luh", hours);
+		HX_strlcat(out, buf, outsize);
+	}
+	if (mins > 0) {
+		snprintf(buf, ARRAY_SIZE(buf), "%lumin", mins);
+		HX_strlcat(out, buf, outsize);
+	}
+	if (secs > 0 ||
+	    (years == 0 && months == 0 && weeks == 0 &&
+	    days == 0 && hours == 0 && mins == 0)) {
+		snprintf(buf, ARRAY_SIZE(buf), "%llus", secs);
+		HX_strlcat(out, buf, outsize);
+	}
+	return out;
+}
