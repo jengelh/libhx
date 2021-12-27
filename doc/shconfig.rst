@@ -103,7 +103,7 @@ Per-file-override
 -----------------
 
 This particular example reads from the file in the home directory first (if it
-exists), but stops after it has been successfull, so any subsequent locations
+exists), but stops after it has been successful, so any subsequent locations
 listed in the paths variable are not read. This has the effect that the file
 from the home directory has the highest priority too like in the previous
 example, but without any keys from the system files. Note the ``SHCONF_ONE``
