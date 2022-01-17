@@ -71,7 +71,6 @@ check_PROGRAMS    += tx-compile tx-cast tx-deque tx-dir \
                      tx-strquote tx-time
 TESTS             += tx-strchr2 tx-strquote
 tx_cast_SOURCES    = tx-cast.cpp
-tx_cast_CXXFLAGS   = ${AM_CXXFLAGS} -std=c++98
 tx_cast_LDADD      = libHX.la -lm
 tx_compile_SOURCES = tx-compile.cpp
 tx_compile_LDADD   = libHX.la

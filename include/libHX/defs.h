@@ -10,8 +10,8 @@
 #	endif
 #	ifndef containerof
 #		include <cstddef>
-#		define containerof(var, type, member) reinterpret_cast<type *>( \
-			reinterpret_cast<char *>(var) - offsetof(type, member))
+#		include <type_traits>
+#		define containerof(var, T, member) reinterpret_cast<std::conditional<std::is_const<std::remove_pointer<decltype(var)>::type>::value, std::add_const<T>::type, T>::type *>(reinterpret_cast<std::conditional<std::is_const<std::remove_pointer<decltype(var)>::type>::value, const char, char>::type *>(var) - offsetof(T, member))
 #	endif
 #	ifndef static_cast
 #		define static_cast(T, x) static_cast<T>(x)
