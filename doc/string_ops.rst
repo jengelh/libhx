@@ -361,8 +361,8 @@ Numbers to human-readable sizes with units
 
 	char *HX_unit_size(char *out, size_t outsize, unsigned long long number,
 	                   unsigned int divisor, unsigned int cutoff);
-	char *HX_unit_size_p90(char *out, size_t outsize,
-	                       unsigned long long number, unsigned int divisor);
+	char *HX_unit_size_cu(char *out, size_t outsize,
+	                      unsigned long long number, unsigned int divisor);
 
 ``HX_unit_size`` takes an arbitrary number and and produces a more
 readily-readable shortened (string) representation with a unit suffix. It does
