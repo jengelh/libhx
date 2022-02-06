@@ -39,6 +39,9 @@ static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 	if (ret < 0 || value != ai->ai_socktype)
 		return -1;
 	optlen = sizeof(value);
+#if defined(__sunos__) && !defined(SO_PROTOCOL)
+#	define SO_PROTOCOL SO_PROTOTYPE
+#endif
 	ret = getsockopt(fd, SOL_SOCKET, SO_PROTOCOL, &value, &optlen);
 	if (ret < 0 || value != ai->ai_protocol)
 		return -1;
