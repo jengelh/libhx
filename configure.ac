@@ -14,6 +14,12 @@ AC_DISABLE_STATIC
 AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
 
+regular_CPPFLAGS="-D_FILE_OFFSET_BITS=64 -D_REENTRANT"
+regular_CFLAGS="-Wall -Waggregate-return -Wmissing-declarations \
+	-Wmissing-prototypes -Wredundant-decls -Wshadow -Wstrict-prototypes \
+	-Wformat=2 -pipe $visibility_CFLAGS"
+regular_CXXFLAGS="-Wall -Wno-pointer-arith -Wredundant-decls -pipe \
+	$visibility_CFLAGS";
 #
 # Check whether there really is a C++ compiler.
 # It is not mandatory to compile libHX, but we want to know.
@@ -22,6 +28,21 @@ AC_LANG_PUSH([C++])
 AC_COMPILE_IFELSE(
 	[AC_LANG_PROGRAM([], [return 0;])],
 	[ac_cv_cxx=yes], [ac_cv_cxx=no])
+AC_MSG_CHECKING([available C++ standard])
+cxxmode=""
+for i in "c++20" "c++17"; do
+	AS_IF([test "$i" = "c++20" && test -n "$COVERITY"], [continue])
+	CXXFLAGS="$saved_CXXFLAGS -std=$i"
+	AC_COMPILE_IFELSE([AC_LANG_SOURCE([])], [cxxmode="$i"])
+	AS_IF([test -n "$cxxmode"], [break])
+done
+CXXFLAGS="$saved_CXXFLAGS"
+AS_IF([test -n "$cxxmode"], [
+	regular_CXXFLAGS="$regular_CXXFLAGS -std=$cxxmode"
+	AC_MSG_RESULT([$cxxmode])
+], [
+	AC_MSG_RESULT([none])
+])
 AC_LANG_POP([C++])
 AM_CONDITIONAL([HAVE_CXX], [test "$ac_cv_cxx" = yes])
 
@@ -107,12 +128,6 @@ AC_CHECK_FUNCS([fork execv execvp pipe])
 AC_CHECK_FUNCS([getegid geteuid getpid getppid])
 AC_CHECK_FUNCS([initgroups setgid])
 
-regular_CPPFLAGS="-D_FILE_OFFSET_BITS=64 -D_REENTRANT"
-regular_CFLAGS="-Wall -Waggregate-return -Wmissing-declarations \
-	-Wmissing-prototypes -Wredundant-decls -Wshadow -Wstrict-prototypes \
-	-Wformat=2 -pipe $visibility_CFLAGS"
-regular_CXXFLAGS="-Wall -Wno-pointer-arith -Wredundant-decls -pipe \
-	$visibility_CFLAGS";
 AC_SUBST([regular_CPPFLAGS])
 AC_SUBST([regular_CFLAGS])
 AC_SUBST([regular_CXXFLAGS])
