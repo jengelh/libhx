@@ -5,7 +5,9 @@
 #endif
 #include <libHX/option.h>
 
+static unsigned int g_verbose;
 static const struct HXoption t[] = {
+	{nullptr, 'v', HXTYPE_NONE | HXOPT_INC, &g_verbose},
 	HXOPT_AUTOHELP,
 	HXOPT_TABLEEND,
 };

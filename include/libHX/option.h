@@ -77,7 +77,7 @@ extern int HXformat_fprintf(const struct HXformat_map *,
  * Type expected of struct HXoption.ptr is given in ().
  * HX_getopt (o) and HXformat_* (f) support different sets, marked with [].
  */
-enum HX_option_type {
+enum {
 	HXTYPE_NONE = 0,
 	HXTYPE_VAL,
 	HXTYPE_SVAL,
@@ -110,7 +110,6 @@ enum HX_option_type {
 	HXTYPE_XSNTMARK,
 	HXTYPE_XHELP, /* 30 */
 	HXTYPE_SIZE_T,
-};
 
 /**
  * Extra flags to be OR'ed into struct HXoption.type.
@@ -125,7 +124,6 @@ enum HX_option_type {
  * %HXOPT_AND:		AND *ptr by argument
  * %HXOPT_XOR:		XOR *ptr by argument
  */
-enum {
 	HXOPT_OPTIONAL = 1 << 6,
 	HXOPT_INC      = 1 << 7,
 	HXOPT_DEC      = 1 << 8,
