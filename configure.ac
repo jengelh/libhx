@@ -14,12 +14,13 @@ AC_DISABLE_STATIC
 AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
 
+saved_CXXFLAGS="$CXXFLAGS"
 regular_CPPFLAGS="-D_FILE_OFFSET_BITS=64 -D_REENTRANT"
 regular_CFLAGS="-Wall -Waggregate-return -Wmissing-declarations \
 	-Wmissing-prototypes -Wredundant-decls -Wshadow -Wstrict-prototypes \
 	-Wformat=2 -pipe $visibility_CFLAGS"
 regular_CXXFLAGS="-Wall -Wno-pointer-arith -Wredundant-decls -pipe \
-	$visibility_CFLAGS";
+	$visibility_CFLAGS"
 #
 # Check whether there really is a C++ compiler.
 # It is not mandatory to compile libHX, but we want to know.
