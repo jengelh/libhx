@@ -624,6 +624,8 @@ static ssize_t HX_sendfile_rw(int dst, int src, size_t count)
 	void *buf = malloc(bufsize);
 	if (buf == nullptr)
 		return -ENOMEM;
+	if (count > SSIZE_MAX)
+		count = SSIZE_MAX;
 	while (count > 0) {
 		size_t readsize = bufsize;
 		if (count < readsize)
