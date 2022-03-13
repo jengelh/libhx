@@ -209,8 +209,12 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 
 		if (opts & HXF_UID) uid = va_arg(argp, long);
 		if (opts & HXF_GID) gid = va_arg(argp, long);
-		if (fchown(dstfd, uid, gid) < 0)
-			{};
+		if (fchown(dstfd, uid, gid) < 0) {
+			int saved_errno = errno;
+			unlink(dest);
+			close(dstfd);
+			return -(errno = saved_errno);
+		}
 		va_end(argp);
 	}
 	close(dstfd);
