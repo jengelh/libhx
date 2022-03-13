@@ -188,10 +188,6 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 		return -(errno = saved_errno);
 	}
 
-	while ((rdret = read(srcfd, buf, bufsize)) > 0 && write(dstfd, buf, rdret) > 0)
-		;
-	close(srcfd);
-
 	if (opts & (HXF_UID | HXF_GID)) {
 		struct stat sb;
 		long uid, gid;
@@ -202,6 +198,7 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 			int saved_errno = errno;
 			unlink(dest);
 			close(dstfd);
+			close(srcfd);
 			return -(errno = saved_errno);
 		}
 		uid = sb.st_uid;
@@ -213,10 +210,15 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 			int saved_errno = errno;
 			unlink(dest);
 			close(dstfd);
+			close(srcfd);
 			return -(errno = saved_errno);
 		}
 		va_end(argp);
 	}
+
+	while ((rdret = read(srcfd, buf, bufsize)) > 0 && write(dstfd, buf, rdret) > 0)
+		;
+	close(srcfd);
 	close(dstfd);
 	free(buf);
 	return 1;
