@@ -166,31 +166,31 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 	static const size_t bufsize = 0x10000;
 	void *buf;
 	unsigned int extra_flags = 0;
-	int dd, eax = 0, sd, l;
+	int srcfd, dstfd;
+	ssize_t rdret;
 
 	buf = malloc(bufsize);
 	if (buf == nullptr)
 		return -errno;
-	sd = open(src, O_RDONLY | O_BINARY);
-	if (sd < 0) {
+	srcfd = open(src, O_RDONLY | O_BINARY);
+	if (srcfd < 0) {
 		free(buf);
 		return -errno;
 	}
 	if (opts & HXF_KEEP)
 		extra_flags = O_EXCL;
-	dd = open(dest, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC |
-	     extra_flags, S_IRUGO | S_IWUGO);
-	if (dd < 0) {
-		eax = errno;
+	dstfd = open(dest, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC |
+	        extra_flags, S_IRUGO | S_IWUGO);
+	if (dstfd < 0) {
+		int saved_errno = errno;
 		free(buf);
-		close(sd);
-		errno = eax;
-		return -errno;
+		close(srcfd);
+		return -(errno = saved_errno);
 	}
 
-	while ((l = read(sd, buf, bufsize)) > 0 && write(dd, buf, l) > 0)
+	while ((rdret = read(srcfd, buf, bufsize)) > 0 && write(dstfd, buf, rdret) > 0)
 		;
-	close(sd);
+	close(srcfd);
 
 	if (opts & (HXF_UID | HXF_GID)) {
 		struct stat sb;
@@ -198,17 +198,17 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 		va_list argp;
 		va_start(argp, opts);
 
-		fstat(dd, &sb);
+		fstat(dstfd, &sb);
 		uid = sb.st_uid;
 		gid = sb.st_gid;
 
 		if (opts & HXF_UID) uid = va_arg(argp, long);
 		if (opts & HXF_GID) gid = va_arg(argp, long);
-		if (fchown(dd, uid, gid) < 0)
+		if (fchown(dstfd, uid, gid) < 0)
 			{};
 		va_end(argp);
 	}
-	close(dd);
+	close(dstfd);
 	free(buf);
 	return 1;
 }
