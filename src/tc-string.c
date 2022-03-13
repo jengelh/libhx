@@ -274,11 +274,13 @@ static void t_strlcpy(void)
 			HX_timespec_sub(&d2, &stop, &start);
 
 			HX_timespec_sub(&d3, &d1, &d2);
-			printf("%4zu->%4zu: %1ld.%09ld (str=%ld.%09ld mem=%ld.%09ld)\n",
+			printf("%4zu->%4zu: " HX_TIMESPEC_FMT
+			       " (str=" HX_TIMESPEC_FMT
+			       " mem=" HX_TIMESPEC_FMT ")\n",
 				strlen(ibuf), picksizes[opick],
-				static_cast(long, d3.tv_sec), d3.tv_nsec,
-				static_cast(long, d1.tv_sec), d1.tv_nsec,
-				static_cast(long, d2.tv_sec), d2.tv_nsec
+				HX_TIMESPEC_EXP(&d3),
+				HX_TIMESPEC_EXP(&d1),
+				HX_TIMESPEC_EXP(&d2)
 				);
 		}
 	}
