@@ -32,7 +32,7 @@ endif
 
 EXTRA_DIST = internal.h map_int.h libHX.map
 
-check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-io tc-link \
+check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-io \
                      tc-list tc-list2 tc-map tc-memmem tc-misc tc-netio \
                      tc-option tc-proc tc-rand tc-realpath \
                      tc-shconfig tc-strchr2 tc-string tc-strquote \
@@ -44,7 +44,6 @@ tc_compile_LDADD   = libHX.la
 tc_dir_LDADD       = libHX.la
 tc_format_LDADD    = libHX.la
 tc_io_LDADD        = libHX.la
-tc_link_LDADD      = libHX.la
 tc_list_LDADD      = libHX.la
 tc_list2_LDADD     = libHX.la
 tc_list2_CFLAGS    = ${AM_CFLAGS} -O2 -fstrict-aliasing
