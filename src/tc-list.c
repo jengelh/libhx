@@ -111,6 +111,8 @@ static void l_empty(void)
 
 static void l_shift(void)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 	/* Check for -Wshadow warnings */
 	struct object {
 		int value;
@@ -130,6 +132,7 @@ static void l_shift(void)
 	HXclist_push(&clh, &q.anchor);
 	x = p = HXclist_pop(&clh, struct object, anchor);
 	printf("%d\n", p->value);
+#pragma GCC diagnostic pop
 }
 
 int main(int argc, const char **argv)

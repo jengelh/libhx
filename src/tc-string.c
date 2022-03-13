@@ -90,9 +90,12 @@ static void t_strncat(void)
 {
 	char data[5] = "DATA";
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
 	if (snprintf(data, sizeof(data), "12345678") >=
 	    static_cast(ssize_t, sizeof(data)))
 		printf("Not enough space\n");
+#pragma GCC diagnostic pop
 	printf("String: >%s<\n", data);
 
 	HX_strlcat(data, "pqrstuv__", 2);

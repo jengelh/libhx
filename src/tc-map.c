@@ -25,6 +25,7 @@
 #include <sys/time.h>
 #include "internal.h"
 #include "map_int.h"
+#pragma GCC diagnostic ignored "-Wunused-const-variable"
 
 union HXpoly {
 	struct HXmap *map;
