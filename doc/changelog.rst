@@ -1,3 +1,15 @@
+v4.3 (2022-03-14)
+=================
+
+Enhancements:
+
+* string: New functions ``HX_strtoull_sec``, ``HX_unit_seconds`` for converting
+  between second-based time durations and human-readable durations like
+  129600 <-> 1d12h.
+* io: New function ``HX_sendfile``.
+* io: raise buffer size for ``HX_copy_file`` from 1 kiB to 64 kiB
+
+
 v4.2 (2021-10-17)
 =================
 
