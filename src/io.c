@@ -674,9 +674,8 @@ static ssize_t HX_sendfile_rw(int dst, int src, size_t count)
 
 EXPORT_SYMBOL ssize_t HX_sendfile(int dst, int src, size_t count)
 {
-	ssize_t ret;
 #if __linux__
-	ret = HX_sendfile_linux(dst, src, count);
+	ssize_t ret = HX_sendfile_linux(dst, src, count);
 	if (ret != -ENOSYS)
 		return ret;
 #endif
