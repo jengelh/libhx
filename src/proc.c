@@ -18,6 +18,9 @@
 #	include <sys/resource.h>
 #endif
 #include <libHX/proc.h>
+#ifdef _WIN32
+#	include <winsock2.h>
+#endif
 
 #if defined(HAVE_INITGROUPS) && defined(HAVE_SETGID)
 #include <grp.h>
