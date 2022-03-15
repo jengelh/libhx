@@ -22,14 +22,31 @@
 #include <libHX/proc.h>
 #include <libHX/socket.h>
 #include "internal.h"
+#ifdef _WIN32
+#	define STUPIDWIN(x) reinterpret_cast(char *, (x))
+#else
+#	define STUPIDWIN(x) (x)
+#endif
+#if defined(__sunos__) && !defined(SO_PROTOCOL)
+#	define SO_PROTOCOL SO_PROTOTYPE
+#endif
 
 static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 {
 	int value = 0;
 	socklen_t optlen = sizeof(value);
-	int ret = getsockopt(fd, SOL_SOCKET, SO_ACCEPTCONN, &value, &optlen);
+	int ret = getsockopt(fd, SOL_SOCKET, SO_ACCEPTCONN, STUPIDWIN(&value), &optlen);
 	if (ret < 0 || value == 0)
 		return -1;
+#ifdef _WIN32
+	WSAPROTOCOL_INFO protinfo;
+	optlen = sizeof(protinfo);
+	ret = getsockopt(fd, SOL_SOCKET, SO_PROTOCOL_INFO, STUPIDWIN(&protinfo), &optlen);
+	if (ret < 0 || protinfo.iAddressFamily != ai->ai_family ||
+	    protinfo.iSocketType != ai->ai_socktype ||
+	    protinfo.iProtocol != ai->ai_protocol)
+		return -1;
+#else
 	optlen = sizeof(value);
 	ret = getsockopt(fd, SOL_SOCKET, SO_DOMAIN, &value, &optlen);
 	if (ret < 0 || value != ai->ai_family)
@@ -39,12 +56,10 @@ static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 	if (ret < 0 || value != ai->ai_socktype)
 		return -1;
 	optlen = sizeof(value);
-#if defined(__sunos__) && !defined(SO_PROTOCOL)
-#	define SO_PROTOCOL SO_PROTOTYPE
-#endif
 	ret = getsockopt(fd, SOL_SOCKET, SO_PROTOCOL, &value, &optlen);
 	if (ret < 0 || value != ai->ai_protocol)
 		return -1;
+#endif
 	struct sockaddr_storage addr;
 	memset(&addr, 0, sizeof(addr));
 	optlen = sizeof(addr);
@@ -57,6 +72,7 @@ static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 		return -1;
 	if (intf == nullptr)
 		return fd;
+#ifdef SO_BINDTODEVICE
 	char ifname[32];
 	optlen = sizeof(ifname);
 	ret = getsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, ifname, &optlen);
@@ -68,6 +84,7 @@ static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 		ifname[sizeof(ifname)-1] = '\0';
 	if (strcmp(intf, ifname) != 0)
 		return -1;
+#endif
 	return fd;
 }
 

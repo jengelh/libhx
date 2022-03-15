@@ -21,6 +21,7 @@ EXTRA_libHX_la_DEPENDENCIES = libHX.map
 
 if MINGW32
 libHX_la_SOURCES += ux-file.c ux-mmap.c
+libHX_la_LIBADD += -lws2_32
 endif
 
 libHX_rtcheck_la_SOURCES = rtcheck.c
