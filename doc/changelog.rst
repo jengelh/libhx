@@ -1,3 +1,11 @@
+v4.4 (2022-03-15)
+=================
+
+Fixes:
+
+* Build fixes for the mingw environment.
+
+
 v4.3 (2022-03-14)
 =================
 
