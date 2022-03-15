@@ -35,6 +35,9 @@
 #include <libHX/misc.h>
 #include <libHX/string.h>
 #include "internal.h"
+#ifndef O_CLOEXEC
+#	define O_CLOEXEC 0
+#endif
 
 struct HXdir {
 #if defined _WIN32
