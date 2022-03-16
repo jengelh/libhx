@@ -936,12 +936,6 @@ EXPORT_SYMBOL double HX_strtod_unit(const char *s, char **out_end, unsigned int 
 
 	while (HX_isspace(*s))
 		++s;
-	if (*s == '-') {
-		if (out_end != nullptr)
-			*out_end = const_cast(char *, s);
-		errno = ERANGE;
-		return ULLONG_MAX;
-	}
 	q = strtod(s, &end);
 	if (exponent == 0)
 		exponent = 1000;
@@ -972,12 +966,6 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 
 	while (HX_isspace(*s))
 		++s;
-	if (*s == '-') {
-		if (out_end != nullptr)
-			*out_end = const_cast(char *, s);
-		errno = ERANGE;
-		return ULLONG_MAX;
-	}
 	ipart = strtoull(s, &end, 10);
 	if (*end == '.') {
 		double q = HX_strtod_unit(s, out_end, exponent);
