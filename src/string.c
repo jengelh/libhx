@@ -42,11 +42,6 @@ struct HX_quote_rule {
 
 static const char HX_hexenc[16] = "0123456789ABCDEF";
 
-static __inline__ unsigned int min_uint(unsigned int a, unsigned int b)
-{
-	return (a < b) ? a : b;
-}
-
 EXPORT_SYMBOL char *HX_basename(const char *s)
 {
 	const char *p;
