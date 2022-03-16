@@ -969,7 +969,11 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 	ipart = strtoull(s, &end, 10);
 	if (*end == '.') {
 		double q = HX_strtod_unit(s, out_end, exponent);
-		return q < ULLONG_MAX ? q : ULLONG_MAX;
+		bool lo_ok = q >= nextafter(-static_cast(double, ULLONG_MAX), 0);
+		bool hi_ok = q <= nextafter(static_cast(double, ULLONG_MAX), 0);
+		if (!hi_ok || !lo_ok)
+			return ULLONG_MAX;
+		return q;
 	}
 	if (exponent == 0)
 		exponent = 1000;
