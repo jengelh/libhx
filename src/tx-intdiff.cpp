@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <iterator>
 #include <vector>
 #include <libHX/intdiff.hpp>
