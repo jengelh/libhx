@@ -371,6 +371,11 @@ that the resulting (integer) quotient is the highest possible value _v_ that is
 less than ``cutoff``. This value _v_ is then emitted into ``out`` together with
 the corresponding SI prefix.
 
+In other words, ``cutoff`` is the value when it attempts to do another
+iteration of the division. For example, if the cutoff is set at 8192,
+then 8191 will stay as-is, but 8192 is reduced to "8K". The popular
+``wget`` utility implements a cutoff of 1024.
+
 Note that the SI prefix for one iteration (i==1), i.e. kilo, is a lower-case
 ``'k'``. If you need consistent upper-case output in your program, (i.e. K/M/G
 instead of k/M/G), use a subsequent call to ``HX_strupper``.
@@ -393,6 +398,10 @@ emitted. This is rooted in the following idea:
 * By ditching fractions this way, ``HX_unit_size`` also sidesteps the issue of
   excess digits being emitted (usually up to 5) from the trivial use (by
   wget/rsync) of ``printf("%.2f", v)``.
+
+(With regard to the 1.34G-vs-1340M argument, do note that, to actually receive
+"``1340M``" as output, you need to set a conveniently high cutoff value such
+as 10000. Otherwise, you might get "``1G``".)
 
 The ``HX_unit_size_cu`` function will instead mimic the behavior of coreutils
 (/usr/bin/df, /usr/bin/ls). That is, it divides ``number`` by ``pow(divisor,
