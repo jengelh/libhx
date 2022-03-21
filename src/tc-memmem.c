@@ -35,6 +35,7 @@ static void long_scan(void)
 	printf("long_scan: filler2=%p p=%p\n", filler2, p);
 	HX_timespec_sub(&delta, &stop, &start);
 	printf("long_scan: " HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&delta));
+	free(filler2);
 }
 
 int main(void)
