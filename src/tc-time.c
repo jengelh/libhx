@@ -352,11 +352,10 @@ static void test_mul(void)
 static void test_muls_1i(const char *text, mul_func_t fn)
 {
 	struct timespec r, s, start, delta;
-	unsigned int i;
 
 	printf("%s", text);
 	clock_gettime(clock_id, &start);
-	for (i = 0; i < step_mul; ++i) {
+	for (time_t i = 0; i < step_mul; ++i) {
 		r.tv_sec  = -i;
 		r.tv_nsec = -i / 4;
 		(*fn)(&s, &r, 7);
@@ -369,11 +368,10 @@ static void test_muls_1i(const char *text, mul_func_t fn)
 static void test_muls_1f(const char *text, mulf_func_t fn)
 {
 	struct timespec r, s, start, delta;
-	unsigned int i;
 
 	printf("%s", text);
 	clock_gettime(clock_id, &start);
-	for (i = 0; i < step_mul; ++i) {
+	for (time_t i = 0; i < step_mul; ++i) {
 		r.tv_sec  = -i;
 		r.tv_nsec = -i / 4;
 		(*fn)(&s, &r, 7);
