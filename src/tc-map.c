@@ -225,7 +225,7 @@ static void tmap_flat(const struct HXmap *map)
 		abort();
 	}
 	for (i = 0; i < map->items; ++i)
-		tmap_printf("%u. %s -> %s\n", i, nodes[i].key, nodes[i].data);
+		tmap_printf("%u. %s -> %s\n", i, nodes[i].skey, nodes[i].sdata);
 	tmap_ipop();
 	free(nodes);
 }
