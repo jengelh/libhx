@@ -10,11 +10,11 @@
 
 int main(void)
 {
-	unsigned long long bmllong[HXbitmap_size(unsigned long long, 256)];
-	unsigned long bmlong[HXbitmap_size(unsigned long, 256)];
-	unsigned int bmint[HXbitmap_size(unsigned int, 256)];
-	unsigned short bmshort[HXbitmap_size(unsigned short, 256)];
-	unsigned char bmchar[HXbitmap_size(unsigned char, 256)];
+	unsigned long long bmllong[HXbitmap_size(unsigned long long, 256)] = {0};
+	unsigned long bmlong[HXbitmap_size(unsigned long, 256)] = {0};
+	unsigned int bmint[HXbitmap_size(unsigned int, 256)] = {0};
+	unsigned short bmshort[HXbitmap_size(unsigned short, 256)] = {0};
+	unsigned char bmchar[HXbitmap_size(unsigned char, 256)] = {0};
 
 	if (HX_init() <= 0)
 		abort();
