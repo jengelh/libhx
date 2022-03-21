@@ -39,6 +39,8 @@ static void l_init(unsigned int max, bool unshift)
 		obj = new struct text_object;
 #else
 		obj = malloc(sizeof(*obj));
+		if (obj == NULL)
+			abort();
 #endif
 		HXlist_init(&obj->list);
 		obj->id[0] = HX_irand('a', 'z'+1);
