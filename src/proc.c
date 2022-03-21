@@ -299,7 +299,8 @@ HXproc_run_async(const char *const *argv, struct HXproc *proc)
 		close(pipes[2][1]);
 		proc->p_stderr = pipes[2][0];
 	}
-
+	if (nullfd >= 0)
+		close(nullfd);
 	return 1;
 }
 
