@@ -84,6 +84,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcpy(hxmc_t **vp, const void *ptr, size_t len)
 
 	memcpy(ctx->data, ptr, ctx->length = len);
 	ctx->data[len] = '\0';
+	// coverity[resource_leak]
 	return *vp = ctx->data;
 }
 
@@ -123,6 +124,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_trunc(hxmc_t **vp, size_t len)
 		ctx->data[len] = '\0';
 		ctx->length = len;
 	}
+	// coverity[resource_leak]
 	return *vp = ctx->data;
 }
 
@@ -151,6 +153,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcat(hxmc_t **vp, const void *ptr, size_t len)
 	memcpy(ctx->data + ctx->length, ptr, len);
 	ctx->length = nl;
 	ctx->data[nl] = '\0';
+	// coverity[resource_leak]
 	return *vp = ctx->data;
 }
 
@@ -200,6 +203,7 @@ EXPORT_SYMBOL hxmc_t *HXmc_memins(hxmc_t **vp, size_t pos, const void *ptr,
 	memcpy(ctx->data + pos, ptr, len);
 	ctx->length += len;
 	ctx->data[ctx->length] = '\0';
+	// coverity[resource_leak]
 	return *vp = ctx->data;
 }
 
