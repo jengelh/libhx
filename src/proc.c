@@ -259,17 +259,17 @@ HXproc_run_async(const char *const *argv, struct HXproc *proc)
 		 */
 		HXproc_close_pipes(pipes);
 		if ((proc->p_flags & (HXPROC_STDIN | HXPROC_NULL_STDIN)) &&
-		    proc->p_stdin != STDIN_FILENO) {
+		    proc->p_stdin >= 0 && proc->p_stdin != STDIN_FILENO) {
 			dup2(proc->p_stdin, STDIN_FILENO);
 			close(proc->p_stdin);
 		}
 		if ((proc->p_flags & (HXPROC_STDOUT | HXPROC_NULL_STDOUT)) &&
-		    proc->p_stdout != STDOUT_FILENO) {
+		    proc->p_stdout >= 0 && proc->p_stdout != STDOUT_FILENO) {
 			dup2(proc->p_stdout, STDOUT_FILENO);
 			close(proc->p_stdout);
 		}
 		if ((proc->p_flags & (HXPROC_STDERR | HXPROC_NULL_STDERR)) &&
-		    proc->p_stderr != STDERR_FILENO) {
+		    proc->p_stderr >= 0 && proc->p_stderr != STDERR_FILENO) {
 			dup2(proc->p_stderr, STDERR_FILENO);
 			close(proc->p_stderr);
 		}
