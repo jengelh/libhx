@@ -11,6 +11,7 @@
 #	include "config.h"
 #endif
 #include <errno.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #ifdef _WIN32
@@ -93,7 +94,10 @@ EXPORT_SYMBOL int HX_socket_from_env(const struct addrinfo *ai, const char *intf
 	int top_fd;
 	const char *env_limit = getenv("LISTEN_FDS");
 	if (env_limit != nullptr) {
-		top_fd = 3 + strtol(env_limit, nullptr, 0);
+		long x = strtol(env_limit, nullptr, 0);
+		if (x > INT_MAX - 3)
+			x = INT_MAX - 3;
+		top_fd = 3 + x;
 	} else {
 		env_limit = getenv("HX_LISTEN_TOP_FD");
 		top_fd = env_limit != nullptr ? strtol(env_limit, nullptr, 0) : HXproc_top_fd();
