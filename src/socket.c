@@ -100,7 +100,15 @@ EXPORT_SYMBOL int HX_socket_from_env(const struct addrinfo *ai, const char *intf
 		top_fd = 3 + x;
 	} else {
 		env_limit = getenv("HX_LISTEN_TOP_FD");
-		top_fd = env_limit != nullptr ? strtol(env_limit, nullptr, 0) : HXproc_top_fd();
+		long x;
+		if (env_limit != nullptr) {
+			x = strtol(env_limit, nullptr, 0);
+			if (x > INT_MAX)
+				x = INT_MAX;
+		} else {
+			x = HXproc_top_fd();
+		}
+		top_fd = x;
 	}
 	for (int fd = 3; fd < top_fd; ++fd)
 		if (try_sk_from_env(fd, ai, intf) == fd)
