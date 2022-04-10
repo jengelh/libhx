@@ -1,3 +1,11 @@
+v4.5 (2022-04-10)
+=================
+
+Fixes:
+
+* Resolve a number of cov-scan reported warnings.
+
+
 v4.4 (2022-03-15)
 =================
 
