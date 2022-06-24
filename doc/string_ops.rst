@@ -256,10 +256,10 @@ Tokenizing
 
 ``HX_split_inplace``
 	Splits the string ``s`` in-place on any characters from the
-	``delimiters`` string. The array that will be holding the pointers to
-	the substrings will be allocated and needs to be freed by the user,
-	using ``free``(3). The ``fields`` and ``max`` arguments work as with
-	``HX_split``.
+	``delimiters`` string. The resulting array will hold pointers to parts
+	of the original string. The array itself needs to be freed by the user,
+	using ``free``(3), the individual elements must not be freed. The
+	``fields`` and ``max`` arguments work as with ``HX_split``.
 
 ``HX_split_fixed``
 	Splits the string ``s`` in-place on any characters from the
