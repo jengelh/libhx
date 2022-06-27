@@ -1,3 +1,12 @@
+v4.6 (2022-06-27)
+=================
+
+Enhancements:
+
+* HX_slurp_fd/HX_slurp_file now supports reading from files reporting their
+  own size as 0 (e.g. ttys, /proc special files).
+
+
 v4.5 (2022-04-10)
 =================
 
