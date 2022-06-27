@@ -2,9 +2,11 @@
 #include <fcntl.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <libHX/io.h>
+#include "internal.h"
 
 static void sf(void)
 {
@@ -26,14 +28,28 @@ int main(void)
 {
 	size_t z;
 	char *s = HX_slurp_file("tc-io.c", &z);
+	if (s == nullptr) {
+		fprintf(stderr, "HX_slurp_file: %s\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
 	printf("%s\n", s);
 	printf("Dumped %zu bytes\n", z);
+	free(s);
+	s = HX_slurp_file("/proc/version", &z);
+	if (s == nullptr) {
+		fprintf(stderr, "HX_slurp_file: %s\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
+	printf(">%s<\n", s);
+	free(s);
 
 	sf();
 	int ret = HX_copy_file("tc-io.c", "tciocopy.txt", 0);
-	if (ret <= 0)
+	if (ret <= 0) {
 		fprintf(stderr, "HX_copy_file: %s\n", strerror(errno));
-	else
+	} else {
 		fprintf(stderr, "copy_file ok\n");
+		unlink("tciocopy.txt");
+	}
 	return 0;
 }

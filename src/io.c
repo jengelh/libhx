@@ -687,6 +687,36 @@ EXPORT_SYMBOL char *HX_slurp_fd(int fd, size_t *outsize)
 	struct stat sb;
 	if (fstat(fd, &sb) < 0)
 		return NULL;
+	if (sb.st_size == 0) {
+		/* e.g. ttys (S_ISCHR) or special procfs files */
+		size_t bufsize = 4096, offset = 0;
+		char *buf = malloc(bufsize);
+		if (buf == nullptr)
+			return nullptr;
+		ssize_t rdret;
+		while ((rdret = read(fd, buf, bufsize - 1 - offset)) > 0) {
+			offset += rdret;
+			if (bufsize - offset >= 4095)
+				/* any value would work, but >=1 is not all that efficient */
+				continue;
+			if (bufsize > SSIZE_MAX)
+				/* No more doubling */
+				break;
+			bufsize *= 2;
+			void *nbuf = realloc(buf, bufsize + 1);
+			if (nbuf == nullptr) {
+				int se = errno;
+				free(buf);
+				errno = se;
+				return nullptr;
+			}
+			buf = nbuf;
+		}
+		buf[offset] = '\0';
+		if (outsize != nullptr)
+			*outsize = offset;
+		return buf;
+	}
 	size_t fsize = sb.st_size; /* may truncate from loff_t to size_t */
 	if (fsize == SIZE_MAX)
 		--fsize;
