@@ -126,6 +126,7 @@ Systems-related components
 Miscellaneous
 =============
 
+* `Type-checking casts <typechecking_casts.rst>`_
 * `Helper headers <helper_headers.rst>`_ for other software
 * `Macros <macros.rst>`_
 * `Misc functions <misc_functions.rst>`_ that did not fit in any other category
