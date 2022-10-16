@@ -132,6 +132,21 @@ Allowed conversions
 
   Conversion from ``const type *`` to and from ``const void *``.
 
+Limitations
+-----------
+
+Because the implementation of our ``static_cast`` involves a C99 compound
+literals and those are not constant expressions, ``static_cast`` cannot be used
+in such contexts. (Cf. `GCC issue 105510
+<https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105510#c3>`_).
+
+.. code-block:: c
+
+	static const int a = static_cast(int, 1U);
+
+Furthermore, because an implicit assignment is used in the implementation, it
+can trigger `-Wsign-conversion` warnings.
+
 
 ``const_cast``
 ==============
