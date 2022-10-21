@@ -175,6 +175,9 @@ Possible values for type:
 ``HXQUOTE_BASE64``
 	Transforms the string to BASE64, as described in `RFC 4648`_.
 
+``HXQUOTE_BASE64URL``
+	Transforms the string to base64url, as described in `RFC 4648`_.
+
 ``HXQUOTE_URIENC``
 	Escapes the string so that it becomes a valid part for an URI.
 

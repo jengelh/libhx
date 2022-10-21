@@ -9,6 +9,7 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+4.7     4.7     4.7     HXQUOTE_BASE64URL
 4.3     4.3     4.3     HX_unit_seconds
 4.3     4.3     4.3     HX_strtoull_sec
 4.2     4.2     4.2     HX_unit_size

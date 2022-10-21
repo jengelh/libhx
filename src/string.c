@@ -760,6 +760,7 @@ static size_t HX_quoted_size(const char *s, unsigned int type)
 	case HXQUOTE_LDAPRDN:
 		return HX_qsize_bsr(s, HX_quote_rules[type].chars, 2);
 	case HXQUOTE_BASE64:
+	case HXQUOTE_BASE64URL:
 		return (strlen(s) + 2) / 3 * 4;
 	case HXQUOTE_URIENC:
 		return HX_qsize_bsa(s, HX_quote_rules[type].chars, 2);
@@ -819,6 +820,8 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 		return HX_quote_ldap(*free_me, src, rule->chars);
 	case HXQUOTE_BASE64:
 		return HX_quote_base64(*free_me, src, '+', '/');
+	case HXQUOTE_BASE64URL:
+		return HX_quote_base64(*free_me, src, '-', '_');
 	case HXQUOTE_URIENC:
 		return HX_quote_urlenc(*free_me, src);
 	case HXQUOTE_SQLSQUOTE:

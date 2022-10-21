@@ -28,6 +28,8 @@ static const char input5[]   = "echo hello `echo world`";
 static const char output5[]  = "echo hello ``echo world``";
 static const char input6[]   = "\xfb\xef\xff";
 static const char output6[]  = "++//";
+static const char input7[]   = "\xfb\xef\xff";
+static const char output7[]  = "--__";
 
 static int test(const char *input, unsigned int mode, const char *expect)
 {
@@ -68,6 +70,7 @@ int main(void)
 	tst(input4, HXQUOTE_URIENC, output4);
 	tst(input5, HXQUOTE_SQLBQUOTE, output5);
 	tst(input6, HXQUOTE_BASE64, output6);
+	tst(input7, HXQUOTE_BASE64URL, output7);
 	return 0;
 #undef tst
 }
