@@ -1,3 +1,15 @@
+v4.7 (2022-10-21)
+=================
+
+Enhancements:
+
+* string: new quoting modes HXQUOTE_BASE64URL & HXQUOTE_BASE64IMAP
+
+Fixes:
+
+* socket: make HX_socket_from_env functional on OpenBSD
+
+
 v4.6 (2022-06-27)
 =================
 
