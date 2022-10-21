@@ -602,14 +602,16 @@ HX_quote_sqlbackslash(char *dest, const char *src, const char *trm)
  * Encode @src into BASE-64 according to RFC 4648 and write result to @dest,
  * which must be of appropriate size, plus one for a trailing NUL.
  */
-static char *HX_quote_base64(char *d, const char *s)
+static char *HX_quote_base64(char *d, const char *s, char x1, char x2)
 {
-	static const char a[] =
+	char a[] =
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		"abcdefghijklmnopqrstuvwxyz0123456789+/";
+		"abcdefghijklmnopqrstuvwxyz0123456789??";
 	size_t len = strlen(s);
 	char *ret = d;
 
+	a[62] = x1;
+	a[63] = x2;
 	while (len > 0) {
 		if (len >= 3) {
 			len -= 3;
@@ -816,7 +818,7 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 	case HXQUOTE_LDAPRDN:
 		return HX_quote_ldap(*free_me, src, rule->chars);
 	case HXQUOTE_BASE64:
-		return HX_quote_base64(*free_me, src);
+		return HX_quote_base64(*free_me, src, '+', '/');
 	case HXQUOTE_URIENC:
 		return HX_quote_urlenc(*free_me, src);
 	case HXQUOTE_SQLSQUOTE:

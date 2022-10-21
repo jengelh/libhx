@@ -26,6 +26,8 @@ static const char input4[]   = "http://user:pass@host.de/~path/file(msvc);stuff.
 static const char output4[]  = "http%3A%2F%2Fuser%3Apass%40host.de%2F~path%2Ffile%28msvc%29%3Bstuff.php%3Fquery%5Bphpindex%5D%3Dvalue%26another%3Done%3Bstuff";
 static const char input5[]   = "echo hello `echo world`";
 static const char output5[]  = "echo hello ``echo world``";
+static const char input6[]   = "\xfb\xef\xff";
+static const char output6[]  = "++//";
 
 static int test(const char *input, unsigned int mode, const char *expect)
 {
@@ -65,6 +67,7 @@ int main(void)
 	tst(input3, HXQUOTE_BASE64, output3c);
 	tst(input4, HXQUOTE_URIENC, output4);
 	tst(input5, HXQUOTE_SQLBQUOTE, output5);
+	tst(input6, HXQUOTE_BASE64, output6);
 	return 0;
 #undef tst
 }
