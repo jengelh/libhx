@@ -7,6 +7,9 @@
  *	General Public License as published by the Free Software Foundation;
  *	either version 2.1 or (at your option) any later version.
  */
+#ifdef HAVE_CONFIG_H
+#	include "config.h"
+#endif
 #include <sys/stat.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -720,6 +723,11 @@ EXPORT_SYMBOL char *HX_slurp_fd(int fd, size_t *outsize)
 	size_t fsize = sb.st_size; /* may truncate from loff_t to size_t */
 	if (fsize == SIZE_MAX)
 		--fsize;
+#ifdef HAVE_POSIX_FADVISE
+	if (fsize > 0 && posix_fadvise(fd, 0, fsize,
+	    POSIX_FADV_SEQUENTIAL) != 0)
+		/* ignore */;
+#endif
 	char *buf = malloc(fsize + 1);
 	if (buf == NULL)
 		return NULL;
