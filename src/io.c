@@ -699,8 +699,11 @@ EXPORT_SYMBOL char *HX_slurp_fd(int fd, size_t *outsize)
 		ssize_t rdret;
 		while ((rdret = read(fd, buf, bufsize - 1 - offset)) > 0) {
 			offset += rdret;
+			/*
+			 * Make it so that the next read call is not called
+			 * with an exceptionally small size.
+			 */
 			if (bufsize - offset >= 4095)
-				/* any value would work, but >=1 is not all that efficient */
 				continue;
 			if (bufsize > SSIZE_MAX)
 				/* No more doubling */
