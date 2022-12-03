@@ -697,7 +697,7 @@ EXPORT_SYMBOL char *HX_slurp_fd(int fd, size_t *outsize)
 		if (buf == nullptr)
 			return nullptr;
 		ssize_t rdret;
-		while ((rdret = read(fd, buf, bufsize - 1 - offset)) > 0) {
+		while ((rdret = read(fd, buf + offset, bufsize - 1 - offset)) > 0) {
 			offset += rdret;
 			/*
 			 * Make it so that the next read call is not called
