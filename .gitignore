@@ -12,6 +12,7 @@ Makefile.in
 /build-aux/
 /config.*
 /configure
+/configure~
 /libtool
 stamp-h1
 

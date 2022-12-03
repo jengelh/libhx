@@ -1,3 +1,15 @@
+v4.8 (2022-12-03)
+=================
+
+Enhancements:
+
+* io: call posix_fadvise when slurping files
+
+Fixes:
+
+* io: fix garbling of slurped data when read from an unknown-size source
+
+
 v4.7 (2022-10-21)
 =================
 
