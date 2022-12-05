@@ -8,6 +8,7 @@
  *	either version 2.1 or (at your option) any later version.
  */
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,10 +21,12 @@ static __inline__ size_t __HXmc_request(size_t len)
 	return sizeof(struct memcont) + len + 1;
 }
 
-static __inline__ void HXmc_check(const struct memcont *c)
+static __inline__ int HXmc_check(const struct memcont *c)
 {
-	if (c->id != HXMC_IDENT)
+	int err = c->id != HXMC_IDENT;
+	if (err != 0)
 		fprintf(stderr, "libHX-mc error: not a hxmc object!\n");
+	return err;
 }
 
 static __inline__ struct memcont *HXmc_base(const hxmc_t *p)
@@ -61,7 +64,8 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcpy(hxmc_t **vp, const void *ptr, size_t len)
 	struct memcont *ctx;
 	if (*vp != NULL) {
 		ctx = HXmc_base(*vp);
-		HXmc_check(ctx);
+		if (HXmc_check(ctx) != 0)
+			return nullptr;
 		if (ctx->alloc < len) {
 			ctx = realloc(ctx, __HXmc_request(len));
 			if (ctx == NULL)
@@ -96,7 +100,8 @@ EXPORT_SYMBOL size_t HXmc_length(const hxmc_t *vp)
 	if (vp == NULL)
 		return 0;
 	ctx = HXmc_base(vp);
-	HXmc_check(ctx);
+	if (HXmc_check(ctx) != 0)
+		return SIZE_MAX;
 	return ctx->length;
 }
 
@@ -115,7 +120,8 @@ EXPORT_SYMBOL hxmc_t *HXmc_trunc(hxmc_t **vp, size_t len)
 {
 	struct memcont *ctx = HXmc_base(*vp);
 
-	HXmc_check(ctx);
+	if (HXmc_check(ctx) != 0)
+		return nullptr;
 	if (len > ctx->alloc) {
 		ctx = realloc(ctx, __HXmc_request(len));
 		if (ctx == NULL)
@@ -141,7 +147,8 @@ EXPORT_SYMBOL hxmc_t *HXmc_memcat(hxmc_t **vp, const void *ptr, size_t len)
 	struct memcont *ctx = HXmc_base(*vp);
 	size_t nl = ctx->length + len;
 
-	HXmc_check(ctx);
+	if (HXmc_check(ctx) != 0)
+		return nullptr;
 	if (nl > ctx->alloc) {
 		ctx = realloc(ctx, __HXmc_request(nl));
 		if (ctx == NULL)
@@ -191,7 +198,8 @@ EXPORT_SYMBOL hxmc_t *HXmc_memins(hxmc_t **vp, size_t pos, const void *ptr,
 	struct memcont *ctx = HXmc_base(*vp);
 	size_t nl = ctx->length + len;
 
-	HXmc_check(ctx);
+	if (HXmc_check(ctx) != 0)
+		return nullptr;
 	if (ctx->alloc < nl) {
 		ctx = realloc(ctx, __HXmc_request(nl));
 		if (ctx == NULL)
@@ -212,8 +220,8 @@ EXPORT_SYMBOL hxmc_t *HXmc_memins(hxmc_t **vp, size_t pos, const void *ptr,
 EXPORT_SYMBOL hxmc_t *HXmc_memdel(hxmc_t *vp, size_t pos, size_t len)
 {
 	struct memcont *ctx = HXmc_base(vp);
-	HXmc_check(ctx);
-
+	if (HXmc_check(ctx) != 0)
+		return nullptr;
 	if (pos + len > ctx->length)
 		len = ctx->length - pos;
 
@@ -230,7 +238,8 @@ EXPORT_SYMBOL void HXmc_free(hxmc_t *vp)
 	if (vp == NULL)
 		return;
 	ctx = HXmc_base(vp);
-	HXmc_check(ctx);
+	if (HXmc_check(ctx) != 0)
+		return;
 	free(ctx);
 }
 
