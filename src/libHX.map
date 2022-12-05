@@ -150,3 +150,10 @@ global:
 	HX_unit_seconds;
 	HX_strtoull_sec;
 } LIBHX_4.2;
+
+LIBHX_4.9 {
+global:
+	HXformat3_aprintf;
+	HXformat3_fprintf;
+	HXformat3_sprintf;
+} LIBHX_4.3;

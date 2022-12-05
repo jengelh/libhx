@@ -16,6 +16,12 @@
 #include <unistd.h>
 #include <libHX.h>
 #include "internal.h"
+#undef HXformat_aprintf
+#undef HXformat_fprintf
+#undef HXformat_sprintf
+extern int HXformat_aprintf(const struct HXformat_map *, hxmc_t **, const char *);
+extern int HXformat_sprintf(const struct HXformat_map *, char *, size_t, const char *);
+extern int HXformat_fprintf(const struct HXformat_map *, FILE *, const char *);
 
 /* To make it easier on the highlighter */
 #define C_OPEN  '('
@@ -643,6 +649,13 @@ EXPORT_SYMBOL struct HXformat_map *HXformat_init(void)
 EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *blk,
     hxmc_t **resultp, const char *fmt)
 {
+	ssize_t ret = HXformat3_aprintf(blk, resultp, fmt);
+	return ret > INT_MAX ? INT_MAX : ret;
+}
+
+EXPORT_SYMBOL ssize_t HXformat3_aprintf(const struct HXformat_map *blk,
+    hxmc_t **resultp, const char *fmt)
+{
 	hxmc_t *ex, *ts, *out;
 	const char *current;
 	int ret = 0;
@@ -680,7 +693,7 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *blk,
 
 	*resultp = out;
 	size_t xl = HXmc_length(out);
-	return xl > INT_MAX ? INT_MAX : xl;
+	return xl > SSIZE_MAX ? SSIZE_MAX : xl;
 
  out:
 	ret = -errno;
@@ -691,10 +704,17 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *blk,
 EXPORT_SYMBOL int HXformat_fprintf(const struct HXformat_map *ftable,
     FILE *filp, const char *fmt)
 {
-	hxmc_t *str;
-	int ret;
+	ssize_t ret = HXformat3_fprintf(ftable, filp, fmt);
+	return ret > INT_MAX ? INT_MAX : ret;
+}
 
-	if ((ret = HXformat_aprintf(ftable, &str, fmt)) <= 0)
+EXPORT_SYMBOL ssize_t HXformat3_fprintf(const struct HXformat_map *ftable,
+    FILE *filp, const char *fmt)
+{
+	hxmc_t *str;
+	ssize_t ret;
+
+	if ((ret = HXformat3_aprintf(ftable, &str, fmt)) <= 0)
 		return ret;
 	errno = 0;
 	if (fputs(str, filp) < 0)
@@ -706,8 +726,15 @@ EXPORT_SYMBOL int HXformat_fprintf(const struct HXformat_map *ftable,
 EXPORT_SYMBOL int HXformat_sprintf(const struct HXformat_map *ftable,
     char *dest, size_t size, const char *fmt)
 {
+	ssize_t ret = HXformat3_sprintf(ftable, dest, size, fmt);
+	return ret > INT_MAX ? INT_MAX : ret;
+}
+
+EXPORT_SYMBOL ssize_t HXformat3_sprintf(const struct HXformat_map *ftable,
+    char *dest, size_t size, const char *fmt)
+{
 	hxmc_t *str;
-	int ret;
+	ssize_t ret;
 
 	if ((ret = HXformat_aprintf(ftable, &str, fmt)) < 0)
 		return ret;
@@ -718,5 +745,5 @@ EXPORT_SYMBOL int HXformat_sprintf(const struct HXformat_map *ftable,
 	strncpy(dest, str, size);
 	size_t xl = strlen(dest);
 	HXmc_free(str);
-	return xl > INT_MAX ? INT_MAX : xl;
+	return xl > SSIZE_MAX ? SSIZE_MAX : xl;
 }
