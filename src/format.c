@@ -716,7 +716,7 @@ EXPORT_SYMBOL int HXformat_sprintf(const struct HXformat_map *ftable,
 		return 0;
 	}
 	strncpy(dest, str, size);
-	ret = HXmc_length(dest);
+	size_t xl = strlen(dest);
 	HXmc_free(str);
-	return ret > INT_MAX ? INT_MAX : ret;
+	return xl > INT_MAX ? INT_MAX : xl;
 }
