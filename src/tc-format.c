@@ -55,7 +55,7 @@ static const char *const fmt2_strings[] = {
 	NULL,
 };
 
-static void t_format(int argc)
+static int t_format(int argc)
 {
 	struct HXformat_map *fmt = HXformat_init();
 	const char *const *s;
@@ -70,9 +70,14 @@ static void t_format(int argc)
 	HXformat_add(fmt, "TWOARG", "a, b", HXTYPE_STRING | HXFORMAT_IMMED);
 	++argc;
 	printf("# HXformat2\n");
-	for (s = fmt2_strings; *s != NULL; ++s)
-		HXformat_fprintf(fmt, stdout, *s);
+	for (s = fmt2_strings; *s != NULL; ++s) {
+		char buf[80];
+		if (HXformat_sprintf(fmt, buf, ARRAY_SIZE(buf), *s) < 0 ||
+		    HXformat_fprintf(fmt, stdout, *s) < 0)
+			return EXIT_FAILURE;
+	}
 	HXformat_free(fmt);
+	return EXIT_SUCCESS;
 }
 
 int main(int argc, const char **argv)
@@ -84,7 +89,7 @@ int main(int argc, const char **argv)
 		fprintf(stderr, "HX_init: %s\n", strerror(-ret));
 		return EXIT_FAILURE;
 	}
-	t_format(argc);
+	ret = t_format(argc);
 	HX_exit();
-	return EXIT_SUCCESS;
+	return ret;
 }
