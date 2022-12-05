@@ -679,7 +679,8 @@ EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *blk,
 	}
 
 	*resultp = out;
-	return HXmc_length(out);
+	size_t xl = HXmc_length(out);
+	return xl > INT_MAX ? INT_MAX : xl;
 
  out:
 	ret = -errno;
@@ -717,5 +718,5 @@ EXPORT_SYMBOL int HXformat_sprintf(const struct HXformat_map *ftable,
 	strncpy(dest, str, size);
 	ret = HXmc_length(dest);
 	HXmc_free(str);
-	return ret;
+	return ret > INT_MAX ? INT_MAX : ret;
 }

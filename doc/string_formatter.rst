@@ -116,10 +116,11 @@ Invoking the formatter
 	Does substituion and directly outputs the expansion to the given stdio
 	stream.
 
-On success, the length of the expanded string is returned, excluding the
-trailing ``\0``. While ``HXformat_sprintf`` will not write more than ``size``
-bytes (including the ``\0``), the length it would have taken is returned,
-similar to what sprintf does. On error, ``-errno`` is returned.
+On success, the length of the expanded string is returned (only up to a maximum
+of INT_MAX), excluding the trailing ``\0``. While ``HXformat_sprintf`` will not
+write more than ``size`` bytes (including the ``\0``), the length it would have
+taken is returned, similar to what sprintf does. On error, ``-errno`` is
+returned.
 
 The HXformat function family recognizes make-style like functions and recursive
 expansion, described below.
