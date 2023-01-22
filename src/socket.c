@@ -142,19 +142,17 @@ static int linux_sockaddr_local3(int sk, const void *buf, size_t bufsize)
 {
 	if (send(sk, buf, bufsize, 0) < 0)
 		return -errno;
-	union {
-		struct nlmsghdr nlh;
-		char b[4096];
-	} rsp;
-	ssize_t ret = recv(sk, rsp.b, sizeof(rsp.b), 0);
+	char rsp[4096];
+	ssize_t ret = recv(sk, rsp, sizeof(rsp), 0);
 	if (ret < 0)
 		return -errno;
-	if (static_cast(size_t, ret) < sizeof(struct nlmsghdr))
-		return -ENODATA;
-	const struct nlmsghdr *nlh = &rsp.nlh;
-	if (!NLMSG_OK(nlh, nlh->nlmsg_len))
+	else if (static_cast(size_t, ret) < sizeof(struct nlmsghdr))
 		return -EIO;
-	const struct rtmsg *rtm = NLMSG_DATA(nlh);
+	struct nlmsghdr nlh;
+	memcpy(&nlh, rsp, sizeof(nlh));
+	if (!NLMSG_OK(&nlh, ret))
+		return -EIO;
+	const struct rtmsg *rtm = static_cast(void *, rsp + NLMSG_HDRLEN);
 	return rtm->rtm_type == RTN_LOCAL;
 }
 
