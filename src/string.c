@@ -27,6 +27,7 @@
  * 			all others pass through
  */
 enum HX_quote_selector {
+	HXQUOTE_ALWAYS,
 	HXQUOTE_ACCEPT,
 	HXQUOTE_REJECT,
 };
@@ -211,6 +212,8 @@ EXPORT_SYMBOL char **HX_split(const char *str, const char *delim,
 		*cp = max;
 
 	ret = malloc(sizeof(char *) * (*cp + 1));
+	if (ret == nullptr)
+		return nullptr;
 	ret[*cp] = NULL;
 
 	{
@@ -782,15 +785,19 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 		return NULL;
 	}
 	/* If quote_chars is NULL, it is clear all chars are to be encoded. */
-	rule = &HX_quote_rules[type];
-	if (type >= ARRAY_SIZE(HX_quote_rules) || rule->chars == NULL)
+	if (type >= ARRAY_SIZE(HX_quote_rules)) {
 		do_quote = true;
-	else if (rule->selector == HXQUOTE_REJECT)
-		do_quote = strpbrk(src, rule->chars) != NULL;
-	else if (rule->selector == HXQUOTE_ACCEPT)
-		do_quote = HX_strchr2(src, rule->chars) != NULL;
-	else
-		do_quote = false;
+	} else {
+		rule = &HX_quote_rules[type];
+		if (rule->selector == HXQUOTE_ALWAYS)
+			do_quote = true;
+		else if (rule->selector == HXQUOTE_REJECT)
+			do_quote = strpbrk(src, rule->chars) != NULL;
+		else if (rule->selector == HXQUOTE_ACCEPT)
+			do_quote = HX_strchr2(src, rule->chars) != NULL;
+		else
+			do_quote = false;
+	}
 	/*
 	 * free_me == NULL implies that we always allocate, even if
 	 * there is nothing to quote.
