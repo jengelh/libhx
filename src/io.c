@@ -57,22 +57,23 @@ struct HXdir {
 static int mkdir_gen(const char *d, unsigned int mode)
 {
 	struct stat sb;
-	if (lstat(d, &sb) < 0) {
 #if defined(_WIN32)
-		if (mkdir(d) < 0)
+	if (mkdir(d) == 0)
 #else
-		if (mkdir(d, mode) < 0) /* use umask() for permissions */
+	if (mkdir(d, mode) == 0) /* use umask() for permissions */
 #endif
-			return -errno;
-	} else {
+		return 1;
+	if (errno != EEXIST)
+		return -errno;
+	if (lstat(d, &sb) == 0) {
 #if defined(_WIN32)
-		if ((sb.st_mode & S_IFDIR) != S_IFDIR)
+		if (sb.st_mode & S_IFDIR)
 #else
-		if (!S_ISDIR(sb.st_mode))
+		if (S_ISDIR(sb.st_mode))
 #endif
-			return -errno;
+			return 0;
 	}
-	return 1;
+	return -EEXIST;
 }
 
 EXPORT_SYMBOL struct HXdir *HXdir_open(const char *s)
@@ -204,6 +205,8 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 			unlink(dest);
 			close(dstfd);
 			close(srcfd);
+			free(buf);
+			va_end(argp);
 			return -(errno = saved_errno);
 		}
 		uid = sb.st_uid;
@@ -216,6 +219,8 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 			unlink(dest);
 			close(dstfd);
 			close(srcfd);
+			free(buf);
+			va_end(argp);
 			return -(errno = saved_errno);
 		}
 		va_end(argp);
@@ -229,6 +234,7 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 			int saved_errno = errno;
 			close(srcfd);
 			close(dstfd);
+			free(buf);
 			return -(errno = saved_errno);
 		}
 	}
@@ -264,8 +270,8 @@ EXPORT_SYMBOL int HX_copy_dir(const char *src, const char *dest,
 			continue;
 		snprintf(fsrc,  MAXFNLEN, "%s/%s", src,  fn);
 		snprintf(fdest, MAXFNLEN, "%s/%s", dest, fn);
-
-		lstat(fsrc, &sb);
+		if (lstat(fsrc, &sb) < 0)
+			continue;
 		sb.st_mode &= 0777; /* clear SUID/GUID/Sticky bits */
 
 		if (S_ISREG(sb.st_mode)) {
@@ -278,17 +284,20 @@ EXPORT_SYMBOL int HX_copy_dir(const char *src, const char *dest,
 			memset(pt, '\0', MAXFNLEN);
 			if (readlink(fsrc, pt, MAXFNLEN - 1) < MAXFNLEN - 1)
 				if (symlink(pt, fdest) < 0)
-					{};
+					/* ignore */;
 		} else if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode)) {
-			mknod(fdest, sb.st_mode, sb.st_dev);
+			if (mknod(fdest, sb.st_mode, sb.st_dev) < 0)
+				/* ignore */;
 		} else if (S_ISFIFO(sb.st_mode)) {
-			mkfifo(fdest, sb.st_mode);
+			if (mkfifo(fdest, sb.st_mode) < 0)
+				/* ignore */;
 		}
 
 		if (lchown(fdest, uid, gid) < 0)
-			{};
+			/* ignore */;
 		if (!S_ISLNK(sb.st_mode))
-			chmod(fdest, sb.st_mode);
+			if (chmod(fdest, sb.st_mode) < 0)
+				/* ignore */;
 	}
 
 	HXdir_close(dt);
@@ -321,12 +330,12 @@ EXPORT_SYMBOL int HX_mkdir(const char *idir, unsigned int mode)
 		if (dir[i] == '/') {
 			strncpy(buf, dir, i);
 			buf[i] = '\0';
-			if ((v = mkdir_gen(buf, mode)) <= 0)
+			if ((v = mkdir_gen(buf, mode)) < 0)
 				return v;
 		} else if (i == len - 1) {
 			strncpy(buf, dir, len);
 			buf[len] = '\0';
-			if ((v = mkdir_gen(buf, mode)) <= 0)
+			if ((v = mkdir_gen(buf, mode)) < 0)
 				return v;
 		}
 	}
@@ -358,7 +367,8 @@ EXPORT_SYMBOL int HX_readlink(hxmc_t **target, const char *path)
 			return -(errno = saved_errno);
 		}
 		if (static_cast(size_t, ret) < linkbuf_size) {
-			HXmc_setlen(target, ret);
+			(*target)[ret] = '\0'; // please cov-scan
+			HXmc_setlen(target, ret); // \0 set here anyway
 			return ret;
 		}
 		linkbuf_size *= 2;
@@ -500,7 +510,7 @@ EXPORT_SYMBOL int HX_realpath(hxmc_t **dest_pptr, const char *path,
 		ret = HX_realpath_symres(&state, path);
 		if (ret == -EINVAL)
 			continue;
-		else if (ret < 0)
+		else if (ret <= 0)
 			goto out;
 		path = state.path;
 	}
@@ -668,6 +678,7 @@ static ssize_t HX_sendfile_rw(int dst, int src, size_t count)
 		xferd += ret;
 		count -= ret;
 	}
+	free(buf);
 	if (xferd > 0)
 		return xferd;
 	if (ret < 0)
