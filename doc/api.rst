@@ -9,6 +9,8 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+4.9     4.9     4.9     HX_sockaddr_is_local
+4.9     4.9     4.9     HX_ipaddr_is_local
 4.7     4.7     4.7     HXQUOTE_BASE64IMAP
 4.7     4.7     4.7     HXQUOTE_BASE64URL
 4.3     4.3     4.3     HX_unit_seconds

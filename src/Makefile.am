@@ -36,7 +36,7 @@ EXTRA_DIST = internal.h map_int.h libHX.map
 check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-io \
                      tc-list tc-list2 tc-map tc-memmem tc-misc tc-netio \
                      tc-option tc-proc tc-rand tc-realpath \
-                     tc-shconfig tc-strchr2 tc-string tc-strquote \
+                     tc-shconfig tc-socket tc-strchr2 tc-string tc-strquote \
                      tc-switchuser tc-time
 TESTS              = tc-format tc-strchr2 tc-strquote
 tc_cast_CFLAGS     = ${AM_CFLAGS} -std=gnu99
@@ -57,6 +57,7 @@ tc_proc_LDADD      = libHX.la
 tc_rand_LDADD      = libHX.la
 tc_realpath_LDADD  = libHX.la
 tc_shconfig_LDADD  = libHX.la
+tc_socket_LDADD    = libHX.la
 tc_strchr2_LDADD   = libHX.la
 tc_string_LDADD    = libHX.la
 tc_strquote_LDADD  = libHX.la

@@ -156,4 +156,6 @@ global:
 	HXformat3_aprintf;
 	HXformat3_fprintf;
 	HXformat3_sprintf;
+	HX_ipaddr_is_local;
+	HX_sockaddr_is_local;
 } LIBHX_4.3;
