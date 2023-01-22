@@ -32,7 +32,8 @@ int main(int argc, const char **argv)
 		if (stat(argv[1], &sa) < 0 ||
 		    stat(argv[2], &sb) < 0)
 			perror("stat");
-		printf("Difference: %ld\n", HX_time_compare(&sa, &sb, 'm'));
+		else
+			printf("Difference: %ld\n", HX_time_compare(&sa, &sb, 'm'));
 	}
 
 	HX_exit();
