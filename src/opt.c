@@ -547,8 +547,12 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 	key = HX_strdup(cur);
 	if (key == NULL)
 		return -errno;
-
 	value = strchr(key, '=');
+	if (value == nullptr) {
+		/* Cannot happen because state is always !S_TWOLONG */
+		free(key);
+		return -EINVAL;
+	}
 	*value++ = '\0';
 	par->cbi.current = lookup_long_pfx(par->cbi.table, key + 2);
 	if (par->cbi.current == &HXopt_ambig_prefix) {
@@ -699,14 +703,16 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	struct HX_getopt_vars ps;
 	const char **opt = *argv;
 	int state = HXOPT_S_NORMAL;
-	int ret = HXOPT_ERR_SUCCESS;
+	int ret = -ENOMEM;
 	unsigned int argk;
 	const char *cur;
 
 	memset(&ps, 0, sizeof(ps));
 	ps.remaining = HXdeque_init();
-	if (ps.remaining == NULL)
+	if (ps.remaining == NULL) {
+		ret = -errno;
 		goto out;
+	}
 	ps.flags = flags;
 	ps.arg0  = **argv;
 	ps.cbi.table = table;
@@ -714,17 +720,19 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	if (*opt != NULL) {
 		/* put argv[0] back */
 		char *arg = HX_strdup(*opt++);
-		if (arg == NULL)
-			goto out_errno;
+		if (arg == NULL) {
+			ret = -errno;
+			goto out;
+		}
 		if (HXdeque_push(ps.remaining, arg) == NULL) {
 			free(arg);
-			goto out_errno;
+			ret = -errno;
+			goto out;
 		}
 	}
 
 	if (posix_me_harder())
 		ps.flags |= HXOPT_RQ_ORDER;
-
 	for (cur = *opt; cur != NULL; ) {
 		if (state == HXOPT_S_TWOLONG)
 			state = HX_getopt_twolong(opt, &ps);
@@ -739,11 +747,11 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 
 		if (state < 0) {
 			ret = state;
-			break;
+			goto out;
 		}
 		if (state & HXOPT_I_ERROR) {
 			ret = state & ~HXOPT_I_ERROR;
-			break;
+			goto out;
 		}
 		if (state & HXOPT_I_ASSIGN)
 			do_assign(&ps.cbi, ps.arg0);
@@ -756,13 +764,13 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		state &= ~HXOPT_I_MASK;
 	}
 
- out:
-	if (ret == HXOPT_ERR_SUCCESS) {
-		if (!(ps.flags & HXOPT_KEEP_ARGV)) {
+	if (!(ps.flags & HXOPT_KEEP_ARGV)) {
 		const char **nvec = reinterpret_cast(const char **,
 		                    HXdeque_to_vec(ps.remaining, &argk));
-		if (nvec == NULL)
-			goto out_errno;
+		if (nvec == NULL) {
+			ret = -errno;
+			goto out;
+		}
 		if (ps.flags & HXOPT_DESTROY_OLD)
 			/*
 			 * Only the "true, original" argv is stored on the
@@ -780,7 +788,11 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		/* pointers are owned by nvec/argv now */
 		HXdeque_free(ps.remaining);
 		ps.remaining = nullptr;
-		}
+	}
+	ret = HXOPT_ERR_SUCCESS;
+
+ out:
+	if (ret == HXOPT_ERR_SUCCESS) {
 	} else if (ret < 0) {
 		if (!(ps.flags & HXOPT_QUIET))
 			fprintf(stderr, "%s: %s\n", __func__, strerror(errno));
@@ -794,10 +806,6 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	if (ps.remaining != nullptr)
 		HXdeque_genocide2(ps.remaining, free);
 	return ret;
-
- out_errno:
-	ret = -errno;
-	goto out;
 }
 
 EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
