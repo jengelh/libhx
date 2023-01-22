@@ -10,6 +10,7 @@
 #define LIBHX_INTERNAL_H 1
 
 #include "config.h"
+#include <stdint.h>
 #include <libHX/defs.h>
 #include <libHX/string.h>
 
@@ -56,5 +57,6 @@ struct timespec;
 struct timeval;
 
 extern hxmc_t *HXparse_dequote_fmt(const char *, const char *, const char **);
+extern size_t HX_substr_helper(size_t, long, long, size_t *);
 
 #endif /* LIBHX_INTERNAL_H */

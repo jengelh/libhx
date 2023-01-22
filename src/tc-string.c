@@ -474,6 +474,35 @@ static void t_time_strto(void)
 	}
 }
 
+static int t_strmid(void)
+{
+#define T(spar,opar,lpar,xpar) do { \
+		char *s = HX_strmid((spar), (opar), (lpar)); \
+		if (s == nullptr) \
+			return EXIT_FAILURE; \
+		int ret = strcmp(s, (xpar)); \
+		if (ret != 0) { \
+			fprintf(stderr, "Faillure: substr %s,%d,%d = %s\n", \
+				(spar), static_cast(int, (opar)), static_cast(int, (lpar)), s); \
+			free(s); \
+			return ret; \
+		} \
+		free(s); \
+	} while (false)
+
+	T("Hello World", -12, 5, "");
+	T("bark", -3, -1, "ar");
+	T("cake", -3, -3, "");
+	T("cake", -3, -4, "");
+	T("fun", 0, 0, "");
+	T("bark", 0, 1, "b");
+	T("bark", 0, 5, "bark");
+	T("bark", -4, 1, "b");
+	T("bark", -4, 5, "bark");
+	return EXIT_SUCCESS;
+#undef T
+}
+
 int main(int argc, const char **argv)
 {
 	hxmc_t *tx = NULL;
@@ -482,6 +511,9 @@ int main(int argc, const char **argv)
 
 	if (HX_init() <= 0)
 		abort();
+	int ret = t_strmid();
+	if (ret != EXIT_SUCCESS)
+		return EXIT_FAILURE;
 
 	fp = fopen(file, "r");
 	if (fp == NULL) {

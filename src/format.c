@@ -303,7 +303,6 @@ static hxmc_t *HXformat2_snl(int argc, const hxmc_t *const *argv,
 static hxmc_t *HXformat2_substr(int argc, const hxmc_t *const *argv,
                                 const struct HXformat_map *blk)
 {
-	ssize_t offset, length, z;
 	hxmc_t *ret;
 	char *end;
 
@@ -312,44 +311,27 @@ static hxmc_t *HXformat2_substr(int argc, const hxmc_t *const *argv,
 		return &HXformat2_nexp;
 	}
 
-	offset = strtoll(argv[1], &end, 0);
+	long w = LONG_MAX, v = strtol(argv[1], &end, 0);
 	if (*end != '\0') {
 		fprintf(stderr, "HXformat2-substr: found garbage in "
 		        "offset specification\n");
 		return &HXformat2_nexp;
 	}
-
-	z = strlen(argv[0]);
-	if (offset < 0)
-		offset = z + offset;
-	if (offset >= z)
-		return &HXformat2_nexp;
-
-	if (argc == 2) {
-		if (offset < 0)
-			offset = 0;
-		length = z - offset;
-	} else {
-		length = strtoll(argv[2], &end, 0);
+	if (argc >= 3) {
+		w = strtol(argv[2], &end, 0);
 		if (*end != '\0') {
 			fprintf(stderr, "HXformat2-substr; found garbage in "
 			        "length specification\n");
 			return &HXformat2_nexp;
 		}
-		if (length < 0)
-			length/*end*/ = z + length;
-		else
-			length/*end*/ = offset + length;
-		if (offset < 0)
-			offset = 0;
 	}
-	if (length <= 0)
+	size_t start = 0, tocopy = HX_substr_helper(strlen(argv[0]), v, w, &start);
+	if (tocopy == 0)
 		return &HXformat2_nexp;
-
-	ret = HXmc_meminit(NULL, length);
+	ret = HXmc_meminit(NULL, tocopy);
 	if (ret == NULL)
 		return &HXformat2_nexp;
-	if (HXmc_memcpy(&ret, &argv[0][offset], length) == NULL) {
+	if (HXmc_memcpy(&ret, &argv[0][start], tocopy) == NULL) {
 		HXmc_free(ret);
 		return &HXformat2_nexp;
 	}

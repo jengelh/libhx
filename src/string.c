@@ -381,20 +381,48 @@ EXPORT_SYMBOL char *HX_stpltrim(const char *p)
 	return const_cast1(char *, p);
 }
 
+/**
+ * Helper for substr() function for dealing with negative off/len values
+ * @z:		total length of string
+ * @offset:	n>=0 specifies offset from the start,
+ * 		n<0 specifies offset from the end
+ * @len:	"length"; n>=0 specifies length to copy (from @offset),
+ * 		n<0 specifies the byte relative to the end at which to stop
+ *
+ * @abstart:	(result) absolute start
+ * @retval:	(result) absolute length to copy (from *@abstart)
+ */
+size_t HX_substr_helper(size_t z, long offset, long len, size_t *start)
+{
+	if (offset >= 0)
+		*start = offset;
+	else if (offset == LONG_MIN)
+		*start = z + -static_cast(size_t, LONG_MIN);
+	else
+		*start = z >= static_cast(unsigned long, -offset) ? z + offset : z;
+
+	size_t end;
+	if (len >= 0)
+		end = *start < SIZE_MAX - len ? *start + len : SIZE_MAX;
+	else if (len == LONG_MIN)
+		end = z + -static_cast(unsigned long, LONG_MIN);
+	else
+		end = z >= static_cast(unsigned long, -len) ? z + len : 0;
+	if (end > z)
+		end = z;
+	return end > *start ? end - *start : 0;
+}
+
 /* supports negative offsets like scripting languages */
 EXPORT_SYMBOL char *HX_strmid(const char *expr, long offset, long length)
 {
-	char *buffer;
-
-	if (offset < 0)
-		offset = strlen(expr) + offset;
-	if (length < 0)
-		length = strlen(expr) - offset + length;
-	if ((buffer = malloc(length + 1)) == NULL)
+	size_t start = 0, tocopy = HX_substr_helper(strlen(expr), offset, length, &start);
+	char *buffer = malloc(tocopy + 1);
+	if (buffer == nullptr)
 		return NULL;
-
-	expr += offset;
-	return HX_strlcpy(buffer, expr, length + 1);
+	memcpy(buffer, &expr[start], tocopy);
+	buffer[tocopy] = '\0';
+	return buffer;
 }
 
 EXPORT_SYMBOL char *HX_strndup(const char *src, size_t size)
