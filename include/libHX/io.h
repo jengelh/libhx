@@ -1,6 +1,7 @@
 #ifndef _LIBHX_IO_H
 #define _LIBHX_IO_H 1
 
+#include <stdio.h>
 #include <sys/types.h>
 
 #ifdef __cplusplus
@@ -41,6 +42,10 @@ extern char *HX_slurp_file(const char *file, size_t *outsize);
 
 extern ssize_t HXio_fullread(int, void *, size_t);
 extern ssize_t HXio_fullwrite(int, const void *, size_t);
+#ifndef HX_HEXDUMP_DECLARATION
+#define HX_HEXDUMP_DECLARATION 1
+extern void HX_hexdump(FILE *, const void *, unsigned int);
+#endif
 
 #ifdef __cplusplus
 } /* extern "C" */

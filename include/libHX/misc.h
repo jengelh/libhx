@@ -59,7 +59,10 @@ extern const char *HX_dlerror(void);
  */
 extern int HX_ffs(unsigned long);
 extern int HX_fls(unsigned long);
+#ifndef HX_HEXDUMP_DECLARATION
+#define HX_HEXDUMP_DECLARATION 1
 extern void HX_hexdump(FILE *, const void *, unsigned int);
+#endif
 extern bool HX_timespec_isneg(const struct timespec *);
 extern struct timespec *HX_timespec_neg(struct timespec *,
 	const struct timespec *);
