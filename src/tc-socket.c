@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include <errno.h>
 #include <netdb.h>
 #include <stdio.h>

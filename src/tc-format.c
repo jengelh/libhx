@@ -1,11 +1,4 @@
-/*
- *	formatter test program
- *	Copyright by Jan Engelhardt
- *
- *	This program is free software; you can redistribute it and/or
- *	modify it under the terms of the WTF Public License version 2 or
- *	(at your option) any later version.
- */
+// SPDX-License-Identifier: MIT
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
