@@ -1304,11 +1304,12 @@ static struct HXrbnode *HXrbtrav_rewalk(struct HXrbtrav *trav)
 		trav->current = trav->path[--trav->depth];
 		if (trav->current == NULL)
 			fprintf(stderr, "btrav_rewalk: problem: current==NULL\n");
-		HXrbtrav_checkpoint(trav, trav->current);
+		else
+			HXrbtrav_checkpoint(trav, trav->current);
 	}
 
 	trav->tid = btree->tid;
-	if (go_next)
+	if (trav->current != nullptr && go_next)
 		return HXrbtrav_next(trav);
 	else
 		return trav->current;
