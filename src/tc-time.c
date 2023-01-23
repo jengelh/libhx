@@ -21,7 +21,7 @@ static const int NANOSECOND = 1000000000;
 static const long long NANOSECOND_LL = 1000000000;
 static const unsigned int clock_id = CLOCK_THREAD_CPUTIME_ID;
 static const unsigned int step = 1000;
-static const unsigned int step_mul = 10000000;
+static const long step_mul = 10000000;
 
 static const struct timespec pairs[] = {
 	{-1, 700000000}, {-1, 400000000}, {-1, 0},
