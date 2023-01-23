@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 #include <errno.h>
-#include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <libHX/defs.h>
 #include <libHX/socket.h>
+#ifndef _WIN32
+#	include <netdb.h>
+#endif
 #ifndef AI_V4MAPPED
 #	define AI_V4MAPPED 0
 #endif

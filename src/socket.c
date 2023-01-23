@@ -251,10 +251,14 @@ EXPORT_SYMBOL int HX_sockaddr_is_local(const struct sockaddr *sa, socklen_t sl,
 	} else if (sa->sa_family == AF_INET) {
 		if (sl < sizeof(struct sockaddr_in))
 			return -EINVAL;
-	} else if (sa->sa_family == AF_UNIX) {
+	}
+#ifdef HAVE_SYS_UN_H
+	else if (sa->sa_family == AF_UNIX) {
 		if (sl < sizeof(struct sockaddr_un))
 			return 1;
-	} else {
+	}
+#endif
+	else {
 		return -EPROTONOSUPPORT;
 	}
 	if (flags & AI_V4MAPPED && sa->sa_family == AF_INET6) {

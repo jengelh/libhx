@@ -2,7 +2,6 @@
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
 #endif
-#if defined(HAVE_INITGROUPS)
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +10,7 @@
 #include <libHX/defs.h>
 #include <libHX/option.h>
 #include <libHX/proc.h>
+#if defined(HAVE_INITGROUPS)
 
 static char *user_name, *group_name;
 static const struct HXoption options_table[] = {
@@ -62,6 +62,11 @@ int main(int argc, const char **argv)
 		break;
 	}
 	}
+	return EXIT_SUCCESS;
+}
+#else
+int main(void)
+{
 	return EXIT_SUCCESS;
 }
 #endif
