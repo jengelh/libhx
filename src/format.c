@@ -103,6 +103,7 @@ static void *func_entry_clone(const void *data, size_t size)
 
 static const struct HXmap_ops func_entry_ops = {
 	.d_clone = func_entry_clone,
+	.d_free  = free,
 };
 
 EXPORT_SYMBOL void HXformat_free(struct HXformat_map *blk)
