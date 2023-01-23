@@ -1,3 +1,18 @@
+v4.9 (2023-01-23)
+=================
+
+Enhancements:
+
+* socket: add sockaddr_is_local, ipaddr_is_local functions
+
+Fixes:
+
+* format: avoid return value truncation from HXformat_aprintf, HXformat_sprintf
+* format: avoid calling HXmc_length on a non-hxmc object
+* format: add new variations of printf functions returning ssize_t
+* Resolve Coverity-SCAN reports
+
+
 v4.8 (2022-12-03)
 =================
 
