@@ -1,3 +1,12 @@
+v4.10 (2023-01-29)
+==================
+
+Fixes:
+
+* format: plug a memory leak relating to func_entry_clone
+* Resolve mingw build failure
+
+
 v4.9 (2023-01-23)
 =================
 
