@@ -804,7 +804,7 @@ static size_t HX_quoted_size(const char *s, unsigned int type)
 EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
     char **free_me)
 {
-	const struct HX_quote_rule *rule;
+	const struct HX_quote_rule *rule = nullptr;
 	bool do_quote;
 	char *tmp;
 

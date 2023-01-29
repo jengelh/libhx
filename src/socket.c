@@ -243,7 +243,7 @@ static int openbsd_sockaddr_local2(const struct sockaddr *sa, socklen_t sl)
 EXPORT_SYMBOL int HX_sockaddr_is_local(const struct sockaddr *sa, socklen_t sl,
     unsigned int flags)
 {
-	struct sockaddr_in xl;
+	struct sockaddr_in xl = {};
 
 	if (sa->sa_family == AF_INET6) {
 		if (sl < sizeof(struct sockaddr_in6))
