@@ -7,6 +7,7 @@
 #	include <string.h>
 #endif
 #include <libxml/parser.h>
+#include <libHX/defs.h>
 
 #ifdef __cplusplus
 extern "C" {
