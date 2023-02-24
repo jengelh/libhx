@@ -31,6 +31,10 @@ static __inline__ int xml_strcasecmp(const xmlChar *a, const char *b)
 #endif
 }
 
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
 static __inline__ char *xml_getprop(xmlNode *node, const char *attr)
 {
 #ifdef __cplusplus
@@ -107,7 +111,15 @@ xml_setprop(xmlNode *node, const char *name, const char *value)
 }
 
 #ifdef __cplusplus
-} /* extern "C" */
+static __inline__ const char *xml_getprop(const xmlNode *node, const char *attr)
+{
+	return xml_getprop(const_cast<xmlNode *>(node), attr);
+}
+static __inline__ char *xml_getnsprop(const xmlNode *node, const char *nsprefix,
+    const char *attr)
+{
+	return xml_getnsprop(const_cast<const xmlNode *>(node), nsprefix, attr);
+}
 #endif
 
 #endif /* _LIBHX_LIBXML_HELPER_H */
