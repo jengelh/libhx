@@ -7,6 +7,7 @@ Socket functions
 	#include <libHX/socket.h>
 
 	int HX_addrport_split(const char *spec, char *host, size_t hsize, uint16_t *port);
+	int HX_inet_connect(const char *host, uint16_t port, unsigned int oflags);
 	int HX_socket_from_env(const struct addrinfo *ai, const char *intf);
 	int HX_sockaddr_is_local(const struct sockaddr *, socklen_t, unsigned int flags);
 	int HX_ipaddr_is_local(const char *, unsigned int flags);
@@ -20,6 +21,15 @@ Socket functions
 	value 2 is returned if both a host and a port were parsed (irrespective
 	of ``port`` being NULL or not). The value 1 is returned if only a host
 	portion was parsed. Upon error, a negative errno value is returned.
+
+``HX_inet_connect``
+	The function first resolves the specified host or IPv6/IPv4 address
+	(must not be enclosed in square brackets), and then attempts to connect
+	to one of the addresses. The order of evaluation is dependent upon the
+	system defaults. (It may choose whatever protocol is offered by the
+	system.) ``oflags`` is a bitset which may contain ``O_NONBLOCK``, else
+	must be 0. Upon success, a socket file descriptor is returned. Upon
+	failure, a negative errno code is returned.
 
 ``HX_socket_from_env``
 	The function looks up the current process's file descriptors for a

@@ -7,6 +7,7 @@
 #include <libHX/socket.h>
 #ifndef _WIN32
 #	include <netdb.h>
+#	include <unistd.h>
 #endif
 #ifndef AI_V4MAPPED
 #	define AI_V4MAPPED 0
@@ -55,5 +56,20 @@ int main(void)
 	ret = HX_addrport_split("0.0.0.0:80", host, sizeof(host), &port);
 	if (ret < 0 || port != 80)
 		return EXIT_FAILURE;
+
+	int fd = HX_inet_connect("::1", 80, 0);
+	if (fd >= 0) {
+		printf("Connected to [::1]:80\n");
+		close(fd);
+	} else {
+		fprintf(stderr, "HX_inet_connect [::1]:80: %s\n", strerror(-fd));
+	}
+	fd = HX_inet_connect("::", 80, 0);
+	if (fd >= 0) {
+		printf("Connected to [::]:80\n");
+		close(fd);
+	} else {
+		fprintf(stderr, "HX_inet_connect [::]:80: %s\n", strerror(-fd));
+	}
 	return EXIT_SUCCESS;
 }

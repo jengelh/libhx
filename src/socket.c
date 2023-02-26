@@ -17,6 +17,7 @@
 #ifdef _WIN32
 #	include <ws2tcpip.h>
 #else
+#	include <fcntl.h>
 #	include <netdb.h>
 #	include <unistd.h>
 #	include <netinet/in.h>
@@ -120,6 +121,70 @@ int HX_addrport_split(const char *spec, char *host,
 		return -E2BIG;
 	memmove(host, spec, hlen);
 	return 1;
+}
+
+static int HX_inet_lookup(const char *host, uint16_t port, unsigned int xflags,
+    struct addrinfo **res)
+{
+	struct addrinfo hints = {};
+#if defined(AI_V4MAPPED)
+	hints.ai_flags    = AI_V4MAPPED | xflags;
+#else
+	hints.ai_flags    = xflags;
+#endif
+	hints.ai_family   = AF_INET6;
+	hints.ai_socktype = SOCK_STREAM;
+
+	char portbuf[HXSIZEOF_Z32];
+	snprintf(portbuf, sizeof(portbuf), "%hu", port);
+	return getaddrinfo(host, port == 0 ? nullptr : portbuf, &hints, res);
+}
+
+int HX_inet_connect(const char *host, uint16_t port, unsigned int oflags)
+{
+	struct addrinfo *aires = nullptr;
+	int ret = HX_inet_lookup(host, port, AI_ADDRCONFIG, &aires);
+	int saved_errno = 0;
+	for (const struct addrinfo *r = aires; r != nullptr; r = r->ai_next) {
+		int fd = socket(r->ai_family, r->ai_socktype, r->ai_protocol);
+		if (fd < 0) {
+			if (saved_errno == 0)
+				saved_errno = errno;
+			continue;
+		}
+#ifdef O_NONBLOCK
+		if (oflags & O_NONBLOCK) {
+			int flags = fcntl(fd, F_GETFL, 0);
+			if (flags < 0)
+				flags = 0;
+			flags |= O_NONBLOCK;
+			if (fcntl(fd, F_SETFL, flags) != 0) {
+				saved_errno = errno;
+				close(fd);
+				continue;
+			}
+		}
+#endif
+		ret = connect(fd, r->ai_addr, r->ai_addrlen);
+		if (ret == 0) {
+			freeaddrinfo(aires);
+			return fd;
+		}
+#ifdef O_NONBLOCK
+		if ((errno == EWOULDBLOCK || errno == EINPROGRESS) &&
+		    (oflags & O_NONBLOCK)) {
+			freeaddrinfo(aires);
+			return fd;
+		}
+#endif
+		saved_errno = errno;
+		close(fd);
+	}
+	if (aires == nullptr && saved_errno == 0)
+		saved_errno = EHOSTUNREACH;
+	if (aires != nullptr)
+		freeaddrinfo(aires);
+	return -(errno = saved_errno);
 }
 
 static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
