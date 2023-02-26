@@ -6,9 +6,20 @@ Socket functions
 
 	#include <libHX/socket.h>
 
+	int HX_addrport_split(const char *spec, char *host, size_t hsize, uint16_t *port);
 	int HX_socket_from_env(const struct addrinfo *ai, const char *intf);
 	int HX_sockaddr_is_local(const struct sockaddr *, socklen_t, unsigned int flags);
 	int HX_ipaddr_is_local(const char *, unsigned int flags);
+
+``HX_addrport_split``
+	Splits a host specification like ``[fe80::1]:80`` or ``127.0.0.1:80``
+	into a host and port part. The ``host`` parameter should point to a
+	buffer of size ``hsize``. ``port`` may be NULL. If ``spec`` did not
+	contain a port part, ``*port`` will *not* be updated, so it is wise to
+	set a default port first like in the example below. Upon success, the
+	value 2 is returned if both a host and a port were parsed (irrespective
+	of ``port`` being NULL or not). The value 1 is returned if only a host
+	portion was parsed. Upon error, a negative errno value is returned.
 
 ``HX_socket_from_env``
 	The function looks up the current process's file descriptors for a
@@ -32,3 +43,15 @@ Socket functions
 	Takes a text representation of an IPv6/IPv4 address and, after
 	transformation, calls ``HX_sockaddr_is_local``.  ``flags`` and
 	return value behave the same as that.
+
+Examples
+--------
+
+.. code-block:: c
+
+	char host[256];
+	uint16_t port = 443;
+	/* port won't be updated */
+	HX_addrport_split("example.de", host, sizeof(host), &port);
+	/* port will be updated */
+	HX_addrport_split("example.de:80", host, sizeof(host), &port);

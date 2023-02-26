@@ -159,3 +159,8 @@ global:
 	HX_ipaddr_is_local;
 	HX_sockaddr_is_local;
 } LIBHX_4.3;
+
+LIBHX_4.11 {
+global:
+	HX_addrport_split;
+} LIBHX_4.9;

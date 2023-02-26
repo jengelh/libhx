@@ -46,6 +46,82 @@
 #	define AI_V4MAPPED 0
 #endif
 
+/**
+ * Return the pointer to the singular colon character, any other input
+ * yields nullptr.
+ */
+static inline const char *has_exactly_one_colon(const char *s)
+{
+	s = strchr(s, ':');
+	if (s == nullptr)
+		return nullptr;
+	return strchr(s + 1, ':') == nullptr ? s : nullptr;
+}
+
+/**
+ * @spec:	"[" HOST-ANY "]" [ ":" PORT ]
+ * 		HOST-NAME [ ":" PORT ]
+ * 		HOST-IPV4 [ ":" PORT ]
+ * 		HOST-IPV6
+ * @host:	buffer for placing the extracted hostname
+ * 		(can overlap @spec)
+ * @hsize:	buffer size for @host
+ * @port:	storage space for extracted port number
+ * 		(can be nullptr)
+ *
+ * Returns <0 (error code) if unparsable or if the output buffer is too small.
+ * Success if on >=0.
+ */
+int HX_addrport_split(const char *spec, char *host,
+    size_t hbufsz, uint16_t *pport)
+{
+	if (*spec == '[') {
+		/* We also happen to allow IPv4 addrs and hostnames in [] */
+		++spec;
+		const char *end = strchr(spec, ']');
+		if (end == nullptr)
+			return -EINVAL;
+		unsigned long hlen = end - spec;
+		if (hlen >= hbufsz)
+			return -E2BIG;
+		if (*++end == '\0')
+			return 1;
+		if (*end++ != ':')
+			return -EINVAL;
+		char *nend = nullptr;
+		uint16_t port = strtoul(end, &nend, 10);
+		if (nend == nullptr || *nend != '\0')
+			return -EINVAL;
+		memmove(host, spec, hlen);
+		host[hlen] = '\0';
+		if (pport == nullptr)
+			return 2;
+		*pport = port;
+		return 2;
+	}
+	const char *onecolon = has_exactly_one_colon(spec);
+	if (onecolon != nullptr) {
+		unsigned long hlen = onecolon - spec;
+		if (hlen >= hbufsz)
+			return -E2BIG;
+		char *nend = nullptr;
+		uint16_t port = strtoul(onecolon + 1, &nend, 10);
+		if (nend == nullptr || *nend != '\0')
+			return -EINVAL;
+		memmove(host, spec, hlen);
+		host[hlen] = '\0';
+		if (pport == nullptr)
+			return 2;
+		*pport = port;
+		return 2;
+	}
+	size_t hlen = strlen(spec);
+	if (hlen >= SIZE_MAX || ++hlen >= hbufsz)
+		return -E2BIG;
+	memmove(host, spec, hlen);
+	return 1;
+}
+
 static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 {
 	int value = 0;
