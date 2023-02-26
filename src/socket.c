@@ -187,6 +187,56 @@ int HX_inet_connect(const char *host, uint16_t port, unsigned int oflags)
 	return -(errno = saved_errno);
 }
 
+static int HX_gai_listen(const struct addrinfo *r)
+{
+	int fd = socket(r->ai_family, r->ai_socktype, r->ai_protocol);
+	if (fd < 0)
+		return -2;
+	static const int y = 1;
+	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, STUPIDWIN(&y), sizeof(y)) < 0)
+		/* warn setsockopt: %s, strerror(errno)) */ ;
+	int ret = bind(fd, r->ai_addr, r->ai_addrlen);
+	if (ret != 0) {
+		int se = errno;
+		close(fd);
+		errno = se;
+		return -1;
+	}
+	ret = listen(fd, SOMAXCONN);
+	if (ret != 0) {
+		int se = errno;
+		close(fd);
+		errno = se;
+		return -2;
+	}
+	return fd;
+}
+
+int HX_inet_listen(const char *host, uint16_t port)
+{
+	struct addrinfo *aires = nullptr;
+	int ret = HX_inet_lookup(host, port, AI_PASSIVE, &aires);
+	if (ret != 0)
+		;
+	int saved_errno = EHOSTUNREACH;
+	bool use_env = getenv("HX_LISTEN_TOP_FD") != nullptr || getenv("LISTEN_FDS") != nullptr;
+	for (const struct addrinfo *r = aires; r != nullptr; r = r->ai_next) {
+		if (use_env) {
+			int fd = HX_socket_from_env(r, nullptr);
+			if (fd >= 0)
+				return fd;
+		}
+		int fd = HX_gai_listen(r);
+		if (fd >= 0)
+			return fd;
+		saved_errno = errno;
+		if (fd == -2)
+			continue;
+		break;
+	}
+	return -(errno = saved_errno);
+}
+
 static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 {
 	int value = 0;

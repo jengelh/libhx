@@ -8,6 +8,7 @@ Socket functions
 
 	int HX_addrport_split(const char *spec, char *host, size_t hsize, uint16_t *port);
 	int HX_inet_connect(const char *host, uint16_t port, unsigned int oflags);
+	int HX_inet_listen(const char *host, uint16_t port);
 	int HX_socket_from_env(const struct addrinfo *ai, const char *intf);
 	int HX_sockaddr_is_local(const struct sockaddr *, socklen_t, unsigned int flags);
 	int HX_ipaddr_is_local(const char *, unsigned int flags);
@@ -30,6 +31,13 @@ Socket functions
 	system.) ``oflags`` is a bitset which may contain ``O_NONBLOCK``, else
 	must be 0. Upon success, a socket file descriptor is returned. Upon
 	failure, a negative errno code is returned.
+
+``HX_inet_listen``
+	The function first resolves ``host`` using ``getaddrinfo()` with
+	``AI_PASSIVE``, then using ``HX_socket_from_env`` looks in the
+	environment for a matching socket to pick up, and otherwise uses the
+	first result from getaddrinfo to create a new socket. Upon error, a
+	negative errno value is returned.
 
 ``HX_socket_from_env``
 	The function looks up the current process's file descriptors for a

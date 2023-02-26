@@ -164,4 +164,5 @@ LIBHX_4.11 {
 global:
 	HX_addrport_split;
 	HX_inet_connect;
+	HX_inet_listen;
 } LIBHX_4.9;
