@@ -1,3 +1,12 @@
+v4.11 (2023-02-26)
+==================
+
+Enhancements:
+
+* socket: add HX_addrport_split, HX_inet_connect, HX_inet_listen,
+  HX_local_listen
+
+
 v4.10 (2023-01-29)
 ==================
 
