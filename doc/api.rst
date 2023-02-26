@@ -12,6 +12,7 @@ RMV     MinVer  FirstA  Name
 4.11    4.11    4.11    HX_addrport_split
 4.11    4.11    4.11    HX_inet_connect
 4.11    4.11    4.11    HX_inet_listen
+4.11    4.11    4.11    HX_local_listen
 4.9     4.9     4.9     HX_sockaddr_is_local
 4.9     4.9     4.9     HX_ipaddr_is_local
 4.7     4.7     4.7     HXQUOTE_BASE64IMAP

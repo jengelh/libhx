@@ -9,6 +9,7 @@ Socket functions
 	int HX_addrport_split(const char *spec, char *host, size_t hsize, uint16_t *port);
 	int HX_inet_connect(const char *host, uint16_t port, unsigned int oflags);
 	int HX_inet_listen(const char *host, uint16_t port);
+	int HX_local_listen(const char *path);
 	int HX_socket_from_env(const struct addrinfo *ai, const char *intf);
 	int HX_sockaddr_is_local(const struct sockaddr *, socklen_t, unsigned int flags);
 	int HX_ipaddr_is_local(const char *, unsigned int flags);
@@ -37,6 +38,12 @@ Socket functions
 	``AI_PASSIVE``, then using ``HX_socket_from_env`` looks in the
 	environment for a matching socket to pick up, and otherwise uses the
 	first result from getaddrinfo to create a new socket. Upon error, a
+	negative errno value is returned.
+
+``HX_local_listen``
+	The function creates a local system-specific socket. Using
+	``HX_socket_from_env``, it will attempt to pick up a matching socket
+	from the environment, and otherwise create a new socket. Upon error, a
 	negative errno value is returned.
 
 ``HX_socket_from_env``

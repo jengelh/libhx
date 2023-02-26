@@ -22,6 +22,7 @@
 #	include <unistd.h>
 #	include <netinet/in.h>
 #	include <sys/socket.h>
+#	include <sys/stat.h>
 #endif
 #ifdef HAVE_SYS_UN_H
 #	include <sys/un.h>
@@ -235,6 +236,60 @@ int HX_inet_listen(const char *host, uint16_t port)
 		break;
 	}
 	return -(errno = saved_errno);
+}
+
+int HX_local_listen(const char *path)
+{
+#ifdef HAVE_SYS_UN_H
+	struct sockaddr_un u;
+	if (strlen(path) >= sizeof(u.sun_path))
+		return -EINVAL;
+	u.sun_family = AF_LOCAL;
+	strcpy(u.sun_path, path);
+	struct addrinfo r = {};
+	r.ai_flags = AI_PASSIVE;
+	r.ai_family = AF_LOCAL;
+	r.ai_socktype = SOCK_STREAM;
+	r.ai_addrlen = sizeof(u) - sizeof(u.sun_path) + strlen(u.sun_path) + 1;
+	r.ai_addr = reinterpret_cast(struct sockaddr *, &u);
+	bool use_env = getenv("HX_LISTEN_TOP_FD") != nullptr || getenv("LISTEN_FDS") != nullptr;
+	if (use_env) {
+		int fd = HX_socket_from_env(&r, nullptr);
+		if (fd >= 0)
+			return fd;
+	}
+	int ret = HX_gai_listen(&r);
+	if (ret >= 0)
+		return ret; /* fd */
+	if (ret == -2 || errno != EADDRINUSE)
+		return -errno;
+
+	struct stat sb;
+	ret = stat(path, &sb);
+	if (ret < 0)
+		return -errno;
+	if (!S_ISSOCK(sb.st_mode))
+		return -ENOTSOCK;
+
+	int testfd = socket(AF_LOCAL, SOCK_STREAM, 0);
+	if (testfd < 0)
+		return -errno;
+	ret = connect(testfd, r.ai_addr, r.ai_addrlen);
+	close(testfd);
+	if (ret == 0)
+		return -EADDRINUSE;
+
+	/* There will be a TOCTOU report, but what can you do... */
+	ret = unlink(path);
+	if (ret < 0 && errno != ENOENT)
+		return -errno;
+	ret = HX_gai_listen(&r);
+	if (ret >= 0)
+		return ret; /* fd */
+	return -errno;
+#else
+	return -EPROTONOSUPPORT;
+#endif
 }
 
 static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
