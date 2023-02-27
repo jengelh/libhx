@@ -11,6 +11,7 @@
 #	include "config.h"
 #endif
 #include <sys/stat.h>
+#include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -594,39 +595,37 @@ EXPORT_SYMBOL int HX_rrmdir(const char *dir)
 EXPORT_SYMBOL ssize_t HXio_fullread(int fd, void *vbuf, size_t size)
 {
 	char *buf = vbuf;
-	size_t done = 0;
 	if (size > SSIZE_MAX)
 		size = SSIZE_MAX;
 
-	while (done < size) {
-		ssize_t ret = read(fd, buf, size - done);
+	while (size > 0) {
+		ssize_t ret = read(fd, buf, size);
 		if (ret < 0)
 			return ret;
 		else if (ret == 0)
 			break;
-		done += ret;
 		buf += ret;
+		size -= ret;
 	}
-	return done;
+	return buf - static_cast(char *, vbuf);
 }
 
 EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *vbuf, size_t size)
 {
 	const char *buf = vbuf;
-	size_t done = 0;
 	if (size > SSIZE_MAX)
 		size = SSIZE_MAX;
 
-	while (done < size) {
-		ssize_t ret = write(fd, buf, size - done);
+	while (size > 0) {
+		ssize_t ret = write(fd, buf, size);
 		if (ret < 0)
 			return ret;
 		else if (ret == 0)
 			break;
-		done += ret;
 		buf += ret;
+		size -= ret;
 	}
-	return done;
+	return buf - static_cast(const char *, vbuf);
 }
 
 #if __linux__
