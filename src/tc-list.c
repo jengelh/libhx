@@ -69,8 +69,14 @@ static void l_dump(bool pop)
 	while ((obj = (pop ?
 	    HXclist_pop(&strings_ct, struct text_object, list) :
 	    HXclist_shift(&strings_ct, struct text_object, list)
-	    )) != NULL)
+	    )) != NULL) {
 		printf("%s item %u (\"%s\")\n", msg[pop], ++i, obj->id);
+#ifdef __cplusplus
+		delete obj;
+#else
+		free(obj);
+#endif
+	}
 
 	printf("Remaining elements: %u\n", strings_ct.items);
 }
