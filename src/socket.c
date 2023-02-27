@@ -224,17 +224,23 @@ int HX_inet_listen(const char *host, uint16_t port)
 	for (const struct addrinfo *r = aires; r != nullptr; r = r->ai_next) {
 		if (use_env) {
 			int fd = HX_socket_from_env(r, nullptr);
-			if (fd >= 0)
+			if (fd >= 0) {
+				freeaddrinfo(aires);
 				return fd;
+			}
 		}
 		int fd = HX_gai_listen(r);
-		if (fd >= 0)
+		if (fd >= 0) {
+			freeaddrinfo(aires);
 			return fd;
+		}
 		saved_errno = errno;
 		if (fd == -2)
 			continue;
 		break;
 	}
+	if (aires != nullptr)
+		freeaddrinfo(aires);
 	return -(errno = saved_errno);
 }
 
