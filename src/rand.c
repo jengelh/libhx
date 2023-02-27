@@ -27,7 +27,7 @@
 
 static unsigned int HXrand_obtain_seed(void)
 {
-	unsigned int s;
+	unsigned long s;
 
 #if defined(HAVE_CLOCK_GETTIME)
 	struct timespec tv;
