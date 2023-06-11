@@ -7,6 +7,7 @@
  *	General Public License as published by the Free Software Foundation;
  *	either version 2.1 or (at your option) any later version.
  */
+#include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -681,6 +682,7 @@ EXPORT_SYMBOL ssize_t HXformat3_aprintf(const struct HXformat_map *blk,
  out:
 	ret = -errno;
 	HXmc_free(out);
+	*resultp = nullptr;
 	return ret;
 }
 
@@ -716,7 +718,7 @@ EXPORT_SYMBOL int HXformat_sprintf(const struct HXformat_map *ftable,
 EXPORT_SYMBOL ssize_t HXformat3_sprintf(const struct HXformat_map *ftable,
     char *dest, size_t size, const char *fmt)
 {
-	hxmc_t *str;
+	hxmc_t *str = nullptr;
 	ssize_t ret;
 
 	if ((ret = HXformat_aprintf(ftable, &str, fmt)) < 0)
@@ -725,6 +727,7 @@ EXPORT_SYMBOL ssize_t HXformat3_sprintf(const struct HXformat_map *ftable,
 		*dest = '\0';
 		return 0;
 	}
+	assert(str != nullptr);
 	strncpy(dest, str, size);
 	size_t xl = strlen(dest);
 	HXmc_free(str);
