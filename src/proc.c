@@ -69,7 +69,7 @@ static int HXproc_switch_group(const struct passwd *pw, const char *group)
 	return HXproc_switch_gid(pw, gr->gr_gid);
 }
 
-EXPORT_SYMBOL int HXproc_switch_user(const char *user, const char *group)
+EXPORT_SYMBOL enum HXproc_su_status HXproc_switch_user(const char *user, const char *group)
 {
 	const struct passwd *pw = NULL;
 	if (user != NULL && *user != '\0') {
