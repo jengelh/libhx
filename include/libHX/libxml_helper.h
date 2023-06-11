@@ -118,7 +118,7 @@ static __inline__ const char *xml_getprop(const xmlNode *node, const char *attr)
 static __inline__ char *xml_getnsprop(const xmlNode *node, const char *nsprefix,
     const char *attr)
 {
-	return xml_getnsprop(const_cast<const xmlNode *>(node), nsprefix, attr);
+	return xml_getnsprop(const_cast<xmlNode *>(node), nsprefix, attr);
 }
 #endif
 
