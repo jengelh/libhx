@@ -146,6 +146,8 @@ int HX_inet_connect(const char *host, uint16_t port, unsigned int oflags)
 	struct addrinfo *aires = nullptr;
 	int ret = HX_inet_lookup(host, port, AI_ADDRCONFIG, &aires);
 	int saved_errno = 0;
+	if (ret != 0)
+		;
 	for (const struct addrinfo *r = aires; r != nullptr; r = r->ai_next) {
 		int fd = socket(r->ai_family, r->ai_socktype, r->ai_protocol);
 		if (fd < 0) {
