@@ -424,6 +424,7 @@ HX_realpath_symres(struct HX_realpath_state *state, const char *path)
 		return -ELOOP;
 #endif
 
+	assert(state->link_target != nullptr);
 	if (*state->link_target == '/') {
 		*state->dest = '\0';
 		if (HXmc_setlen(&state->dest, 0) == NULL)
