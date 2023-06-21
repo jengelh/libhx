@@ -1,3 +1,12 @@
+v4.13 (2023-06-21)
+==================
+
+Fixes:
+
+* io: do not fail HX_mkdir when a component is a symlink to a directory
+* xml_helper: fix infinite recursion in xml_getnsprop
+
+
 v4.12 (2023-02-27)
 ==================
 
