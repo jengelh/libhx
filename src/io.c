@@ -66,7 +66,7 @@ static int mkdir_gen(const char *d, unsigned int mode)
 		return 1;
 	if (errno != EEXIST)
 		return -errno;
-	if (lstat(d, &sb) == 0) {
+	if (stat(d, &sb) == 0) {
 #if defined(_WIN32)
 		if (sb.st_mode & S_IFDIR)
 #else
