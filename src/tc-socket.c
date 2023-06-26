@@ -12,12 +12,30 @@
 #ifndef AI_V4MAPPED
 #	define AI_V4MAPPED 0
 #endif
+#include "internal.h"
 
-int main(void)
+static int t_parse(void)
+{
+	char host[32] = "bogus";
+	if (HX_addrport_split("[::1]", host, sizeof(host), nullptr) != 1 ||
+	    strcmp(host, "::1") != 0)
+		return 1;
+	if (HX_addrport_split("[]", host, sizeof(host), nullptr) != 1 ||
+	    strcmp(host, "") != 0)
+		return 1;
+	if (HX_addrport_split("", host, sizeof(host), nullptr) != 1 ||
+	    strcmp(host, "") != 0)
+		return 1;
+	return 0;
+}
+
+static int t_local(void)
 {
 	static const char *addrs[] = {
 		"::1", "::2", "::ffff:127.0.0.1", "::",
+		"[::1]", "[::2]", "[::ffff:127.0.0.1]", "[::]",
 		"127.0.0.1", "127.0.0.2", "1.1.1.1", "255.255.255.255",
+		"[127.0.0.1]", "[127.0.0.2]", "[1.1.1.1]", "[255.255.255.255]",
 	};
 	for (size_t i = 0; i < ARRAY_SIZE(addrs); ++i) {
 		char host[32] = {};
@@ -71,5 +89,16 @@ int main(void)
 	} else {
 		fprintf(stderr, "HX_inet_connect [::]:80: %s\n", strerror(-fd));
 	}
+	return EXIT_SUCCESS;
+}
+
+int main(void)
+{
+	int ret = t_parse();
+	if (ret != 0)
+		return ret;
+	ret = t_local();
+	if (ret != EXIT_SUCCESS)
+		return ret;
 	return EXIT_SUCCESS;
 }

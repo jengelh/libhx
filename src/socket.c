@@ -86,8 +86,11 @@ int HX_addrport_split(const char *spec, char *host,
 		unsigned long hlen = end - spec;
 		if (hlen >= hbufsz)
 			return -E2BIG;
-		if (*++end == '\0')
+		if (*++end == '\0') {
+			memmove(host, spec, hlen);
+			host[hlen] = '\0';
 			return 1;
+		}
 		if (*end++ != ':')
 			return -EINVAL;
 		char *nend = nullptr;
