@@ -1145,7 +1145,7 @@ static const struct HXmap_node *HXumap_traverse(struct HXumap_trav *trav)
 
 	while (trav->head == &hmap->bk_array[trav->bk_current]) {
 		if (++trav->bk_current >= HXhash_primes[hmap->power])
-			return false;
+			return NULL;
 		trav->head = hmap->bk_array[trav->bk_current].next;
 	}
 
