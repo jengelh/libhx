@@ -1,3 +1,11 @@
+v4.14 (2023-07-14)
+==================
+
+Fixes:
+
+* socket: make HX_addrport_split work on portless bracketed hostspec
+
+
 v4.13 (2023-06-21)
 ==================
 
