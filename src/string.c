@@ -476,7 +476,7 @@ EXPORT_SYMBOL char *HX_strrev(char *s)
 
 EXPORT_SYMBOL size_t HX_strrtrim(char *expr)
 {
-	int i = strlen(expr), s = 0;
+	size_t i = strlen(expr), s = 0;
 	while (i-- && HX_isspace(expr[i]))
 		++s;
 	expr[++i] = '\0';
