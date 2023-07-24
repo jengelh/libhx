@@ -7,6 +7,7 @@
  *	General Public License as published by the Free Software Foundation;
  *	either version 2.1 or (at your option) any later version.
  */
+#include <math.h> /* fmod */
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,4 +88,14 @@ EXPORT_SYMBOL void HX_zvecfree(char **args)
 	for (travp = args; *travp != NULL; ++travp)
 		free(*travp);
 	free(args);
+}
+
+EXPORT_SYMBOL float HX_flprf(float x, float y)
+{
+	return fmodf(fmodf(x, y) + y, y);
+}
+
+EXPORT_SYMBOL double HX_flpr(double x, double y)
+{
+	return fmod(fmod(x, y) + y, y);
 }

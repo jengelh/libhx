@@ -8,6 +8,8 @@ Miscellaneous functions
 
 	int HX_ffs(unsigned long z);
 	int HX_fls(unsigned long z);
+	float HX_flprf(float x, float y);
+	double HX_flpr(double x, double y);
 
 	void HX_zvecfree(char **);
 	unsigned int HX_zveclen(const char *const *);
@@ -19,6 +21,9 @@ Miscellaneous functions
 ``HX_fls``
 	Finds the last (most-significant) bit in a value and returns its
 	position, or ``-1`` to indicate failure.
+
+``HX_flpr``, ``HX_flprf``
+	Computes the Least Positive Residue of the modulo operation x % y.
 
 ``HX_zvecfree``
 	Frees the supplied Z-vector array. (Frees all array elements from the

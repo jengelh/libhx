@@ -9,7 +9,7 @@
  */
 #include <errno.h>
 #include <limits.h>
-#include <math.h>
+#include <math.h> /* nextafter */
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>

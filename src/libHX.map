@@ -167,3 +167,9 @@ global:
 	HX_inet_listen;
 	HX_local_listen;
 } LIBHX_4.9;
+
+LIBHX_4.15 {
+global:
+	HX_flpr;
+	HX_flprf;
+} LIBHX_4.11;
