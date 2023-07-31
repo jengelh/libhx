@@ -92,10 +92,16 @@ EXPORT_SYMBOL void HX_zvecfree(char **args)
 
 EXPORT_SYMBOL float HX_flprf(float x, float y)
 {
-	return fmodf(fmodf(x, y) + y, y);
+	float r = fmodf(x, y);
+	if (r < 0)
+		r += y;
+	return r;
 }
 
 EXPORT_SYMBOL double HX_flpr(double x, double y)
 {
-	return fmod(fmod(x, y) + y, y);
+	double r = fmod(x, y);
+	if (r < 0)
+		r += y;
+	return r;
 }
