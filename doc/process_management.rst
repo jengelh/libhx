@@ -202,7 +202,17 @@ User identity control
 
 	#include <libHX/proc.h>
 
-	int HXproc_switch_user(const char *user, const char *group);
+	enum HXproc_su_status {
+		HXPROC_INITGROUPS_FAILED = -5,
+		HXPROC_SETGID_FAILED = -4,
+		HXPROC_SETUID_FAILED = -3,
+		HXPROC_GROUP_NOT_FOUND = -2,
+		HXPROC_USER_NOT_FOUND = -1,
+		HXPROC_SU_NOOP = 0,
+		HXPROC_SU_SUCCESS = 1,
+	};
+
+	enum HXproc_su_status HXproc_switch_user(const char *user, const char *group);
 
 ``HXproc_switch_user`` is a wrapper for changing process identity to an
 unprivileged user. This utilizes ``setuid``, and possibly ``setgid`` plus
@@ -216,6 +226,9 @@ or the empty string, no change of process user identity occurs.
 process group(s) will change to the the user's group(s) — both primary and
 secondary — provided a user was specified (see above). When ``gruop`` is the
 empty string, no change of process group identity occurs.
+
+The return value is an enum indicating failure with values <0, and success with
+>=0.
 
 
 Process information
