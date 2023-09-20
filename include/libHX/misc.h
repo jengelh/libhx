@@ -59,6 +59,8 @@ extern const char *HX_dlerror(void);
  */
 extern int HX_ffs(unsigned long);
 extern int HX_fls(unsigned long);
+extern float HX_flprf(float, float);
+extern double HX_flpr(double, double);
 #ifndef HX_HEXDUMP_DECLARATION
 #define HX_HEXDUMP_DECLARATION 1
 extern void HX_hexdump(FILE *, const void *, unsigned int);
