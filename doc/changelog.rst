@@ -1,3 +1,15 @@
+v4.15 (2023-09-24)
+==================
+
+Enhancements:
+
+* Add functions to compute Least Positive Residue (HX_flpr, HX_flprf)
+
+Fixes:
+
+* Make HX_strrtrim work on strings longer than INT_MAX
+
+
 v4.14 (2023-07-14)
 ==================
 

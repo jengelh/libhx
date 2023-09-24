@@ -9,6 +9,8 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+4.15    4.15    4.15    HX_flpr
+4.15    4.15    4.15    HX_flprf
 4.11    4.11    4.11    HX_addrport_split
 4.11    4.11    4.11    HX_inet_connect
 4.11    4.11    4.11    HX_inet_listen
