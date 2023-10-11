@@ -41,7 +41,7 @@
 #else
 #	define STUPIDWIN(x) (x)
 #endif
-#if defined(__sunos__) && !defined(SO_PROTOCOL)
+#if defined(__sun) && !defined(SO_PROTOCOL)
 #	define SO_PROTOCOL SO_PROTOTYPE
 #endif
 #ifndef AI_V4MAPPED
