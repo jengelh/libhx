@@ -103,6 +103,7 @@ extern unsigned long long HX_strtoull_unit(const char *, char **, unsigned int e
 extern char *HX_unit_size(char *out, size_t bufsize, unsigned long long size, unsigned int divisor, unsigned int cutoff);
 extern char *HX_unit_size_cu(char *out, size_t bufsize, unsigned long long size, unsigned int divisor);
 extern unsigned long long HX_strtoull_sec(const char *s, char **);
+extern unsigned long long HX_strtoull_nsec(const char *s, char **);
 extern char *HX_unit_seconds(char *out, size_t bufsize, unsigned long long seconds, unsigned int flags);
 
 static __inline__ void *HX_memdup(const void *buf, size_t len)

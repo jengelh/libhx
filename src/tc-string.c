@@ -454,25 +454,30 @@ static void t_time_units(void)
 
 static void t_time_strto(void)
 {
+	#define NS_PER_S 1000000000ULL
 	static const struct {
 		const char *input;
-		unsigned long long expect_out;
-		const char expect_rem[4];
+		unsigned long long expect_s, expect_ns;
+		const char expect_rem[8];
 	} vt[] = {
-		{"1y1month1week1d1h1min1s ", 31557600+2629800+86400*8+3600+60+1, ""},
-		{" -1d", 0, "-1d"},
-		{"1 -", 1, "-"},
-		{"1s", 1, ""},
-		{"1min", 60, ""},
-		{"0", 0, ""},
+		{"29µs", 0, 29000, ""},
+		{"1y", 31557600, NS_PER_S * 31557600, ""},
+		{"1y1month1week1d1h1min1s ", 31557600+2629800+86400*8+3600+60+1, NS_PER_S * (31557600+2629800+86400*8+3600+60+1), ""},
+		{" -1d", 0, 0, "-1d"},
+		{"1 -", 1, NS_PER_S, "-"},
+		{"1.5min", 1, NS_PER_S, ".5min"},
+		{"1s", 1, NS_PER_S, ""},
+		{"1min", 60, 60 * NS_PER_S, ""},
+		{"0", 0, 0, ""},
 	};
 	char *end;
 	printf("===== t_time_strto\n");
 	for (size_t i = 0; i < ARRAY_SIZE(vt); ++i) {
 		unsigned long long q = HX_strtoull_sec(vt[i].input, &end);
-		printf("\"%s\" => %llus + \"%s\"\n", vt[i].input, q, end);
-		if (q != vt[i].expect_out)
-			printf("\tBUG: expected %llus\n", vt[i].expect_out);
+		unsigned long long qn = HX_strtoull_nsec(vt[i].input, &end);
+		printf("\"%s\" => %llus [%lluns] + \"%s\"\n", vt[i].input, q, qn, end);
+		if (q != vt[i].expect_s || qn != vt[i].expect_ns)
+			printf("\tBUG: expected %llus [%lluns]\n", vt[i].expect_s, vt[i].expect_ns);
 		if (strcmp(end, vt[i].expect_rem) != 0)
 			printf("\tBUG: expected remainder \"%s\"\n", vt[i].expect_rem);
 	}

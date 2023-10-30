@@ -456,17 +456,20 @@ Conversion from/to human-readable durations with units
 	#include <libHX/string.h>
 
 	unsigned long long HX_strtoull_sec(const char *s, char **end);
+	unsigned long long HX_strtoull_nsec(const char *s, char **end);
 	char *HX_unit_seconds(char *out, size_t outsize,
 	                      unsigned long long seconds,
 	                      unsigned int flags);
 
-``HX_strtoull_sec`` converts a time duration with units, such as ``"15min30s"``
-into an all-seconds value. The recognized unit strings are: ``years``,
-``year``, ``y``, ``months``, ``month``, ``days``, ``day``, ``d``, ``hours``,
-``hour``, ``h``, ``minutes``, ``minute``, ``min``, ``seconds``, ``second``,
-``s`` and the empty string (for seconds). When parsing stops at any point,
-``*end`` is set to the location, similar to how the ``strtoull`` C function
-would.
+``HX_strtoull_sec`` and ``HX_strtoull_nsec`` convert a time duration with
+units, such as ``"15min30s"`` into an all-seconds and all-nanoseconds value,
+respectively. The recognized unit strings are: ``years``, ``year``, ``y``,
+``months``, ``month``, ``days``, ``day``, ``d``, ``hours``, ``hour``, ``h``,
+``minutes``, ``minute``, ``min``, ``seconds``, ``second``, ``s``, the empty
+string (to mean seconds), ``msec``, ``ms``, ``µsec``, ``µs``, ``nsec`` and
+``ns``. Fractions are not supported, nor are negative durations. When parsing
+stops at any point, ``*end`` is set to the location, similar to how the
+``strtoull`` C function would.
 
 One year is defined to be 365.25 days of 86400 seconds; one month is defined to
 be 1/12 such a year. This is consistent with the units employed by systemd.

@@ -1037,44 +1037,52 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 
 #define SECONDS_PER_YEAR 31557600
 #define SECONDS_PER_MONTH 2629800
+#define NSEC_PER_SECOND 1000000000ULL
 
 static const struct {
 	const char name[8];
 	unsigned int len;
-	uint32_t mult;
+	uint32_t s_mult;
+	uint64_t ns_mult;
 } time_multiplier[] = {
-	{"seconds", 7, 1},
-	{"second",  6, 1},
-	{"sec",     3, 1},
-	{"s",       1, 1},
-	{"minutes", 7, 60},
-	{"minute",  6, 60},
-	{"min",     3, 60},
-	{"hours",   5, 3600},
-	{"hour",    4, 3600},
-	{"h",       1, 3600},
-	{"days",    4, 86400},
-	{"day",     3, 86400},
-	{"d",       1, 86400},
-	{"weeks",   5, 604800},
-	{"week",    4, 604800},
-	{"months",  6, SECONDS_PER_MONTH},
-	{"month",   5, SECONDS_PER_MONTH},
-	{"years",   5, SECONDS_PER_YEAR},
-	{"year",    4, SECONDS_PER_YEAR},
-	{"y",       1, SECONDS_PER_YEAR},
+	{"seconds", 7, 1, 1 * NSEC_PER_SECOND},
+	{"second",  6, 1, 1 * NSEC_PER_SECOND},
+	{"sec",     3, 1, 1 * NSEC_PER_SECOND},
+	{"s",       1, 1, 1 * NSEC_PER_SECOND},
+	{"minutes", 7, 60, 60 * NSEC_PER_SECOND},
+	{"minute",  6, 60, 60 * NSEC_PER_SECOND},
+	{"min",     3, 60, 60 * NSEC_PER_SECOND},
+	{"hours",   5, 3600, 3600 * NSEC_PER_SECOND},
+	{"hour",    4, 3600, 3600 * NSEC_PER_SECOND},
+	{"h",       1, 3600, 3600 * NSEC_PER_SECOND},
+	{"days",    4, 86400, 86400 * NSEC_PER_SECOND},
+	{"day",     3, 86400, 86400 * NSEC_PER_SECOND},
+	{"d",       1, 86400, 86400 * NSEC_PER_SECOND},
+	{"weeks",   5, 604800, 604800 * NSEC_PER_SECOND},
+	{"week",    4, 604800, 604800 * NSEC_PER_SECOND},
+	{"months",  6, SECONDS_PER_MONTH, SECONDS_PER_MONTH * NSEC_PER_SECOND},
+	{"month",   5, SECONDS_PER_MONTH, SECONDS_PER_MONTH * NSEC_PER_SECOND},
+	{"years",   5, SECONDS_PER_YEAR, SECONDS_PER_YEAR * NSEC_PER_SECOND},
+	{"year",    4, SECONDS_PER_YEAR, SECONDS_PER_YEAR * NSEC_PER_SECOND},
+	{"y",       1, SECONDS_PER_YEAR, SECONDS_PER_YEAR * NSEC_PER_SECOND},
+	{"msec",    4, 0, 1000000},
+	{"ms",      2, 0, 1000000},
+	{"µsec",    5, 0, 1000},
+	{"µs",      3, 0, 1000},
+	{"nsec",    4, 0, 1},
+	{"ns",      2, 0, 1},
+	{"",        0, 1, NSEC_PER_SECOND},
 };
 
-EXPORT_SYMBOL unsigned long long HX_strtoull_sec(const char *s, char **out_end)
+static unsigned long long HX_strtoull_time(const char *s, char **out_end, bool nsec)
 {
-	unsigned long long seconds = 0;
+	unsigned long long quant = 0;
 
 	while (*s != '\0') {
 		while (HX_isspace(*s))
 			++s;
-		if (*s == '-') {
+		if (*s == '-')
 			break;
-		}
 		char *end = nullptr;
 		unsigned long long num = strtoull(s, &end, 10);
 		if (end == s)
@@ -1082,10 +1090,6 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_sec(const char *s, char **out_end)
 		s = end;
 		while (HX_isspace(*s))
 			++s;
-		if (!HX_isalpha(*s)) {
-			seconds += num;
-			continue;
-		}
 		unsigned int i;
 		for (i = 0; i < ARRAY_SIZE(time_multiplier); ++i)
 			if (strncmp(s, time_multiplier[i].name,
@@ -1094,12 +1098,22 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_sec(const char *s, char **out_end)
 				break;
 		if (i == ARRAY_SIZE(time_multiplier))
 			break;
-		seconds += num * time_multiplier[i].mult;
+		quant += num * (nsec ? time_multiplier[i].ns_mult : time_multiplier[i].s_mult);
 		s += time_multiplier[i].len;
 	}
 	if (out_end != nullptr)
 		*out_end = const_cast(char *, s);
-	return seconds;
+	return quant;
+}
+
+EXPORT_SYMBOL unsigned long long HX_strtoull_sec(const char *s, char **out_end)
+{
+	return HX_strtoull_time(s, out_end, false);
+}
+
+EXPORT_SYMBOL unsigned long long HX_strtoull_nsec(const char *s, char **out_end)
+{
+	return HX_strtoull_time(s, out_end, true);
 }
 
 EXPORT_SYMBOL char *HX_unit_seconds(char *out, size_t outsize,

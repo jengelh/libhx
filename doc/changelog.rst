@@ -1,3 +1,11 @@
+HEAD
+====
+
+Enhancements:
+
+* Add ``HX_strtoull_nsec`` to parse time period and emit nanoseconds
+
+
 v4.15 (2023-09-24)
 ==================
 
