@@ -3,11 +3,11 @@ v4.15 (2023-09-24)
 
 Enhancements:
 
-* Add functions to compute Least Positive Residue (HX_flpr, HX_flprf)
+* Add functions to compute Least Positive Residue (``HX_flpr``, ``HX_flprf``)
 
 Fixes:
 
-* Make HX_strrtrim work on strings longer than INT_MAX
+* Make ``HX_strrtrim`` work on strings longer than ``INT_MAX``
 
 
 v4.14 (2023-07-14)
@@ -15,7 +15,7 @@ v4.14 (2023-07-14)
 
 Fixes:
 
-* socket: make HX_addrport_split work on portless bracketed hostspec
+* socket: make ``HX_addrport_split`` work on portless bracketed hostspec
 
 
 v4.13 (2023-06-21)
@@ -23,8 +23,8 @@ v4.13 (2023-06-21)
 
 Fixes:
 
-* io: do not fail HX_mkdir when a component is a symlink to a directory
-* xml_helper: fix infinite recursion in xml_getnsprop
+* io: do not fail ``HX_mkdir`` when a component is a symlink to a directory
+* xml_helper: fix infinite recursion in ``xml_getnsprop``
 
 
 v4.12 (2023-02-27)
@@ -32,7 +32,7 @@ v4.12 (2023-02-27)
 
 Fixes:
 
-* Plug a memory leak in HX_inet_listen
+* Plug a memory leak in ``HX_inet_listen``
 
 
 v4.11 (2023-02-26)
@@ -40,8 +40,8 @@ v4.11 (2023-02-26)
 
 Enhancements:
 
-* socket: add HX_addrport_split, HX_inet_connect, HX_inet_listen,
-  HX_local_listen
+* socket: add ``HX_addrport_split``, ``HX_inet_connect``, ``HX_inet_listen``,
+  ``HX_local_listen``
 
 
 v4.10 (2023-01-29)
@@ -49,7 +49,7 @@ v4.10 (2023-01-29)
 
 Fixes:
 
-* format: plug a memory leak relating to func_entry_clone
+* format: plug a memory leak relating to ``func_entry_clone``
 * Resolve mingw build failure
 
 
@@ -58,13 +58,14 @@ v4.9 (2023-01-23)
 
 Enhancements:
 
-* socket: add sockaddr_is_local, ipaddr_is_local functions
+* socket: add ``sockaddr_is_local``, ``ipaddr_is_local`` functions
 
 Fixes:
 
-* format: avoid return value truncation from HXformat_aprintf, HXformat_sprintf
-* format: avoid calling HXmc_length on a non-hxmc object
-* format: add new variations of printf functions returning ssize_t
+* format: avoid return value truncation from ``HXformat_aprintf``,
+  ``HXformat_sprintf``
+* format: avoid calling ``HXmc_length`` on a non-hxmc object
+* format: add new variations of printf functions returning ``ssize_t``
 * Resolve Coverity-SCAN reports
 
 
@@ -73,7 +74,7 @@ v4.8 (2022-12-03)
 
 Enhancements:
 
-* io: call posix_fadvise when slurping files
+* io: call ``posix_fadvise`` when slurping files
 
 Fixes:
 
@@ -85,11 +86,11 @@ v4.7 (2022-10-21)
 
 Enhancements:
 
-* string: new quoting modes HXQUOTE_BASE64URL & HXQUOTE_BASE64IMAP
+* string: new quoting modes ``HXQUOTE_BASE64URL`` & ``HXQUOTE_BASE64IMAP``
 
 Fixes:
 
-* socket: make HX_socket_from_env functional on OpenBSD
+* socket: make ``HX_socket_from_env`` functional on OpenBSD
 
 
 v4.6 (2022-06-27)
@@ -97,8 +98,8 @@ v4.6 (2022-06-27)
 
 Enhancements:
 
-* HX_slurp_fd/HX_slurp_file now supports reading from files reporting their
-  own size as 0 (e.g. ttys, /proc special files).
+* ``HX_slurp_fd``/``HX_slurp_file`` now supports reading from files reporting
+  their own size as 0 (e.g. ttys, ``/proc`` special files).
 
 
 v4.5 (2022-04-10)
@@ -144,8 +145,8 @@ v4.1 (2021-10-13)
 
 Fixes:
 
-* io: fix a use-after-free in conjunction with HX_realpath /
-  fix missing NULLing of a pointer within HX_readlink
+* io: fix a use-after-free in conjunction with ``HX_realpath`` /
+  fix missing NULLing of a pointer within ``HX_readlink``
 
 
 v4.0 (2021-10-03)
