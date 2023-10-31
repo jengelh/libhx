@@ -1085,6 +1085,10 @@ static unsigned long long HX_strtoull_time(const char *s, char **out_end, bool n
 			break;
 		char *end = nullptr;
 		unsigned long long num = strtoull(s, &end, 10);
+		double frac = 0;
+		bool have_frac = *end == '.';
+		if (have_frac)
+			frac = strtod(s, &end);
 		if (end == s)
 			break;
 		s = end;
@@ -1098,7 +1102,11 @@ static unsigned long long HX_strtoull_time(const char *s, char **out_end, bool n
 				break;
 		if (i == ARRAY_SIZE(time_multiplier))
 			break;
-		quant += num * (nsec ? time_multiplier[i].ns_mult : time_multiplier[i].s_mult);
+		unsigned long long mult = nsec ? time_multiplier[i].ns_mult : time_multiplier[i].s_mult;
+		if (have_frac)
+			quant += frac * mult;
+		else
+			quant += num * mult;
 		s += time_multiplier[i].len;
 	}
 	if (out_end != nullptr)

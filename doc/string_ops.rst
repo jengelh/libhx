@@ -467,9 +467,9 @@ respectively. The recognized unit strings are: ``years``, ``year``, ``y``,
 ``months``, ``month``, ``days``, ``day``, ``d``, ``hours``, ``hour``, ``h``,
 ``minutes``, ``minute``, ``min``, ``seconds``, ``second``, ``s``, the empty
 string (to mean seconds), ``msec``, ``ms``, ``µsec``, ``µs``, ``nsec`` and
-``ns``. Fractions are not supported, nor are negative durations. When parsing
-stops at any point, ``*end`` is set to the location, similar to how the
-``strtoull`` C function would.
+``ns``. Negative durations are not supported. Support for fractions is
+implementation-defined. When parsing stops at any point, ``*end`` is set to the
+location, similar to how the ``strtoull`` C function would.
 
 One year is defined to be 365.25 days of 86400 seconds; one month is defined to
 be 1/12 such a year. This is consistent with the units employed by systemd.

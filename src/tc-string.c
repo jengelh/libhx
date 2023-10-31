@@ -465,7 +465,7 @@ static void t_time_strto(void)
 		{"1y1month1week1d1h1min1s ", 31557600+2629800+86400*8+3600+60+1, NS_PER_S * (31557600+2629800+86400*8+3600+60+1), ""},
 		{" -1d", 0, 0, "-1d"},
 		{"1 -", 1, NS_PER_S, "-"},
-		{"1.5min", 1, NS_PER_S, ".5min"},
+		{"12.5 hours .5 hours 240 minutes 25200 seconds", 86400, NS_PER_S * 86400, ""},
 		{"1s", 1, NS_PER_S, ""},
 		{"1min", 60, 60 * NS_PER_S, ""},
 		{"0", 0, 0, ""},
