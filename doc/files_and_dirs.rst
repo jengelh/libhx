@@ -180,11 +180,27 @@ Filedescriptor helpers
 	ssize_t HXio_fullwrite(int fd, const void *buf, size_t size, unsigned int flags);
 	ssize_t HX_sendfile(int dst, int src, size_t count);
 
-Since plain ``read``(2) and ``write``(2) may process only part of the buffer —
-even more likely so with sockets —, libHX provides two functions that calls
-these in a loop to retry said operations until the full amount has been
-processed. Since read and write can also be used with socket file descriptors,
-so can these.
+``HXio_fullread`` calls ``read``(2) in a loop so long as to completely read
+``size`` bytes, and thereby masking short read behavior that the *read* system
+call is allowed to exhibit. On success, the return value indicates the number
+of bytes read, which may be shorter than ``size`` if EOF was encountered. On
+error, the return value is negative (but no particular one value).
+
+There is no way with just HXio_fullread to know the number of bytes that were
+read up to the point that the error occurred. (As this issue went
+"undiscovered" for 13 years, it goes to show that the use sites of
+HXio_fullread do not care for the byte count when that happened. If the file
+descriptor is seekable, one could ask for the position via ``lseek``(2),
+though.)
+
+``HXio_fullwrite`` calls ``write``(2) in a loop so long as to completely write
+``size`` bytes, and thereby masking short write behavior that the *write*
+system call is allowed to exhibit. On success, the return value is the same as
+``size`` (as there is never an EOF condition for writes). On error, the return
+value is negative.
+
+There is no way with HXio_fullwrite to know the number of bytes that were
+written up to the point that the error occurred similar to HXio_fullread.
 
 ``HX_sendfile`` wraps ``sendfile``(2) for the same reason; in addition, it
 falls back to a read-write loop on platforms which do not offer sendfile.
