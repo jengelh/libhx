@@ -20,7 +20,7 @@
 #include <libHX/init.h>
 #include <libHX/io.h>
 
-int main(void)
+static int runner(void)
 {
 	const char id[] = "SSH-2.0-OpenSSH_9.9";
 	struct addrinfo *res;
@@ -28,25 +28,33 @@ int main(void)
 
 	if ((ret = HX_init()) <= 0) {
 		fprintf(stderr, "HX_init: %s\n", strerror(-ret));
-		abort();
+		return EXIT_FAILURE;
 	}
 
 	fd = socket(AF_INET6, SOCK_STREAM, 0);
 	if (fd < 0) {
 		perror("socket");
-		abort();
+		return EXIT_FAILURE;
 	}
 	if (getaddrinfo("::1", "22", NULL, &res) < 0) {
 		perror("getaddrinfo");
-		abort();
+		return EXIT_FAILURE;
 	}
 	if (connect(fd, res->ai_addr, res->ai_addrlen) < 0) {
 		perror("connect");
-		abort();
+		return EXIT_FAILURE;
 	}
 	if (HXio_fullwrite(fd, id, strlen(id)) < 0)
 		perror("write");
 	close(fd);
 	HX_exit();
 	return EXIT_SUCCESS;
+}
+
+int main(void)
+{
+	int ret = runner();
+	if (ret != EXIT_SUCCESS)
+		fprintf(stderr, "FAILED\n");
+	return ret;
 }

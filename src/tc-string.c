@@ -21,14 +21,14 @@
 #include <libHX/string.h>
 #include "internal.h"
 
-static void t_mc(void)
+static int t_mc(void)
 {
 	hxmc_t *s, *old_s;
 
 	s = HXmc_meminit(NULL, 4096);
 	printf("%" HX_SIZET_FMT "u\n", HXmc_length(s));
 	if (HXmc_length(s) != 0)
-		abort();
+		return EXIT_FAILURE;
 	old_s = s;
 	HXmc_trunc(&s, 8192);
 	if (old_s != s)
@@ -37,6 +37,7 @@ static void t_mc(void)
 	HXmc_setlen(&s, 16384);
 	printf("Length is now %" HX_SIZET_FMT "u\n", HXmc_length(s));
 	HXmc_free(s);
+	return EXIT_SUCCESS;
 }
 
 static void t_path(void)
@@ -60,13 +61,12 @@ static void t_path(void)
 	}
 }
 
-static void t_strcpy(void)
+static int t_strcpy(void)
 {
 	hxmc_t *vp = NULL;
 
 	HXmc_strcpy(&vp, NULL);
-	if (vp != NULL)
-		abort();
+	return vp == nullptr ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 static void t_strdup(void)
@@ -291,7 +291,7 @@ static void t_strlcpy2(void)
 	assert(a[0] == 49 && a[0] == a[1] && a[1] == a[2]);
 }
 
-static void t_units(void)
+static int t_units(void)
 {
 	static const struct {
 		unsigned long long num;
@@ -320,18 +320,19 @@ static void t_units(void)
 		printf("\t%llu -> %s\n", vt[i].num, buf);
 		if (strcmp(buf, vt[i].exp_1024) != 0) {
 			printf("\texpected %s\n", vt[i].exp_1024);
-			abort();
+			return EXIT_FAILURE;
 		}
 		HX_unit_size(buf, ARRAY_SIZE(buf), vt[i].num, 1000, 9120);
 		printf("\t%llu -> %s\n", vt[i].num, buf);
 		if (strcmp(buf, vt[i].exp_1000) != 0) {
 			printf("\texpected %s\n", vt[i].exp_1000);
-			abort();
+			return EXIT_FAILURE;
 		}
 	}
+	return EXIT_SUCCESS;
 }
 
-static void t_units_cu(void)
+static int t_units_cu(void)
 {
 	static const struct {
 		unsigned long long num;
@@ -360,18 +361,19 @@ static void t_units_cu(void)
 		printf("\t%llu -> %s\n", vt[i].num, buf);
 		if (strcmp(buf, vt[i].exp_1024) != 0) {
 			printf("\texpected %s\n", vt[i].exp_1024);
-			abort();
+			return EXIT_FAILURE;
 		}
 		HX_unit_size_cu(buf, ARRAY_SIZE(buf), vt[i].num, 1000);
 		printf("\t%llu -> %s\n", vt[i].num, buf);
 		if (strcmp(buf, vt[i].exp_1000) != 0) {
 			printf("\texpected %s\n", vt[i].exp_1000);
-			abort();
+			return EXIT_FAILURE;
 		}
 	}
+	return EXIT_SUCCESS;
 }
 
-static void t_units_strto(void)
+static int t_units_strto(void)
 {
 	static const struct {
 		const char input[24];
@@ -416,8 +418,9 @@ static void t_units_strto(void)
 		unsigned long long q = HX_strtoull_unit(vt[i].input, &end, vt[i].exponent);
 		printf("%s -> %llu __ %s\n", vt[i].input, q, end);
 		if (q != vt[i].expect_out || strcmp(end, vt[i].expect_rem) != 0)
-			printf("BUG\n");
+			return EXIT_FAILURE;
 	}
+	return EXIT_SUCCESS;
 }
 
 static void t_time_units(void)
@@ -512,14 +515,14 @@ static int t_strmid(void)
 #undef T
 }
 
-int main(int argc, const char **argv)
+static int runner(int argc, const char **argv)
 {
 	hxmc_t *tx = NULL;
 	const char *file = (argc >= 2) ? argv[1] : "tx-string.cpp";
 	FILE *fp;
 
 	if (HX_init() <= 0)
-		abort();
+		return EXIT_FAILURE;
 	int ret = t_strmid();
 	if (ret != EXIT_SUCCESS)
 		return EXIT_FAILURE;
@@ -533,9 +536,13 @@ int main(int argc, const char **argv)
 		fclose(fp);
 	}
 
-	t_mc();
+	ret = t_mc();
+	if (ret != EXIT_SUCCESS)
+		return EXIT_FAILURE;
 	t_path();
-	t_strcpy();
+	ret = t_strcpy();
+	if (ret != EXIT_SUCCESS)
+		return EXIT_FAILURE;
 	t_strncat();
 	t_strnlen();
 	t_strdup();
@@ -543,9 +550,15 @@ int main(int argc, const char **argv)
 	t_strtrim();
 	t_split();
 	t_split2();
-	t_units();
-	t_units_cu();
-	t_units_strto();
+	ret = t_units();
+	if (ret != EXIT_SUCCESS)
+		return EXIT_FAILURE;
+	ret = t_units_cu();
+	if (ret != EXIT_SUCCESS)
+		return EXIT_FAILURE;
+	ret = t_units_strto();
+	if (ret != EXIT_SUCCESS)
+		return EXIT_FAILURE;
 	t_time_units();
 	t_time_strto();
 	t_strlcpy();
@@ -553,4 +566,12 @@ int main(int argc, const char **argv)
 	HXmc_free(tx);
 	HX_exit();
 	return EXIT_SUCCESS;
+}
+
+int main(int argc, const char **argv)
+{
+	int ret = runner(argc, argv);
+	if (ret != EXIT_FAILURE)
+		fprintf(stderr, "FAILED\n");
+	return ret;
 }

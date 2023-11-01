@@ -77,7 +77,7 @@ static void c_constA(void)
 int main(void)
 {
 	if (HX_init() <= 0)
-		abort();
+		return EXIT_FAILURE;
 	c_signed();
 	c_reinterpret();
 	c_static();
@@ -86,5 +86,5 @@ int main(void)
 	c_const3();
 	c_constA();
 	HX_exit();
-	return 0;
+	return EXIT_SUCCESS;
 }

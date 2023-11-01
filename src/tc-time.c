@@ -207,7 +207,7 @@ static void print_op2(const struct timespec *r, const struct timespec *a,
 	printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(r));
 }
 
-static void test_add(void)
+static int test_add(void)
 {
 	const struct timespec *a, *b;
 	struct timespec r, s;
@@ -220,13 +220,14 @@ static void test_add(void)
 			HX_timespec_add_DIVQ(&s, a, b);
 			print_op2(&r, a, "+Q", b);
 			if (r.tv_sec != s.tv_sec || r.tv_nsec != s.tv_nsec)
-				abort();
+				return EXIT_FAILURE;
 			HX_timespec_sub(&r, a, b);
 			print_op2(&r, a, "- ", b);
 			printf("----------\n");
 		}
 	}
 	printf("\n");
+	return EXIT_SUCCESS;
 }
 
 static void test_adds_nz(time_t s, add_func_t fn)
@@ -303,7 +304,7 @@ static void test_adds(void)
 	printf("\n");
 }
 
-static void test_mul(void)
+static int test_mul(void)
 {
 	struct timespec r, s;
 	unsigned int i;
@@ -324,7 +325,7 @@ static void test_mul(void)
 			printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&s));
 
 			if (r.tv_sec != s.tv_sec || r.tv_nsec != s.tv_nsec)
-				abort();
+				return EXIT_FAILURE;
 		}
 
 		for (k = -3; k <= 3; k += 0.1) {
@@ -341,6 +342,7 @@ static void test_mul(void)
 	}
 
 	printf("\n");
+	return EXIT_SUCCESS;
 }
 
 static void test_muls_1i(const char *text, mul_func_t fn)
@@ -386,18 +388,29 @@ static void test_muls(void)
 	printf("\n");
 }
 
-int main(void)
+static int runner(void)
 {
 	if (HX_init() <= 0)
-		abort();
-
+		return EXIT_FAILURE;
 	test_basic();
 	test_same();
 	test_neg();
-	test_add();
-	test_mul();
+	int ret = test_add();
+	if (ret != EXIT_SUCCESS)
+		return ret;
+	ret = test_mul();
+	if (ret != EXIT_SUCCESS)
+		return ret;
 	test_adds();
 	test_muls();
 	HX_exit();
 	return EXIT_SUCCESS;
+}
+
+int main(void)
+{
+	int ret = runner();
+	if (ret != EXIT_SUCCESS)
+		fprintf(stderr, "FAILED\n");
+	return ret;
 }

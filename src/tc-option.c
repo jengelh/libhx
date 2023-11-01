@@ -99,7 +99,7 @@ static void t_empty_argv(void)
 int main(int argc, const char **argv)
 {
 	if (HX_init() <= 0)
-		abort();
+		return EXIT_FAILURE;
 	printf("Return value of HX_getopt: %d\n",
 	       HX_getopt(table, &argc, &argv, HXOPT_USAGEONERR));
 	t_empty_argv();

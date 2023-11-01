@@ -22,7 +22,7 @@ union list_encap {
 
 static HXCLIST_HEAD(strings_ct);
 
-static void l_init(unsigned int max, bool unshift)
+static int l_init(unsigned int max, bool unshift)
 {
 	static const char *const msg[] = {"Pushing", "Unshifting"};
 	struct text_object *obj;
@@ -34,7 +34,7 @@ static void l_init(unsigned int max, bool unshift)
 #else
 		obj = malloc(sizeof(*obj));
 		if (obj == NULL)
-			abort();
+			return EXIT_FAILURE;
 #endif
 		HXlist_init(&obj->list);
 		obj->id[0] = HX_irand('a', 'z'+1);
@@ -48,6 +48,7 @@ static void l_init(unsigned int max, bool unshift)
 		else
 			HXclist_push(&strings_ct, &obj->list);
 	}
+	return EXIT_SUCCESS;
 }
 
 static void l_traverse(void)
@@ -137,20 +138,29 @@ static void l_shift(void)
 #pragma GCC diagnostic pop
 }
 
-int main(int argc, const char **argv)
+static int runner(int argc, const char **argv)
 {
 	unsigned int max = 10;
 
 	if (HX_init() <= 0)
-		abort();
+		return EXIT_FAILURE;
 	if (argc >= 2)
 		max = strtoul(argv[1], NULL, 0);
-
-	l_init(max, HX_rand() & 1);
+	int ret = l_init(max, HX_rand() & 1);
+	if (ret != EXIT_SUCCESS)
+		return ret;
 	l_traverse();
 	l_dump(HX_rand() & 1);
 	l_empty();
 	l_shift();
 	HX_exit();
 	return EXIT_SUCCESS;
+}
+
+int main(int argc, const char **argv)
+{
+	int ret = runner(argc, argv);
+	if (ret != EXIT_FAILURE)
+		fprintf(stderr, "FAILED\n");
+	return ret;
 }

@@ -14,14 +14,14 @@ static unsigned int size = 1048576 * 64;
 static const char filler_text[] =
 	"Slhrdlu cringle tongle flonging blobbity bleep blingmangl";
 
-static void long_scan(void)
+static int long_scan(void)
 {
 	struct timespec start, stop, delta;
 	char *filler2, *p;
 
 	filler2 = malloc(size);
 	if (filler2 == NULL)
-		abort();
+		return EXIT_FAILURE;
 	memset(filler2, 'l', size);
 	filler2[size-2] = 'a';
 
@@ -32,19 +32,20 @@ static void long_scan(void)
 	HX_timespec_sub(&delta, &stop, &start);
 	printf("long_scan: " HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&delta));
 	free(filler2);
+	return EXIT_SUCCESS;
 }
 
-int main(void)
+static int runner(void)
 {
 	unsigned int i;
 	char *haystack;
 	struct timespec start, stop, delta;
 
 	if (HX_init() <= 0)
-		abort();
+		return EXIT_FAILURE;
 	haystack = malloc(size);
 	if (haystack == NULL)
-		abort();
+		return EXIT_FAILURE;
 	memset(haystack, 'A', size);
 	haystack[size-1] = haystack[size-2] = 'Z';
 	printf("Init done\n");
@@ -55,8 +56,9 @@ int main(void)
 	printf("%p\n", HX_memmem(filler_text, strlen(filler_text), "ngl", 3));
 	printf("%p\n", HX_memmem(filler_text, strlen(filler_text), "ngl", 3));
 
-	long_scan();
-
+	int ret = long_scan();
+	if (ret != EXIT_SUCCESS)
+		return ret;
 	for (i = 0; i < 10; ++i) {
 		printf("Search length %u...", i);
 		clock_gettime(CLOCK_THREAD_CPUTIME_ID, &start);
@@ -68,4 +70,12 @@ int main(void)
 
 	HX_exit();
 	return EXIT_SUCCESS;
+}
+
+int main(void)
+{
+	int ret = runner();
+	if (ret != EXIT_FAILURE)
+		fprintf(stderr, "FAILED\n");
+	return ret;
 }

@@ -19,7 +19,7 @@ static const struct HXoption options_table[] = {
 	HXOPT_TABLEEND,
 };
 
-int main(int argc, const char **argv)
+static int runner(int argc, const char **argv)
 {
 	HX_getopt(options_table, &argc, &argv, HXOPT_USAGEONERR);
 	const char *user = user_name != NULL ? user_name : "-";
@@ -27,12 +27,12 @@ int main(int argc, const char **argv)
 	switch (HXproc_switch_user(user_name, group_name)) {
 	case HXPROC_USER_NOT_FOUND:
 		if (user_name == NULL)
-			abort(); /* impossible outcomes */
+			return EXIT_FAILURE; /* impossible outcomes */
 		printf("No such user \"%s\": %s\n", user_name, strerror(errno));
 		break;
 	case HXPROC_GROUP_NOT_FOUND:
 		if (group_name == NULL || *group_name == '\0')
-			abort(); /* impossible outcome */
+			return EXIT_FAILURE; /* impossible outcome */
 		printf("No such group \"%s\": %s\n", group_name, strerror(errno));
 		break;
 	case HXPROC_SETUID_FAILED:
@@ -63,6 +63,14 @@ int main(int argc, const char **argv)
 	}
 	}
 	return EXIT_SUCCESS;
+}
+
+int main(int argc, const char **argv)
+{
+	int ret = runner(argc, argv);
+	if (ret != EXIT_SUCCESS)
+		fprintf(stderr, "FAILED\n");
+	return ret;
 }
 #else
 int main(void)

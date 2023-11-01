@@ -205,7 +205,7 @@ static void tmap_trav_speed(struct HXmap *map)
 	tmap_ipop();
 }
 
-static void tmap_flat(const struct HXmap *map)
+static int tmap_flat(const struct HXmap *map)
 {
 	struct HXmap_node *nodes;
 	unsigned int i;
@@ -215,12 +215,13 @@ static void tmap_flat(const struct HXmap *map)
 	nodes = HXmap_keysvalues(map);
 	if (nodes == NULL) {
 		perror("HXmap_keysvalues");
-		abort();
+		return EXIT_FAILURE;
 	}
 	for (i = 0; i < map->items; ++i)
 		tmap_printf("%u. %s -> %s\n", i, nodes[i].skey, nodes[i].sdata);
 	tmap_ipop();
 	free(nodes);
+	return EXIT_SUCCESS;
 }
 
 static void tmap_trav(struct HXmap *map)
@@ -251,7 +252,7 @@ static void tmap_trav(struct HXmap *map)
 	HXmap_travfree(iter);
 }
 
-static void tmap_generic_tests(enum HXmap_type type,
+static int tmap_generic_tests(enum HXmap_type type,
     unsigned long (*hash_fn)(const void *, size_t), const char *hash_name)
 {
 	struct HXmap_ops ops = {.k_hash = hash_fn};
@@ -265,10 +266,13 @@ static void tmap_generic_tests(enum HXmap_type type,
 	tmap_flush(map, false);
 
 	tmap_add_rand(map, 2);
-	tmap_flat(map);
+	int ret = tmap_flat(map);
+	if (ret != EXIT_SUCCESS)
+		return ret;
 	tmap_trav(map);
 	tmap_flush(map, true);
 	HXmap_free(map);
+	return EXIT_SUCCESS;
 }
 
 static int tmap_strtolcmp(const void *a, const void *b, size_t z)
@@ -722,15 +726,16 @@ static void tmap_zero(void)
 		fprintf(stderr, "eek!\n");
 }
 
-int main(void)
+static int runner(void)
 {
 	if (HX_init() <= 0)
-		abort();
-
+		return EXIT_FAILURE;
 	tmap_zero();
 
 	tmap_printf("* HXhashmap\n");
-	tmap_generic_tests(HXMAPT_HASH, HXhash_djb2, "DJB2");
+	int ret = tmap_generic_tests(HXMAPT_HASH, HXhash_djb2, "DJB2");
+	if (ret != EXIT_SUCCESS)
+		return ret;
 	tmap_generic_tests(HXMAPT_HASH, HXhash_jlookup3s, "JL3");
 	tmap_hmap_test_1();
 
@@ -741,4 +746,12 @@ int main(void)
 
 	HX_exit();
 	return EXIT_SUCCESS;
+}
+
+int main(void)
+{
+	int ret = runner();
+	if (ret != EXIT_SUCCESS)
+		fprintf(stderr, "FAILED\n");
+	return ret;
 }

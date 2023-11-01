@@ -25,7 +25,7 @@ static void lookatdir(const char *dname)
 int main(int argc, const char **argv)
 {
 	if (HX_init() <= 0)
-		abort();
+		return EXIT_FAILURE;
 	if (argc == 1) {
 		/* On Windows VCRT, "/" yields nothing, "c:/" is needed */
 		lookatdir("/");

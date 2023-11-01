@@ -26,7 +26,7 @@ static void t_shconfig(const char *file)
 		fprintf(stderr, "Read error %s: %s\n", file, strerror(errno));
 }
 
-static void t_shconfig2(const char *file)
+static int t_shconfig2(const char *file)
 {
 	const struct HXmap_node *node;
 	struct HXmap_trav *trav;
@@ -35,15 +35,16 @@ static void t_shconfig2(const char *file)
 	map = HX_shconfig_map(file);
 	if (map == NULL) {
 		fprintf(stderr, "HX_shconfig_map: %s\n", strerror(errno));
-		abort();
+		return EXIT_FAILURE;
 	}
 	trav = HXmap_travinit(map, HXMAP_NOFLAGS);
 	while ((node = HXmap_traverse(trav)) != NULL)
 		printf("\t\"%s\" -> \"%s\"\n", node->skey, node->sdata);
 	HXmap_travfree(trav);
+	return EXIT_SUCCESS;
 }
 
-int main(int argc, const char **argv)
+static int runner(int argc, const char **argv)
 {
 	int ret;
 
@@ -53,7 +54,17 @@ int main(int argc, const char **argv)
 		return EXIT_FAILURE;
 	}
 	t_shconfig((argc >= 2) ? argv[1] : "tc-shconf.c");
-	t_shconfig2((argc >= 2) ? argv[1] : "tc-shconf.c");
+	ret = t_shconfig2((argc >= 2) ? argv[1] : "tc-shconf.c");
+	if (ret != EXIT_SUCCESS)
+		return ret;
 	HX_exit();
 	return EXIT_SUCCESS;
+}
+
+int main(int argc, const char **argv)
+{
+	int ret = runner(argc, argv);
+	if (ret != EXIT_SUCCESS)
+		fprintf(stderr, "FAILED\n");
+	return ret;
 }

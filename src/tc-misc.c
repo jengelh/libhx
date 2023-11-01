@@ -8,13 +8,13 @@
 #include <libHX/init.h>
 #include <libHX/misc.h>
 
-int main(int argc, const char **argv)
+static int runner(int argc, const char **argv)
 {
 	unsigned int n;
 	struct stat sa, sb;
 
 	if (HX_init() <= 0)
-		abort();
+		return EXIT_FAILURE;
 	printf("%d\n", HX_ffs(0));
 	for (n = 1; ; n <<= 1) {
 		printf("%08x = %d\n", n, HX_ffs(n));
@@ -30,12 +30,23 @@ int main(int argc, const char **argv)
 
 	if (argc >= 3) {
 		if (stat(argv[1], &sa) < 0 ||
-		    stat(argv[2], &sb) < 0)
+		    stat(argv[2], &sb) < 0) {
 			perror("stat");
-		else
+			return EXIT_FAILURE;
+		} else {
 			printf("Difference: %ld\n", HX_time_compare(&sa, &sb, 'm'));
+			return EXIT_FAILURE;
+		}
 	}
 
 	HX_exit();
 	return EXIT_SUCCESS;
+}
+
+int main(int argc, const char **argv)
+{
+	int ret = runner(argc, argv);
+	if (ret != EXIT_FAILURE)
+		fprintf(stderr, "FAILED\n");
+	return ret;
 }

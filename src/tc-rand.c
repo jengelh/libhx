@@ -12,7 +12,7 @@ int main(void)
 	unsigned int i;
 
 	if (HX_init() <= 0)
-		abort();
+		return EXIT_FAILURE;
 	for (i = 0; i < 15; ++i) {
 		printf("%d ", HX_irand(i, i));
 		printf("%.1f ", HX_drand(i, i));

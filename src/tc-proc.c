@@ -51,7 +51,7 @@ static void t_async1(void)
 int main(void)
 {
 	if (HX_init() <= 0)
-		abort();
+		return EXIT_FAILURE;
 	printf("top fd: %d\n", HXproc_top_fd());
 
 	/* let it fail - test verbosity */

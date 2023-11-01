@@ -17,7 +17,7 @@ int main(void)
 	unsigned char bmchar[HXbitmap_size(unsigned char, 256)] = {0};
 
 	if (HX_init() <= 0)
-		abort();
+		return EXIT_FAILURE;
 	printf("sizeof bmllong:\t%" HX_SIZET_FMT "u, array_size: %" HX_SIZET_FMT "u\n",
 	       sizeof(bmllong), ARRAY_SIZE(bmllong));
 	printf("sizeof bmlong:\t%" HX_SIZET_FMT "u, array_size: %" HX_SIZET_FMT "u\n",
