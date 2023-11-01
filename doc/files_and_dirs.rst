@@ -186,21 +186,26 @@ call is allowed to exhibit. On success, the return value indicates the number
 of bytes read, which may be shorter than ``size`` if EOF was encountered. On
 error, the return value is negative (but no particular one value).
 
-There is no way with just HXio_fullread to know the number of bytes that were
-read up to the point that the error occurred. (As this issue went
-"undiscovered" for 13 years, it goes to show that the use sites of
-HXio_fullread do not care for the byte count when that happened. If the file
-descriptor is seekable, one could ask for the position via ``lseek``(2),
-though.)
-
 ``HXio_fullwrite`` calls ``write``(2) in a loop so long as to completely write
 ``size`` bytes, and thereby masking short write behavior that the *write*
 system call is allowed to exhibit. On success, the return value is the same as
-``size`` (as there is never an EOF condition for writes). On error, the return
+``size``, as there is never an EOF condition for writes. On error, the return
 value is negative.
 
-There is no way with HXio_fullwrite to know the number of bytes that were
-written up to the point that the error occurred similar to HXio_fullread.
+There is no way with just HXio_fullwrite to know the number of bytes that were
+read up to the point that the error occurred. This was a subconscious design
+choice in 2010. The reasoning (as of 2023) goes: If the file descriptor is not
+seekable, like a socket or pipe, what are you going to do anyway but abort? You
+cannot recall the data that was sent, the peer already knows how much was sent
+thanks to their socket interface. The peer also either caused the abort itself
+(e.g. by closing the read end of a pipe), or is made aware of connection
+severing (will see EOF). If the file descriptor is seekable, there is no "peer"
+and one can ``lseek`` back and retract the data.
+
+The HXio_fullread API mirrors that of HXio_fullwrite for API consistency. Input
+is often discarded and an error shown instead. However, we acknowledge there
+might be a legitimate case (e.g. wanting to render an incoming image even if
+incomplete), but in this case, HXio_fullread is not for you.
 
 ``HX_sendfile`` wraps ``sendfile``(2) for the same reason; in addition, it
 falls back to a read-write loop on platforms which do not offer sendfile.
