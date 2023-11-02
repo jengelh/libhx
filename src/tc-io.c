@@ -20,7 +20,10 @@ static void sf(void)
 		return;
 	}
 	ssize_t ret = HX_sendfile(dst, src, SIZE_MAX);
-	printf("sendfile transferred %zd bytes\n", ret);
+	if (ret < 0)
+		printf("sendfile: %s\n", strerror(errno));
+	else
+		printf("sendfile transferred %zd bytes\n", ret);
 	close(dst);
 	close(src);
 }

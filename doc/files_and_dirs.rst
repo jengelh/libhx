@@ -209,3 +209,15 @@ incomplete), but in this case, HXio_fullread is not for you.
 
 ``HX_sendfile`` wraps ``sendfile``(2) for the same reason; in addition, it
 falls back to a read-write loop on platforms which do not offer sendfile.
+``HX_sendfile`` will transfer at most ``SSIZE_MAX`` bytes in one call. A user
+wishing to emit somewhat more (e.g. still less than ``SIZE_MAX``) will have to
+write a loop around HXio_sendfile, just like for sendfile. On success, the
+return value is the request number of bytes. On error, the return value may be
+a negative errno (``errno`` is set too), or it may be the number of bytes from
+a partially-completed send.
+
+	.. code-block:: c
+
+	ssize_t ret = HX_sendfile(dst, src, count);
+	if (ret < 0 || (ssize_t)ret < count)
+		fprintf(stderr, "sendfile: %s\n", strerror(errno));
