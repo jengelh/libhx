@@ -665,16 +665,13 @@ static ssize_t HX_sendfile_rw(int dst, int src, size_t count)
 		size_t readsize = bufsize;
 		if (count < readsize)
 			readsize = count;
+		/* Return value of fullread/write is same as read/write(2). */
 		ret = HXio_fullread(src, buf, readsize);
-		if (ret < 0) {
-			errno = -ret;
+		if (ret < 0)
 			break;
-		}
 		ret = HXio_fullwrite(dst, buf, ret);
-		if (ret < 0) {
-			errno = -ret;
+		if (ret < 0)
 			break;
-		}
 		xferd += ret;
 		count -= ret;
 	}
