@@ -1,9 +1,11 @@
-HEAD
-====
+v4.16 (2023-11-02)
+==================
 
 Enhancements:
 
 * Add ``HX_strtoull_nsec`` to parse time period and emit nanoseconds
+* doc: specify return value and semantics for ``HXio_fullread``,
+  ``HXio_fullwrite``, ``HX_sendfile``
 
 
 v4.15 (2023-09-24)
