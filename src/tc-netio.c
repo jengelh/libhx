@@ -19,11 +19,12 @@
 #endif
 #include <libHX/init.h>
 #include <libHX/io.h>
+#include "internal.h"
 
 static int runner(void)
 {
 	const char id[] = "SSH-2.0-OpenSSH_9.9";
-	struct addrinfo *res;
+	struct addrinfo *res = nullptr;
 	int fd, ret;
 
 	if ((ret = HX_init()) <= 0) {
@@ -38,14 +39,18 @@ static int runner(void)
 	}
 	if (getaddrinfo("::1", "22", NULL, &res) < 0) {
 		perror("getaddrinfo");
+		close(fd);
 		return EXIT_FAILURE;
 	}
 	if (connect(fd, res->ai_addr, res->ai_addrlen) < 0) {
 		perror("connect");
+		freeaddrinfo(res);
+		close(fd);
 		return EXIT_FAILURE;
 	}
 	if (HXio_fullwrite(fd, id, strlen(id)) < 0)
 		perror("write");
+	freeaddrinfo(res);
 	close(fd);
 	HX_exit();
 	return EXIT_SUCCESS;

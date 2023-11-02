@@ -57,8 +57,10 @@ static int runner(void)
 	printf("%p\n", HX_memmem(filler_text, strlen(filler_text), "ngl", 3));
 
 	int ret = long_scan();
-	if (ret != EXIT_SUCCESS)
+	if (ret != EXIT_SUCCESS) {
+		free(haystack);
 		return ret;
+	}
 	for (i = 0; i < 10; ++i) {
 		printf("Search length %u...", i);
 		clock_gettime(CLOCK_THREAD_CPUTIME_ID, &start);
@@ -68,6 +70,7 @@ static int runner(void)
 		printf(HX_TIMESPEC_FMT "\n", HX_TIMESPEC_EXP(&delta));
 	}
 
+	free(haystack);
 	HX_exit();
 	return EXIT_SUCCESS;
 }
