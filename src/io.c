@@ -655,7 +655,7 @@ static ssize_t HX_sendfile_rw(int dst, int src, size_t count)
 {
 	static const size_t bufsize = 0x10000;
 	size_t xferd = 0;
-	ssize_t ret;
+	ssize_t ret = 0;
 	void *buf = malloc(bufsize);
 	if (buf == nullptr)
 		return -ENOMEM;
