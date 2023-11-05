@@ -9,4 +9,4 @@ Description:	Useful collection of routines for C and C++ programming
 Version:	@PACKAGE_VERSION@
 Cflags:		-I${includedir}
 Libs:		-L${libdir} -lHX
-Libs.private:	@libdl_LIBS@ @libpthread_LIBS@ @librt_LIBS@
+Libs.private:	@libdl_LIBS@ @libpthread_LIBS@ @librt_LIBS@ @libsocket_LIBS@
