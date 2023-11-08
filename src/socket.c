@@ -47,6 +47,11 @@
 #ifndef AI_V4MAPPED
 #	define AI_V4MAPPED 0
 #endif
+#ifdef SOCK_CLOEXEC
+#	define PLATFORM_SKFLAGS SOCK_CLOEXEC
+#else
+#	define PLATFORM_SKFLAGS 0
+#endif
 
 /**
  * Return the pointer to the singular colon character, any other input
@@ -152,7 +157,8 @@ int HX_inet_connect(const char *host, uint16_t port, unsigned int oflags)
 	if (ret != 0)
 		;
 	for (const struct addrinfo *r = aires; r != nullptr; r = r->ai_next) {
-		int fd = socket(r->ai_family, r->ai_socktype, r->ai_protocol);
+		int fd = socket(r->ai_family, r->ai_socktype | PLATFORM_SKFLAGS,
+		         r->ai_protocol);
 		if (fd < 0) {
 			if (saved_errno == 0)
 				saved_errno = errno;
@@ -195,7 +201,8 @@ int HX_inet_connect(const char *host, uint16_t port, unsigned int oflags)
 
 static int HX_gai_listen(const struct addrinfo *r)
 {
-	int fd = socket(r->ai_family, r->ai_socktype, r->ai_protocol);
+	int fd = socket(r->ai_family, r->ai_socktype | PLATFORM_SKFLAGS,
+	         r->ai_protocol);
 	if (fd < 0)
 		return -2;
 	static const int y = 1;
@@ -282,7 +289,7 @@ int HX_local_listen(const char *path)
 	if (!S_ISSOCK(sb.st_mode))
 		return -ENOTSOCK;
 
-	int testfd = socket(AF_LOCAL, SOCK_STREAM, 0);
+	int testfd = socket(AF_LOCAL, SOCK_STREAM | PLATFORM_SKFLAGS, 0);
 	if (testfd < 0)
 		return -errno;
 	ret = connect(testfd, r.ai_addr, r.ai_addrlen);
@@ -388,8 +395,12 @@ EXPORT_SYMBOL int HX_socket_from_env(const struct addrinfo *ai, const char *intf
 		top_fd = x;
 	}
 	for (int fd = 3; fd < top_fd; ++fd)
-		if (try_sk_from_env(fd, ai, intf) == fd)
+		if (try_sk_from_env(fd, ai, intf) == fd) {
+#ifdef SOCK_CLOEXEC
+			fcntl(fd, F_SETFD, fcntl(fd, F_GETFD, 0) | FD_CLOEXEC);
+#endif
 			return fd;
+		}
 	errno = ENOENT;
 	return -1;
 }
@@ -415,7 +426,7 @@ static int linux_sockaddr_local3(int sk, const void *buf, size_t bufsize)
 
 static int linux_sockaddr_local2(const struct sockaddr *sa, socklen_t sl)
 {
-	int sk = socket(AF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE);
+	int sk = socket(AF_NETLINK, SOCK_DGRAM | PLATFORM_SKFLAGS, NETLINK_ROUTE);
 	if (sk < 0)
 		return -errno;
 	struct {
@@ -474,7 +485,7 @@ static int openbsd_sockaddr_local3(int rsk, const void *buf, size_t bufsize)
 
 static int openbsd_sockaddr_local2(const struct sockaddr *sa, socklen_t sl)
 {
-	int sk = socket(AF_ROUTE, SOCK_RAW, AF_UNSPEC);
+	int sk = socket(AF_ROUTE, SOCK_RAW | PLATFORM_SKFLAGS, AF_UNSPEC);
 	if (sk < 0)
 		return -errno;
 	struct {

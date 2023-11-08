@@ -31,27 +31,31 @@ Socket functions
 	system defaults. (It may choose whatever protocol is offered by the
 	system.) ``oflags`` is a bitset which may contain ``O_NONBLOCK``, else
 	must be 0. Upon success, a socket file descriptor is returned. Upon
-	failure, a negative errno code is returned.
+	failure, a negative errno code is returned. The socket will have
+	``SOCK_CLOEXEC`` set by default if the platform supports it.
 
 ``HX_inet_listen``
 	The function first resolves ``host`` using ``getaddrinfo()` with
 	``AI_PASSIVE``, then using ``HX_socket_from_env`` looks in the
 	environment for a matching socket to pick up, and otherwise uses the
 	first result from getaddrinfo to create a new socket. Upon error, a
-	negative errno value is returned.
+	negative errno value is returned. The socket will have ``SOCK_CLOEXEC``
+	set by default if the platform supports it.
 
 ``HX_local_listen``
 	The function creates a local system-specific socket. Using
 	``HX_socket_from_env``, it will attempt to pick up a matching socket
 	from the environment, and otherwise create a new socket. Upon error, a
-	negative errno value is returned.
+	negative errno value is returned. The socket will have ``SOCK_CLOEXEC``
+	set by default if the platform supports it.
 
 ``HX_socket_from_env``
 	The function looks up the current process's file descriptors for a
 	socket that is listening and which matches the given addrinfo and
 	(optionally) intf if the latter is not NULL``. Upon success, the fd
 	number is returned, or -1 if no file descriptor matched. No errors are
-	signalled.
+	signalled. Before this function returns a file descriptor, it sets
+	``SOCK_CLOEXEC``.
 
 ``HX_sockaddr_is_local``
 	Attempts to determine if the given socket address refers to a local
