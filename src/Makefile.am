@@ -31,7 +31,7 @@ if WITH_GNU_LD
 libHX_rtcheck_la_LDFLAGS += -Wl,--version-script=${srcdir}/libHX.map
 endif
 
-EXTRA_DIST = internal.h map_int.h libHX.map
+EXTRA_DIST = internal.h map_int.h libHX.map uxcompat.h
 
 check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-io \
                      tc-list tc-list2 tc-map tc-memmem tc-misc tc-netio \
