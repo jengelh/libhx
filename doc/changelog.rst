@@ -1,3 +1,11 @@
+v4.17 (2023-11-12)
+==================
+
+Changes:
+
+* socket: set SOCK_CLOEXEC on all sockets
+
+
 v4.16 (2023-11-02)
 ==================
 
