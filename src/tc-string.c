@@ -197,93 +197,6 @@ static void t_split2(void)
 	HX_zvecfree(a);
 }
 
-/* avoid these being inlined */
-extern char *f_strlcpy_str(char *, const char *, size_t);
-extern char *f_strlcpy_mem(char *, const char *, size_t);
-
-EXPORT_SYMBOL char *f_strlcpy_str(char *d, const char *s, size_t n)
-{
-	if (n == 0)
-		return d;
-	strncpy(d, s, n);
-	d[n-1] = '\0';
-	return d;
-}
-
-EXPORT_SYMBOL char *f_strlcpy_mem(char *dest, const char *src, size_t dsize)
-{
-	size_t slen = strlen(src);
-	if (slen < dsize)
-		return static_cast(char *, memcpy(dest, src, slen + 1));
-	if (dsize > 0) {
-		memcpy(dest, src, dsize - 1);
-		dest[dsize-1] = '\0';
-	}
-	return dest;
-}
-
-static const char s_lorem_ipsum[] = /* 1368 chars */
-"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo "
-"ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis "
-"parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, "
-"pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec "
-"pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, "
-"rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede "
-"mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper "
-"nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, "
-"consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra "
-"quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. "
-"Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur "
-"ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, "
-"tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing "
-"sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit "
-"id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut "
-"libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros "
-"faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec "
-"sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit "
-"cursus nunc,";
-
-static void t_strlcpy(void)
-{
-	static const size_t picksizes[] =
-		{4, 8, 16, 32, 64, 80, 128, 256, 1024, 2048};
-	char ibuf[2048], obuf[2048];
-	size_t ipick, opick, k, runs = 10000000 + HX_irand(0, 1);
-	struct timespec start, stop, d1, d2, d3;
-
-	for (ipick = 0; ipick < ARRAY_SIZE(picksizes); ++ipick) {
-		/* Select string size */
-		HX_strlcpy(ibuf, s_lorem_ipsum, picksizes[ipick]);
-
-		for (opick = 0; opick < ARRAY_SIZE(picksizes); ++opick) {
-			/* Select buffer size */
-			clock_gettime(CLOCK_MONOTONIC, &start);
-			for (k = 0; k < runs; ++k)
-				f_strlcpy_str(reinterpret_cast(char *, obuf),
-					ibuf, picksizes[opick]);
-			clock_gettime(CLOCK_MONOTONIC, &stop);
-			HX_timespec_sub(&d1, &stop, &start);
-
-			clock_gettime(CLOCK_MONOTONIC, &start);
-			for (k = 0; k < runs; ++k)
-				f_strlcpy_mem(reinterpret_cast(char *, obuf),
-					ibuf, picksizes[opick]);
-			clock_gettime(CLOCK_MONOTONIC, &stop);
-			HX_timespec_sub(&d2, &stop, &start);
-
-			HX_timespec_sub(&d3, &d1, &d2);
-			printf("%4zu->%4zu: " HX_TIMESPEC_FMT
-			       " (str=" HX_TIMESPEC_FMT
-			       " mem=" HX_TIMESPEC_FMT ")\n",
-				strlen(ibuf), picksizes[opick],
-				HX_TIMESPEC_EXP(&d3),
-				HX_TIMESPEC_EXP(&d1),
-				HX_TIMESPEC_EXP(&d2)
-				);
-		}
-	}
-}
-
 static void t_strlcpy2(void)
 {
 	char a[3] = {49, 49, 49};
@@ -575,7 +488,6 @@ static int runner(int argc, char **argv)
 		return EXIT_FAILURE;
 	t_time_units();
 	t_time_strto();
-	t_strlcpy();
 	t_strlcpy2();
 	HXmc_free(tx);
 	HX_exit();
