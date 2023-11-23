@@ -22,7 +22,7 @@ static void lookatdir(const char *dname)
 	HXdir_close(dh);
 }
 
-int main(int argc, const char **argv)
+int main(int argc, char **argv)
 {
 	if (HX_init() <= 0)
 		return EXIT_FAILURE;

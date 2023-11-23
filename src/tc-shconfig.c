@@ -44,7 +44,7 @@ static int t_shconfig2(const char *file)
 	return EXIT_SUCCESS;
 }
 
-static int runner(int argc, const char **argv)
+static int runner(int argc, char **argv)
 {
 	int ret;
 
@@ -61,7 +61,7 @@ static int runner(int argc, const char **argv)
 	return EXIT_SUCCESS;
 }
 
-int main(int argc, const char **argv)
+int main(int argc, char **argv)
 {
 	int ret = runner(argc, argv);
 	if (ret != EXIT_SUCCESS)

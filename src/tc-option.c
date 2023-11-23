@@ -64,27 +64,31 @@ static struct HXoption table[] = {
 	HXOPT_TABLEEND,
 };
 
-static void dump_argv(const char **v)
+static void dump_argv(char **v)
 {
 	while (*v != NULL)
 		printf("[%s] ", *v++);
 	printf("\n");
 }
 
-static void t_pthru(void)
+static int t_pthru(void)
 {
 	const char *argv[] = {
 		"ARGV0", "-Zomg", "-GZfoo", "bar",
 		"--unknown-f=13.37", "--unknown-a",
 		"foo", "bar", NULL
 	};
-	const char **argp = argv;
+	char **argp = const_cast(char **, argv);
 	int argc = ARRAY_SIZE(argv) - 1;
 
 	printf("PTHRU test:\n");
-	HX_getopt(table, &argc, &argp, HXOPT_USAGEONERR | HXOPT_PTHRU);
+	int ret = HX_getopt(table, &argc, &argp, HXOPT_USAGEONERR | HXOPT_PTHRU);
+	if (ret != HXOPT_ERR_SUCCESS)
+		return EXIT_FAILURE;
 	dump_argv(argp);
 	printf("\n");
+	HX_zvecfree(argp);
+	return EXIT_SUCCESS;
 }
 
 static void t_empty_argv(void)
@@ -96,7 +100,7 @@ static void t_empty_argv(void)
 	HX_getopt(table, &zero_argc, &zero_argp, HXOPT_USAGEONERR);
 }
 
-int main(int argc, const char **argv)
+int main(int argc, char **argv)
 {
 	if (HX_init() <= 0)
 		return EXIT_FAILURE;
@@ -111,8 +115,7 @@ int main(int argc, const char **argv)
 	printf("Mask: 0x%08X\n", opt_mask);
 	printf("mcstr: >%s<\n", opt_mcstr);
 
-	t_pthru();
-
+	int ret = t_pthru();
 	HX_exit();
-	return EXIT_SUCCESS;
+	return ret;
 }

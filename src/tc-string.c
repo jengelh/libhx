@@ -515,7 +515,7 @@ static int t_strmid(void)
 #undef T
 }
 
-static int runner(int argc, const char **argv)
+static int runner(int argc, char **argv)
 {
 	hxmc_t *tx = NULL;
 	const char *file = (argc >= 2) ? argv[1] : "tx-string.cpp";
@@ -568,7 +568,7 @@ static int runner(int argc, const char **argv)
 	return EXIT_SUCCESS;
 }
 
-int main(int argc, const char **argv)
+int main(int argc, char **argv)
 {
 	int ret = runner(argc, argv);
 	if (ret != EXIT_FAILURE)

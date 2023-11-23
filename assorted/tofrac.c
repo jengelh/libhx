@@ -52,7 +52,7 @@ static bool HX_tofrac(double arg, unsigned long *num, unsigned long *denom)
 	return false;
 }
 
-int main(int argc, const char **argv)
+int main(int argc, char **argv)
 {
 	unsigned long d = 1, n = ULONG_MAX;
 

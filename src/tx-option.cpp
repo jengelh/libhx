@@ -12,8 +12,10 @@ static const struct HXoption t[] = {
 	HXOPT_TABLEEND,
 };
 
-int main(int argc, const char **argv)
+int main(int argc, char **argv)
 {
-	HX_getopt(t, &argc, &argv, HXOPT_USAGEONERR);
+	if (HX_getopt(t, &argc, &argv, HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
+		return EXIT_FAILURE;
+	HX_zvecfree(argv);
 	return EXIT_SUCCESS;
 }

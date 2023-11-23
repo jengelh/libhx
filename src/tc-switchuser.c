@@ -19,9 +19,10 @@ static const struct HXoption options_table[] = {
 	HXOPT_TABLEEND,
 };
 
-static int runner(int argc, const char **argv)
+static int runner(int argc, char **argv)
 {
-	HX_getopt(options_table, &argc, &argv, HXOPT_USAGEONERR);
+	if (HX_getopt(options_table, &argc, &argv, HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
+		return EXIT_FAILURE;
 	const char *user = user_name != NULL ? user_name : "-";
 	const char *group = group_name != NULL ? group_name : "-";
 	switch (HXproc_switch_user(user_name, group_name)) {
@@ -62,10 +63,11 @@ static int runner(int argc, const char **argv)
 		break;
 	}
 	}
+	HX_zvecfree(argv);
 	return EXIT_SUCCESS;
 }
 
-int main(int argc, const char **argv)
+int main(int argc, char **argv)
 {
 	int ret = runner(argc, argv);
 	if (ret != EXIT_SUCCESS)

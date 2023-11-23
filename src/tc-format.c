@@ -73,7 +73,7 @@ static int t_format(int argc)
 	return EXIT_SUCCESS;
 }
 
-int main(int argc, const char **argv)
+int main(int argc, char **argv)
 {
 	int ret;
 

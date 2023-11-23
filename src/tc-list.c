@@ -138,7 +138,7 @@ static void l_shift(void)
 #pragma GCC diagnostic pop
 }
 
-static int runner(int argc, const char **argv)
+static int runner(int argc, char **argv)
 {
 	unsigned int max = 10;
 
@@ -157,7 +157,7 @@ static int runner(int argc, const char **argv)
 	return EXIT_SUCCESS;
 }
 
-int main(int argc, const char **argv)
+int main(int argc, char **argv)
 {
 	int ret = runner(argc, argv);
 	if (ret != EXIT_FAILURE)

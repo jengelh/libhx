@@ -24,7 +24,7 @@ static const struct HXoption rp_option_table[] = {
 	HXOPT_TABLEEND,
 };
 
-static bool rp_get_options(int *argc, const char ***argv)
+static bool rp_get_options(int *argc, char ***argv)
 {
 	if (HX_getopt(rp_option_table, argc, argv, HXOPT_USAGEONERR) !=
 	    HXOPT_ERR_SUCCESS)
@@ -47,7 +47,7 @@ static void t_1(void)
 	HXmc_free(tmp);
 }
 
-int main(int argc, const char **argv)
+int main(int argc, char **argv)
 {
 	hxmc_t *res;
 	int ret;
@@ -57,8 +57,8 @@ int main(int argc, const char **argv)
 	t_1();
 
 	res = NULL;
-	while (--argc > 0) {
-		ret = HX_realpath(&res, *++argv, rp_flags);
+	for (int i = 1; i < argc; ++i) {
+		ret = HX_realpath(&res, argv[argc], rp_flags);
 		if (ret < 0) {
 			perror("HX_realpath");
 			printf("\n");
@@ -66,5 +66,6 @@ int main(int argc, const char **argv)
 			printf("%s\n", res);
 		}
 	}
+	HX_zvecfree(argv);
 	return EXIT_SUCCESS;
 }
