@@ -980,6 +980,7 @@ EXPORT_SYMBOL double HX_strtod_unit(const char *s, char **out_end, unsigned int 
 	if (end == s) {
 		if (out_end != nullptr)
 			*out_end = end;
+		errno = 0;
 		return q;
 	}
 	while (HX_isspace(*end))
@@ -988,10 +989,12 @@ EXPORT_SYMBOL double HX_strtod_unit(const char *s, char **out_end, unsigned int 
 	if (pwr == 0) {
 		if (out_end != nullptr)
 			*out_end = const_cast(char *, end);
+		errno = 0;
 		return q;
 	}
 	if (out_end != nullptr)
 		*out_end = const_cast(char *, end + 1);
+	errno = 0;
 	return q * pow(exponent, pwr);
 }
 
@@ -1023,8 +1026,11 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 		double q = HX_strtod_unit(s, out_end, exponent);
 		bool lo_ok = q >= nextafter(-static_cast(double, ULLONG_MAX), 0);
 		bool hi_ok = q <= nextafter(static_cast(double, ULLONG_MAX), 0);
-		if (!hi_ok || !lo_ok)
+		if (!hi_ok || !lo_ok) {
+			errno = ERANGE;
 			return ULLONG_MAX;
+		}
+		errno = 0;
 		return neg ? -q : q;
 	}
 	if (exponent == 0)
@@ -1035,6 +1041,7 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 	if (pwr == 0) {
 		if (out_end != nullptr)
 			*out_end = end;
+		errno = 0;
 		return neg ? -ipart: ipart;
 	}
 	if (out_end != nullptr)
@@ -1046,6 +1053,7 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 		}
 		ipart *= exponent;
 	}
+	errno = 0;
 	return neg ? -ipart : ipart;
 }
 
