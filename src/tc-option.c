@@ -91,22 +91,27 @@ static int t_pthru(void)
 	return EXIT_SUCCESS;
 }
 
-static void t_empty_argv(void)
+static int t_empty_argv(void)
 {
-	const char *zero_argv[] = {NULL}, **zero_argp = zero_argv;
+	char *zero_argv[] = {NULL}, **zero_argp = zero_argv;
 	int zero_argc = 0;
 
 	printf("Testing argv={NULL}\n");
-	HX_getopt(table, &zero_argc, &zero_argp, HXOPT_USAGEONERR);
+	if (HX_getopt(table, &zero_argc, &zero_argp,
+	    HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
+		return EXIT_FAILURE;
+	HX_zvecfree(zero_argp);
+	return EXIT_SUCCESS;
 }
 
-int main(int argc, char **argv)
+static int runner(int argc, char **argv)
 {
-	if (HX_init() <= 0)
-		return EXIT_FAILURE;
-	printf("Return value of HX_getopt: %d\n",
-	       HX_getopt(table, &argc, &argv, HXOPT_USAGEONERR));
-	t_empty_argv();
+	int ret = HX_getopt(table, &argc, &argv, HXOPT_USAGEONERR);
+	printf("Return value of HX_getopt: %d\n", ret);
+	HX_zvecfree(argv);
+	ret = t_empty_argv();
+	if (ret != EXIT_SUCCESS)
+		return ret;
 
 	printf("Either-or is: %s\n", opt_eitheror[opt_dst]);
 	printf("values: D=%lf I=%d L=%ld S=%s\n",
@@ -114,8 +119,16 @@ int main(int argc, char **argv)
 	printf("Verbosity level: %d\n", opt_v);
 	printf("Mask: 0x%08X\n", opt_mask);
 	printf("mcstr: >%s<\n", opt_mcstr);
+	return t_pthru();
+}
 
-	int ret = t_pthru();
+int main(int argc, char **argv)
+{
+	if (HX_init() <= 0)
+		return EXIT_FAILURE;
+	int ret = runner(argc, argv);
+	if (ret != EXIT_SUCCESS)
+		printf("FAILED\n");
 	HX_exit();
 	return ret;
 }
