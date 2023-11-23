@@ -5,10 +5,6 @@ AM_CFLAGS   = ${regular_CFLAGS}
 AM_CXXFLAGS = ${regular_CXXFLAGS}
 
 lib_LTLIBRARIES  = libHX.la
-if HAVE_DLFCN_H
-lib_LTLIBRARIES += libHX_rtcheck.la
-endif
-
 libHX_la_SOURCES = deque.c dl.c format.c io.c map.c \
                    mc.c misc.c opt.c proc.c \
                    rand.c socket.c string.c time.c
@@ -22,13 +18,6 @@ EXTRA_libHX_la_DEPENDENCIES = libHX.map
 if MINGW32
 libHX_la_SOURCES += ux-file.c ux-mmap.c
 libHX_la_LIBADD += -lws2_32
-endif
-
-libHX_rtcheck_la_SOURCES = rtcheck.c
-libHX_rtcheck_la_LIBADD  = ${libdl_LIBS}
-libHX_rtcheck_la_LDFLAGS = -no-undefined -avoid-version -module
-if WITH_GNU_LD
-libHX_rtcheck_la_LDFLAGS += -Wl,--version-script=${srcdir}/libHX.map
 endif
 
 EXTRA_DIST = internal.h map_int.h libHX.map uxcompat.h
