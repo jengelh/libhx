@@ -1057,8 +1057,9 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 	return neg ? -ipart : ipart;
 }
 
-#define SECONDS_PER_YEAR 31557600
-#define SECONDS_PER_MONTH 2629800
+/* Numbers also used by systemd — the focus is on longterm averages */
+#define SECONDS_PER_YEAR 31557600 /* 365.25 days */
+#define SECONDS_PER_MONTH 2629800 /* 1/12th of that year = 30.4375 days */
 #define NSEC_PER_SECOND 1000000000ULL
 
 static const struct {

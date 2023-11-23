@@ -350,7 +350,7 @@ static int t_units_strto(void)
 	return EXIT_SUCCESS;
 }
 
-static void t_time_units(void)
+static int t_time_units(void)
 {
 	static const struct {
 		unsigned long long input;
@@ -359,10 +359,13 @@ static void t_time_units(void)
 	} vt[] = {
 		{31536000, 0, "365d"},
 		{31622400, 0, "366d"},
-		{31622400, HXUNIT_YEARS, "1y18h"},
-		{31622400, HXUNIT_MONTHS, "1y"},
-		{31622400, HXUNIT_WEEKS, "1y"},
-		{31622400, HXUNIT_MONTHS | HXUNIT_WEEKS, "1y"},
+		{34819200, HXUNIT_WEEKS, "57weeks4d"},
+		{34819200, HXUNIT_MONTHS, "13months7d7h30min"},
+		{34819200, HXUNIT_MONTHS | HXUNIT_WEEKS, "13months1week7h30min"},
+		{34819200, HXUNIT_YEARS, "1y37d18h"},
+		{34819200, HXUNIT_YEARS | HXUNIT_WEEKS, "1y5weeks2d18h"},
+		{34819200, HXUNIT_YEARS | HXUNIT_MONTHS, "1y1month7d7h30min"},
+		{34819200, HXUNIT_YEARS | HXUNIT_MONTHS | HXUNIT_WEEKS, "1y1month1week7h30min"},
 		{2678400, HXUNIT_MONTHS, "1month13h30min"},
 		{2592000, HXUNIT_MONTHS, "30d"},
 		{608400, HXUNIT_WEEKS, "1week1h"},
@@ -376,13 +379,16 @@ static void t_time_units(void)
 	for (size_t i = 0; i < ARRAY_SIZE(vt); ++i) {
 		char out[60];
 		char *ret = HX_unit_seconds(out, ARRAY_SIZE(out), vt[i].input, vt[i].flags);
-		printf("%llus => \"%s\"\n", vt[i].input, ret);
-		if (strcmp(ret, vt[i].expect_out) != 0)
-			printf("\tBUG, expected \"%s\"\n", vt[i].expect_out);
+		printf("Observed: %llus => \"%s\"\n", vt[i].input, ret);
+		if (strcmp(ret, vt[i].expect_out) != 0) {
+			printf("Expected: \"%s\"\n", vt[i].expect_out);
+			return EXIT_FAILURE;
+		}
 	}
+	return EXIT_SUCCESS;
 }
 
-static void t_time_strto(void)
+static int t_time_strto(void)
 {
 	#define NS_PER_S 1000000000ULL
 	static const struct {
@@ -405,12 +411,17 @@ static void t_time_strto(void)
 	for (size_t i = 0; i < ARRAY_SIZE(vt); ++i) {
 		unsigned long long q = HX_strtoull_sec(vt[i].input, &end);
 		unsigned long long qn = HX_strtoull_nsec(vt[i].input, &end);
-		printf("\"%s\" => %llus [%lluns] + \"%s\"\n", vt[i].input, q, qn, end);
-		if (q != vt[i].expect_s || qn != vt[i].expect_ns)
-			printf("\tBUG: expected %llus [%lluns]\n", vt[i].expect_s, vt[i].expect_ns);
-		if (strcmp(end, vt[i].expect_rem) != 0)
-			printf("\tBUG: expected remainder \"%s\"\n", vt[i].expect_rem);
+		printf("Observed: \"%s\" => %llus [%lluns] + \"%s\"\n", vt[i].input, q, qn, end);
+		if (q != vt[i].expect_s || qn != vt[i].expect_ns) {
+			printf("Expected: %llus [%lluns]\n", vt[i].expect_s, vt[i].expect_ns);
+			return EXIT_FAILURE;
+		}
+		if (strcmp(end, vt[i].expect_rem) != 0) {
+			printf("Expected: remainder \"%s\"\n", vt[i].expect_rem);
+			return EXIT_FAILURE;
+		}
 	}
+	return EXIT_SUCCESS;
 }
 
 static int t_strmid(void)
@@ -486,8 +497,12 @@ static int runner(int argc, char **argv)
 	ret = t_units_strto();
 	if (ret != EXIT_SUCCESS)
 		return EXIT_FAILURE;
-	t_time_units();
-	t_time_strto();
+	ret = t_time_units();
+	if (ret != EXIT_SUCCESS)
+		return EXIT_FAILURE;
+	ret = t_time_strto();
+	if (ret != EXIT_SUCCESS)
+		return EXIT_FAILURE;
 	t_strlcpy2();
 	HXmc_free(tx);
 	HX_exit();
