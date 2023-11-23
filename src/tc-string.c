@@ -585,7 +585,7 @@ static int runner(int argc, char **argv)
 int main(int argc, char **argv)
 {
 	int ret = runner(argc, argv);
-	if (ret != EXIT_FAILURE)
+	if (ret == EXIT_FAILURE)
 		fprintf(stderr, "FAILED\n");
 	return ret;
 }

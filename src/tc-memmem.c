@@ -78,7 +78,7 @@ static int runner(void)
 int main(void)
 {
 	int ret = runner();
-	if (ret != EXIT_FAILURE)
+	if (ret == EXIT_FAILURE)
 		fprintf(stderr, "FAILED\n");
 	return ret;
 }
