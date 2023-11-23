@@ -35,7 +35,7 @@ class rdgen {
         fi<rdgen> end(void) { return fi<rdgen>(*this); };
 };
 
-int main(int argc, const char **argv)
+int main(int argc, char **argv)
 {
         for (auto x : rdgen(argc))
                 printf("%d\n", x);

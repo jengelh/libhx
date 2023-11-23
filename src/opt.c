@@ -20,6 +20,7 @@
 #include <libHX/misc.h>
 #include <libHX/option.h>
 #include <libHX/string.h>
+#undef HX_getopt
 #include "internal.h"
 
 /* Definitions */
@@ -698,10 +699,10 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 }
 
 EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
-    const char ***argv, unsigned int flags)
+    char ***argv, unsigned int flags)
 {
 	struct HX_getopt_vars ps;
-	const char **opt = *argv;
+	const char **opt = const_cast(const char **, *argv);
 	int state = HXOPT_S_NORMAL;
 	int ret = -ENOMEM;
 	unsigned int argk;
@@ -765,8 +766,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	}
 
 	if (!(ps.flags & HXOPT_KEEP_ARGV)) {
-		const char **nvec = reinterpret_cast(const char **,
-		                    HXdeque_to_vec(ps.remaining, &argk));
+		char **nvec = reinterpret_cast(char **, HXdeque_to_vec(ps.remaining, &argk));
 		if (nvec == NULL) {
 			ret = -errno;
 			goto out;

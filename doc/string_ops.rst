@@ -64,7 +64,7 @@ Extraction
 
 .. code-block:: c
 
-	int main(int argc, const char **argv)
+	int main(int argc, char **argv)
 	{
 		if (foo())
 			fprintf(stderr, "%s: Special condition occurred.\n",

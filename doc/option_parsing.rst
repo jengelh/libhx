@@ -37,7 +37,7 @@ Synopsis
 		const char *help, *htyp;
 	};
 
-	int HX_getopt(const struct HXoption *options_table, int *argc, const char ***argv, unsigned int flags);
+	int HX_getopt(const struct HXoption *options_table, int *argc, char ***argv, unsigned int flags);
 
 The various fields of ``struct HXoption`` are:
 
@@ -271,7 +271,7 @@ Invoking the parser
 
 .. code-block:: c
 
-	int HX_getopt(const struct HXoption *options_table, int *argc, const char ***argv, unsigned int flags);HX_getopt
+	int HX_getopt(const struct HXoption *options_table, int *argc, char ***argv, unsigned int flags);HX_getopt
 
 ``HX_getopt`` is the actual parsing function. It takes the option table, and a
 pointer to your argc and argv variables that you get from the main function.
@@ -341,7 +341,7 @@ The following is an example of a possible pitfall regarding ``HXTYPE_STRDQ``:
 
 	static struct HXdeque *dq;
 
-	static bool get_options(int *argc, const char ***argv)
+	static bool get_options(int *argc, char ***argv)
 	{
 		static const struct HXoption options_table[] = {
 			{.sh = 'N', .type = HXTYPE_STRDQ, .ptr = dq,
@@ -352,7 +352,7 @@ The following is an example of a possible pitfall regarding ``HXTYPE_STRDQ``:
 		       HXOPT_ERR_SUCCESS;
 	}
 
-	int main(int argc, const char **argv)
+	int main(int argc, char **argv)
 	{
 		dq = HXdeque_init();
 		get_options(&argc, &argv);
@@ -409,7 +409,7 @@ GNU getopt sample.[#f5]
 	#include <stdilb.h>
 	#include <libHX/option.h>
 
-	int main(int argc, const char **argv)
+	int main(int argc, char **argv)
 	{
 		int aflag = 0;
 		int bflag = 0;
@@ -551,7 +551,7 @@ be freed.
 
 .. code-block:: c
 
-	static bool get_cakes(int *argc, const char ***argv)
+	static bool get_cakes(int *argc, char ***argv)
 	{
 		struct HXoption option_table[] = {
 			...
@@ -560,7 +560,7 @@ be freed.
 		       HXOPT_USAGEONERR | HXOPT_DESTROY_OLD) == HXOPT_ERR_SUCCESS;
 	}
 
-	static bool get_fruit(int *argc, const char ***argv)
+	static bool get_fruit(int *argc, char ***argv)
 	{
 		struct HXoption fruit_table[] = {
 			...
@@ -569,7 +569,7 @@ be freed.
 		       HXOPT_USAGEONERR | HXOPT_DESTROY_OLD) == HXOPT_ERR_SUCCESS;
 	}
 
-	static bool get_options(int *argc, const char ***argv)
+	static bool get_options(int *argc, char ***argv)
 	{
 		int cake = 0, fruit = 0;
 		struct HXoption option_table[] = {

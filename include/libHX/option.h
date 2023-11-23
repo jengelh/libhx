@@ -8,6 +8,7 @@
 #	include <stddef.h>
 #	include <stdio.h>
 #endif
+#include <libHX/cast.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -228,8 +229,8 @@ struct HXoption {
 	const char *help, *htyp;
 };
 
-extern int HX_getopt(const struct HXoption *, int *, const char ***,
-	unsigned int);
+extern int HX_getopt(const struct HXoption *, int *, char ***, unsigned int);
+#define HX_getopt(a, b, c, d) HX_getopt((a), (b), const_cast(char ***, (c)), (d))
 extern void HX_getopt_help(const struct HXoptcb *, FILE *);
 extern void HX_getopt_help_cb(const struct HXoptcb *);
 extern void HX_getopt_usage(const struct HXoptcb *, FILE *);

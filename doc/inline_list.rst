@@ -195,7 +195,7 @@ HXdeque:
 
 .. code-block:: c
 
-	int main(int argc, const char **argv)
+	int main(int argc, char **argv)
 	{
 		struct HXdeque *dq = HXdeque_init();
 		while (--argc)
@@ -212,7 +212,7 @@ HXdeque:
 		char *data;
 	};
 
-	int main(int main, const char **argv)
+	int main(int main, char **argv)
 	{
 		HXLIST_HEAD(lh);
 		while (--argc) {
