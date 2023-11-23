@@ -1094,7 +1094,6 @@ static const struct {
 	{"µs",      3, 0, 1000},
 	{"nsec",    4, 0, 1},
 	{"ns",      2, 0, 1},
-	{"",        0, 1, NSEC_PER_SECOND},
 };
 
 static unsigned long long HX_strtoull_time(const char *s, char **out_end, bool nsec)
@@ -1104,6 +1103,7 @@ static unsigned long long HX_strtoull_time(const char *s, char **out_end, bool n
 	while (*s != '\0') {
 		while (HX_isspace(*s))
 			++s;
+		const char *numbegin = s;
 		if (*s == '-')
 			break;
 		char *end = nullptr;
@@ -1123,8 +1123,13 @@ static unsigned long long HX_strtoull_time(const char *s, char **out_end, bool n
 			    time_multiplier[i].len) == 0 &&
 			    !HX_isalpha(s[time_multiplier[i].len]))
 				break;
-		if (i == ARRAY_SIZE(time_multiplier))
+		if (i == ARRAY_SIZE(time_multiplier)) {
+			if ((!have_frac && num == 0) || (have_frac && frac == 0))
+				/* 0 is the same no matter what unit, take it */
+				continue;
+			s = numbegin;
 			break;
+		}
 		unsigned long long mult = nsec ? time_multiplier[i].ns_mult : time_multiplier[i].s_mult;
 		if (have_frac)
 			quant += frac * mult;
