@@ -1001,17 +1001,31 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 	char *end;
 	unsigned long long ipart;
 	unsigned int pwr = 0;
+	bool neg = false;
 
 	while (HX_isspace(*s))
 		++s;
+	if (*s == '-') {
+		/*
+		 * "-5k": While (-5ULL) * 1000 is the same as (-5000ULL) under
+		 * modulo arithmetic, the expression `ipart >= ULLONG_MAX /
+		 * exponent` depends on seeing the true value (5 rather than
+		 * (-5ULL).)
+		 */
+		neg = true;
+		++s;
+	}
+	errno = 0;
 	ipart = strtoull(s, &end, 10);
+	if (ipart == ULLONG_MAX && errno == ERANGE)
+		return ipart;
 	if (*end == '.') {
 		double q = HX_strtod_unit(s, out_end, exponent);
 		bool lo_ok = q >= nextafter(-static_cast(double, ULLONG_MAX), 0);
 		bool hi_ok = q <= nextafter(static_cast(double, ULLONG_MAX), 0);
 		if (!hi_ok || !lo_ok)
 			return ULLONG_MAX;
-		return q;
+		return neg ? -q : q;
 	}
 	if (exponent == 0)
 		exponent = 1000;
@@ -1021,7 +1035,7 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 	if (pwr == 0) {
 		if (out_end != nullptr)
 			*out_end = end;
-		return ipart;
+		return neg ? -ipart: ipart;
 	}
 	if (out_end != nullptr)
 		*out_end = const_cast(char *, end + 1);
@@ -1032,7 +1046,7 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 		}
 		ipart *= exponent;
 	}
-	return ipart;
+	return neg ? -ipart : ipart;
 }
 
 #define SECONDS_PER_YEAR 31557600

@@ -381,8 +381,8 @@ static int t_units_strto(void)
 		unsigned long long expect_out;
 		const char expect_rem[8];
 	} vt[] = {
-		{"-5k", 1000, ULLONG_MAX, "-5k"},
-		{" -5.2k", 1000, ULLONG_MAX, "-5.2k"},
+		{"-5k", 1000, -5000ULL, ""},
+		{" -5.2k", 1000, -5200ULL, ""},
 		{"1", 9999, 1, ""},
 		{"1024", 9999, 1ULL << 10, ""},
 		{"1048576", 9999, 1ULL << 20, ""},
@@ -403,6 +403,10 @@ static int t_units_strto(void)
 		{"1T", 1024, 1ULL << 40, ""},
 		{"1P", 1024, 1ULL << 50, ""},
 		{"1E", 1024, 1ULL << 60, ""},
+		{"15E", 1024, 15ULL << 60, ""},
+		{"16E", 1024, ULLONG_MAX, ""},
+		{"16.0E", 1024, ULLONG_MAX, ""},
+		{"1Z", 1024, ULLONG_MAX, ""},
 		{"0", 0, 0, ""},
 		{"0k", 0, 0, ""},
 		{"0  Z", 0, 0, ""},
@@ -412,13 +416,23 @@ static int t_units_strto(void)
 		{"0.00000000000000001E", 1024, 11, ""},
 		{"1.525444GiB", 1000, 1525444000, "iB"},
 		{"1.525444GiB", 1024, 1637933022, "iB"},
+		{"2M4k", 1000, 2000000, "4k"},
+		{"18446744073709551614", 0, 18446744073709551614ULL, ""},
+		{"18446744073709551615", 0, ULLONG_MAX, ""},
+		{"18446744073709551616", 0, ULLONG_MAX, ""},
+		{"-18446744073709551614", 0, 2, ""},
+		{"-18446744073709551615", 0, 1, ""},
+		{"-18446744073709551616", 0, ULLONG_MAX, ""},
 	};
 	char *end;
 	for (size_t i = 0; i < ARRAY_SIZE(vt); ++i) {
 		unsigned long long q = HX_strtoull_unit(vt[i].input, &end, vt[i].exponent);
-		printf("%s -> %llu __ %s\n", vt[i].input, q, end);
-		if (q != vt[i].expect_out || strcmp(end, vt[i].expect_rem) != 0)
+		printf("Observed: %s -> %llu __ %s\n", vt[i].input, q, end);
+		if (q != vt[i].expect_out || strcmp(end, vt[i].expect_rem) != 0) {
+			printf("Expected: %s -> %llu __ %s\n", vt[i].input,
+				vt[i].expect_out, vt[i].expect_rem);
 			return EXIT_FAILURE;
+		}
 	}
 	return EXIT_SUCCESS;
 }
