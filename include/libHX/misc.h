@@ -79,7 +79,10 @@ extern struct timespec *HX_timespec_mulf(struct timespec *,
 extern struct timeval *HX_timeval_sub(struct timeval *,
 	const struct timeval *, const struct timeval *);
 extern long HX_time_compare(const struct stat *, const struct stat *, char);
+#ifndef LIBHX_ZVECFREE_DECLARATION
+#define LIBHX_ZVECFREE_DECLARATION
 extern void HX_zvecfree(char **);
+#endif
 
 /*
  *	RAND.C
