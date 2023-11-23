@@ -11,12 +11,12 @@
 
 #include "config.h"
 #include <stdint.h>
+#include <libHX/cast.h>
 #include <libHX/defs.h>
 #include <libHX/string.h>
 
 #ifdef __cplusplus
 	/* Only for our dual C/C++ testsuites */
-#	define const_cast(type, expr)       const_cast<type>(expr)
 #	define const_cast1(type, expr)      const_cast<type>(expr)
 #	define const_cast2(type, expr)      const_cast<type>(expr)
 #	define const_cast3(type, expr)      const_cast<type>(expr)
