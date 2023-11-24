@@ -394,13 +394,15 @@ EXPORT_SYMBOL int HX_socket_from_env(const struct addrinfo *ai, const char *intf
 		}
 		top_fd = x;
 	}
-	for (int fd = 3; fd < top_fd; ++fd)
-		if (try_sk_from_env(fd, ai, intf) == fd) {
+	for (int fd = 3; fd < top_fd; ++fd) {
+		if (try_sk_from_env(fd, ai, intf) != fd)
+			continue;
 #ifdef SOCK_CLOEXEC
-			fcntl(fd, F_SETFD, fcntl(fd, F_GETFD, 0) | FD_CLOEXEC);
+		if (fcntl(fd, F_SETFD, fcntl(fd, F_GETFD, 0) | FD_CLOEXEC) != 0)
+			/* ignore */;
 #endif
-			return fd;
-		}
+		return fd;
+	}
 	errno = ENOENT;
 	return -1;
 }
