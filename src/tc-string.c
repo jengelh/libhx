@@ -394,7 +394,7 @@ static int t_time_strto(void)
 	static const struct {
 		const char *input;
 		unsigned long long expect_s, expect_ns;
-		const char expect_rem[8];
+		const char expect_rem[16];
 	} vt[] = {
 		{"29µs", 0, 29000, ""},
 		{"1y", 31557600, NS_PER_S * 31557600, ""},
@@ -410,6 +410,7 @@ static int t_time_strto(void)
 		{"1s0.0", 1, NS_PER_S, ""},
 		{"1s1s", 2, 2 * NS_PER_S, ""},
 		{"1s1", 1, 1 * NS_PER_S, "1"},
+		{"584542046091y", ULLONG_MAX, ULLONG_MAX, "584542046091y"},
 	};
 	char *end;
 	printf("===== t_time_strto\n");
