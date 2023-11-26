@@ -698,16 +698,19 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
 
-EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
-    char ***argv, unsigned int flags)
+EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
+    int *new_argc, char ***new_argv, unsigned int flags)
 {
 	struct HX_getopt_vars ps;
-	const char **opt = const_cast(const char **, *argv);
+	const char **opt = const_cast(const char **, orig_argv);
 	int state = HXOPT_S_NORMAL;
 	int ret = -ENOMEM;
-	unsigned int argk;
-	const char *cur;
+	unsigned int argk = 0;
 
+	if (new_argc != nullptr)
+		*new_argc = 0;
+	if (new_argv != nullptr)
+		*new_argv = nullptr;
 	memset(&ps, 0, sizeof(ps));
 	ps.remaining = HXdeque_init();
 	if (ps.remaining == NULL) {
@@ -715,7 +718,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		goto out;
 	}
 	ps.flags = flags;
-	ps.arg0  = **argv;
+	ps.arg0  = *opt;
 	ps.cbi.table = table;
 
 	if (*opt != NULL) {
@@ -734,7 +737,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 
 	if (posix_me_harder())
 		ps.flags |= HXOPT_RQ_ORDER;
-	for (cur = *opt; cur != NULL; ) {
+	for (const char *cur = *opt; cur != NULL; ) {
 		if (state == HXOPT_S_TWOLONG)
 			state = HX_getopt_twolong(opt, &ps);
 		else if (state == HXOPT_S_LONG)
@@ -765,32 +768,19 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 		state &= ~HXOPT_I_MASK;
 	}
 
-	if (!(ps.flags & HXOPT_KEEP_ARGV)) {
-		char **nvec = reinterpret_cast(char **, HXdeque_to_vec(ps.remaining, &argk));
-		if (nvec == NULL) {
+	if (new_argv != nullptr) {
+		*new_argv = reinterpret_cast(char **, HXdeque_to_vec(ps.remaining, &argk));
+		if (*new_argv == nullptr) {
 			ret = -errno;
 			goto out;
 		}
-		if (ps.flags & HXOPT_DESTROY_OLD)
-			/*
-			 * Only the "true, original" argv is stored on the
-			 * stack - the argv that HX_getopt() produces is on
-			 * the heap, so the %HXOPT_DESTROY_OLD flag should be
-			 * passed when you use passthrough chaining, i.e. all
-			 * but the first call to HX_getopt() should have this
-			 * set.
-			 */
-			HX_zvecfree(const_cast2(char **, *argv));
-
-		*argv = nvec;
-		if (argc != NULL)
-			*argc = argk;
-		/* pointers are owned by nvec/argv now */
+		if (new_argc != nullptr)
+			*new_argc = argk;
+		/* pointers are owned by new_argv now, so free only the deque head */
 		HXdeque_free(ps.remaining);
 		ps.remaining = nullptr;
 	}
 	ret = HXOPT_ERR_SUCCESS;
-
  out:
 	if (ret == HXOPT_ERR_SUCCESS) {
 	} else if (ret < 0) {
@@ -805,6 +795,27 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	}
 	if (ps.remaining != nullptr)
 		HXdeque_genocide2(ps.remaining, free);
+	return ret;
+}
+
+EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
+    char ***argv, unsigned int flags)
+{
+	int new_argc = 0;
+	char **new_argv = nullptr;
+	int ret = HX_getopt5(table, *argv, &new_argc, &new_argv, flags);
+	if (ret != HXOPT_ERR_SUCCESS)
+		return ret;
+	if (flags & HXOPT_KEEP_ARGV) {
+		HX_zvecfree(new_argv);
+		new_argv = nullptr;
+	} else {
+		if (flags & HXOPT_DESTROY_OLD)
+			HX_zvecfree(*argv);
+	}
+	if (argc != nullptr)
+		*argc = new_argc;
+	*argv = new_argv;
 	return ret;
 }
 

@@ -11,6 +11,7 @@
 #include <libHX/init.h>
 #include <libHX/map.h>
 #include <libHX/option.h>
+#include "internal.h"
 
 static int opt_v = 0, opt_mask = 0;
 static char *opt_kstr = NULL;
@@ -78,37 +79,40 @@ static int t_pthru(void)
 		"--unknown-f=13.37", "--unknown-a",
 		"foo", "bar", NULL
 	};
-	char **argp = const_cast(char **, argv);
-	int argc = ARRAY_SIZE(argv) - 1;
+	char **nargv = nullptr;
+	int nargc = 0;
 
 	printf("PTHRU test:\n");
-	int ret = HX_getopt(table, &argc, &argp, HXOPT_USAGEONERR | HXOPT_PTHRU);
-	if (ret != HXOPT_ERR_SUCCESS)
+	if (HX_getopt5(table, const_cast(char **, argv), &nargc, &nargv,
+	    HXOPT_USAGEONERR | HXOPT_PTHRU) != HXOPT_ERR_SUCCESS)
 		return EXIT_FAILURE;
-	dump_argv(argp);
+	printf("argc = %d\n", nargc);
+	dump_argv(nargv);
 	printf("\n");
-	HX_zvecfree(argp);
+	HX_zvecfree(nargv);
 	return EXIT_SUCCESS;
 }
 
 static int t_empty_argv(void)
 {
-	char *zero_argv[] = {NULL}, **zero_argp = zero_argv;
-	int zero_argc = 0;
+	char *zero_argv[] = {nullptr};
+	char **new_argv = nullptr;
 
 	printf("Testing argv={NULL}\n");
-	if (HX_getopt(table, &zero_argc, &zero_argp,
+	if (HX_getopt5(table, zero_argv, nullptr, &new_argv,
 	    HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
 		return EXIT_FAILURE;
-	HX_zvecfree(zero_argp);
+	HX_zvecfree(new_argv);
 	return EXIT_SUCCESS;
 }
 
 static int runner(int argc, char **argv)
 {
-	int ret = HX_getopt(table, &argc, &argv, HXOPT_USAGEONERR);
+	char **nargv = nullptr;
+	int ret = HX_getopt5(table, argv, &argc, &nargv, HXOPT_USAGEONERR);
 	printf("Return value of HX_getopt: %d\n", ret);
-	HX_zvecfree(argv);
+	if (ret == EXIT_SUCCESS)
+		HX_zvecfree(nargv);
 	ret = t_empty_argv();
 	if (ret != EXIT_SUCCESS)
 		return ret;

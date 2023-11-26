@@ -234,6 +234,7 @@ struct HXoption {
 extern void HX_zvecfree(char **);
 #endif
 extern int HX_getopt(const struct HXoption *, int *, char ***, unsigned int);
+extern int HX_getopt5(const struct HXoption *, char **argv, int *nargc, char ***nargv, unsigned int flags);
 #define HX_getopt(a, b, c, d) HX_getopt((a), (b), const_cast(char ***, (c)), (d))
 extern void HX_getopt_help(const struct HXoptcb *, FILE *);
 extern void HX_getopt_help_cb(const struct HXoptcb *);

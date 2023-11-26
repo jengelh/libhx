@@ -9,7 +9,7 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
-4.18    1.10.0  1.10.0  HX_getopt
+4.18    4.18    4.18    HX_getopt5
 4.16    4.16    4.16    HX_strtoull_nsec
 4.15    4.15    4.15    HX_flpr
 4.15    4.15    4.15    HX_flprf
@@ -300,6 +300,7 @@ RMV     MinVer  FirstA  Name
 1.10.0  1.10.0  1.10.0  HX_dlopen
 1.10.0  1.10.0  1.10.0  HX_dlsym
 1.10.0  1.10.0  1.10.0  HX_dlsym<>
+1.10.0  1.10.0  1.10.0  HX_getopt
 1.10.0  1.10.0  1.10.0  HX_getopt_help
 1.10.0  1.10.0  1.10.0  HX_getopt_usage
 1.10.0  1.10.0  1.10.0  HX_irand

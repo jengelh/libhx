@@ -8,6 +8,7 @@
 #include <libHX/io.h>
 #include <libHX/option.h>
 #include <libHX/string.h>
+#include "internal.h"
 
 static unsigned int rp_flags;
 static unsigned int rp_absolute;
@@ -24,9 +25,9 @@ static const struct HXoption rp_option_table[] = {
 	HXOPT_TABLEEND,
 };
 
-static bool rp_get_options(int *argc, char ***argv)
+static bool rp_get_options(char **oargv, int *argc, char ***argv)
 {
-	if (HX_getopt(rp_option_table, argc, argv, HXOPT_USAGEONERR) !=
+	if (HX_getopt5(rp_option_table, oargv, argc, argv, HXOPT_USAGEONERR) !=
 	    HXOPT_ERR_SUCCESS)
 		return false;
 	rp_flags = HX_REALPATH_DEFAULT;
@@ -47,12 +48,13 @@ static void t_1(void)
 	HXmc_free(tmp);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char **oargv)
 {
+	char **argv = nullptr;
 	hxmc_t *res;
 	int ret;
 
-	if (!rp_get_options(&argc, &argv))
+	if (!rp_get_options(oargv, &argc, &argv))
 		return EXIT_FAILURE;
 	t_1();
 

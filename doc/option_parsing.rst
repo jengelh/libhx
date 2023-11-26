@@ -2,22 +2,22 @@
 Option parsing
 ==============
 
-libHX uses a table-based approach like libpopt[#f3]. It provides for both long
-and short options and the different styles associated with them, such as
-absence or presence of an equals sign for long options (``--foo=bar`` and ``--foo
-bar``), bundling (writing ``-abc`` for non-argument taking options ``-a -b -c``),
-squashing (writing ``-fbar`` for an argument-requiring option ``-f bar``). The “lone
-dash” that is often used to indicate standard input or standard output, is
-correctly handled[#f4], as in ``-f -``.
+Characteristics:
 
-.. [#f3] The alternative would be an iterative, open-coded approach like
-         ``getopt``(3) requires.
-
-.. [#f4] popt failed to do this for a long time.
-
-A table-based approach allows for the parser to run as one unit, quite unlike
-the open-coded ``getopt``(3) loop where the function returns for every argument
-it parsed and needs to be called repeatedly.
+* short options:
+  * bundling of argument-free options (``-a -b -c`` -> ``-abc``)
+  * squashing of argument-requiring options (``-a foo`` -> ``-afoo``)
+* GNU long options with space or equals sign (``--foo bar``, ``--foo=bar``)
+* proper recognition of the lone dash (often used to indicate stdin/stdout)
+* recognition of the double dash as option list terminator
+* offers POSIX strictness where the option list terminates at the first
+  non-option argument
+* option passthrough
+* the parse function is one-shot; there is no context object (like popt),
+  no global state (like getopt) and no ``while`` loop (either of the two others)
+* exclusively uses an option table
+* value storing is performed through pointers in the option table
+* or user-provided callbacks can be invoked per option
 
 
 Synopsis
@@ -37,7 +37,7 @@ Synopsis
 		const char *help, *htyp;
 	};
 
-	int HX_getopt(const struct HXoption *options_table, int *argc, char ***argv, unsigned int flags);
+	int HX_getopt5(const struct HXoption *options_table, char **argv, int *new_argc, char ***new_argv, unsigned int flags);
 
 The various fields of ``struct HXoption`` are:
 
@@ -51,10 +51,10 @@ The various fields of ``struct HXoption`` are:
 
 ``type``
 	The type of the entry, essentially denoting the type of the target
-	variable.
+	variable (``ptr``).
 
 ``val``
-	An integer value to be stored into ``*(int *)ptr`` when the option type
+	An integer value to be stored into ``*(int *)ptr`` if the option type
 	is ``HXTYPE_IVAL``.
 
 ``ptr``
@@ -80,17 +80,13 @@ The various fields of ``struct HXoption`` are:
 	String containing a keyword to aid the user in understanding the
 	available options during dump. See examples.
 
-Due to the amount of fields, it is advised to use C99 named initializers to
-populate a struct, as they allow to omit unspecified fields, and assume no
+Due to the amount of fields, it is advised to use C99/C++20 named initializers
+to populate a struct, as they allow to omit unspecified fields, and assume no
 specific order of the members:
 
 .. code-block:: c
 
 	struct HXoption e = {.sh = 'f', .help = "Force"};
-
-It is a sad fact that C++ has not gotten around to implement named initializers
-as of C++17. It is possible to put the option parsing code into a separate C
-source file that can then be compiled in C99 rather than C++ mode.
 
 
 Type map
@@ -206,13 +202,13 @@ specified, but may be implemented on behalf of the user via a callback.
 Flags
 =====
 
-Flags can be combined into the type parameter by OR'ing them. It is valid to
+Flags can be combined into the type parameter by OR-ing them. It is valid to
 not specify any flags at all, but most flags collide with one another.
 
 ``HXOPT_INC``
 	Perform an increment on the memory location specified by the
-	``*(int *)ptr`` pointer. Make sure the referenced variable is
-	initialized beforehand!
+	``*(int *)ptr`` pointer. The referenced variable must be
+	initialized.
 
 ``HXOPT_DEC``
 	Perform a decrement on the pointee. Same requirements as ``HXOPT_INC``.
@@ -271,19 +267,22 @@ Invoking the parser
 
 .. code-block:: c
 
-	int HX_getopt(const struct HXoption *options_table, int *argc, char ***argv, unsigned int flags);HX_getopt
+	int HX_getopt5(const struct HXoption *options_table, char **argv, int *new_argc, char **new_argv, unsigned int flags);
+	int HX_getopt(const struct HXoption *options_table, int *argc, char ***argv, unsigned int flags);
 
-``HX_getopt`` is the actual parsing function. It takes the option table, and a
-pointer to your argc and argv variables that you get from the main function.
-The parser will, by default, consume all options and their arguments, similar
-to Perl's ``Getopt::Long`` module. ``*argv`` is then updated to point to a new
-array of strings (to be deallocated with ``HX_zvecfree``) and ``*argc`` is
-updated accordingly. Additional flags can control the exact behavior of
-``HX_getopt``:
+``HX_getopt5`` is the central parsing function. ``options_table`` specifies
+the options that the parser will recognize. ``argv`` must be a NULL-terminated
+array of C strings.
+
+If ``new_argv`` is non-NULL, the leftover arguments will be output as a new
+string vector on success. (That array can be freed with ``HX_zvecfree``). If
+``new_argc`` is non-NULL, the argument count for new_argv will be output too.
+
+The ``flags`` argument control the general behavior of ``HX_getopt``:
 
 ``HXOPT_PTHRU``
-	“Passthrough mode”. Any unknown options are not “eaten” and are instead
-	passed back into the resulting argv array.
+	“Passthrough mode”. Any unknown options are passed through into
+	``new_argv``.
 
 ``HXOPT_QUIET``
 	Do not print any diagnostics when encountering errors in the user's
@@ -302,7 +301,7 @@ updated accordingly. Additional flags can control the exact behavior of
 	implicit when the environment variable ``POSIXLY_CORRECT`` is set.
 
 ``HXOPT_KEEP_ARGV``
-	Do not modify ``argc`` and ``argv`` at all.
+	Do not set ``*new_argc`` and ``*new_argv`` at all.
 
 The return value can be one of the following:
 
@@ -328,6 +327,15 @@ The return value can be one of the following:
 negative non-zero
 	Failure on behalf of lower-level calls; errno.
 
+``HX_getopt`` is an older API where ``argv`` is both used for input and output.
+It recognizes additional flags/has additional behavior:
+
+``HXOPT_KEEP_ARGV``
+	``argc`` and ``argv`` is not updated.
+
+``HXOPT_DESTROY_OLD``
+	Call ``HX_zvecfree`` on ``argv`` before updating it.
+
 
 Pitfalls
 ========
@@ -341,33 +349,28 @@ The following is an example of a possible pitfall regarding ``HXTYPE_STRDQ``:
 
 	static struct HXdeque *dq;
 
-	static bool get_options(int *argc, char ***argv)
+	int main(int argc, char **argv)
 	{
+		dq = HXdeque_init();
 		static const struct HXoption options_table[] = {
 			{.sh = 'N', .type = HXTYPE_STRDQ, .ptr = dq,
 			 .help = "Add name"},
 			HXOPT_TABLEEND,
 		};
-		return HX_getopt(options_table, argc, argv, HXOPT_USAGEONERR) ==
-		       HXOPT_ERR_SUCCESS;
-	}
-
-	int main(int argc, char **argv)
-	{
-		dq = HXdeque_init();
-		get_options(&argc, &argv);
-		return 0;
+		if (HX_getopt5(options_table, *argv, &argc, &argv,
+		    HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
+			return EXIT_FAILURE;
+		/* ... */
+		HX_zvecfree(argv);
+		return EXIT_SUCCESS;
 	}
 
 The problem here is that ``options_table`` is, due to the static keyword,
 initialized at compile-time when ``dq`` is still ``NULL``. To counter this
-problem and have it doing the right thing, you must remove the static qualifier
-on the options table when used with ``HXTYPE_STRDQ``, so that it will be
-evaluated when it is first executed.
+problem and have it doing the right thing, the ``static`` qualifier on the
+options table must be removed, so that the table is built when that line
+executes.
 
-It was not deemed worthwhile to have ``HXTYPE_STRDQ`` take an indirect
-``HXdeque`` (``struct HXdeque **``) instead just to bypass this issue. (Live
-with it.)
 
 Limitations
 -----------
@@ -423,9 +426,8 @@ GNU getopt sample.[#f5]
 			HXOPT_TABLEEND,
 		};
 
-		if (HX_getopt(options_table, &argc, &argv, HXOPT_USAGEONERR) !=
-		    HXOPT_ERR_SUCCESS)
-
+		if (HX_getopt5(options_table, argv, &argc, &argv,
+		    HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
 			return EXIT_FAILURE;
 
 		printf("aflag = %d, bflag = %d, cvalue = %s\n",
@@ -434,6 +436,7 @@ GNU getopt sample.[#f5]
 		while (*++argv != NULL)
 			printf("Non-option argument %s\n", *argv);
 
+		HX_zvecfree(argv);
 		return EXIT_SUCCESS;
 	}
 
@@ -534,42 +537,43 @@ the callback function in ``cb``.
 		{.sh = 'n', .type = HXTYPE_STRING, .cb = fixed_point_parse,
 		 .uptr = &number, .help = "Do this or that",
 		HXOPT_TABLEEND,
-
 	};
 
 Chained argument processing
 ---------------------------
 
 On the first run, only ``--cake`` and ``--fruit`` is considered, which is then
-used to select the next set of accepted options. Note that
-``HXOPT_DESTROY_OLD`` is used here, which causes the ``argv`` that is produced
-by the first invocation of ``HX_getopt`` in the ``get_options`` function to be
-freed as it gets replaced by a new argv again by ``HX_getopt`` in
-``get_cakes``/``get_fruit``. ``HXOPT_DESTROY_OLD`` is however not specified in
-the first invocation, because the initial argv resides on the stack and cannot
-be freed.
+used to select the next set of accepted options.
 
 .. code-block:: c
 
-	static bool get_cakes(int *argc, char ***argv)
+	static int get_cakes(int *argc, char ***argv)
 	{
-		struct HXoption option_table[] = {
+		struct HXoption cake_table[] = {
 			...
 		};
-		return HX_getopt(cake_table, argc, argv,
-		       HXOPT_USAGEONERR | HXOPT_DESTROY_OLD) == HXOPT_ERR_SUCCESS;
+		if (HX_getopt5(cake_table, *argv, &argc, &argv,
+		    HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
+			return EXIT_FAILURE;
+		/* ... */
+		HX_zvecfree(argv);
+		return EXIT_SUCCESS;
 	}
 
-	static bool get_fruit(int *argc, char ***argv)
+	static int fruit_main(int argc, char **argv)
 	{
 		struct HXoption fruit_table[] = {
 			...
 		};
-		return HX_getopt(fruit_table, argc, argv,
-		       HXOPT_USAGEONERR | HXOPT_DESTROY_OLD) == HXOPT_ERR_SUCCESS;
+		if (HX_getopt5(fruit_table, *argv, &argc, &argv,
+		    HXOPT_PTHRU) != HXOPT_ERR_SUCCESS)
+			return EXIT_FAILURE;
+		/* ... */
+		HX_zvecfree(argv);
+		return EXIT_SUCCESS;
 	}
 
-	static bool get_options(int *argc, char ***argv)
+	int main(int argc, char **argv)
 	{
 		int cake = 0, fruit = 0;
 		struct HXoption option_table[] = {
@@ -577,11 +581,10 @@ be freed.
 			{.ln = "fruit", .type = HXTYPE_NONE, .ptr = &fruit},
 			HXOPT_TABLEEND,
 		};
-		if (HX_getopt(option_table, argc, argv, HXOPT_PTHRU) != HXOPT_ERR_SUCCESS)
-			return false;
-		if (cake)
-			return get_cakes(argc, argv);
-		else if (fruit)
-			return get_fruit(argc, argv);
-		return false;
+		if (HX_getopt5(option_table, *argv, &argc, &argv,
+		    HXOPT_PTHRU) != HXOPT_ERR_SUCCESS)
+			return EXIT_FAILURE;
+		int ret = cake ? cake_main(argc, argv) : fruit_main(argc, argv);
+		HX_zvecfree(argv);
+		return EXIT_FAILURE;
 	}

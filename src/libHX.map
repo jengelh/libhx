@@ -178,3 +178,8 @@ LIBHX_4.16 {
 global:
 	HX_strtoull_nsec;
 } LIBHX_4.15;
+
+LIBHX_4.18 {
+global:
+	HX_getopt5;
+} LIBHX_4.16;
