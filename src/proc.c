@@ -103,7 +103,7 @@ EXPORT_SYMBOL enum HXproc_su_status HXproc_switch_user(const char *user, const c
 
 #else
 
-EXPORT_SYMBOL int HXproc_switch_user(const char *user, const char *group)
+EXPORT_SYMBOL enum HXproc_su_status HXproc_switch_user(const char *user, const char *group)
 {
 	return -ENOSYS;
 }
