@@ -10,6 +10,7 @@
 #include <libHX/list.h>
 #include <libHX/init.h>
 #include <libHX/misc.h>
+#include "internal.h"
 
 struct text_object {
 	struct HXlist_head list;
@@ -64,13 +65,14 @@ static void l_traverse(void)
 static void l_dump(bool pop)
 {
 	static const char *const msg[] = {"Shifting", "Popping"};
-	struct text_object *obj;
 	unsigned int i = 0;
 
-	while ((obj = (pop ?
-	    HXclist_pop(&strings_ct, struct text_object, list) :
-	    HXclist_shift(&strings_ct, struct text_object, list)
-	    )) != NULL) {
+	while (true) {
+		struct text_object *obj = pop ?
+			HXclist_pop(&strings_ct, struct text_object, list) :
+			HXclist_shift(&strings_ct, struct text_object, list);
+		if (obj == nullptr)
+			break;
 		printf("%s item %u (\"%s\")\n", msg[pop], ++i, obj->id);
 #ifdef __cplusplus
 		delete obj;

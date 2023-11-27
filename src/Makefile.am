@@ -20,7 +20,7 @@ libHX_la_SOURCES += ux-file.c ux-mmap.c
 libHX_la_LIBADD += -lws2_32
 endif
 
-EXTRA_DIST = internal.h map_int.h libHX.map uxcompat.h
+EXTRA_DIST = internal.h map_int.h libHX.map uxcompat.h analyze.sh
 
 check_PROGRAMS     = tc-compile tc-cast tc-deque tc-dir tc-format tc-io \
                      tc-list tc-list2 tc-map tc-memmem tc-misc tc-netio \
