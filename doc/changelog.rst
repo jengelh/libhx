@@ -1,3 +1,21 @@
+v4.18 (2023-11-27)
+==================
+
+Enhancements:
+
+* opt: new HX_getopt5 API for the parser with untangled in and out variables
+
+Fixes:
+
+* string: HX_strtoull_units handles negative values now (like strtoull)
+* string: HX_strtoull_units & HX_strtoull_(n)sec now set errno=ERANGE for
+  nonrepresentable results
+
+Behavioral changes:
+
+* string: HX_strtoull_sec rejects unitless numbers now
+
+
 v4.17 (2023-11-12)
 ==================
 
