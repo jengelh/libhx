@@ -1030,8 +1030,19 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 			errno = ERANGE;
 			return ULLONG_MAX;
 		}
+		/*
+		 * https://eel.is/c++draft/conv.fpint: values unrepresentable
+		 * in the target type (such as forcing -5.2f into a uint) is
+		 * UB. Thus check for range and apply the negation after the
+		 * conversion to ULL.
+		 */
+		if (q > ULLONG_MAX) {
+			errno = ERANGE;
+			return ULLONG_MAX;
+		}
+		unsigned long long r = q;
 		errno = 0;
-		return neg ? -q : q;
+		return neg ? -r : r;
 	}
 	if (exponent == 0)
 		exponent = 1000;
