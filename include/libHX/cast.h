@@ -8,6 +8,9 @@
 #	ifndef static_cast
 #		define static_cast(T, x) static_cast<T>(x)
 #	endif
+#	define const_cast1(type, expr)      const_cast<type>(expr)
+#	define const_cast2(type, expr)      const_cast<type>(expr)
+#	define const_cast3(type, expr)      const_cast<type>(expr)
 
 template<typename new_type>
 static __inline__ new_type signed_cast(const char *expr)
