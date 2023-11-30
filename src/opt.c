@@ -803,16 +803,15 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 {
 	int new_argc = 0;
 	char **new_argv = nullptr;
-	int ret = HX_getopt5(table, *argv, &new_argc, &new_argv, flags);
+	int ret = HX_getopt5(table, *argv, &new_argc,
+	          flags & HXOPT_KEEP_ARGV ? nullptr : &new_argv, flags);
 	if (ret != HXOPT_ERR_SUCCESS)
 		return ret;
-	if (flags & HXOPT_KEEP_ARGV) {
-		HX_zvecfree(new_argv);
-		new_argv = nullptr;
-	} else {
-		if (flags & HXOPT_DESTROY_OLD)
-			HX_zvecfree(*argv);
-	}
+	if (flags & HXOPT_KEEP_ARGV)
+		// NO_CREATE_NEW / DESTROY_NEW
+		new_argv = *argv;
+	else if (flags & HXOPT_DESTROY_OLD)
+		HX_zvecfree(*argv);
 	if (argc != nullptr)
 		*argc = new_argc;
 	*argv = new_argv;

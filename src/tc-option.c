@@ -106,6 +106,15 @@ static int t_empty_argv(void)
 	return EXIT_SUCCESS;
 }
 
+static int t_keep_argv(void)
+{
+	static const char *const one_argv[] = {"what", nullptr};
+	const char **argv = const_cast2(const char **, one_argv);
+	if (HX_getopt(table, nullptr, &argv, HXOPT_KEEP_ARGV) != HXOPT_ERR_SUCCESS)
+		return EXIT_FAILURE;
+	return argv == one_argv ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
 static int runner(int argc, char **argv)
 {
 	char **nargv = nullptr;
@@ -114,6 +123,9 @@ static int runner(int argc, char **argv)
 	if (ret == EXIT_SUCCESS)
 		HX_zvecfree(nargv);
 	ret = t_empty_argv();
+	if (ret != EXIT_SUCCESS)
+		return ret;
+	ret = t_keep_argv();
 	if (ret != EXIT_SUCCESS)
 		return ret;
 
