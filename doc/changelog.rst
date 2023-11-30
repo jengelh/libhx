@@ -1,3 +1,13 @@
+v4.19 (2023-12-01)
+==================
+
+Fixes:
+
+* string: fixed HX_strtoull_unit with negative fractions producing 0
+  sometimes
+* opt: fix HX_getopt losing argv on HXOPT_KEEP_ARGV
+
+
 v4.18 (2023-11-27)
 ==================
 
