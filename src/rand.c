@@ -18,6 +18,10 @@
 #ifdef __unix__
 #	include <unistd.h>
 #endif
+#ifdef __APPLE__
+#	include <sys/types.h>
+#	include <unistd.h>
+#endif
 #ifdef _WIN32
 #	include <process.h>
 #endif
