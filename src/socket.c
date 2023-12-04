@@ -41,7 +41,7 @@
 #else
 #	define STUPIDWIN(x) (x)
 #endif
-#if defined(__sun) && !defined(SO_PROTOCOL)
+#if defined(__sun) && !defined(SO_PROTOCOL) && defined(SO_PROTOTYPE)
 #	define SO_PROTOCOL SO_PROTOTYPE
 #endif
 #ifndef AI_V4MAPPED
@@ -333,17 +333,21 @@ static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 		return -1;
 #else
 	optlen = sizeof(value);
+#ifdef SO_DOMAIN
 	ret = getsockopt(fd, SOL_SOCKET, SO_DOMAIN, &value, &optlen);
 	if (ret < 0 || value != ai->ai_family)
 		return -1;
+#endif
 	optlen = sizeof(value);
 	ret = getsockopt(fd, SOL_SOCKET, SO_TYPE, &value, &optlen);
 	if (ret < 0 || value != ai->ai_socktype)
 		return -1;
 	optlen = sizeof(value);
+#ifdef SO_PROTOCOL
 	ret = getsockopt(fd, SOL_SOCKET, SO_PROTOCOL, &value, &optlen);
 	if (ret < 0 || value != ai->ai_protocol)
 		return -1;
+#endif
 #endif
 	struct sockaddr_storage addr;
 	memset(&addr, 0, sizeof(addr));
