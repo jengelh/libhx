@@ -1,10 +1,9 @@
-AC_INIT([libHX], [4.19])
+AC_INIT([libHX], [4.21])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_PROG_INSTALL
-AM_INIT_AUTOMAKE([-Wall -Wno-override foreign subdir-objects
-	tar-pax no-dist-gzip dist-xz])
+AM_INIT_AUTOMAKE([-Wall -Wno-override foreign subdir-objects tar-pax])
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX

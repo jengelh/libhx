@@ -1,3 +1,12 @@
+v4.21 (2023-12-20)
+==================
+
+Fixes:
+
+* Resolve a compilation error when the signed_cast macro is used without defs.h.
+* Resolve compilation errors in NetBSD and MacOS.
+
+
 v4.19 (2023-12-01)
 ==================
 
