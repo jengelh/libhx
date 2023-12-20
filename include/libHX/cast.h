@@ -1,6 +1,12 @@
 #ifndef _LIBHX_CAST_H
 #define _LIBHX_CAST_H 1
 
+#ifndef BUILD_BUG_ON_EXPR
+#	define BUILD_BUG_ON_EXPR(condition) (sizeof(char[1 - 2 * !!(condition)]) - 1)
+#endif
+#ifndef BUILD_BUG_ON
+#	define BUILD_BUG_ON(condition) ((void)BUILD_BUG_ON_EXPR(condition))
+#endif
 #ifdef __cplusplus
 #	ifndef const_cast
 #		define const_cast(T, x) const_cast<T>(x)

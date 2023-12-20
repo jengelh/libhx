@@ -38,12 +38,6 @@
 #ifndef ARRAY_SIZE
 #	define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)) + __array_size_check(x))
 #endif
-#ifndef BUILD_BUG_ON_EXPR
-#	define BUILD_BUG_ON_EXPR(condition) (sizeof(char[1 - 2 * !!(condition)]) - 1)
-#endif
-#ifndef BUILD_BUG_ON
-#	define BUILD_BUG_ON(condition) ((void)BUILD_BUG_ON_EXPR(condition))
-#endif
 #ifndef DEMOTE_TO_PTR
 	/*
 	 * An alternative approach is also (p+0), but that does not ensure that
