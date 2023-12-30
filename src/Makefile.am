@@ -13,6 +13,9 @@ libHX_la_LDFLAGS = -no-undefined -version-info 39:0:7
 if WITH_GNU_LD
 libHX_la_LDFLAGS += -Wl,--version-script=${srcdir}/libHX.map
 endif
+if WITH_SUN_LD
+libHX_la_LDFLAGS += -Wl,-M,${srcdir}/libHX.map
+endif
 EXTRA_libHX_la_DEPENDENCIES = libHX.map
 
 if MINGW32
