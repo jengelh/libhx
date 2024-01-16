@@ -17,6 +17,7 @@
 static int t_parse(void)
 {
 	char host[32] = "bogus";
+	uint16_t port = 4321;
 	if (HX_addrport_split("[::1]", host, sizeof(host), nullptr) != 1 ||
 	    strcmp(host, "::1") != 0)
 		return 1;
@@ -25,6 +26,9 @@ static int t_parse(void)
 		return 1;
 	if (HX_addrport_split("", host, sizeof(host), nullptr) != 1 ||
 	    strcmp(host, "") != 0)
+		return 1;
+	if (HX_addrport_split("[]:", host, sizeof(host), &port) != 1 ||
+	    strcmp(host, "") != 0 || port != 0)
 		return 1;
 	return 0;
 }
