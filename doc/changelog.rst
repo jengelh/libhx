@@ -1,3 +1,15 @@
+v4.22 (2024-02-15)
+==================
+
+Fixes:
+
+* io: use smaller chunks with sendfile(2) to work around unusual API behavior
+
+Enhancements:
+
+* io: make HX_copy_file() utilize copy_file_range when available
+
+
 v4.21 (2023-12-20)
 ==================
 
