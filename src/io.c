@@ -712,7 +712,7 @@ EXPORT_SYMBOL ssize_t HX_sendfile(int dst, int src, size_t count)
 	ssize_t ret;
 #ifdef HAVE_COPY_FILE_RANGE
 	ret = HX_cfr_linux(dst, src, count);
-	if (ret != -ENOSYS)
+	if (ret != -ENOSYS && ret != -EXDEV)
 		return ret;
 #endif
 	ret = HX_sendfile_linux(dst, src, count);
