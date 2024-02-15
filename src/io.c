@@ -632,13 +632,13 @@ EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *vbuf, size_t size)
 #if __linux__
 static ssize_t HX_sendfile_linux(int dst, int src, size_t count)
 {
-	long pagesize = sysconf(_SC_PAGE_SIZE);
-	size_t xfersize;
 	ssize_t ret, xferd = 0;
-
-	if (pagesize < 0)
-		pagesize = 4096;
-	xfersize = SSIZE_MAX - pagesize;
+	/*
+	 * Use INT(32)_MAX rather than SSIZE_MAX, as there is an issue with
+	 * overflow detection pending.
+	 * https://lore.kernel.org/linux-man/38nr2286-1o9q-0004-2323-799587773o15@vanv.qr/
+	 */
+	size_t xfersize = INT_MAX;
 	if (count > xfersize)
 		count = xfersize;
 	while ((ret = sendfile(dst, src, nullptr, count)) > 0)
