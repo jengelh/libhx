@@ -1036,7 +1036,7 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 		 * UB. Thus check for range and apply the negation after the
 		 * conversion to ULL.
 		 */
-		if (q > ULLONG_MAX) {
+		if (q >= static_cast(double, ULLONG_MAX)) {
 			errno = ERANGE;
 			return ULLONG_MAX;
 		}
