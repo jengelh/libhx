@@ -61,7 +61,7 @@ AC_SUBST([pkgconfigdir])
 
 CHECK_GCC_FVISIBILITY
 AM_CONDITIONAL([WITH_GNU_LD], [test "$with_gnu_ld" = yes])
-AS_IF([test -n "$LD" && $LD -z help], [with_sun_ld=yes], [with_sun_ld=no])
+AS_IF([test -n "$LD" && $LD -z help >/dev/null 2>/dev/null], [with_sun_ld=yes], [with_sun_ld=no])
 AM_CONDITIONAL([WITH_SUN_LD], [test "$with_sun_ld" = yes])
 
 LIBS_system="$LIBS"
