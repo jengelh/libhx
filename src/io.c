@@ -7,6 +7,7 @@
  *	General Public License as published by the Free Software Foundation;
  *	either version 2.1 or (at your option) any later version.
  */
+#define _GNU_SOURCE 1
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
 #endif
@@ -630,6 +631,28 @@ EXPORT_SYMBOL ssize_t HXio_fullwrite(int fd, const void *vbuf, size_t size)
 }
 
 #if __linux__
+#ifdef HAVE_COPY_FILE_RANGE
+static ssize_t HX_cfr_linux(int dst, int src, size_t count)
+{
+	ssize_t ret, xferd = 0;
+	/*
+	 * Use INT(32)_MAX rather than SSIZE_MAX, as there is an issue with
+	 * overflow detection pending.
+	 * https://lore.kernel.org/linux-man/38nr2286-1o9q-0004-2323-799587773o15@vanv.qr/
+	 */
+	size_t xfersize = INT_MAX;
+	if (count > xfersize)
+		count = xfersize;
+	while ((ret = copy_file_range(src, nullptr, dst, nullptr, count, 0)) > 0)
+		xferd += ret;
+	if (xferd > 0)
+		return xferd;
+	if (ret < 0)
+		return -errno;
+	return 0;
+}
+#endif
+
 static ssize_t HX_sendfile_linux(int dst, int src, size_t count)
 {
 	ssize_t ret, xferd = 0;
@@ -686,7 +709,13 @@ static ssize_t HX_sendfile_rw(int dst, int src, size_t count)
 EXPORT_SYMBOL ssize_t HX_sendfile(int dst, int src, size_t count)
 {
 #if __linux__
-	ssize_t ret = HX_sendfile_linux(dst, src, count);
+	ssize_t ret;
+#ifdef HAVE_COPY_FILE_RANGE
+	ret = HX_cfr_linux(dst, src, count);
+	if (ret != -ENOSYS)
+		return ret;
+#endif
+	ret = HX_sendfile_linux(dst, src, count);
 	if (ret != -ENOSYS)
 		return ret;
 #endif

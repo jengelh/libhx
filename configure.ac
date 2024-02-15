@@ -124,7 +124,7 @@ AC_CHECK_MEMBERS(
 	#include <sys/time.h>
 	#include <time.h>
 	])
-AC_CHECK_FUNCS([fork execv execvp pipe posix_fadvise])
+AC_CHECK_FUNCS([copy_file_range fork execv execvp pipe posix_fadvise])
 AC_CHECK_FUNCS([getegid geteuid getpid getppid])
 AC_CHECK_FUNCS([initgroups setgid])
 
