@@ -458,6 +458,45 @@ HX_realpath_symres(struct HX_realpath_state *state, const char *path)
 	return 1;
 }
 
+EXPORT_SYMBOL int HX_getcwd(hxmc_t **target)
+{
+	bool allocate = *target == nullptr;
+	size_t linkbuf_size;
+
+	if (allocate) {
+		linkbuf_size = 128;
+		*target = HXmc_meminit(nullptr, linkbuf_size);
+		if (*target == nullptr)
+			return -errno;
+	} else {
+		linkbuf_size = HXmc_length(*target);
+		if (linkbuf_size < 128) {
+			linkbuf_size = 128;
+			if (HXmc_setlen(target, linkbuf_size) == nullptr)
+				return -errno;
+		}
+	}
+	while (true) {
+		const char *ret = getcwd(*target, linkbuf_size);
+		if (ret != nullptr) {
+			HXmc_setlen(target, strlen(ret)); /* shrink to fit */
+			return 1;
+		}
+		if (errno == ERANGE) {
+			if (HXmc_setlen(target, linkbuf_size *= 2) != nullptr)
+				continue;
+			/* errno already set by realloc, fall into next if block */
+		}
+		int saved_errno = errno;
+		if (allocate) {
+			HXmc_free(*target);
+			*target = nullptr;
+		}
+		return -(errno = saved_errno);
+	}
+	return -EINVAL;
+}
+
 EXPORT_SYMBOL int HX_realpath(hxmc_t **dest_pptr, const char *path,
     unsigned int flags)
 {

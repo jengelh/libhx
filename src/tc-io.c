@@ -28,6 +28,16 @@ static void sf(void)
 	close(src);
 }
 
+static void t_getcwd(void)
+{
+	hxmc_t *s = nullptr;
+	if (HX_getcwd(&s) > 0)
+		printf("cwd1: >%s<\n", s);
+	HXmc_setlen(&s, 0);
+	if (HX_getcwd(&s) > 0)
+		printf("cwd2: >%s<\n", s);
+}
+
 int main(void)
 {
 	size_t z;
@@ -55,5 +65,7 @@ int main(void)
 		fprintf(stderr, "copy_file ok\n");
 		unlink("tciocopy.txt");
 	}
+
+	t_getcwd();
 	return 0;
 }

@@ -57,8 +57,14 @@ Operation on directory entries
 
 	#include <libHX/io.h>
 
+	int HX_getcwd(hxmc_t **buf);
 	int HX_readlink(hxmc_t **buf, const char *path);
 	int HX_realpath(hxmc_t **buf, const char *path, unsigned int flags);
+
+``HX_getcwd`` is a length-agnostic version of getcwd. On error, a negative
+integer is returned indicating the errno; the contents of ``*buf`` are
+unspecified if that happens. On success, a non-zero positive integer is
+returned.
 
 ``HX_readlink`` calls through to readlink to read the target of a symbolic
 link, and stores the result in the memory container referenced by ``*buf``

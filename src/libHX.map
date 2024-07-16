@@ -183,3 +183,8 @@ LIBHX_4.18 {
 global:
 	HX_getopt5;
 } LIBHX_4.16;
+
+LIBHX_4.24 {
+global:
+	HX_getcwd;
+} LIBHX_4.18;
