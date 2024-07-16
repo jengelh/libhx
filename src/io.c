@@ -351,12 +351,17 @@ EXPORT_SYMBOL int HX_readlink(hxmc_t **target, const char *path)
 	size_t linkbuf_size;
 
 	if (allocate) {
-		linkbuf_size = 32;
-		*target = HXmc_meminit(NULL, 32);
+		linkbuf_size = 128;
+		*target = HXmc_meminit(nullptr, 128);
 		if (*target == NULL)
 			return -errno;
 	} else {
 		linkbuf_size = HXmc_length(*target);
+		if (linkbuf_size < 128) {
+			linkbuf_size = 128;
+			if (HXmc_setlen(target, 128) == nullptr)
+				return -errno;
+		}
 	}
 	while (true) {
 		ssize_t ret = readlink(path, *target, linkbuf_size);
