@@ -585,6 +585,8 @@ EXPORT_SYMBOL int HX_realpath(hxmc_t **dest_pptr, const char *path,
 		/* If caller supplied a buffer, do not take it away. */
 		HXmc_free(state.dest);
 		*dest_pptr = NULL;
+	} else {
+		*dest_pptr = state.dest;
 	}
 	HXmc_free(state.link_target);
 	HXmc_free(state.new_path);
