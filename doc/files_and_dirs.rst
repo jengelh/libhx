@@ -97,7 +97,8 @@ actions:
 
 The result is stored in a memory container whose pointer is returned through
 ``*buf``. The return value of the function will be negative to indicate a
-possible system error, or be positive non-zero for success.
+possible system error, or be positive non-zero for success. The contents of the
+buffer are unspecified in case HX_realpath returns an error.
 
 
 Operations on directories
