@@ -514,11 +514,9 @@ EXPORT_SYMBOL int HX_realpath(hxmc_t **dest_pptr, const char *path,
 	if (*path == '/') {
 		rq_slash = true;
 	} else if (flags & HX_REALPATH_ABSOLUTE) {
-		if (getcwd(state.dest, PATH_MAX) == NULL)
+		if (HX_getcwd(&state.dest) < 0)
 			goto err;
 		rq_slash = true;
-		if (HXmc_setlen(&state.dest, strlen(state.dest)) == NULL)
-			goto err;
 	}
 
 	while (*path != '\0') {

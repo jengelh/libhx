@@ -48,6 +48,15 @@ static void t_1(void)
 	HXmc_free(tmp);
 }
 
+static void t_2(void)
+{
+	hxmc_t *tmp = HXmc_strinit("");
+	int ret = HX_realpath(&tmp, "../../../../dev/tty", HX_REALPATH_ABSOLUTE | HX_REALPATH_DEFAULT);
+	if (ret > 0)
+		printf("t_2: %s\n", tmp);
+	HXmc_free(tmp);
+}
+
 int main(int argc, char **oargv)
 {
 	char **argv = nullptr;
@@ -57,6 +66,7 @@ int main(int argc, char **oargv)
 	if (!rp_get_options(oargv, &argc, &argv))
 		return EXIT_FAILURE;
 	t_1();
+	t_2();
 
 	res = NULL;
 	for (int i = 1; i < argc; ++i) {
