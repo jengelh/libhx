@@ -506,7 +506,7 @@ EXPORT_SYMBOL int HX_realpath(hxmc_t **dest_pptr, const char *path,
 	int ret = 0;
 
 	if (dnull) {
-		state.dest = HXmc_meminit(NULL, PATH_MAX);
+		state.dest = HXmc_meminit(NULL, 256);
 		if (state.dest == NULL)
 			goto err;
 	}
