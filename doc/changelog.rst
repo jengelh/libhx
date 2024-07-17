@@ -1,3 +1,12 @@
+v4.24 (2024-07-17)
+==================
+
+Fixes:
+
+* io: resolve use-after-free and out-of-bounds writes in conjunction
+  with HX_realpath
+
+
 v4.23 (2024-02-15)
 ==================
 
