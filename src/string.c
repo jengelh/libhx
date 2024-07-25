@@ -41,7 +41,7 @@ struct HX_quote_rule {
 	const char *chars;
 };
 
-static const char HX_hexenc[16] = "0123456789ABCDEF";
+static const char HX_hexenc[] = "0123456789ABCDEF";
 
 EXPORT_SYMBOL char *HX_basename(const char *s)
 {
