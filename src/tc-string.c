@@ -355,8 +355,16 @@ static int t_time_units(void)
 	static const struct {
 		unsigned long long input;
 		unsigned int flags;
-		const char expect_out[24];
+		const char expect_out[41];
 	} vt[] = {
+#define SECONDS_PER_YEAR 31557600 /* 365.25 days */
+#define SECONDS_PER_MONTH 2629800 /* 1/12th of that year = 30.4375 days */
+		{18446744073709551615ULL, 0, "213503982334601d7h15s"},
+		{18446744073709526399ULL, 0, "213503982334600d23h59min59s"},
+		{18446744073709180799ULL, HXUNIT_WEEKS, "30500568904942weeks2d23h59min59s"},
+		{18446744073708451799ULL, HXUNIT_MONTHS, "7014504553087months2d23h59min59s"},
+		{18446744073707636399ULL, HXUNIT_MONTHS | HXUNIT_WEEKS, "7014504553086months3weeks2d23h59min59s"},
+		{18446744073688622999ULL, HXUNIT_YEARS | HXUNIT_MONTHS | HXUNIT_WEEKS, "584542046089y11months2weeks2d23h59min59s"},
 		{31536000, 0, "365d"},
 		{31622400, 0, "366d"},
 		{34819200, HXUNIT_WEEKS, "57weeks4d"},

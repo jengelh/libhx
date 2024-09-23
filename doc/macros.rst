@@ -27,6 +27,13 @@ Expands to the size needed for a buffer (including ``\0``) to hold the base-10
 string representation of 16‑, 32‑ or 64‑bit integer (either signed or
 unsigned), respectively.
 
+.. code-block:: c
+
+	#define HXSIZEOF_UNITSEC64
+
+Expands to the size needed for a buffer (including ``\0``) to hold the largest
+result of ``HX_unit_seconds``.
+
 Locators
 ========
 

@@ -9,6 +9,7 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+4.25    4.25    4.25    HXSIZEOF_UNITSEC64
 4.24    4.24    4.24    HX_getcwd
 4.19    4.18    4.18    HX_getopt5
 4.16    4.16    4.16    HX_strtoull_nsec

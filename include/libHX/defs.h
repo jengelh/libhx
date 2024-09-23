@@ -86,6 +86,7 @@
 #define HXSIZEOF_Z32 sizeof("-4294967296")
 /* 2^64 and -2^63 have same length */
 #define HXSIZEOF_Z64 sizeof("18446744073709551616")
+#define HXSIZEOF_UNITSEC64 sizeof("584542046089y11months2weeks2d23h59min59s")
 
 #define __HX_STRINGIFY_EXPAND(s) #s
 #define HX_STRINGIFY(s) __HX_STRINGIFY_EXPAND(s)

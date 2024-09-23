@@ -478,7 +478,10 @@ be 1/12 such a year. This is consistent with the units employed by systemd.
 ``seconds`` into a string representation broken into days, hours, minutes, and
 remaining seconds as appropriate. By default, only the d/h/min/s units are
 emitted. The ``flags`` argument specifies if any other units should be emitted;
-``HXUNIT_YEARS``, ``HXUNIT_MONTHS`` and ``HXUNIT_WEEKS`` are available.
+``HXUNIT_YEARS``, ``HXUNIT_MONTHS`` and ``HXUNIT_WEEKS`` are available. The
+longest string HX_unit_seconds can emit on a contemporary 64-bit POSIX system
+with 1970 epoch is 40 characters (so a buffer should be no less than 41 bytes),
+cf. ``HXSIZEOF_UNITSEC64``.
 
 
 Examples
