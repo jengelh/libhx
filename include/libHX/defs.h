@@ -12,7 +12,16 @@
 #	ifndef containerof
 #		include <cstddef>
 #		include <type_traits>
-#		define containerof(var, T, member) reinterpret_cast<std::conditional<std::is_const<std::remove_pointer<decltype(var)>::type>::value, std::add_const<T>::type, T>::type *>(reinterpret_cast<std::conditional<std::is_const<std::remove_pointer<decltype(var)>::type>::value, const char, char>::type *>(var) - offsetof(T, member))
+namespace {
+template<typename Dst, typename Src> static inline auto containerof_cxx(Src *var, size_t ofs)
+{
+	using K  = typename std::is_const<typename std::remove_pointer<Src>::type>;
+	using Ch = typename std::conditional<K::value, const char, char>::type;
+	using D2 = typename std::conditional<K::value, const Dst, Dst>::type;
+	return reinterpret_cast<D2 *>(reinterpret_cast<Ch *>(var) + ofs);
+}
+}
+#		define containerof(var, D1, member) containerof_cxx<D1>(var, -offsetof(D1, member))
 #	endif
 #else
 #	define HXsizeof_member(type, member) sizeof(((type *)NULL)->member)
