@@ -12,7 +12,8 @@ Characteristics:
 * recognition of the double dash as option list terminator
 * offers POSIX strictness where the option list terminates at the first
   non-option argument
-* option passthrough
+* option passthrough (conceptuall only works for options taking no argument,
+  or when the argument is joined to a long option with a '=')
 * the parse function is one-shot; there is no context object (like popt),
   no global state (like getopt) and no ``while`` loop (either of the two others)
 * exclusively uses an option table
