@@ -5,6 +5,7 @@
 #	include <cstdlib>
 #endif
 #include <libHX.h>
+#include <libHX/endian.h>
 
 #define ZZ 64
 

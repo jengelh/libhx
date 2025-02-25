@@ -9,6 +9,8 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+4.25    inline  4.25    cpu_to_le{16,32,64}p cpu_to_be{16,32,64}p
+4.25    inline  4.25    le{16,32,64}p_to_cpu be{16,32,64}p_to_cpu
 4.25    4.25    4.25    HXSIZEOF_UNITSEC64
 4.24    4.24    4.24    HX_getcwd
 4.19    4.18    4.18    HX_getopt5
