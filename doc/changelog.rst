@@ -1,3 +1,12 @@
+v4.25 (2025-03-07)
+==================
+
+Enhancements:
+
+* New headers endian.h and scope.hpp
+* New define HXSIZEOF_UNITSEC64 for the maximum output size of HX_unit_seconds
+
+
 v4.24 (2024-07-17)
 ==================
 
