@@ -1175,7 +1175,7 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_nsec(const char *s, char **out_end)
 EXPORT_SYMBOL char *HX_unit_seconds(char *out, size_t outsize,
     unsigned long long secs, unsigned int flags)
 {
-	unsigned long years = 0, months = 0, weeks = 0, days, hours, mins;
+	unsigned long long years = 0, months = 0, weeks = 0, days, hours, mins;
 	char buf[HXSIZEOF_Z64+4];
 	if (flags & HXUNIT_YEARS) {
 		years = secs / SECONDS_PER_YEAR;
@@ -1197,31 +1197,31 @@ EXPORT_SYMBOL char *HX_unit_seconds(char *out, size_t outsize,
 	secs %= 60;
 	*out = '\0';
 	if (years > 0) {
-		snprintf(buf, ARRAY_SIZE(buf), "%luy", years);
+		snprintf(buf, ARRAY_SIZE(buf), "%lluy", years);
 		HX_strlcat(out, buf, outsize);
 	}
 	if (months == 1) {
 		HX_strlcat(out, "1month", outsize);
 	} else if (months > 0) {
-		snprintf(buf, ARRAY_SIZE(buf), "%lumonths", months);
+		snprintf(buf, ARRAY_SIZE(buf), "%llumonths", months);
 		HX_strlcat(out, buf, outsize);
 	}
 	if (weeks == 1) {
 		HX_strlcat(out, "1week", outsize);
 	} else if (weeks > 0) {
-		snprintf(buf, ARRAY_SIZE(buf), "%luweeks", weeks);
+		snprintf(buf, ARRAY_SIZE(buf), "%lluweeks", weeks);
 		HX_strlcat(out, buf, outsize);
 	}
 	if (days > 0) {
-		snprintf(buf, ARRAY_SIZE(buf), "%lud", days);
+		snprintf(buf, ARRAY_SIZE(buf), "%llud", days);
 		HX_strlcat(out, buf, outsize);
 	}
 	if (hours > 0) {
-		snprintf(buf, ARRAY_SIZE(buf), "%luh", hours);
+		snprintf(buf, ARRAY_SIZE(buf), "%lluh", hours);
 		HX_strlcat(out, buf, outsize);
 	}
 	if (mins > 0) {
-		snprintf(buf, ARRAY_SIZE(buf), "%lumin", mins);
+		snprintf(buf, ARRAY_SIZE(buf), "%llumin", mins);
 		HX_strlcat(out, buf, outsize);
 	}
 	if (secs > 0 ||
