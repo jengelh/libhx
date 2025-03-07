@@ -9,6 +9,7 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+4.25    inline  4.25    HX_isascii
 4.25    inline  4.25    HX::make_scope_exit
 4.25    inline  4.25    cpu_to_le{16,32,64}p cpu_to_be{16,32,64}p
 4.25    inline  4.25    le{16,32,64}p_to_cpu be{16,32,64}p_to_cpu

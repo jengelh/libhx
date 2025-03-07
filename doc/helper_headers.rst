@@ -30,6 +30,7 @@ that there is a good reason to do so in the first place.
 
 	bool HX_isalnum(unsigned char c);
 	bool HX_isalpha(unsigned char c);
+	bool HX_isascii(unsigned char c);
 	bool HX_isdigit(unsigned char c);
 	bool HX_islower(unsigned char c);
 	bool HX_isprint(unsigned char c);

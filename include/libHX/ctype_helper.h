@@ -39,6 +39,11 @@ static __inline__ bool HX_isalpha(unsigned char c)
 	return isalpha(c);
 }
 
+static __inline__ bool HX_isascii(unsigned char c)
+{
+	return isascii(c);
+}
+
 static __inline__ bool HX_isdigit(unsigned char c)
 {
 	return isdigit(c);
