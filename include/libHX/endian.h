@@ -21,6 +21,9 @@
 #else
 #	define LIBHX_OPT_O2
 #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 LIBHX_DBG_INLINE uint16_t LIBHX_OPT_O2 be16p_to_cpu(const void *p)
 {
@@ -191,5 +194,9 @@ LIBHX_DBG_INLINE uint64_t LIBHX_OPT_O2 cpu_to_le64(uint64_t v)
 	cpu_to_le64p(&v, v);
 	return v;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LIBHX_ENDIAN_H */
