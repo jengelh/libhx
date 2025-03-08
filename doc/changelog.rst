@@ -1,3 +1,12 @@
+v4.26 (2025-03-08)
+==================
+
+Fixes:
+
+* Resolve integer truncation in HX_unit_seconds's output when the result
+  were to exceeded 2^32 years or months or weeks.
+
+
 v4.25 (2025-03-07)
 ==================
 
