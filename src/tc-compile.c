@@ -6,6 +6,7 @@
 #endif
 #include <libHX.h>
 #include <libHX/endian.h>
+#include <libHX/endian_float.h>
 
 #define ZZ 64
 
