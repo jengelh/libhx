@@ -378,6 +378,8 @@ EXPORT_SYMBOL int HX_readlink(hxmc_t **target, const char *path)
 			HXmc_setlen(target, ret); // \0 set here anyway
 			return ret;
 		}
+		if (linkbuf_size > SIZE_MAX / 2)
+			return -E2BIG;
 		linkbuf_size *= 2;
 		if (HXmc_setlen(target, linkbuf_size) == NULL) {
 			int saved_errno = errno;
@@ -483,7 +485,10 @@ EXPORT_SYMBOL int HX_getcwd(hxmc_t **target)
 			return 1;
 		}
 		if (errno == ERANGE) {
-			if (HXmc_setlen(target, linkbuf_size *= 2) != nullptr)
+			if (linkbuf_size > SIZE_MAX / 2)
+				return -E2BIG;
+			linkbuf_size *= 2;
+			if (HXmc_setlen(target, linkbuf_size) != nullptr)
 				continue;
 			/* errno already set by realloc, fall into next if block */
 		}
@@ -786,7 +791,7 @@ EXPORT_SYMBOL char *HX_slurp_fd(int fd, size_t *outsize)
 			 */
 			if (bufsize - offset >= 4095)
 				continue;
-			if (bufsize > SSIZE_MAX)
+			if (bufsize > SIZE_MAX / 2)
 				/* No more doubling */
 				break;
 			bufsize *= 2;
