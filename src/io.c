@@ -782,15 +782,17 @@ EXPORT_SYMBOL char *HX_slurp_fd(int fd, size_t *outsize)
 		char *buf = malloc(bufsize);
 		if (buf == nullptr)
 			return nullptr;
-		ssize_t rdret;
-		while ((rdret = read(fd, buf + offset, bufsize - 1 - offset)) > 0) {
+		do {
+			assert(offset < bufsize);
+			ssize_t rdret = read(fd, buf + offset, bufsize - 1 - offset);
+			if (rdret <= 0)
+				break;
 			offset += rdret;
-			/*
-			 * Make it so that the next read call is not called
-			 * with an exceptionally small size.
-			 */
 			if (bufsize - offset >= 4095)
+				/* 4K room still, just continue reading. */
 				continue;
+
+			/* Less than 4K room, enlarge now */
 			if (bufsize > SIZE_MAX / 2)
 				/* No more doubling */
 				break;
@@ -803,7 +805,7 @@ EXPORT_SYMBOL char *HX_slurp_fd(int fd, size_t *outsize)
 				return nullptr;
 			}
 			buf = nbuf;
-		}
+		} while (true);
 		buf[offset] = '\0';
 		if (outsize != nullptr)
 			*outsize = offset;
