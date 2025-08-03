@@ -141,18 +141,22 @@ enum {
  * %HXOPT_QUIET:	do not output any warnings to stderr
  * %HXOPT_HELPONERR:	print out help when a parsing error occurs
  * %HXOPT_USAGEONERR:	print out short usage when a parsing error occurs
- * %HXOPT_RQ_ORDER:	require option order/POSIX mode:
- * 			first non-option terminates option processing
+ * %HXOPT_RQ_ORDER:     Options and non-options must not be mixed (first
+ *                      non-option stops parsing) and the environment variable
+ *                      POSIXLY_CORRECT is ignored.
  * %HXOPT_KEEP_ARGV:	do not replace argc/argv at all
+ * %HXOPT_ANY_ORDER:    Options and non-options may be mixed and the
+ *                      environment variable POSIXLY_CORRECT is ignored.
  */
 enum {
-	HXOPT_PTHRU       = 1 << 0,
-	HXOPT_DESTROY_OLD = 1 << 1,
-	HXOPT_QUIET       = 1 << 2,
-	HXOPT_HELPONERR   = 1 << 3,
-	HXOPT_USAGEONERR  = 1 << 4,
-	HXOPT_RQ_ORDER    = 1 << 5,
-	HXOPT_KEEP_ARGV   = 1 << 6,
+	HXOPT_PTHRU       = 0x1U,
+	HXOPT_DESTROY_OLD = 0x2U,
+	HXOPT_QUIET       = 0x4U,
+	HXOPT_HELPONERR   = 0x8U,
+	HXOPT_USAGEONERR  = 0x10U,
+	HXOPT_RQ_ORDER    = 0x20U,
+	HXOPT_KEEP_ARGV   = 0x40U,
+	HXOPT_ANY_ORDER   = 0x80U,
 };
 
 /**
@@ -162,6 +166,7 @@ enum {
  * %HXOPT_ERR_VOID:	long option takes no value
  * %HXOPT_ERR_MIS:	option requires a value argument
  * %HXOPT_ERR_AMBIG:	long option abbreviation was ambiguous
+ * %HXOPT_ERR_FLAGS:    illegal flag combination (API misuse)
  */
 enum {
 	HXOPT_ERR_SUCCESS = 0,
@@ -169,6 +174,7 @@ enum {
 	HXOPT_ERR_VOID,
 	HXOPT_ERR_MIS,
 	HXOPT_ERR_AMBIG,
+	HXOPT_ERR_FLAGS,
 };
 
 /**

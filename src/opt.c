@@ -707,6 +707,8 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 	int ret = -ENOMEM;
 	unsigned int argk = 0;
 
+	if ((flags & (HXOPT_RQ_ORDER | HXOPT_ANY_ORDER)) == (HXOPT_RQ_ORDER | HXOPT_ANY_ORDER))
+		return -EINVAL;
 	if (new_argc != nullptr)
 		*new_argc = 0;
 	if (new_argv != nullptr)
@@ -735,7 +737,7 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 		}
 	}
 
-	if (posix_me_harder())
+	if (!(ps.flags & HXOPT_ANY_ORDER) && posix_me_harder())
 		ps.flags |= HXOPT_RQ_ORDER;
 	for (const char *cur = *opt; cur != NULL; ) {
 		if (state == HXOPT_S_TWOLONG)

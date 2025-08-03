@@ -299,7 +299,12 @@ The ``flags`` argument control the general behavior of ``HX_getopt``:
 ``HXOPT_RQ_ORDER``
 	Specifying this option terminates option processing when the first
 	non-option argument in argv is encountered. This behavior is also
-	implicit when the environment variable ``POSIXLY_CORRECT`` is set.
+	implicit when the environment variable ``POSIXLY_CORRECT`` is set
+	(and ``HXOPT_ANY_ORDER`` is not used).
+
+``HXOPT_ANY_ORDER``
+	Specifying this option allows mixing of options and non-options,
+	basically the opposite of the strict POSIX order.
 
 ``HXOPT_KEEP_ARGV``
 	Do not set ``*new_argc`` and ``*new_argv`` at all.
