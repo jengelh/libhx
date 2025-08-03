@@ -147,6 +147,7 @@ enum {
  * %HXOPT_KEEP_ARGV:	do not replace argc/argv at all
  * %HXOPT_ANY_ORDER:    Options and non-options may be mixed and the
  *                      environment variable POSIXLY_CORRECT is ignored.
+ * %HXOPT_ITER_OPTS:    (HX_getopt6 only) Populate result.desc and .oarg.
  * %HXOPT_ITER_ARGS:    (HX_getopt6 only) Populate result.uarg.
  * %HXOPT_DUP_ARGS:     (HX_getopt6 only) Populate result.dup_argv.
  */
@@ -159,6 +160,7 @@ enum {
 	HXOPT_RQ_ORDER    = 0x20U,
 	HXOPT_KEEP_ARGV   = 0x40U,
 	HXOPT_ANY_ORDER   = 0x80U,
+	HXOPT_ITER_OPTS   = 0x200U,
 	HXOPT_ITER_ARGS   = 0x400U,
 	HXOPT_DUP_ARGS    = 0x800U,
 };
@@ -240,7 +242,10 @@ struct HXoption {
 };
 
 /**
+ * @nopts:    Number of options found.
  * @nargs:    Number of non-option arguments found.
+ * @desc:     Under %HXOPT_ITER_OPTS, filled with pointers to options, else %nullptr.
+ * @oarg:     Under %HXOPT_ITER_OPTS, filled with pointers to optargs, else %nullptr.
  * @uarg:     Under %HXOPT_ITER_ARGS, filled with pointers to non-opt args
  *            (always orig_argv, never dup_argv), else %nullptr.
  * @dup_argc: String count for dup_argv.
@@ -249,8 +254,9 @@ struct HXoption {
  *            another HX_getopt6 call).
  */
 struct HXopt6_result {
-	int nargs;
-	char **uarg;
+	int nopts, nargs;
+	const struct HXoption **desc;
+	char **oarg, **uarg;
 	int dup_argc;
 	char **dup_argv;
 };

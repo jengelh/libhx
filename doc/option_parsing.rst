@@ -303,6 +303,12 @@ The ``flags`` argument control the general behavior of ``HX_getopt``:
 	Specifying this option allows mixing of options and non-options,
 	basically the opposite of the strict POSIX order.
 
+``HXOPT_ITER_OPTS``
+	``result->desc`` will be filled with pointers to the definitions of the
+	parsed options. ``result->oarg`` will be filled with pointers to the
+	option argument strings (potentially %nullptr if the option did not
+	take anything). ``result->nopts`` will be filled with the option count.
+
 ``HXOPT_ITER_ARGS``
 	``result->uarg`` will be filled with pointers to leftover arguments
 	(pointing into the memory regions of the original argv), and
@@ -448,6 +454,52 @@ Storing through pointers
 Note how HXTYPE_STRING in conjunction with ``.ptr=&cflag`` will allocate a
 buffer that needs to be freed.
 
+Storing via iteration
+---------------------
+
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <libHX/option.h>
+
+	int main(int argc, char **argv)
+	{
+		int aflag = 0;
+		int bflag = 0;
+		char *cflag = NULL;
+		struct HXoption options_table[] = {
+			{.sh = 'a', .type = HXTYPE_NONE},
+			{.sh = 'b', .type = HXTYPE_NONE},
+			{.sh = 'c', .type = HXTYPE_STRING},
+			HXOPT_AUTOHELP,
+			HXOPT_TABLEEND,
+		};
+
+		struct HXopt6_result result;
+		if (HX_getopt6(options_table, argc, argv, &result,
+		    HXOPT_USAGEONERR | HXOPT_ITER_OPTS) != HXOPT_ERR_SUCCESS)
+			return EXIT_FAILURE;
+		for (int i = 1; i < result.nopts; ++i) {
+			switch (result.desc[i]->sh) {
+			case 'a':
+				aflag = 1;
+				break;
+			case 'b':
+				bflag = 1;
+				break;
+			case 'c':
+				cflag = result.oarg[i];
+				break;
+			}
+		}
+		printf("aflag = %d, bflag = %d, cvalue = %s\n",
+		       aflag, bflag, cflag ? cflag : "(null)");
+		HX_getopt6_clean(&result);
+		return EXIT_SUCCESS;
+	}
+
+Note that the pointers in ``oarg`` point to the original argv and so should not
+be freed. Upon success of HX_getopt6, HX_getopt6_clean must be called.
+
 Obtaining non-option arguments
 ------------------------------
 
@@ -484,8 +536,6 @@ Obtaining non-option arguments
 		HX_getopt6_clean(&result);
 		return EXIT_SUCCESS;
 	}
-
-Note how, upon success of HX_getopt6, HX_getopt6_clean must be called.
 
 Verbosity levels
 ----------------

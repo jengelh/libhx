@@ -120,13 +120,15 @@ enum {
 /**
  * struct HX_getopt_vars - option parser working variable set
  * @arg0:	saved program name
+ * @desc:	list of extracted options
+ * @oarg:	list of extracted options
  * @uarg:	list of extracted non-options
  * @cbi:	callback info
  * @flags:	flags setting the behavior for HX_getopt
  */
 struct HX_getopt_vars {
 	const char *arg0;
-	struct HXdeque *uarg;
+	struct HXdeque *desc, *oarg, *uarg;
 	struct HXoptcb cbi;
 	unsigned int flags;
 };
@@ -236,6 +238,15 @@ static void do_assign(struct HXoptcb *cbi, const char *arg0)
 	} /* switch */
 	if (opt->cb != NULL)
 		opt->cb(cbi);
+}
+
+static int do_assign_front(struct HX_getopt_vars *par)
+{
+	if (HXdeque_push(par->desc, par->cbi.current) == nullptr ||
+	    HXdeque_push(par->oarg, par->cbi.data) == nullptr)
+		return -errno;
+	do_assign(&par->cbi, par->arg0);
+	return 0;
 }
 
 static __inline__ const struct HXoption *
@@ -571,8 +582,10 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 	 * manually call do_assign now rather than in the superordinate
 	 * function.
 	 */
-	do_assign(&par->cbi, par->arg0);
+	ret = do_assign_front(par);
 	free(key);
+	if (ret < 0)
+		return ret;
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
 
@@ -653,8 +666,12 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 
 EXPORT_SYMBOL void HX_getopt6_clean(struct HXopt6_result *r)
 {
+	free(r->desc);
+	free(r->oarg);
 	free(r->uarg);
 	HX_zvecfree(r->dup_argv);
+	r->desc = nullptr;
+	r->oarg = nullptr;
 	r->uarg = nullptr;
 	r->dup_argv = nullptr;
 }
@@ -671,13 +688,15 @@ EXPORT_SYMBOL int HX_getopt6(const struct HXoption *table, int argc,
 		return -EINVAL;
 	if (flags & (HXOPT_PTHRU | HXOPT_KEEP_ARGV | HXOPT_DESTROY_OLD))
 		return -EINVAL;
-	if (result == nullptr && flags & (HXOPT_ITER_ARGS | HXOPT_DUP_ARGS))
+	if (result == nullptr && flags & (HXOPT_ITER_OPTS | HXOPT_ITER_ARGS | HXOPT_DUP_ARGS))
 		return -EINVAL;
 	if (result != nullptr)
 		memset(result, 0, sizeof(*result));
 	memset(&ps, 0, sizeof(ps));
+	ps.desc = HXdeque_init();
+	ps.oarg = HXdeque_init();
 	ps.uarg = HXdeque_init();
-	if (ps.uarg == nullptr) {
+	if (ps.desc == nullptr || ps.oarg == nullptr || ps.uarg == nullptr) {
 		ret = -errno;
 		goto out;
 	}
@@ -715,8 +734,11 @@ EXPORT_SYMBOL int HX_getopt6(const struct HXoption *table, int argc,
 			ret = state & ~HXOPT_I_ERROR;
 			goto out;
 		}
-		if (state & HXOPT_I_ASSIGN)
-			do_assign(&ps.cbi, ps.arg0);
+		if (state & HXOPT_I_ASSIGN) {
+			ret = do_assign_front(&ps);
+			if (ret < 0)
+				goto out;
+		}
 		if (state & HXOPT_I_ADVARG) {
 			op0 = *++opt;
 			--argc;
@@ -729,6 +751,16 @@ EXPORT_SYMBOL int HX_getopt6(const struct HXoption *table, int argc,
 		state &= ~HXOPT_I_MASK;
 	}
 
+	if (flags & HXOPT_ITER_OPTS) {
+		unsigned int nelem = 0;
+		result->desc = reinterpret_cast(const struct HXoption **, HXdeque_to_vec(ps.desc, &nelem));
+		result->oarg = reinterpret_cast(char **, HXdeque_to_vec(ps.oarg, &nelem));
+		if (result->desc == nullptr || result->oarg == nullptr) {
+			ret = -errno;
+			goto out;
+		}
+		result->nopts = nelem;
+	}
 	if (flags & HXOPT_ITER_ARGS) {
 		size_t nelem = 0;
 		result->uarg = reinterpret_cast(char **, HXdeque_to_vecx(ps.uarg, &nelem));
@@ -768,6 +800,10 @@ EXPORT_SYMBOL int HX_getopt6(const struct HXoption *table, int argc,
 	}
 	if (ps.uarg != nullptr)
 		HXdeque_free(ps.uarg);
+	if (ps.oarg != nullptr)
+		HXdeque_free(ps.oarg);
+	if (ps.desc != nullptr)
+		HXdeque_free(ps.desc);
 	return ret;
 }
 
