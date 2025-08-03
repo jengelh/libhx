@@ -147,6 +147,8 @@ enum {
  * %HXOPT_KEEP_ARGV:	do not replace argc/argv at all
  * %HXOPT_ANY_ORDER:    Options and non-options may be mixed and the
  *                      environment variable POSIXLY_CORRECT is ignored.
+ * %HXOPT_CONST_INPUT:   User declaration that elements in input argv can NOT
+ *                       be reordered by the parser.
  * %HXOPT_ITER_OPTS:    (HX_getopt6 only) Populate result.desc and .oarg.
  * %HXOPT_ITER_ARGS:    (HX_getopt6 only) Populate result.uarg.
  * %HXOPT_DUP_ARGS:     (HX_getopt6 only) Populate result.dup_argv.
@@ -160,6 +162,7 @@ enum {
 	HXOPT_RQ_ORDER    = 0x20U,
 	HXOPT_KEEP_ARGV   = 0x40U,
 	HXOPT_ANY_ORDER   = 0x80U,
+	HXOPT_CONST_INPUT   = 0x100U,
 	HXOPT_ITER_OPTS   = 0x200U,
 	HXOPT_ITER_ARGS   = 0x400U,
 	HXOPT_ITER_OA     = HXOPT_ITER_OPTS | HXOPT_ITER_ARGS,

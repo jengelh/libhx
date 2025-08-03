@@ -304,6 +304,10 @@ The ``flags`` argument control the general behavior of ``HX_getopt``:
 	Specifying this option allows mixing of options and non-options,
 	basically the opposite of the strict POSIX order.
 
+``HXOPT_CONST_INPUT``
+	Declaration by the user that elements in input argv must *not* be
+	reordered by the parser.
+
 ``HXOPT_ITER_OPTS``
 	``result->desc`` will be filled with pointers to the definitions of the
 	parsed options. ``result->oarg`` will be filled with pointers to the

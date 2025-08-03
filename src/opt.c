@@ -815,7 +815,8 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 		flags |= HXOPT_DUP_ARGS;
 	else
 		flags &= ~HXOPT_DUP_ARGS;
-	int ret = HX_getopt6(table, -1, orig_argv, &result, flags);
+	int ret = HX_getopt6(table, -1, orig_argv, &result,
+	          flags | HXOPT_CONST_INPUT);
 	if (ret != 0)
 		return ret;
 	if (new_argc != nullptr)
