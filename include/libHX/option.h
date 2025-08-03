@@ -147,6 +147,7 @@ enum {
  * %HXOPT_KEEP_ARGV:	do not replace argc/argv at all
  * %HXOPT_ANY_ORDER:    Options and non-options may be mixed and the
  *                      environment variable POSIXLY_CORRECT is ignored.
+ * %HXOPT_DUP_ARGS:     (HX_getopt6 only) Populate result.dup_argv.
  */
 enum {
 	HXOPT_PTHRU       = 0x1U,
@@ -157,6 +158,7 @@ enum {
 	HXOPT_RQ_ORDER    = 0x20U,
 	HXOPT_KEEP_ARGV   = 0x40U,
 	HXOPT_ANY_ORDER   = 0x80U,
+	HXOPT_DUP_ARGS    = 0x800U,
 };
 
 /**
@@ -233,6 +235,17 @@ struct HXoption {
 	void (*cb)(const struct HXoptcb *);
 	int val;
 	const char *help, *htyp;
+};
+
+/**
+ * @dup_argc: String count for dup_argv.
+ * @dup_argv: Filled with copies of non-option arguments if %HXOPT_DUP_ARGS.
+ *            dup_argv[0] will be the program name (useful for feeding to
+ *            another HX_getopt6 call).
+ */
+struct HXopt6_result {
+	int dup_argc;
+	char **dup_argv;
 };
 
 #ifndef LIBHX_ZVECFREE_DECLARATION

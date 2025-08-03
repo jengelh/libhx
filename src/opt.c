@@ -8,6 +8,7 @@
  *	either version 2.1 or (at your option) any later version.
  */
 #include <errno.h>
+#include <limits.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -649,11 +650,17 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
 
-EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
-    int *new_argc, char ***new_argv, unsigned int flags)
+static void HX_getopt6_clean(struct HXopt6_result *r)
+{
+	HX_zvecfree(r->dup_argv);
+	r->dup_argv = nullptr;
+}
+
+static int HX_getopt6(const struct HXoption *table, char **argv,
+    struct HXopt6_result *result, unsigned int flags)
 {
 	struct HX_getopt_vars ps;
-	const char **opt = const_cast(const char **, orig_argv);
+	const char **opt = const_cast(const char **, argv);
 	int state = HXOPT_S_NORMAL;
 	int ret = -ENOMEM;
 
@@ -661,10 +668,7 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 		return -EINVAL;
 	if (flags & HXOPT_PTHRU)
 		return -EINVAL;
-	if (new_argc != nullptr)
-		*new_argc = 0;
-	if (new_argv != nullptr)
-		*new_argv = nullptr;
+	memset(result, 0, sizeof(*result));
 	memset(&ps, 0, sizeof(ps));
 	ps.uarg = HXdeque_init();
 	if (ps.uarg == nullptr) {
@@ -710,22 +714,23 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 		state &= ~HXOPT_I_MASK;
 	}
 
-	if (new_argv != nullptr) {
+	if (flags & HXOPT_DUP_ARGS) {
 		size_t nelem = 0;
 		if (ps.arg0 != nullptr && HXdeque_unshift(ps.uarg, ps.arg0) == nullptr) {
 			ret = -errno;
 			goto out;
 		}
-		*new_argv = HXdeque_to_vec_strdup(ps.uarg, &nelem);
-		if (*new_argv == nullptr) {
+		result->dup_argv = HXdeque_to_vec_strdup(ps.uarg, &nelem);
+		if (result->dup_argv == nullptr) {
 			ret = -errno;
 			goto out;
 		}
-		if (new_argc != nullptr)
-			*new_argc = nelem;
+		result->dup_argc = nelem < INT_MAX ? nelem : INT_MAX;
 	}
 	ret = HXOPT_ERR_SUCCESS;
  out:
+	if (ret != HXOPT_ERR_SUCCESS && result != nullptr)
+		HX_getopt6_clean(result);
 	if (ret == HXOPT_ERR_SUCCESS) {
 	} else if (ret < 0) {
 		if (!(ps.flags & HXOPT_QUIET))
@@ -739,6 +744,27 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 	}
 	if (ps.uarg != nullptr)
 		HXdeque_free(ps.uarg);
+	return ret;
+}
+
+EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
+    int *new_argc, char ***new_argv, unsigned int flags)
+{
+	struct HXopt6_result result;
+	if (new_argv != nullptr)
+		flags |= HXOPT_DUP_ARGS;
+	else
+		flags &= ~HXOPT_DUP_ARGS;
+	int ret = HX_getopt6(table, orig_argv, &result, flags);
+	if (ret != 0)
+		return ret;
+	if (new_argc != nullptr)
+		*new_argc = result.dup_argc;
+	if (new_argv != nullptr) {
+		*new_argv = result.dup_argv;
+		result.dup_argv = nullptr;
+	}
+	HX_getopt6_clean(&result);
 	return ret;
 }
 
