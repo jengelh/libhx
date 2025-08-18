@@ -41,6 +41,26 @@ struct HX_quote_rule {
 	const char *chars;
 };
 
+/* years, months, weeks, days, hours, minutes, seconds, msecs, musecs, nsecs; */
+enum period_idx {
+	PERIDX_YEARS = 0,
+	PERIDX_MONTHS,
+	PERIDX_WEEKS,
+	PERIDX_DAYS,
+	PERIDX_HOURS,
+	PERIDX_MIN,
+	PERIDX_SEC,
+	PERIDX_MSEC,
+	PERIDX_MUSEC,
+	PERIDX_NSEC,
+	PERIDX_MAX,
+};
+
+struct HX_unit_desc {
+	const char name[8];
+	uint8_t len, pidx;
+};
+
 static const char HX_hexenc[] = "0123456789ABCDEF";
 
 EXPORT_SYMBOL char *HX_basename(const char *s)
@@ -1068,46 +1088,78 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_unit(const char *s,
 	return neg ? -ipart : ipart;
 }
 
+static const struct HX_unit_desc txtperiod_utab[] = {
+	{"seconds", 7, PERIDX_SEC},
+	{"second",  6, PERIDX_SEC},
+	{"sec",     3, PERIDX_SEC},
+	{"s",       1, PERIDX_SEC},
+	{"minutes", 7, PERIDX_MIN},
+	{"minute",  6, PERIDX_MIN},
+	{"min",     3, PERIDX_MIN},
+	{"hours",   5, PERIDX_HOURS},
+	{"hour",    4, PERIDX_HOURS},
+	{"h",       1, PERIDX_HOURS},
+	{"days",    4, PERIDX_DAYS},
+	{"day",     3, PERIDX_DAYS},
+	{"d",       1, PERIDX_DAYS},
+	{"weeks",   5, PERIDX_WEEKS},
+	{"week",    4, PERIDX_WEEKS},
+	{"months",  6, PERIDX_MONTHS},
+	{"month",   5, PERIDX_MONTHS},
+	{"years",   5, PERIDX_YEARS},
+	{"year",    4, PERIDX_YEARS},
+	{"y",       1, PERIDX_YEARS},
+	{"msec",    4, PERIDX_MSEC},
+	{"ms",      2, PERIDX_MSEC},
+	{"µsec",    5, PERIDX_MUSEC},
+	{"µs",      3, PERIDX_MUSEC},
+	{"nsec",    4, PERIDX_NSEC},
+	{"ns",      2, PERIDX_NSEC},
+};
+
 /* Numbers also used by systemd — the focus is on longterm averages */
 #define SECONDS_PER_YEAR 31557600 /* 365.25 days */
 #define SECONDS_PER_MONTH 2629800 /* 1/12th of that year = 30.4375 days */
 #define NSEC_PER_SECOND 1000000000ULL
 
-static const struct {
-	const char name[8];
-	unsigned int len;
-	uint32_t s_mult;
-	uint64_t ns_mult;
-} time_multiplier[] = {
-	{"seconds", 7, 1, 1 * NSEC_PER_SECOND},
-	{"second",  6, 1, 1 * NSEC_PER_SECOND},
-	{"sec",     3, 1, 1 * NSEC_PER_SECOND},
-	{"s",       1, 1, 1 * NSEC_PER_SECOND},
-	{"minutes", 7, 60, 60 * NSEC_PER_SECOND},
-	{"minute",  6, 60, 60 * NSEC_PER_SECOND},
-	{"min",     3, 60, 60 * NSEC_PER_SECOND},
-	{"hours",   5, 3600, 3600 * NSEC_PER_SECOND},
-	{"hour",    4, 3600, 3600 * NSEC_PER_SECOND},
-	{"h",       1, 3600, 3600 * NSEC_PER_SECOND},
-	{"days",    4, 86400, 86400 * NSEC_PER_SECOND},
-	{"day",     3, 86400, 86400 * NSEC_PER_SECOND},
-	{"d",       1, 86400, 86400 * NSEC_PER_SECOND},
-	{"weeks",   5, 604800, 604800 * NSEC_PER_SECOND},
-	{"week",    4, 604800, 604800 * NSEC_PER_SECOND},
-	{"months",  6, SECONDS_PER_MONTH, SECONDS_PER_MONTH * NSEC_PER_SECOND},
-	{"month",   5, SECONDS_PER_MONTH, SECONDS_PER_MONTH * NSEC_PER_SECOND},
-	{"years",   5, SECONDS_PER_YEAR, SECONDS_PER_YEAR * NSEC_PER_SECOND},
-	{"year",    4, SECONDS_PER_YEAR, SECONDS_PER_YEAR * NSEC_PER_SECOND},
-	{"y",       1, SECONDS_PER_YEAR, SECONDS_PER_YEAR * NSEC_PER_SECOND},
-	{"msec",    4, 0, 1000000},
-	{"ms",      2, 0, 1000000},
-	{"µsec",    5, 0, 1000},
-	{"µs",      3, 0, 1000},
-	{"nsec",    4, 0, 1},
-	{"ns",      2, 0, 1},
+static const uint64_t sec_mult[PERIDX_MAX] = {
+	[PERIDX_YEARS]  = SECONDS_PER_YEAR,
+	[PERIDX_MONTHS] = SECONDS_PER_MONTH,
+	[PERIDX_WEEKS]  = 604800,
+	[PERIDX_DAYS]   = 86400,
+	[PERIDX_HOURS]  = 3600,
+	[PERIDX_MIN]    = 60,
+	[PERIDX_SEC]    = 1,
+	[PERIDX_MSEC]   = 0,
+	[PERIDX_MUSEC]  = 0,
+	[PERIDX_NSEC]   = 0,
 };
 
-static unsigned long long HX_strtoull_time(const char *s, char **out_end, bool nsec)
+static const uint64_t nsec_mult[PERIDX_MAX] = {
+	[PERIDX_YEARS]  = NSEC_PER_SECOND * SECONDS_PER_YEAR,
+	[PERIDX_MONTHS] = NSEC_PER_SECOND * SECONDS_PER_MONTH,
+	[PERIDX_WEEKS]  = NSEC_PER_SECOND * 604800,
+	[PERIDX_DAYS]   = NSEC_PER_SECOND * 86400,
+	[PERIDX_HOURS]  = NSEC_PER_SECOND * 3600,
+	[PERIDX_MIN]    = NSEC_PER_SECOND * 60,
+	[PERIDX_SEC]    = NSEC_PER_SECOND,
+	[PERIDX_MSEC]   = 1000000,
+	[PERIDX_MUSEC]  = 1000,
+	[PERIDX_NSEC]   = 1,
+};
+
+/**
+ * Take a textual period string ("1 minute 5 seconds") and break it down.
+ * @s:       input string
+ * @utab:    allowed unit suffixes
+ * @mtab:    multiplication table
+ * @out_end: parsing stopping point
+ *
+ * Returns an errno.
+ */
+static unsigned long long HX_strtoull_period(const char *s,
+    const struct HX_unit_desc *utab, size_t usize, const uint64_t *mtab,
+    size_t msize, char **out_end)
 {
 	unsigned long long quant = 0;
 
@@ -1131,19 +1183,18 @@ static unsigned long long HX_strtoull_time(const char *s, char **out_end, bool n
 		while (HX_isspace(*s))
 			++s;
 		unsigned int i;
-		for (i = 0; i < ARRAY_SIZE(time_multiplier); ++i)
-			if (strncmp(s, time_multiplier[i].name,
-			    time_multiplier[i].len) == 0 &&
-			    !HX_isalpha(s[time_multiplier[i].len]))
+		for (i = 0; i < usize; ++i)
+			if (strncmp(s, utab[i].name, utab[i].len) == 0 &&
+			    !HX_isalpha(s[utab[i].len]))
 				break;
-		if (i == ARRAY_SIZE(time_multiplier)) {
+		if (i == usize) {
 			if ((!have_frac && num == 0) || (have_frac && frac == 0))
 				/* 0 is the same no matter what unit, take it */
 				continue;
 			s = numbegin;
 			break;
 		}
-		unsigned long long mult = nsec ? time_multiplier[i].ns_mult : time_multiplier[i].s_mult;
+		unsigned long long mult = mtab[utab[i].pidx];
 		if (have_frac) {
 			double v = frac * mult;
 			if (v >= ULLONG_MAX) {
@@ -1174,7 +1225,7 @@ static unsigned long long HX_strtoull_time(const char *s, char **out_end, bool n
 			return ULLONG_MAX;
 		}
 		quant += num;
-		s += time_multiplier[i].len;
+		s += utab[i].len;
 	}
 	if (out_end != nullptr)
 		*out_end = const_cast(char *, s);
@@ -1184,12 +1235,16 @@ static unsigned long long HX_strtoull_time(const char *s, char **out_end, bool n
 
 EXPORT_SYMBOL unsigned long long HX_strtoull_sec(const char *s, char **out_end)
 {
-	return HX_strtoull_time(s, out_end, false);
+	return HX_strtoull_period(s,
+	       txtperiod_utab, ARRAY_SIZE(txtperiod_utab),
+	       sec_mult, ARRAY_SIZE(sec_mult), out_end);
 }
 
 EXPORT_SYMBOL unsigned long long HX_strtoull_nsec(const char *s, char **out_end)
 {
-	return HX_strtoull_time(s, out_end, true);
+	return HX_strtoull_period(s,
+	       txtperiod_utab, ARRAY_SIZE(txtperiod_utab),
+	       nsec_mult, ARRAY_SIZE(nsec_mult), out_end);
 }
 
 EXPORT_SYMBOL char *HX_unit_seconds(char *out, size_t outsize,
