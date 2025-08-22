@@ -70,7 +70,7 @@ int main(int argc, char **oargv)
 
 	res = NULL;
 	for (int i = 1; i < argc; ++i) {
-		ret = HX_realpath(&res, argv[argc], rp_flags);
+		ret = HX_realpath(&res, argv[i], rp_flags);
 		if (ret < 0) {
 			perror("HX_realpath");
 			printf("\n");
