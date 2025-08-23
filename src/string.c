@@ -1117,6 +1117,18 @@ static const struct HX_unit_desc txtperiod_utab[] = {
 	{"ns",      2, PERIDX_NSEC},
 };
 
+static const struct HX_unit_desc iso8601p_dtab[] = {
+	{"D", 1, PERIDX_DAYS},
+	{"M", 1, PERIDX_MONTHS},
+	{"Y", 1, PERIDX_YEARS},
+};
+
+static const struct HX_unit_desc iso8601p_ttab[] = {
+	{"S", 1, PERIDX_SEC},
+	{"M", 1, PERIDX_MIN},
+	{"H", 1, PERIDX_HOURS},
+};
+
 /* Numbers also used by systemd — the focus is on longterm averages */
 #define SECONDS_PER_YEAR 31557600 /* 365.25 days */
 #define SECONDS_PER_MONTH 2629800 /* 1/12th of that year = 30.4375 days */
@@ -1184,7 +1196,7 @@ static unsigned long long HX_strtoull_period(const char *s,
 			++s;
 		unsigned int i;
 		for (i = 0; i < usize; ++i)
-			if (strncmp(s, utab[i].name, utab[i].len) == 0 &&
+			if (strncasecmp(s, utab[i].name, utab[i].len) == 0 &&
 			    !HX_isalpha(s[utab[i].len]))
 				break;
 		if (i == usize) {
@@ -1233,8 +1245,106 @@ static unsigned long long HX_strtoull_period(const char *s,
 	return quant;
 }
 
+static unsigned long long HX_strtoull_iso8601p(const char *s,
+    const uint64_t *mtab, size_t msize, char **out_end)
+{
+	const struct HX_unit_desc *utab = iso8601p_dtab;
+	size_t usize = ARRAY_SIZE(iso8601p_dtab);
+	unsigned long long quant = 0;
+
+	while (*s != '\0') {
+		while (HX_isspace(*s))
+			++s;
+		const char *numbegin = s;
+		if (*s == '-')
+			break;
+		if (HX_toupper(*s) == 'T') {
+			if (utab != iso8601p_dtab)
+				break;
+			utab = iso8601p_ttab;
+			usize = ARRAY_SIZE(iso8601p_ttab);
+			++s;
+			continue;
+		}
+		char *end = nullptr;
+		unsigned long long num = strtoull(s, &end, 10);
+		if (num == ULLONG_MAX && errno == ERANGE)
+			return num;
+		double frac = 0;
+		bool have_frac = *end == '.';
+		if (have_frac)
+			frac = strtod(s, &end);
+		if (end == s)
+			break;
+		s = end;
+		while (HX_isspace(*s))
+			++s;
+		unsigned int i;
+		for (i = 0; i < usize; ++i)
+			if (strncasecmp(s, utab[i].name, utab[i].len) == 0 &&
+			    !HX_isalpha(s[utab[i].len]))
+				break;
+		if (i == usize) {
+			if ((!have_frac && num == 0) || (have_frac && frac == 0))
+				/* 0 is the same no matter what unit, take it */
+				continue;
+			s = numbegin;
+			break;
+		}
+		unsigned long long mult = mtab[utab[i].pidx];
+		if (have_frac) {
+			double v = frac * mult;
+			if (v >= ULLONG_MAX) {
+				/*
+				 * As ULLONG_MAX gets promoted to double, its
+				 * value may _increase_, therefore here we use
+				 * >= and not >.
+				 */
+				if (out_end != nullptr)
+					*out_end = const_cast(char *, numbegin);
+				errno = ERANGE;
+				return ULLONG_MAX;
+			}
+			num = v;
+		} else {
+			if (mult > 0 && num > ULLONG_MAX / mult) {
+				if (out_end != nullptr)
+					*out_end = const_cast(char *, numbegin);
+				errno = ERANGE;
+				return ULLONG_MAX;
+			}
+			num *= mult;
+		}
+		if (num > ULLONG_MAX - quant) {
+			if (out_end != nullptr)
+				*out_end = const_cast(char *, numbegin);
+			errno = ERANGE;
+			return ULLONG_MAX;
+		}
+		quant += num;
+		s += utab[i].len;
+	}
+	if (out_end != nullptr)
+		*out_end = const_cast(char *, s);
+	errno = 0;
+	return quant;
+}
+
+static bool looks_like_iso8601(const char *s)
+{
+	if (HX_toupper(s[0]) != 'P')
+		return false;
+	if (HX_isdigit(s[1]))
+		return true;
+	if (HX_toupper(s[1]) == 'T' && HX_isdigit(s[2]))
+		return true;
+	return false;
+}
+
 EXPORT_SYMBOL unsigned long long HX_strtoull_sec(const char *s, char **out_end)
 {
+	if (looks_like_iso8601(s))
+		return HX_strtoull_iso8601p(&s[1], sec_mult, ARRAY_SIZE(sec_mult), out_end);
 	return HX_strtoull_period(s,
 	       txtperiod_utab, ARRAY_SIZE(txtperiod_utab),
 	       sec_mult, ARRAY_SIZE(sec_mult), out_end);
@@ -1242,6 +1352,8 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_sec(const char *s, char **out_end)
 
 EXPORT_SYMBOL unsigned long long HX_strtoull_nsec(const char *s, char **out_end)
 {
+	if (looks_like_iso8601(s))
+		return HX_strtoull_iso8601p(&s[1], nsec_mult, ARRAY_SIZE(nsec_mult), out_end);
 	return HX_strtoull_period(s,
 	       txtperiod_utab, ARRAY_SIZE(txtperiod_utab),
 	       nsec_mult, ARRAY_SIZE(nsec_mult), out_end);

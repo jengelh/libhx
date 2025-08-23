@@ -462,7 +462,7 @@ Conversion from/to human-readable durations with units
 	                      unsigned int flags);
 
 ``HX_strtoull_sec`` and ``HX_strtoull_nsec`` convert a time duration with
-units, such as ``"15min30s"`` into an all-seconds and all-nanoseconds value,
+units, such as ``15min30s`` into an all-seconds and all-nanoseconds value,
 respectively. The recognized unit strings are: ``years``, ``year``, ``y``,
 ``months``, ``month``, ``days``, ``day``, ``d``, ``hours``, ``hour``, ``h``,
 ``minutes``, ``minute``, ``min``, ``seconds``, ``second``, ``s``, the empty
@@ -471,8 +471,15 @@ string (to mean seconds), ``msec``, ``ms``, ``µsec``, ``µs``, ``nsec`` and
 implementation-defined. When parsing stops at any point, ``*end`` is set to the
 location, similar to how the ``strtoull`` C function would.
 
-One year is defined to be 365.25 days of 86400 seconds; one month is defined to
-be 1/12 such a year. This is consistent with the units employed by systemd.
+One day is defined as 86400 seconds. One year is defined to be 365.25 days of
+86400 seconds. One month is defined to be 1/12 such a year (30.4375 days). This
+is consistent with the units employed by systemd.
+
+In addition, HX_strtoull_sec recognizes the most common ISO 8601-style period
+syntax, e.g. ``PT15M30S``. Time lengths are applied as mentioned above, so
+``P1M`` is treated as 2629800 seconds, *not* as a "calendaric month" that would
+expand to 28—31 days relative to some start date. There is no function offered
+to return a ``struct tm``.
 
 ``HX_unit_seconds`` is the reverse and transforms the duration given by
 ``seconds`` into a string representation broken into days, hours, minutes, and
