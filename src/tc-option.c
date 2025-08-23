@@ -72,27 +72,6 @@ static void dump_argv(char **v)
 	printf("\n");
 }
 
-static int t_pthru(void)
-{
-	const char *argv[] = {
-		"ARGV0", "-Zomg", "-GZfoo", "bar",
-		"--unknown-f=13.37", "--unknown-a",
-		"foo", "bar", NULL
-	};
-	char **nargv = nullptr;
-	int nargc = 0;
-
-	printf("PTHRU test:\n");
-	if (HX_getopt5(table, const_cast(char **, argv), &nargc, &nargv,
-	    HXOPT_USAGEONERR | HXOPT_PTHRU) != HXOPT_ERR_SUCCESS)
-		return EXIT_FAILURE;
-	printf("argc = %d\n", nargc);
-	dump_argv(nargv);
-	printf("\n");
-	HX_zvecfree(nargv);
-	return EXIT_SUCCESS;
-}
-
 static int t_empty_argv(void)
 {
 	char *zero_argv[] = {nullptr};
@@ -135,7 +114,7 @@ static int runner(int argc, char **argv)
 	printf("Verbosity level: %d\n", opt_v);
 	printf("Mask: 0x%08X\n", opt_mask);
 	printf("mcstr: >%s<\n", opt_mcstr);
-	return t_pthru();
+	return EXIT_SUCCESS;
 }
 
 int main(int argc, char **argv)

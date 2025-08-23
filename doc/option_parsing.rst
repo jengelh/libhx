@@ -281,10 +281,6 @@ string vector on success. (That array can be freed with ``HX_zvecfree``). If
 
 The ``flags`` argument control the general behavior of ``HX_getopt``:
 
-``HXOPT_PTHRU``
-	“Passthrough mode”. Any unknown options are passed through into
-	``new_argv``.
-
 ``HXOPT_QUIET``
 	Do not print any diagnostics when encountering errors in the user's
 	input.

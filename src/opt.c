@@ -502,19 +502,8 @@ static int HX_getopt_twolong(const char *const *opt,
 	par->cbi.current = lookup_long_pfx(par->cbi.table, key + 2);
 	if (par->cbi.current == &HXopt_ambig_prefix)
 		return HX_getopt_error(HXOPT_E_AMBIG_PREFIX, key, par->flags);
-	if (par->cbi.current == NULL) {
-		if (par->flags & HXOPT_PTHRU) {
-			char *tmp = HX_strdup(key);
-			if (tmp == NULL)
-				return -errno;
-			if (HXdeque_push(par->remaining, tmp) == NULL) {
-				free(tmp);
-				return -errno;
-			}
-			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
-		}
+	if (par->cbi.current == nullptr)
 		return HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, par->flags);
-	}
 
 	par->cbi.flags = HXOPTCB_BY_LONG;
 	if (takes_void(par->cbi.current->type)) {
@@ -562,15 +551,6 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 		return ret;
 	}
 	if (par->cbi.current == NULL) {
-		if (par->flags & HXOPT_PTHRU) {
-			/* Undo nuke of '=' and reuse alloc */
-			value[-1] = '=';
-			if (HXdeque_push(par->remaining, key) == NULL) {
-				free(key);
-				return -errno;
-			}
-			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
-		}
 		ret = HX_getopt_error(HXOPT_E_LONG_UNKNOWN, key, par->flags);
 		free(key);
 		return ret;
@@ -602,23 +582,8 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 		return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 
 	par->cbi.current = lookup_short(par->cbi.table, op);
-	if (par->cbi.current == NULL) {
-		if (par->flags & HXOPT_PTHRU) {
-			/*
-			 * @cur-1 is always valid: it is either the previous
-			 * char, or it is '-'.
-			 */
-			char *buf = HX_strdup(cur - 1);
-			if (buf != NULL)
-				*buf = '-';
-			if (HXdeque_push(par->remaining, buf) == NULL) {
-				free(buf);
-				return -errno;
-			}
-			return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
-		}
+	if (par->cbi.current == nullptr)
 		return HX_getopt_error(HXOPT_E_SHORT_UNKNOWN, &op, par->flags);
-	}
 
 	par->cbi.flags = HXOPTCB_BY_SHORT;
 	if (takes_void(par->cbi.current->type)) {
@@ -671,15 +636,8 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 		HXdeque_push(par->remaining, HX_strdup(cur));
 		return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 	}
-	if (cur[0] == '-' && cur[1] == '-' && cur[2] == '\0') {
-		/*
-		 * Double dash. If passthrough is on, "--" must be copied into
-		 * @remaining. This is done in the next round.
-		 */
-		if (!(par->flags & HXOPT_PTHRU))
-			return HXOPT_S_TERMINATED | HXOPT_I_ADVARG;
-		return HXOPT_S_TERMINATED;
-	}
+	if (cur[0] == '-' && cur[1] == '-' && cur[2] == '\0')
+		return HXOPT_S_TERMINATED | HXOPT_I_ADVARG;
 	if (cur[0] == '-' && cur[1] == '-') { /* long option */
 		if (strchr(cur + 2, '=') == NULL)
 			return HXOPT_S_TWOLONG;
@@ -708,6 +666,8 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 	unsigned int argk = 0;
 
 	if ((flags & (HXOPT_RQ_ORDER | HXOPT_ANY_ORDER)) == (HXOPT_RQ_ORDER | HXOPT_ANY_ORDER))
+		return -EINVAL;
+	if (flags & HXOPT_PTHRU)
 		return -EINVAL;
 	if (new_argc != nullptr)
 		*new_argc = 0;
