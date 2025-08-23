@@ -399,14 +399,19 @@ static int t_time_units(void)
 static int t_time_strto(void)
 {
 	#define NS_PER_S 1000000000ULL
+	#define S_PER_Y 31557600
+	enum {
+		NO_NSEC = 0x2U,
+	};
 	static const struct {
 		const char *input;
 		unsigned long long expect_s, expect_ns;
 		const char expect_rem[16];
+		unsigned int flags;
 	} vt[] = {
 		{"29µs", 0, 29000, ""},
-		{"1y", 31557600, NS_PER_S * 31557600, ""},
-		{"1y1month1week1d1h1min1s ", 31557600+2629800+86400*8+3600+60+1, NS_PER_S * (31557600+2629800+86400*8+3600+60+1), ""},
+		{"1y", S_PER_Y, NS_PER_S * S_PER_Y, ""},
+		{"1y1month1week1d1h1min1s ", S_PER_Y+2629800+86400*8+3600+60+1, NS_PER_S * (S_PER_Y+2629800+86400*8+3600+60+1), ""},
 		{" -1d", 0, 0, "-1d"},
 		{"1 -", 0, 0, "1 -"},
 		{"12.5 hours .5 hours 240 minutes 25200 seconds", 86400, NS_PER_S * 86400, ""},
@@ -418,20 +423,28 @@ static int t_time_strto(void)
 		{"1s0.0", 1, NS_PER_S, ""},
 		{"1s1s", 2, 2 * NS_PER_S, ""},
 		{"1s1", 1, 1 * NS_PER_S, "1"},
+		{"584542046090y", 584542046090ULL * S_PER_Y, ULLONG_MAX, "", NO_NSEC},
+		{"584542046090y19767615s", ULLONG_MAX, ULLONG_MAX, "", NO_NSEC},
+		{"584542046090y19767616s", ULLONG_MAX, ULLONG_MAX, "19767616s", NO_NSEC},
+		{"584542046090y", 584542046090ULL * S_PER_Y, ULLONG_MAX, "", NO_NSEC},
 		{"584542046091y", ULLONG_MAX, ULLONG_MAX, "584542046091y"},
+		{"584542046091.0y", ULLONG_MAX, ULLONG_MAX, "584542046091.0y"},
 	};
-	char *end;
 	printf("===== t_time_strto\n");
 	for (size_t i = 0; i < ARRAY_SIZE(vt); ++i) {
+		char *end, *end_ns;
 		unsigned long long q = HX_strtoull_sec(vt[i].input, &end);
-		unsigned long long qn = HX_strtoull_nsec(vt[i].input, &end);
-		printf("Observed: \"%s\" => %llus [%lluns] + \"%s\"\n", vt[i].input, q, qn, end);
-		if (q != vt[i].expect_s || qn != vt[i].expect_ns) {
-			printf("Expected: %llus [%lluns]\n", vt[i].expect_s, vt[i].expect_ns);
+		unsigned long long qn = HX_strtoull_nsec(vt[i].input, &end_ns);
+		printf("Observed: \"%s\" => %llus + \"%s\" [%lluns + \"%s\"]\n",
+		       vt[i].input, q, end, qn, end_ns);
+		if (q != vt[i].expect_s || strcmp(end, vt[i].expect_rem) != 0) {
+			printf("-!- Expected: %llus + \"%s\"\n", vt[i].expect_s, vt[i].expect_rem);
 			return EXIT_FAILURE;
 		}
-		if (strcmp(end, vt[i].expect_rem) != 0) {
-			printf("Expected: remainder \"%s\"\n", vt[i].expect_rem);
+		if (vt[i].flags & NO_NSEC)
+			continue;
+		if (qn != vt[i].expect_ns || strcmp(end_ns, vt[i].expect_rem) != 0) {
+			printf("-!- Expected: %llus + \"%s\"\n", vt[i].expect_ns, vt[i].expect_rem);
 			return EXIT_FAILURE;
 		}
 	}

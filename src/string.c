@@ -1145,20 +1145,40 @@ static unsigned long long HX_strtoull_time(const char *s, char **out_end, bool n
 		}
 		unsigned long long mult = nsec ? time_multiplier[i].ns_mult : time_multiplier[i].s_mult;
 		if (have_frac) {
-			quant += frac * mult;
-		} else {
-			if (mult > 0 && num >= ULLONG_MAX / mult) {
+			double v = frac * mult;
+			if (v >= ULLONG_MAX) {
+				/*
+				 * As ULLONG_MAX gets promoted to double, its
+				 * value may _increase_, therefore here we use
+				 * >= and not >.
+				 */
 				if (out_end != nullptr)
 					*out_end = const_cast(char *, numbegin);
 				errno = ERANGE;
 				return ULLONG_MAX;
 			}
-			quant += num * mult;
+			num = v;
+		} else {
+			if (mult > 0 && num > ULLONG_MAX / mult) {
+				if (out_end != nullptr)
+					*out_end = const_cast(char *, numbegin);
+				errno = ERANGE;
+				return ULLONG_MAX;
+			}
+			num *= mult;
 		}
+		if (num > ULLONG_MAX - quant) {
+			if (out_end != nullptr)
+				*out_end = const_cast(char *, numbegin);
+			errno = ERANGE;
+			return ULLONG_MAX;
+		}
+		quant += num;
 		s += time_multiplier[i].len;
 	}
 	if (out_end != nullptr)
 		*out_end = const_cast(char *, s);
+	errno = 0;
 	return quant;
 }
 
