@@ -119,13 +119,13 @@ enum {
 /**
  * struct HX_getopt_vars - option parser working variable set
  * @arg0:	saved program name
- * @remaining:	list of extracted non-options
+ * @uarg:	list of extracted non-options
  * @cbi:	callback info
  * @flags:	flags setting the behavior for HX_getopt
  */
 struct HX_getopt_vars {
 	const char *arg0;
-	struct HXdeque *remaining;
+	struct HXdeque *uarg;
 	struct HXoptcb cbi;
 	unsigned int flags;
 };
@@ -622,7 +622,7 @@ static int HX_getopt_term(const char *cur, const struct HX_getopt_vars *par)
 	char *tmp = HX_strdup(cur);
 	if (tmp == NULL)
 		return -errno;
-	if (HXdeque_push(par->remaining, tmp) == NULL) {
+	if (HXdeque_push(par->uarg, tmp) == nullptr) {
 		free(tmp);
 		return -errno;
 	}
@@ -633,7 +633,7 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 {
 	if (cur[0] == '-' && cur[1] == '\0') {
 		/* Note to popt developers: A single dash is NOT an option! */
-		HXdeque_push(par->remaining, HX_strdup(cur));
+		HXdeque_push(par->uarg, HX_strdup(cur));
 		return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 	}
 	if (cur[0] == '-' && cur[1] == '-' && cur[2] == '\0')
@@ -651,7 +651,7 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 		/* POSIX: first non-option implies option termination */
 		return HXOPT_S_TERMINATED;
 	cur = HX_strdup(cur);
-	if (cur == NULL || HXdeque_push(par->remaining, cur) == NULL)
+	if (cur == nullptr || HXdeque_push(par->uarg, cur) == nullptr)
 		return -errno;
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
@@ -674,8 +674,8 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 	if (new_argv != nullptr)
 		*new_argv = nullptr;
 	memset(&ps, 0, sizeof(ps));
-	ps.remaining = HXdeque_init();
-	if (ps.remaining == NULL) {
+	ps.uarg = HXdeque_init();
+	if (ps.uarg == nullptr) {
 		ret = -errno;
 		goto out;
 	}
@@ -690,7 +690,7 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 			ret = -errno;
 			goto out;
 		}
-		if (HXdeque_push(ps.remaining, arg) == NULL) {
+		if (HXdeque_push(ps.uarg, arg) == nullptr) {
 			free(arg);
 			ret = -errno;
 			goto out;
@@ -731,7 +731,7 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 	}
 
 	if (new_argv != nullptr) {
-		*new_argv = reinterpret_cast(char **, HXdeque_to_vec(ps.remaining, &argk));
+		*new_argv = reinterpret_cast(char **, HXdeque_to_vec(ps.uarg, &argk));
 		if (*new_argv == nullptr) {
 			ret = -errno;
 			goto out;
@@ -739,8 +739,8 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 		if (new_argc != nullptr)
 			*new_argc = argk;
 		/* pointers are owned by new_argv now, so free only the deque head */
-		HXdeque_free(ps.remaining);
-		ps.remaining = nullptr;
+		HXdeque_free(ps.uarg);
+		ps.uarg = nullptr;
 	}
 	ret = HXOPT_ERR_SUCCESS;
  out:
@@ -755,8 +755,8 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 		else if (ps.flags & HXOPT_USAGEONERR)
 			HX_getopt_usage(&ps.cbi, stderr);
 	}
-	if (ps.remaining != nullptr)
-		HXdeque_genocide2(ps.remaining, free);
+	if (ps.uarg != nullptr)
+		HXdeque_genocide2(ps.uarg, free);
 	return ret;
 }
 
