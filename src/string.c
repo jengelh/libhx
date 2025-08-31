@@ -1283,7 +1283,7 @@ static unsigned long long HX_strtoull_iso8601p(const char *s,
 		unsigned int i;
 		/* No word boundary check for 8601 mode */
 		for (i = 0; i < usize; ++i)
-			if (strncasecmp(s, utab[i].name, utab[i].len) == 0)
+			if (strncmp(s, utab[i].name, utab[i].len) == 0)
 				break;
 		if (i == usize) {
 			if ((!have_frac && num == 0) || (have_frac && frac == 0))
@@ -1333,11 +1333,11 @@ static unsigned long long HX_strtoull_iso8601p(const char *s,
 
 static bool looks_like_iso8601(const char *s)
 {
-	if (HX_toupper(s[0]) != 'P')
+	if (s[0] != 'P')
 		return false;
 	if (HX_isdigit(s[1]))
 		return true;
-	if (HX_toupper(s[1]) == 'T' && HX_isdigit(s[2]))
+	if (s[1] == 'T' && HX_isdigit(s[2]))
 		return true;
 	return false;
 }
