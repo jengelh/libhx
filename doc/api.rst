@@ -9,6 +9,7 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+4.28    4.28    4.28    HX_strtoull8601p_sec
 4.27    inline  4.27    float_cpu_to_{le,be}{32,64}p
 4.27    inline  4.27    float_{le,be}{32,64}p_to_cpu
 4.25    inline  4.25    HX_isascii

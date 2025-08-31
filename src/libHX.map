@@ -188,3 +188,8 @@ LIBHX_4.24 {
 global:
 	HX_getcwd;
 } LIBHX_4.18;
+
+LIBHX_4.28 {
+global:
+	HX_strtoull8601p_sec;
+} LIBHX_4.24;

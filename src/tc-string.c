@@ -455,6 +455,10 @@ static int t_time_strto(void)
 			return EXIT_FAILURE;
 		}
 	}
+	if (HX_strtoull8601p_sec("P1D", nullptr) != 86400) {
+		printf("8601p_sec failed\n");
+		return EXIT_FAILURE;
+	}
 	return EXIT_SUCCESS;
 }
 

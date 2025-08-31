@@ -1246,7 +1246,7 @@ static unsigned long long HX_strtoull_period(const char *s,
 	return quant;
 }
 
-static unsigned long long HX_strtoull_iso8601p(const char *s,
+static unsigned long long HX_strtoull_iso8601p_2(const char *s,
     const uint64_t *mtab, size_t msize, char **out_end)
 {
 	const struct HX_unit_desc *utab = iso8601p_dtab;
@@ -1345,7 +1345,7 @@ static bool looks_like_iso8601(const char *s)
 EXPORT_SYMBOL unsigned long long HX_strtoull_sec(const char *s, char **out_end)
 {
 	if (looks_like_iso8601(s))
-		return HX_strtoull_iso8601p(&s[1], sec_mult, ARRAY_SIZE(sec_mult), out_end);
+		return HX_strtoull_iso8601p_2(&s[1], sec_mult, ARRAY_SIZE(sec_mult), out_end);
 	return HX_strtoull_period(s,
 	       txtperiod_utab, ARRAY_SIZE(txtperiod_utab),
 	       sec_mult, ARRAY_SIZE(sec_mult), out_end);
@@ -1354,10 +1354,19 @@ EXPORT_SYMBOL unsigned long long HX_strtoull_sec(const char *s, char **out_end)
 EXPORT_SYMBOL unsigned long long HX_strtoull_nsec(const char *s, char **out_end)
 {
 	if (looks_like_iso8601(s))
-		return HX_strtoull_iso8601p(&s[1], nsec_mult, ARRAY_SIZE(nsec_mult), out_end);
+		return HX_strtoull_iso8601p_2(&s[1], nsec_mult, ARRAY_SIZE(nsec_mult), out_end);
 	return HX_strtoull_period(s,
 	       txtperiod_utab, ARRAY_SIZE(txtperiod_utab),
 	       nsec_mult, ARRAY_SIZE(nsec_mult), out_end);
+}
+
+EXPORT_SYMBOL unsigned long long HX_strtoull8601p_sec(const char *s, char **out_end)
+{
+	if (*s == 'P')
+		return HX_strtoull_iso8601p_2(&s[1], sec_mult, ARRAY_SIZE(sec_mult), out_end);
+	if (out_end != nullptr)
+		*out_end = const_cast(char *, s);
+	return 0;
 }
 
 EXPORT_SYMBOL char *HX_unit_seconds(char *out, size_t outsize,
