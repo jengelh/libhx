@@ -1,6 +1,6 @@
 /*
  *	libHX/opt.c
- *	Copyright Jan Engelhardt, 2002-2011
+ *	Copyright Jan Engelhardt, 2025
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU Lesser
@@ -619,21 +619,15 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 
 static int HX_getopt_term(const char *cur, const struct HX_getopt_vars *par)
 {
-	char *tmp = HX_strdup(cur);
-	if (tmp == NULL)
+	if (HXdeque_push(par->uarg, cur) == nullptr)
 		return -errno;
-	if (HXdeque_push(par->uarg, tmp) == nullptr) {
-		free(tmp);
-		return -errno;
-	}
 	return HXOPT_S_TERMINATED | HXOPT_I_ADVARG;
 }
 
 static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 {
 	if (cur[0] == '-' && cur[1] == '\0') {
-		/* Note to popt developers: A single dash is NOT an option! */
-		HXdeque_push(par->uarg, HX_strdup(cur));
+		HXdeque_push(par->uarg, cur);
 		return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 	}
 	if (cur[0] == '-' && cur[1] == '-' && cur[2] == '\0')
@@ -650,8 +644,7 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 	if (par->flags & HXOPT_RQ_ORDER)
 		/* POSIX: first non-option implies option termination */
 		return HXOPT_S_TERMINATED;
-	cur = HX_strdup(cur);
-	if (cur == nullptr || HXdeque_push(par->uarg, cur) == nullptr)
+	if (HXdeque_push(par->uarg, cur) == nullptr)
 		return -errno;
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
@@ -663,7 +656,6 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 	const char **opt = const_cast(const char **, orig_argv);
 	int state = HXOPT_S_NORMAL;
 	int ret = -ENOMEM;
-	unsigned int argk = 0;
 
 	if ((flags & (HXOPT_RQ_ORDER | HXOPT_ANY_ORDER)) == (HXOPT_RQ_ORDER | HXOPT_ANY_ORDER))
 		return -EINVAL;
@@ -682,20 +674,8 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 	ps.flags = flags;
 	ps.arg0  = *opt;
 	ps.cbi.table = table;
-
-	if (*opt != NULL) {
-		/* put argv[0] back */
-		char *arg = HX_strdup(*opt++);
-		if (arg == NULL) {
-			ret = -errno;
-			goto out;
-		}
-		if (HXdeque_push(ps.uarg, arg) == nullptr) {
-			free(arg);
-			ret = -errno;
-			goto out;
-		}
-	}
+	if (*opt != nullptr)
+		++opt;
 
 	if (!(ps.flags & HXOPT_ANY_ORDER) && posix_me_harder())
 		ps.flags |= HXOPT_RQ_ORDER;
@@ -731,16 +711,18 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 	}
 
 	if (new_argv != nullptr) {
-		*new_argv = reinterpret_cast(char **, HXdeque_to_vec(ps.uarg, &argk));
+		size_t nelem = 0;
+		if (ps.arg0 != nullptr && HXdeque_unshift(ps.uarg, ps.arg0) == nullptr) {
+			ret = -errno;
+			goto out;
+		}
+		*new_argv = HXdeque_to_vec_strdup(ps.uarg, &nelem);
 		if (*new_argv == nullptr) {
 			ret = -errno;
 			goto out;
 		}
 		if (new_argc != nullptr)
-			*new_argc = argk;
-		/* pointers are owned by new_argv now, so free only the deque head */
-		HXdeque_free(ps.uarg);
-		ps.uarg = nullptr;
+			*new_argc = nelem;
 	}
 	ret = HXOPT_ERR_SUCCESS;
  out:
@@ -756,7 +738,7 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 			HX_getopt_usage(&ps.cbi, stderr);
 	}
 	if (ps.uarg != nullptr)
-		HXdeque_genocide2(ps.uarg, free);
+		HXdeque_free(ps.uarg);
 	return ret;
 }
 

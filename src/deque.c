@@ -1,6 +1,6 @@
 /*
  *	Double-ended queues
- *	Copyright Jan Engelhardt, 2002-2008
+ *	Copyright Jan Engelhardt, 2025
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU Lesser
@@ -180,4 +180,31 @@ HXdeque_to_vec(const struct HXdeque *dq, unsigned int *num)
 	if (num != NULL)
 		*num = dq->items;
 	return ret;
+}
+
+char **HXdeque_to_vec_strdup(const struct HXdeque *dq, size_t *num)
+{
+	const struct HXdeque_node *iter;
+	char **ret, **p;
+	int se;
+
+	ret = malloc((dq->items + 1) * sizeof(char *));
+	if (ret == nullptr)
+		return nullptr;
+	p = ret;
+	for (iter = dq->first; iter != nullptr; ++p, iter = iter->next) {
+		*p = strdup(iter->ptr);
+		if (*p == nullptr)
+			goto out;
+	}
+	*p = nullptr;
+	if (num != nullptr)
+		*num = dq->items;
+	return ret;
+
+ out:
+	se = errno;
+	HX_zvecfree(ret);
+	errno = se;
+	return nullptr;
 }

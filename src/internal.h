@@ -50,9 +50,11 @@ struct memcont {
 	char data[];
 };
 
+struct HXdeque;
 struct timespec;
 struct timeval;
 
+extern char **HXdeque_to_vec_strdup(const struct HXdeque *, size_t *);
 extern hxmc_t *HXparse_dequote_fmt(const char *, const char *, const char **);
 extern size_t HX_substr_helper(size_t, long, long, size_t *);
 

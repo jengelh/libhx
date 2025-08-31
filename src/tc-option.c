@@ -77,7 +77,7 @@ static int t_empty_argv(void)
 	char *zero_argv[] = {nullptr};
 	char **new_argv = nullptr;
 
-	printf("Testing argv={NULL}\n");
+	printf("...with argv={NULL}\n");
 	if (HX_getopt5(table, zero_argv, nullptr, &new_argv,
 	    HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
 		return EXIT_FAILURE;
