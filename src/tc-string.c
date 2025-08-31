@@ -432,6 +432,9 @@ static int t_time_strto(void)
 		{"P1M", S_PER_Y / 12, S_PER_Y / 12 * NS_PER_S, ""},
 		{"PT1M", 60, 60 * NS_PER_S, ""},
 		{"p584542046090y", 584542046090ULL * S_PER_Y, ULLONG_MAX, "", NO_NSEC},
+		{"P0DT0H0M0.0S", 0, 0},
+		{"P0DT12H45M0.0S", 12 * 3600 + 45 * 60, (12 * 3600 + 45 * 60) * NS_PER_S},
+		{"P1D", 86400, 86400 * NS_PER_S},
 	};
 	printf("===== t_time_strto\n");
 	for (size_t i = 0; i < ARRAY_SIZE(vt); ++i) {

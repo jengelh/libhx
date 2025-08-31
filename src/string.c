@@ -1197,6 +1197,7 @@ static unsigned long long HX_strtoull_period(const char *s,
 		unsigned int i;
 		for (i = 0; i < usize; ++i)
 			if (strncasecmp(s, utab[i].name, utab[i].len) == 0 &&
+			    /* Ensure a word boundary is present */
 			    !HX_isalpha(s[utab[i].len]))
 				break;
 		if (i == usize) {
@@ -1280,9 +1281,9 @@ static unsigned long long HX_strtoull_iso8601p(const char *s,
 		while (HX_isspace(*s))
 			++s;
 		unsigned int i;
+		/* No word boundary check for 8601 mode */
 		for (i = 0; i < usize; ++i)
-			if (strncasecmp(s, utab[i].name, utab[i].len) == 0 &&
-			    !HX_isalpha(s[utab[i].len]))
+			if (strncasecmp(s, utab[i].name, utab[i].len) == 0)
 				break;
 		if (i == usize) {
 			if ((!have_frac && num == 0) || (have_frac && frac == 0))
