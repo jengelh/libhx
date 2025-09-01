@@ -192,4 +192,6 @@ global:
 LIBHX_4.28 {
 global:
 	HX_strtoull8601p_sec;
+	HX_getopt6;
+	HX_getopt6_clean;
 } LIBHX_4.24;

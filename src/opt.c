@@ -651,14 +651,14 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
 
-static void HX_getopt6_clean(struct HXopt6_result *r)
+EXPORT_SYMBOL void HX_getopt6_clean(struct HXopt6_result *r)
 {
 	HX_zvecfree(r->dup_argv);
 	r->dup_argv = nullptr;
 }
 
-static int HX_getopt6(const struct HXoption *table, int argc, char **argv,
-    struct HXopt6_result *result, unsigned int flags)
+EXPORT_SYMBOL int HX_getopt6(const struct HXoption *table, int argc,
+    char **argv, struct HXopt6_result *result, unsigned int flags)
 {
 	struct HX_getopt_vars ps;
 	const char **opt = const_cast(const char **, argv);

@@ -4,11 +4,14 @@ Function reference
 * R column: Recommend version number to use in ``PKG_CONFIG_CHECK`` in
   projects using libHX. Includes important bugfixes.
 * M column: Lowest possible version with the same ABI (minus cv qualification).
-* F column: First version that the function name was in use.
+* F column: First version that the symbol name was in use.
 
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+4.28    4.28    4.28    HX_getopt6
+4.28    4.28    4.28    HX_getopt6_clean
+4.28    inline  4.28    HXOPT_DUP_ARGS
 4.28    4.28    4.28    HX_strtoull8601p_sec
 4.27    inline  4.27    float_cpu_to_{le,be}{32,64}p
 4.27    inline  4.27    float_{le,be}{32,64}p_to_cpu
