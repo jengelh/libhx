@@ -130,7 +130,8 @@ static int t_getopt6_aflags(int unused_argc, char **unused_argv)
 
 	printf("== ANY_ORDER ==\n");
 	int ret = HX_getopt6(table, 6, argv, &result, HXOPT_ANY_ORDER);
-	if (ret != HXOPT_ERR_SUCCESS || result.dup_argv != nullptr)
+	if (ret != HXOPT_ERR_SUCCESS ||
+	    result.uarg != nullptr || result.dup_argv != nullptr)
 		return EXIT_FAILURE;
 	HX_getopt6_clean(&result);
 
@@ -139,6 +140,7 @@ static int t_getopt6_aflags(int unused_argc, char **unused_argv)
 	printf("== ANY_ORDER/DUP_ARGS ==\n");
 	ret = HX_getopt6(table, 6, argv, &result, HXOPT_ANY_ORDER | HXOPT_DUP_ARGS);
 	if (ret != HXOPT_ERR_SUCCESS ||
+	    result.uarg != nullptr ||
 	    result.dup_argv == nullptr || result.dup_argc != 3)
 		return EXIT_FAILURE;
 	if (strcmp(result.dup_argv[0], argv[0]) != 0 ||
@@ -154,6 +156,7 @@ static int t_getopt6_aflags(int unused_argc, char **unused_argv)
 	printf("== RQ_ORDER/DUP_ARGS ==\n");
 	ret = HX_getopt6(table, 6, argv, &result, HXOPT_RQ_ORDER | HXOPT_DUP_ARGS);
 	if (ret != HXOPT_ERR_SUCCESS ||
+	    result.uarg != nullptr ||
 	    result.dup_argv == nullptr || result.dup_argc != 5)
 		return EXIT_FAILURE;
 	if (strcmp(result.dup_argv[0], argv[0]) != 0 ||
@@ -164,6 +167,20 @@ static int t_getopt6_aflags(int unused_argc, char **unused_argv)
 		return EXIT_FAILURE;
 	for (int i = 0; i < result.dup_argc; ++i)
 		printf(" %s", result.dup_argv[i]);
+	printf("\n");
+	HX_getopt6_clean(&result);
+
+	/* T: Asking for ITER should produce data */
+	printf("== ANY_ORDER/ITER_ARGS ==\n");
+	ret = HX_getopt6(table, 6, argv, &result, HXOPT_ANY_ORDER | HXOPT_ITER_ARGS);
+	if (ret != HXOPT_ERR_SUCCESS || result.dup_argv != nullptr ||
+	    result.nargs != 2 || result.uarg == nullptr)
+		return EXIT_FAILURE;
+	if (strcmp(result.uarg[0], argv[2]) != 0 ||
+	    strcmp(result.uarg[1], argv[5]) != 0)
+		return EXIT_FAILURE;
+	for (int i = 0; i < result.nargs; ++i)
+		printf(" %s", result.uarg[i]);
 	printf("\n");
 	HX_getopt6_clean(&result);
 	return EXIT_SUCCESS;
