@@ -123,11 +123,43 @@ static int runner(int argc, char **argv)
 	return EXIT_SUCCESS;
 }
 
+static int t_getopt6_aflags(int unused_argc, char **unused_argv)
+{
+	struct HXopt6_result result;
+	char *argv[] = {"./prog", "-q", "foo", "-qS", "quux", "bar", "--NIL", nullptr};
+
+	printf("== ANY_ORDER ==\n");
+	int ret = HX_getopt6(table, 6, argv, &result, HXOPT_ANY_ORDER);
+	if (ret != HXOPT_ERR_SUCCESS || result.dup_argv != nullptr)
+		return EXIT_FAILURE;
+	HX_getopt6_clean(&result);
+
+	/* T: Asking for DUP should produce data */
+	/* T: Limit strings -- NIL must not be processed */
+	printf("== ANY_ORDER/DUP_ARGS ==\n");
+	ret = HX_getopt6(table, 6, argv, &result, HXOPT_ANY_ORDER | HXOPT_DUP_ARGS);
+	if (ret != HXOPT_ERR_SUCCESS ||
+	    result.dup_argv == nullptr || result.dup_argc != 3)
+		return EXIT_FAILURE;
+	if (strcmp(result.dup_argv[0], argv[0]) != 0 ||
+	    strcmp(result.dup_argv[1], argv[2]) != 0 ||
+	    strcmp(result.dup_argv[2], argv[5]) != 0)
+		return EXIT_FAILURE;
+	for (int i = 0; i < result.dup_argc; ++i)
+		printf(" %s", result.dup_argv[i]);
+	printf("\n");
+	HX_getopt6_clean(&result);
+	return EXIT_SUCCESS;
+}
+
 int main(int argc, char **argv)
 {
 	if (HX_init() <= 0)
 		return EXIT_FAILURE;
 	int ret = runner(argc, argv);
+	if (ret != EXIT_SUCCESS)
+		printf("FAILED\n");
+	ret = t_getopt6_aflags(argc, argv);
 	if (ret != EXIT_SUCCESS)
 		printf("FAILED\n");
 	HX_exit();
