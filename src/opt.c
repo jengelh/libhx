@@ -495,11 +495,9 @@ static int HX_getopt_error(int err, const char *key, unsigned int flags)
 	return HXOPT_I_ERROR;
 }
 
-static int HX_getopt_twolong(const char *const *opt,
+static int HX_getopt_twolong(const char *key, const char *value,
     struct HX_getopt_vars *par)
 {
-	const char *key = opt[0], *value = opt[1];
-
 	par->cbi.current = lookup_long_pfx(par->cbi.table, key + 2);
 	if (par->cbi.current == &HXopt_ambig_prefix)
 		return HX_getopt_error(HXOPT_E_AMBIG_PREFIX, key, par->flags);
@@ -568,13 +566,17 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 
 	par->cbi.flags    = HXOPTCB_BY_LONG;
 	par->cbi.data     = value;
-	/* Not possible to use %HXOPT_I_ASSIGN due to transience of @key. */
+	/*
+	 * Not possible to use %HXOPT_I_ASSIGN due to transience of @key. Thus
+	 * manually call do_assign now rather than in the superordinate
+	 * function.
+	 */
 	do_assign(&par->cbi, par->arg0);
 	free(key);
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
 
-static int HX_getopt_short(const char *const *opt, const char *key,
+static int HX_getopt_short(const char *key, const char *value,
     struct HX_getopt_vars *par)
 {
 	char op = *key;
@@ -597,7 +599,6 @@ static int HX_getopt_short(const char *const *opt, const char *key,
 		return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG;
 	}
 
-	const char *value = *++opt;
 	if (par->cbi.current->type & HXOPT_OPTIONAL) {
 		if (value == nullptr || *value != '-' ||
 		    (value[0] == '-' && value[1] == '\0')) {
@@ -656,7 +657,7 @@ static void HX_getopt6_clean(struct HXopt6_result *r)
 	r->dup_argv = nullptr;
 }
 
-static int HX_getopt6(const struct HXoption *table, char **argv,
+static int HX_getopt6(const struct HXoption *table, int argc, char **argv,
     struct HXopt6_result *result, unsigned int flags)
 {
 	struct HX_getopt_vars ps;
@@ -679,24 +680,30 @@ static int HX_getopt6(const struct HXoption *table, char **argv,
 		goto out;
 	}
 	ps.flags = flags;
-	ps.arg0  = *opt;
+	if (argc < 0) {
+		argc = 0;
+		for (const char **p = opt; *p != nullptr; ++p)
+			++argc;
+	}
+	if (argc > 0) {
+		ps.arg0 = *opt++;
+		--argc;
+	}
 	ps.cbi.table = table;
-	if (*opt != nullptr)
-		++opt;
 
 	if (!(ps.flags & HXOPT_ANY_ORDER) && posix_me_harder())
 		ps.flags |= HXOPT_RQ_ORDER;
-	for (const char *cur = *opt; cur != NULL; ) {
+	for (const char *op0 = opt[0]; argc > 0; ) {
 		if (state == HXOPT_S_TWOLONG)
-			state = HX_getopt_twolong(opt, &ps);
+			state = HX_getopt_twolong(op0, argc > 1 ? opt[1] : nullptr, &ps);
 		else if (state == HXOPT_S_LONG)
-			state = HX_getopt_long(cur, &ps);
+			state = HX_getopt_long(op0, &ps);
 		else if (state == HXOPT_S_SHORT)
-			state = HX_getopt_short(opt, cur, &ps);
+			state = HX_getopt_short(op0, argc > 1 ? opt[1] : nullptr, &ps);
 		else if (state == HXOPT_S_TERMINATED)
-			state = HX_getopt_term(cur, &ps);
+			state = HX_getopt_term(op0, &ps);
 		else if (state == HXOPT_S_NORMAL)
-			state = HX_getopt_normal(cur, &ps);
+			state = HX_getopt_normal(op0, &ps);
 
 		if (state < 0) {
 			ret = state;
@@ -708,12 +715,15 @@ static int HX_getopt6(const struct HXoption *table, char **argv,
 		}
 		if (state & HXOPT_I_ASSIGN)
 			do_assign(&ps.cbi, ps.arg0);
-		if (state & HXOPT_I_ADVARG)
-			cur = *++opt;
-		else if (state & HXOPT_I_ADVARG2)
-			cur = *(opt += 2);
-		else if (state & HXOPT_I_ADVCHAR)
-			++cur;
+		if (state & HXOPT_I_ADVARG) {
+			op0 = *++opt;
+			--argc;
+		} else if (state & HXOPT_I_ADVARG2) {
+			op0 = *(opt += 2);
+			argc -= 2;
+		} else if (state & HXOPT_I_ADVCHAR) {
+			++op0;
+		}
 		state &= ~HXOPT_I_MASK;
 	}
 
@@ -758,7 +768,7 @@ EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
 		flags |= HXOPT_DUP_ARGS;
 	else
 		flags &= ~HXOPT_DUP_ARGS;
-	int ret = HX_getopt6(table, orig_argv, &result, flags);
+	int ret = HX_getopt6(table, -1, orig_argv, &result, flags);
 	if (ret != 0)
 		return ret;
 	if (new_argc != nullptr)
