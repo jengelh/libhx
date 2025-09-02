@@ -573,10 +573,10 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
 }
 
-static int HX_getopt_short(const char *const *opt, const char *cur,
+static int HX_getopt_short(const char *const *opt, const char *key,
     struct HX_getopt_vars *par)
 {
-	char op = *cur;
+	char op = *key;
 
 	if (op == '\0')
 		return HXOPT_S_NORMAL | HXOPT_I_ADVARG;
@@ -590,18 +590,18 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 		/* -A */
 		par->cbi.data = NULL;
 		return HXOPT_S_SHORT | HXOPT_I_ASSIGN | HXOPT_I_ADVCHAR;
-	} else if (cur[1] != '\0') {
+	} else if (key[1] != '\0') {
 		/* -Avalue */
-		par->cbi.data = cur + 1;
+		par->cbi.data = key + 1;
 		return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG;
 	}
 
-	cur = *++opt;
+	const char *value = *++opt;
 	if (par->cbi.current->type & HXOPT_OPTIONAL) {
-		if (cur == NULL || *cur != '-' ||
-		    (cur[0] == '-' && cur[1] == '\0')) {
+		if (value == nullptr || *value != '-' ||
+		    (value[0] == '-' && value[1] == '\0')) {
 			/* -f - -f bla */
-			par->cbi.data = cur;
+			par->cbi.data = value;
 			return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG2;
 		} else {
 			/* -f -a-file --another --file -- endofoptions */
@@ -610,9 +610,9 @@ static int HX_getopt_short(const char *const *opt, const char *cur,
 		}
 	} else {
 		/* -A value */
-		if (cur == NULL)
+		if (value == nullptr)
 			return HX_getopt_error(HXOPT_E_SHORT_MISSING, &op, par->flags);
-		par->cbi.data = cur;
+		par->cbi.data = value;
 		return HXOPT_S_NORMAL | HXOPT_I_ASSIGN | HXOPT_I_ADVARG2;
 	}
 }
