@@ -666,7 +666,7 @@ static int HX_getopt6(const struct HXoption *table, char **argv,
 
 	if ((flags & (HXOPT_RQ_ORDER | HXOPT_ANY_ORDER)) == (HXOPT_RQ_ORDER | HXOPT_ANY_ORDER))
 		return -EINVAL;
-	if (flags & HXOPT_PTHRU)
+	if (flags & (HXOPT_PTHRU | HXOPT_KEEP_ARGV | HXOPT_DESTROY_OLD))
 		return -EINVAL;
 	memset(result, 0, sizeof(*result));
 	memset(&ps, 0, sizeof(ps));
@@ -774,7 +774,7 @@ EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
 	int new_argc = 0;
 	char **new_argv = nullptr;
 	int ret = HX_getopt5(table, *argv, &new_argc,
-	          flags & HXOPT_KEEP_ARGV ? nullptr : &new_argv, flags);
+	          flags & HXOPT_KEEP_ARGV ? nullptr : &new_argv, flags & ~(HXOPT_KEEP_ARGV | HXOPT_DESTROY_OLD));
 	if (ret != HXOPT_ERR_SUCCESS)
 		return ret;
 	if (flags & HXOPT_KEEP_ARGV)
