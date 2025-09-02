@@ -149,6 +149,23 @@ static int t_getopt6_aflags(int unused_argc, char **unused_argv)
 		printf(" %s", result.dup_argv[i]);
 	printf("\n");
 	HX_getopt6_clean(&result);
+
+	/* T: POSIX order */
+	printf("== RQ_ORDER/DUP_ARGS ==\n");
+	ret = HX_getopt6(table, 6, argv, &result, HXOPT_RQ_ORDER | HXOPT_DUP_ARGS);
+	if (ret != HXOPT_ERR_SUCCESS ||
+	    result.dup_argv == nullptr || result.dup_argc != 5)
+		return EXIT_FAILURE;
+	if (strcmp(result.dup_argv[0], argv[0]) != 0 ||
+	    strcmp(result.dup_argv[1], argv[2]) != 0 ||
+	    strcmp(result.dup_argv[2], argv[3]) != 0 ||
+	    strcmp(result.dup_argv[3], argv[4]) != 0 ||
+	    strcmp(result.dup_argv[4], argv[5]) != 0)
+		return EXIT_FAILURE;
+	for (int i = 0; i < result.dup_argc; ++i)
+		printf(" %s", result.dup_argv[i]);
+	printf("\n");
+	HX_getopt6_clean(&result);
 	return EXIT_SUCCESS;
 }
 
