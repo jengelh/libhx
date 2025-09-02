@@ -12,8 +12,6 @@ Characteristics:
 * recognition of the double dash as option list terminator
 * offers POSIX strictness where the option list terminates at the first
   non-option argument
-* option passthrough (conceptuall only works for options taking no argument,
-  or when the argument is joined to a long option with a '=')
 * the parse function is one-shot; there is no context object (like popt),
   no global state (like getopt) and no ``while`` loop (either of the two others)
 * exclusively uses an option table
@@ -391,10 +389,9 @@ eventually, there are differences:
   one character to specify options is enough — by GNU standards, a negator is
   named ``--no-foo``.
 
-* Table nesting like implemented in popt. HXopt has no provision for nested
-  tables, as the need has not come up yet. It does however support chained
-  processing. You cannot do nested tables even with callbacks, as the new argv
-  array is only put in place shortly before ``HX_getopt`` returns.
+* Table nesting (like in popt) is not supported in HXopt. The need
+  has not come up yet. It does however support some forms of chained
+  processing, e.g. by using the option terminator, "--".
 
 
 Examples
@@ -540,53 +537,3 @@ the callback function in ``cb``.
 		 .uptr = &number, .help = "Do this or that",
 		HXOPT_TABLEEND,
 	};
-
-Chained argument processing
----------------------------
-
-On the first run, only ``--cake`` and ``--fruit`` is considered, which is then
-used to select the next set of accepted options.
-
-.. code-block:: c
-
-	static int get_cakes(int *argc, char ***argv)
-	{
-		struct HXoption cake_table[] = {
-			...
-		};
-		if (HX_getopt5(cake_table, *argv, &argc, &argv,
-		    HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
-			return EXIT_FAILURE;
-		/* ... */
-		HX_zvecfree(argv);
-		return EXIT_SUCCESS;
-	}
-
-	static int fruit_main(int argc, char **argv)
-	{
-		struct HXoption fruit_table[] = {
-			...
-		};
-		if (HX_getopt5(fruit_table, *argv, &argc, &argv,
-		    HXOPT_PTHRU) != HXOPT_ERR_SUCCESS)
-			return EXIT_FAILURE;
-		/* ... */
-		HX_zvecfree(argv);
-		return EXIT_SUCCESS;
-	}
-
-	int main(int argc, char **argv)
-	{
-		int cake = 0, fruit = 0;
-		struct HXoption option_table[] = {
-			{.ln = "cake",  .type = HXTYPE_NONE, .ptr = &cake},
-			{.ln = "fruit", .type = HXTYPE_NONE, .ptr = &fruit},
-			HXOPT_TABLEEND,
-		};
-		if (HX_getopt5(option_table, *argv, &argc, &argv,
-		    HXOPT_PTHRU) != HXOPT_ERR_SUCCESS)
-			return EXIT_FAILURE;
-		int ret = cake ? cake_main(argc, argv) : fruit_main(argc, argv);
-		HX_zvecfree(argv);
-		return EXIT_FAILURE;
-	}

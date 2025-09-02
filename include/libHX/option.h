@@ -135,8 +135,8 @@ enum {
 };
 
 /**
- * Flags (4th arg) to HX_getopt.
- * %HXOPT_PTHRU:	pass-through unknown options to new argv
+ * Flags to HX_getopt.
+ * %HXOPT_PTHRU:	pass-through unknown options to new argv (obsolete)
  * %HXOPT_DESTROY_OLD:	destroy old argv after parsing is successful
  * %HXOPT_QUIET:	do not output any warnings to stderr
  * %HXOPT_HELPONERR:	print out help when a parsing error occurs
