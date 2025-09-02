@@ -13,9 +13,10 @@ Characteristics:
 * offers POSIX strictness where the option list terminates at the first
   non-option argument
 * the parse function is one-shot; there is no state, just a result set
-* exclusively uses an option table
-* value storing is performed through pointers in the option table
-* or user-provided callbacks can be invoked per option
+* value storing is possible in different ways
+  * using pointers with type declarators in the option table
+  * with user-provided callbacks invoked per option
+  * by specifying the ITER_OPTS flag and iterating after HX_getopt6
 
 
 Synopsis

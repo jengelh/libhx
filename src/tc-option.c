@@ -183,6 +183,26 @@ static int t_getopt6_aflags(int unused_argc, char **unused_argv)
 		printf(" %s", result.uarg[i]);
 	printf("\n");
 	HX_getopt6_clean(&result);
+
+	/* T: Asking for ITER should produce data */
+	printf("== ANY_ORDER/ITER_OPTS ==\n");
+	ret = HX_getopt6(table, 6, argv, &result, HXOPT_ANY_ORDER | HXOPT_ITER_OPTS);
+	if (ret != HXOPT_ERR_SUCCESS || result.nopts != 3 ||
+	    result.desc == nullptr || result.oarg == nullptr)
+		return EXIT_FAILURE;
+	if (result.desc[0]->sh != 'q' || result.oarg[0] != nullptr ||
+	    result.desc[1]->sh != 'q' || result.oarg[1] != nullptr ||
+	    result.desc[2]->sh != 'S' || result.oarg[2] == nullptr ||
+	    strcmp(result.oarg[2], argv[4]) != 0)
+		return EXIT_FAILURE;
+	printf(" %s", argv[0]);
+	for (int i = 0; i < result.nopts; ++i) {
+		printf(" -%c", result.desc[i]->sh);
+		if (result.oarg[i] != nullptr)
+			printf(" %s", result.oarg[i]);
+	}
+	printf("\n");
+	HX_getopt6_clean(&result);
 	return EXIT_SUCCESS;
 }
 
