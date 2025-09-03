@@ -318,6 +318,9 @@ The ``flags`` argument control the general behavior of ``HX_getopt``:
 	(const char **p = result.uarg; p != nullptr && *p != nullptr; ++p)``
 	but must use ``for (int uidx = 0; uidx < result.nargs; ++uidx)``.
 
+``HXOPT_ITER_OA``
+	Shortcut for ``HXOPT_ITER_OPTS | HXOPT_ITER_ARGS``.
+
 ``HXOPT_DUP_ARGS``
 	``result->dup_argv`` will be filled with copies of leftover arguments,
 	and ``result->nargs`` will contain the string count. dup_argv will
