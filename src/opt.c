@@ -668,7 +668,10 @@ static int HX_getopt6(const struct HXoption *table, char **argv,
 		return -EINVAL;
 	if (flags & (HXOPT_PTHRU | HXOPT_KEEP_ARGV | HXOPT_DESTROY_OLD))
 		return -EINVAL;
-	memset(result, 0, sizeof(*result));
+	if (result == nullptr && flags & HXOPT_DUP_ARGS)
+		return -EINVAL;
+	if (result != nullptr)
+		memset(result, 0, sizeof(*result));
 	memset(&ps, 0, sizeof(ps));
 	ps.uarg = HXdeque_init();
 	if (ps.uarg == nullptr) {
