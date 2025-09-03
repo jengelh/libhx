@@ -408,7 +408,7 @@ GNU getopt sample.[#f5]
 .. code-block:: c
 
 	#include <stdio.h>
-	#include <stdilb.h>
+	#include <stdlib.h>
 	#include <libHX/option.h>
 
 	int main(int argc, char **argv)
@@ -426,18 +426,23 @@ GNU getopt sample.[#f5]
 		};
 
 		if (HX_getopt5(options_table, argv, &argc, &argv,
-		    HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
+		    HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS) {
+			free(cflag);
 			return EXIT_FAILURE;
-
+		}
 		printf("aflag = %d, bflag = %d, cvalue = %s\n",
-		       aflag, bflag, cvalue);
-
-		while (*++argv != NULL)
-			printf("Non-option argument %s\n", *argv);
-
+		       aflag, bflag, cflag != NULL ? cflag : "(null)");
+		for (int i = 1; i < argc; ++i)
+			printf("Non-option argument %s\n", argv[i]);
+		free(cflag);
 		HX_zvecfree(argv);
 		return EXIT_SUCCESS;
 	}
+
+Note how HXTYPE_STRING in conjunction with ``.ptr=&cflag`` will allocate a
+buffer that needs to be freed. In addition, upon success of HX_getopt5,
+``argv`` is replaced with an allocated array of allocated strings, which also
+needs to be freed.
 
 Verbosity levels
 ----------------
