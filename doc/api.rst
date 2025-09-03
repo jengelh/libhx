@@ -12,6 +12,7 @@ RMV     MinVer  FirstA  Name
 4.28    4.28    4.28    HXdeque_to_vecx
 4.28    4.28    4.28    HX_getopt6
 4.28    4.28    4.28    HX_getopt6_clean
+4.28    inline  4.28    HXOPT_ITER_ARGS
 4.28    inline  4.28    HXOPT_DUP_ARGS
 4.28    4.28    4.28    HX_strtoull8601p_sec
 4.27    inline  4.27    float_cpu_to_{le,be}{32,64}p

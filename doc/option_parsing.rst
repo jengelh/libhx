@@ -267,6 +267,7 @@ Invoking the parser
 
 	struct HXopt6_result {
 		int nargs;
+		const char **uarg;
 		char **dup_argv;
 	};
 
@@ -302,13 +303,20 @@ The ``flags`` argument control the general behavior of ``HX_getopt``:
 	Specifying this option allows mixing of options and non-options,
 	basically the opposite of the strict POSIX order.
 
+``HXOPT_ITER_ARGS``
+	``result->uarg`` will be filled with pointers to leftover arguments
+	(pointing into the memory regions of the original argv), and
+	``result->nargs`` will contain the string count. uarg does *not*
+	contain NULL sentinel, so you cannot iterate with something like ``for
+	(const char **p = result.uarg; p != nullptr && *p != nullptr; ++p)``
+	but must use ``for (int uidx = 0; uidx < result.nargs; ++uidx)``.
+
 ``HXOPT_DUP_ARGS``
 	``result->dup_argv`` will be filled with copies of leftover arguments,
 	and ``result->nargs`` will contain the string count. dup_argv will
-	include the original argv[0], such that dup_argv can be directly fed to
-	another invocation of an argument parser. dup_argv will also include a
-	NULL sentinel (not counted in nargs). You can move ``dup_argv`` out
-	of the result struct and free it yourself with ``HX_zvecfree`.
+	include the original argv[0]. dup_argv will also include a NULL
+	sentinel (not counted in nargs). You can move ``dup_argv`` out of the
+	result struct and free it yourself with ``HX_zvecfree`.
 
 The return value of HX_getopt6 can be one of the following:
 
@@ -464,14 +472,14 @@ Obtaining non-option arguments
 
 		struct HXopt6_result result;
 		if (HX_getopt6(options_table, argc, argv, &result,
-		    HXOPT_USAGEONERR | HXOPT_DUP_ARGS) != HXOPT_ERR_SUCCESS) {
+		    HXOPT_USAGEONERR | HXOPT_ITER_ARGS) != HXOPT_ERR_SUCCESS) {
 			free(cflag);
 			return EXIT_FAILURE;
 		}
 		printf("aflag = %d, bflag = %d, cvalue = %s\n",
 		       aflag, bflag, cflag);
 		for (int i = 1; i < result.nargs; ++i)
-			printf("Non-option argument %s\n", result.dup_argv[i]);
+			printf("Non-option argument %s\n", result.uarg[i]);
 		free(cflag);
 		HX_getopt6_clean(&result);
 		return EXIT_SUCCESS;

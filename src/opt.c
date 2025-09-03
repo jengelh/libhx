@@ -653,7 +653,9 @@ static int HX_getopt_normal(const char *cur, const struct HX_getopt_vars *par)
 
 EXPORT_SYMBOL void HX_getopt6_clean(struct HXopt6_result *r)
 {
+	free(r->uarg);
 	HX_zvecfree(r->dup_argv);
+	r->uarg = nullptr;
 	r->dup_argv = nullptr;
 }
 
@@ -669,7 +671,7 @@ EXPORT_SYMBOL int HX_getopt6(const struct HXoption *table, int argc,
 		return -EINVAL;
 	if (flags & (HXOPT_PTHRU | HXOPT_KEEP_ARGV | HXOPT_DESTROY_OLD))
 		return -EINVAL;
-	if (result == nullptr && flags & HXOPT_DUP_ARGS)
+	if (result == nullptr && flags & (HXOPT_ITER_ARGS | HXOPT_DUP_ARGS))
 		return -EINVAL;
 	if (result != nullptr)
 		memset(result, 0, sizeof(*result));
@@ -727,12 +729,21 @@ EXPORT_SYMBOL int HX_getopt6(const struct HXoption *table, int argc,
 		state &= ~HXOPT_I_MASK;
 	}
 
-	if (flags & HXOPT_DUP_ARGS) {
+	if (flags & HXOPT_ITER_ARGS) {
 		size_t nelem = 0;
+		result->uarg = reinterpret_cast(char **, HXdeque_to_vecx(ps.uarg, &nelem));
+		if (result->uarg == nullptr) {
+			ret = -errno;
+			goto out;
+		}
+		result->nargs = nelem < INT_MAX ? nelem : INT_MAX;
+	}
+	if (flags & HXOPT_DUP_ARGS) {
 		if (ps.arg0 != nullptr && HXdeque_unshift(ps.uarg, ps.arg0) == nullptr) {
 			ret = -errno;
 			goto out;
 		}
+		size_t nelem = 0;
 		result->dup_argv = HXdeque_to_vec_strdup(ps.uarg, &nelem);
 		if (result->dup_argv == nullptr) {
 			ret = -errno;
