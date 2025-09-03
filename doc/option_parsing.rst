@@ -12,8 +12,7 @@ Characteristics:
 * recognition of the double dash as option list terminator
 * offers POSIX strictness where the option list terminates at the first
   non-option argument
-* the parse function is one-shot; there is no context object (like popt),
-  no global state (like getopt) and no ``while`` loop (either of the two others)
+* the parse function is one-shot; there is no state, just a result set
 * exclusively uses an option table
 * value storing is performed through pointers in the option table
 * or user-provided callbacks can be invoked per option
@@ -36,7 +35,7 @@ Synopsis
 		const char *help, *htyp;
 	};
 
-	int HX_getopt5(const struct HXoption *options_table, char **argv, int *new_argc, char ***new_argv, unsigned int flags);
+	int HX_getopt6(const struct HXoption *options_table, int argc, char **argv, struct HXopt6_result *result, unsigned int flags);
 
 The various fields of ``struct HXoption`` are:
 
@@ -266,16 +265,19 @@ Invoking the parser
 
 .. code-block:: c
 
-	int HX_getopt5(const struct HXoption *options_table, char **argv, int *new_argc, char **new_argv, unsigned int flags);
-	int HX_getopt(const struct HXoption *options_table, int *argc, char ***argv, unsigned int flags);
+	struct HXopt6_result {
+		int nargs;
+		char **dup_argv;
+	};
 
-``HX_getopt5`` is the central parsing function. ``options_table`` specifies
-the options that the parser will recognize. ``argv`` must be a NULL-terminated
-array of C strings.
+	int HX_getopt6(const struct HXoption *options_table, int argc, char **argv, struct HXopt6_result *result, unsigned int flags);
+	void HX_getopt6_clean(struct HXopt6_result *);
 
-If ``new_argv`` is non-NULL, the leftover arguments will be output as a new
-string vector on success. (That array can be freed with ``HX_zvecfree``). If
-``new_argc`` is non-NULL, the argument count for new_argv will be output too.
+``HX_getopt6`` is the central parsing function. ``options_table`` specifies the
+options that the parser will recognize. ``argv`` must be a vector of C strings,
+and ``argc`` be the count of strings that should be processed at most. ``argc``
+may be -1, in which case argc is auto-computed from ``argv``, and in this case,
+argv must be NULL-terminated.
 
 The ``flags`` argument control the general behavior of ``HX_getopt``:
 
@@ -300,10 +302,15 @@ The ``flags`` argument control the general behavior of ``HX_getopt``:
 	Specifying this option allows mixing of options and non-options,
 	basically the opposite of the strict POSIX order.
 
-``HXOPT_KEEP_ARGV``
-	Do not set ``*new_argc`` and ``*new_argv`` at all.
+``HXOPT_DUP_ARGS``
+	``result->dup_argv`` will be filled with copies of leftover arguments,
+	and ``result->nargs`` will contain the string count. dup_argv will
+	include the original argv[0], such that dup_argv can be directly fed to
+	another invocation of an argument parser. dup_argv will also include a
+	NULL sentinel (not counted in nargs). You can move ``dup_argv`` out
+	of the result struct and free it yourself with ``HX_zvecfree`.
 
-The return value can be one of the following:
+The return value of HX_getopt6 can be one of the following:
 
 ``HXOPT_ERR_SUCCESS``
 	Parsing was successful.
@@ -324,17 +331,15 @@ The return value can be one of the following:
 ``HXOPT_ERR_AMBIG``
 	An abbreviation of a long option was ambiguous.
 
+``HXOPT_ERR_FLAGS``
+	HX_getopt6 was called with a ``flags`` value that contained illegal or
+	silly bit combinations.
+
 negative non-zero
 	Failure on behalf of lower-level calls; errno.
 
-``HX_getopt`` is an older API where ``argv`` is both used for input and output.
-It recognizes additional flags/has additional behavior:
-
-``HXOPT_KEEP_ARGV``
-	``argc`` and ``argv`` is not updated.
-
-``HXOPT_DESTROY_OLD``
-	Call ``HX_zvecfree`` on ``argv`` before updating it.
+Upon HXOPT_ERR_SUCCESS, ``HX_getopt6_clean`` must be called to release
+resources.
 
 
 Pitfalls
@@ -357,11 +362,12 @@ The following is an example of a possible pitfall regarding ``HXTYPE_STRDQ``:
 			 .help = "Add name"},
 			HXOPT_TABLEEND,
 		};
-		if (HX_getopt5(options_table, *argv, &argc, &argv,
+		struct HXopt6_result result;
+		if (HX_getopt6(options_table, -1, *argv, &result,
 		    HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
 			return EXIT_FAILURE;
 		/* ... */
-		HX_zvecfree(argv);
+		HX_getopt6_clean(&result);
 		return EXIT_SUCCESS;
 	}
 
@@ -378,16 +384,16 @@ Limitations
 The HX option parser has been influenced by both popt and Getopt::Long, but
 eventually, there are differences:
 
-* Long options with a single dash (``-foo bar``). This unsupported
-  syntax clashes easily with support for option bundling or squashing. In case
-  of bundling, ``-foo`` might actually be ``-f -o -o``, or ``-f oo`` in case of
-  squashing. It also introduces redundant ways to specify options, which is not
-  in the spirit of the author.
+* Long options with a single dash (``-foo bar``) are not supported in HXopt.
+  This syntax clashes easily with support for option bundling or squashing. In
+  case of bundling, ``-foo`` might actually be ``-f -o -o``, or ``-f oo`` in
+  case of squashing. It also introduces redundant ways to specify options,
+  which is not in the spirit of the author.
 
-* Options using a ``+`` as a prefix, as in ``+foo``. Xterm for
-  example uses it as a way to negate an option. In the author's opinion, using
-  one character to specify options is enough — by GNU standards, a negator is
-  named ``--no-foo``.
+* Options using a ``+`` as a prefix, as in ``+foo`` are not supported in HXopt.
+  Xterm for example uses it as a way to negate an option. In the author's
+  opinion, using one character to specify options is enough — by GNU standards,
+  a negator is named ``--no-foo``.
 
 * Table nesting (like in popt) is not supported in HXopt. The need
   has not come up yet. It does however support some forms of chained
@@ -397,13 +403,8 @@ eventually, there are differences:
 Examples
 ========
 
-Basic example
--------------
-
-The following code snippet should provide an equivalent of the
-GNU getopt sample.[#f5]
-
-.. [#f5] http://www.gnu.org/software/libtool/manual/libc/Example-of-Getopt.html\#Example-of-Getopt
+Storing through pointers
+------------------------
 
 .. code-block:: c
 
@@ -416,7 +417,6 @@ GNU getopt sample.[#f5]
 		int aflag = 0;
 		int bflag = 0;
 		char *cflag = NULL;
-
 		struct HXoption options_table[] = {
 			{.sh = 'a', .type = HXTYPE_NONE, .ptr = &aflag},
 			{.sh = 'b', .type = HXTYPE_NONE, .ptr = &bflag},
@@ -425,24 +425,59 @@ GNU getopt sample.[#f5]
 			HXOPT_TABLEEND,
 		};
 
-		if (HX_getopt5(options_table, argv, &argc, &argv,
+		if (HX_getopt6(options_table, argc, argv, nullptr,
 		    HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS) {
 			free(cflag);
 			return EXIT_FAILURE;
 		}
+
 		printf("aflag = %d, bflag = %d, cvalue = %s\n",
 		       aflag, bflag, cflag != NULL ? cflag : "(null)");
-		for (int i = 1; i < argc; ++i)
-			printf("Non-option argument %s\n", argv[i]);
 		free(cflag);
-		HX_zvecfree(argv);
 		return EXIT_SUCCESS;
 	}
 
 Note how HXTYPE_STRING in conjunction with ``.ptr=&cflag`` will allocate a
-buffer that needs to be freed. In addition, upon success of HX_getopt5,
-``argv`` is replaced with an allocated array of allocated strings, which also
-needs to be freed.
+buffer that needs to be freed.
+
+Obtaining non-option arguments
+------------------------------
+
+.. code-block:: c
+
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <libHX/option.h>
+
+	int main(int argc, char **argv)
+	{
+		int aflag = 0;
+		int bflag = 0;
+		char *cflag = NULL;
+		struct HXoption options_table[] = {
+			{.sh = 'a', .type = HXTYPE_NONE, .ptr = &aflag},
+			{.sh = 'b', .type = HXTYPE_NONE, .ptr = &bflag},
+			{.sh = 'c', .type = HXTYPE_STRING, .ptr = &cflag},
+			HXOPT_AUTOHELP,
+			HXOPT_TABLEEND,
+		};
+
+		struct HXopt6_result result;
+		if (HX_getopt6(options_table, argc, argv, &result,
+		    HXOPT_USAGEONERR | HXOPT_DUP_ARGS) != HXOPT_ERR_SUCCESS) {
+			free(cflag);
+			return EXIT_FAILURE;
+		}
+		printf("aflag = %d, bflag = %d, cvalue = %s\n",
+		       aflag, bflag, cflag);
+		for (int i = 1; i < result.nargs; ++i)
+			printf("Non-option argument %s\n", result.dup_argv[i]);
+		free(cflag);
+		HX_getopt6_clean(&result);
+		return EXIT_SUCCESS;
+	}
+
+Note how, upon success of HX_getopt6, HX_getopt6_clean must be called.
 
 Verbosity levels
 ----------------
@@ -507,8 +542,8 @@ Mask operations
 What this options table does is ``cpu_mask &= ~x`` and ``net_mask |= y``, the
 classic operations of clearing and setting bits.
 
-Support for non-standard actions
---------------------------------
+Callbacks
+---------
 
 Supporting additional types or custom storage formats is easy, by simply using
 ``HXTYPE_STRING``, ``NULL`` as the data pointer (usually by not specifying it
