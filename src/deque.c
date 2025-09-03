@@ -8,6 +8,7 @@
  *	either version 2.1 or (at your option) any later version.
  */
 #include <errno.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -162,24 +163,41 @@ EXPORT_SYMBOL void HXdeque_genocide2(struct HXdeque *dq, void (*xfree)(void *))
 	free(dq);
 }
 
-EXPORT_SYMBOL void **
-HXdeque_to_vec(const struct HXdeque *dq, unsigned int *num)
+static void **
+HXdeque_to_veci(const struct HXdeque *dq, size_t *num, bool sentinel)
 {
 	const struct HXdeque_node *trav;
 	void **ret, **p;
 
-	ret = malloc((dq->items + 1) * sizeof(void *));
+	ret = malloc((dq->items + sentinel) * sizeof(void *));
 	if (ret == NULL)
 		return NULL;
 
 	p = ret;
 	for (trav = dq->first; trav != NULL; trav = trav->next)
 		*p++ = trav->ptr;
-	*p = NULL;
+	if (sentinel)
+		*p = NULL;
 
 	if (num != NULL)
 		*num = dq->items;
 	return ret;
+}
+
+EXPORT_SYMBOL void **
+HXdeque_to_vec(const struct HXdeque *dq, unsigned int *num)
+{
+	size_t nelem;
+	void **ret = HXdeque_to_veci(dq, &nelem, true);
+	if (num != nullptr)
+		*num = nelem < UINT_MAX ? nelem : UINT_MAX;
+	return ret;
+}
+
+EXPORT_SYMBOL void **
+HXdeque_to_vecx(const struct HXdeque *dq, size_t *num)
+{
+	return HXdeque_to_veci(dq, num, false);
 }
 
 char **HXdeque_to_vec_strdup(const struct HXdeque *dq, size_t *num)

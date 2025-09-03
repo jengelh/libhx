@@ -194,4 +194,5 @@ global:
 	HX_strtoull8601p_sec;
 	HX_getopt6;
 	HX_getopt6_clean;
+	HXdeque_to_vecx;
 } LIBHX_4.24;

@@ -40,6 +40,7 @@ extern void *HXdeque_del(struct HXdeque_node *);
 extern void HXdeque_free(struct HXdeque *);
 extern void HXdeque_genocide2(struct HXdeque *, void (*)(void *));
 extern void **HXdeque_to_vec(const struct HXdeque *, unsigned int *);
+extern void **HXdeque_to_vecx(const struct HXdeque *, size_t *);
 
 static __inline__ void HXdeque_genocide(struct HXdeque *dq)
 {
