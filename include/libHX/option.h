@@ -300,6 +300,20 @@ extern void HX_shconfig_free(const struct HXoption *);
 		{"usage", 0, HXTYPE_NONE, NULL, NULL, HX_getopt_usage_cb, \
 		0, "Display brief usage message"}
 #	define HXOPT_TABLEEND {NULL, 0, HXTYPE_XSNTMARK}
+
+struct HXopt6_auto_result : public HXopt6_result {
+	HXopt6_auto_result() : HXopt6_result() {}
+	~HXopt6_auto_result() { HX_getopt6_clean(this); }
+	/*
+	 * Unlike the unique_tie class, no operator~ is provided for
+	 * HXopt6_auto_result, because reusing a result is not outright
+	 * possible;
+	 * auto ret = HX_getopt6(&table, argc, argv, &result, HXOPT_ITER_ARGS);
+	 * ret = HX_getopt6(&table, result.nargs, result.uarg, &~result, HXOPT_ITER_ARGS):
+	 * would kill off result before nargs/uarg is loaded.
+	 */
+};
+
 #endif
 
 #endif /* _LIBHX_OPTION_H */

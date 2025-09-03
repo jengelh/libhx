@@ -541,6 +541,23 @@ Obtaining non-option arguments
 		return EXIT_SUCCESS;
 	}
 
+C++ extension
+-------------
+
+.. code-block:: c++
+
+	{
+		struct HXopt6_auto_result result;
+		auto ret = HX_getopt6(&table, argc, argv, &result,
+		           HXOPT_USAGEONERR | HXOPT_ITER_ARGS);
+		if (ret != HXOPT_ERR_SUCCESS)
+			return ret;
+	}
+
+
+For C++ mode, a struct "HXopt6_auto_result" is offered with a constructor for
+zero initialization and a destructor invoking HX_getopt6_clean.
+
 Verbosity levels
 ----------------
 
