@@ -65,13 +65,6 @@ static struct HXoption table[] = {
 	HXOPT_TABLEEND,
 };
 
-static void dump_argv(char **v)
-{
-	while (*v != NULL)
-		printf("[%s] ", *v++);
-	printf("\n");
-}
-
 static int t_empty_argv(void)
 {
 	char *zero_argv[] = {nullptr};
