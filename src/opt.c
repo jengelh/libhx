@@ -686,8 +686,6 @@ EXPORT_SYMBOL int HX_getopt6(const struct HXoption *table, int argc,
 
 	if ((flags & (HXOPT_RQ_ORDER | HXOPT_ANY_ORDER)) == (HXOPT_RQ_ORDER | HXOPT_ANY_ORDER))
 		return -EINVAL;
-	if (flags & (HXOPT_PTHRU | HXOPT_KEEP_ARGV | HXOPT_DESTROY_OLD))
-		return -EINVAL;
 	if (result == nullptr && flags & (HXOPT_ITER_OPTS | HXOPT_ITER_ARGS | HXOPT_DUP_ARGS))
 		return -EINVAL;
 	if (result != nullptr)

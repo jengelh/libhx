@@ -133,15 +133,12 @@ enum {
 
 /**
  * Flags to HX_getopt.
- * %HXOPT_PTHRU:	pass-through unknown options to new argv (obsolete)
- * %HXOPT_DESTROY_OLD:	destroy old argv after parsing is successful
  * %HXOPT_QUIET:	do not output any warnings to stderr
  * %HXOPT_HELPONERR:	print out help when a parsing error occurs
  * %HXOPT_USAGEONERR:	print out short usage when a parsing error occurs
  * %HXOPT_RQ_ORDER:     Options and non-options must not be mixed (first
  *                      non-option stops parsing) and the environment variable
  *                      POSIXLY_CORRECT is ignored.
- * %HXOPT_KEEP_ARGV:	do not replace argc/argv at all
  * %HXOPT_ANY_ORDER:    Options and non-options may be mixed and the
  *                      environment variable POSIXLY_CORRECT is ignored.
  * %HXOPT_CONST_INPUT:   User declaration that elements in input argv can NOT
@@ -151,13 +148,10 @@ enum {
  * %HXOPT_DUP_ARGS:     (HX_getopt6 only) Populate result.dup_argv.
  */
 enum {
-	HXOPT_PTHRU       = 0x1U,
-	HXOPT_DESTROY_OLD = 0x2U,
 	HXOPT_QUIET       = 0x4U,
 	HXOPT_HELPONERR   = 0x8U,
 	HXOPT_USAGEONERR  = 0x10U,
 	HXOPT_RQ_ORDER    = 0x20U,
-	HXOPT_KEEP_ARGV   = 0x40U,
 	HXOPT_ANY_ORDER   = 0x80U,
 	HXOPT_CONST_INPUT   = 0x100U,
 	HXOPT_ITER_OPTS   = 0x200U,
