@@ -82,7 +82,6 @@ RMV     MinVer  FirstA  Name
 3.13    3.13    3.13    HX_timeval_sub
 3.12    3.12    1.10.0  HX_mkdir
 3.12    3.12    3.12    HX_strndup
-3.12    3.12    3.12    HX_strnlen
 3.12    3.0     3.0     HXMAP_CDATA
 3.12    3.0     3.0     HXMAP_CKEY
 3.12    3.0     3.0     HXMAP_SCDATA

@@ -94,7 +94,6 @@ extern size_t HX_strltrim(char *);
 extern char *HX_stpltrim(const char *);
 extern char *HX_strmid(const char *, long, long);
 extern char *HX_strndup(const char *, size_t);
-extern size_t HX_strnlen(const char *, size_t);
 extern char *HX_strquote(const char *, unsigned int, char **);
 extern size_t HX_strrcspn(const char *, const char *);
 extern char *HX_strrev(char *);

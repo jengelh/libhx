@@ -108,15 +108,6 @@ static void t_strncat(void)
 	printf("String: >%s<\n", data);
 }
 
-static void t_strnlen(void)
-{
-	static const char s[] = "Hello world";
-	printf("# strnlen: %" HX_SIZET_FMT "u %" HX_SIZET_FMT "u "
-	       "%" HX_SIZET_FMT "u %" HX_SIZET_FMT "u %" HX_SIZET_FMT "u\n",
-		HX_strnlen(s, -1), HX_strnlen(s, 0), HX_strnlen(s, 1),
-		HX_strnlen(s, strlen(s)), HX_strnlen(s, 999));
-}
-
 static void t_strsep(void)
 {
 	char b[] = "jengelh:x:1500:100:Jan Engelhardt:/home/jengelh:/bin/bash";
@@ -520,7 +511,6 @@ static int runner(int argc, char **argv)
 	if (ret != EXIT_SUCCESS)
 		return EXIT_FAILURE;
 	t_strncat();
-	t_strnlen();
 	t_strdup();
 	t_strsep();
 	t_strtrim();

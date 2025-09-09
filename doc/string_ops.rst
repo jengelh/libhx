@@ -303,7 +303,6 @@ Size-bounded string operations
 	char *HX_strlcat(char *dest, const char *src, size_t length);
 	char *HX_strlcpy(char *dest, const char *src, size_t length);
 	char *HX_strlncat(char *dest, const char *src, size_t dlen, size_t slen);
-	size_t HX_strnlen(const char *src, size_t max);
 
 ``HX_strlcat`` and ``HX_strlcpy`` provide implementations of the
 BSD-originating ``strlcat``(3) and ``strlcpy``(3) functions. ``strlcat`` and
@@ -311,10 +310,6 @@ BSD-originating ``strlcat``(3) and ``strlcpy``(3) functions. ``strlcat`` and
 they always take the length of the entire buffer specified by ``dest``, instead
 of just the length that is to be written. The functions guarantee that the
 buffer is ``'\0'``-terminated.
-
-``HX_strnlen`` will return the length of the input string or the upper bound
-given by ``max``, whichever is less. It will not attempt to access more than
-this many bytes in the input buffer.
 
 
 Allocation-related
