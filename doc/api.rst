@@ -384,6 +384,12 @@ Header reference
 ======  ===================================
 MinVer  Name
 ======  ===================================
+4.27    endian_float.h
+4.25    endian.h
+4.25    scope.hpp
+4.18    cast.h
+4.0     socket.h
+3.25    intdiff.hpp
 3.9     libHX/io.h
 3.4     libHX/init.h
 3.0     libHX/map.h
@@ -392,7 +398,7 @@ MinVer  Name
 2.0     libHX/ctype_helper.h
 1.23    libHX/misc.h
 1.23    libHX/defs.h
-1.22    libHX/xml_helper.h
+1.22    libHX/libxml_helper.h
 1.15    libHX/string.h
 1.15    libHX/option.h
 1.15    libHX/list.h
