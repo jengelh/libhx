@@ -60,7 +60,7 @@ if HAVE_CXX
 check_PROGRAMS    += tx-compile tx-cast tx-deque tx-dir \
                      tx-intdiff tx-list tx-list2 \
                      tx-misc tx-netio \
-                     tx-option tx-proc tx-rand tx-strchr2 tx-string \
+                     tx-proc tx-rand tx-strchr2 tx-string \
                      tx-strquote tx-time
 TESTS             += tx-strchr2 tx-strquote
 tx_cast_SOURCES    = tx-cast.cpp
@@ -80,8 +80,6 @@ tx_misc_SOURCES    = tx-misc.cpp
 tx_misc_LDADD      = libHX.la
 tx_netio_SOURCES   = tx-netio.cpp
 tx_netio_LDADD     = libHX.la ${libsocket_LIBS}
-tx_option_SOURCES  = tx-option.cpp
-tx_option_LDADD    = libHX.la
 tx_proc_SOURCES    = tx-proc.cpp
 tx_proc_LDADD      = libHX.la
 tx_rand_SOURCES    = tx-rand.cpp

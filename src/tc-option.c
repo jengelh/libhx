@@ -68,13 +68,17 @@ static struct HXoption table[] = {
 static int t_empty_argv(void)
 {
 	char *zero_argv[] = {nullptr};
-	char **new_argv = nullptr;
+	struct HXopt6_result result;
 
 	printf("...with argv={NULL}\n");
-	if (HX_getopt5(table, zero_argv, nullptr, &new_argv,
-	    HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
+	if (HX_getopt6(table, 0, zero_argv, &result,
+	    HXOPT_USAGEONERR | HXOPT_ITER_OA | HXOPT_DUP_ARGS) != HXOPT_ERR_SUCCESS)
 		return EXIT_FAILURE;
-	HX_zvecfree(new_argv);
+	if (result.nopts != 0 || result.nargs != 0 || result.dup_argc != 0) {
+		HX_getopt6_clean(&result);
+		return EXIT_FAILURE;
+	}
+	HX_getopt6_clean(&result);
 	return EXIT_SUCCESS;
 }
 
@@ -89,9 +93,8 @@ static int t_keep_argv(void)
 
 static int runner(int argc, char **argv)
 {
-	printf("== HX_getopt5 ==\n");
-	char **nargv = nullptr;
-	int ret = HX_getopt5(table, argv, &argc, &nargv, HXOPT_USAGEONERR);
+	printf("== HX_getopt6 ==\n");
+	int ret = HX_getopt6(table, argc, argv, nullptr, HXOPT_USAGEONERR);
 	printf("Return value of HX_getopt: %d\n", ret);
 	printf("Either-or is: %s\n", opt_eitheror[opt_dst]);
 	printf("values: D=%lf I=%d L=%ld S=%s\n",
@@ -99,11 +102,6 @@ static int runner(int argc, char **argv)
 	printf("Verbosity level: %d\n", opt_v);
 	printf("Mask: 0x%08X\n", opt_mask);
 	printf("mcstr: >%s<\n", opt_mcstr);
-	printf("new_argv:\n");
-	for (char **p = nargv; p != nullptr && *p != nullptr; ++p)
-		printf("\t%s\n", *p);
-	if (ret == EXIT_SUCCESS)
-		HX_zvecfree(nargv);
 
 	printf("\n== getopt other tests ==\n");
 	ret = t_empty_argv();
