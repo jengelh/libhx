@@ -63,7 +63,7 @@ extern float HX_flprf(float, float);
 extern double HX_flpr(double, double);
 #ifndef HX_HEXDUMP_DECLARATION
 #define HX_HEXDUMP_DECLARATION 1
-extern void HX_hexdump(FILE *, const void *, unsigned int);
+extern void HX_hexdump(FILE *, const void *, size_t);
 #endif
 extern bool HX_timespec_isneg(const struct timespec *);
 extern struct timespec *HX_timespec_neg(struct timespec *,

@@ -51,24 +51,24 @@ static __inline__ void hexdump_ascii(FILE *fp, unsigned char c, bool tty)
 		fprintf(fp, ".");
 }
 
-EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, unsigned int len)
+EXPORT_SYMBOL void HX_hexdump(FILE *fp, const void *vptr, size_t len)
 {
 	const unsigned char *ptr = vptr;
-	unsigned int i, j;
+	size_t i;
 	bool tty = isatty(fileno(fp));
 
-	fprintf(fp, "Dumping %u bytes\n", len);
+	fprintf(fp, "Dumping %zu bytes\n", len);
 	for (i = 0; i < len / 16; ++i) {
-		fprintf(fp, "%04x | ", i * 16);
-		for (j = 0; j < 16; ++j)
+		fprintf(fp, "%04zx | ", i * 16);
+		for (unsigned int j = 0; j < 16; ++j)
 			fprintf(fp, "%02x%c", *ptr++, (j == 7) ? '-' : ' ');
 		ptr -= 16;
 		fprintf(fp, "| ");
-		for (j = 0; j < 16; ++j)
+		for (unsigned int j = 0; j < 16; ++j)
 			hexdump_ascii(fp, *ptr++, tty);
 		fprintf(fp, "\n");
 	}
-	fprintf(fp, "%04x | ", i * 16);
+	fprintf(fp, "%04zx | ", i * 16);
 	len -= i * 16;
 	for (i = 0; i < len; ++i)
 		fprintf(fp, "%02x%c", ptr[i], (i == 7) ? '-' : ' ');

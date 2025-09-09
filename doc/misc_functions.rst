@@ -36,7 +36,7 @@ Miscellaneous functions
 .. code-block:: c
 
 	#include <libHX/io.h>
-	void HX_hexdump(FILE *fp, const void *ptr, unsigned int len);
+	void HX_hexdump(FILE *fp, const void *ptr, size_t len);
 
 ``HX_hexdump``
 	Outputs a nice pretty-printed hex and ASCII dump to the filedescriptor

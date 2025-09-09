@@ -225,7 +225,7 @@ RMV     MinVer  FirstA  Name
 1.28    1.28    1.28    HXTYPE_UINT32
 1.28    1.28    1.28    HXTYPE_UINT64
 1.28    1.28    1.28    HXTYPE_UINT8
-1.26    1.26    1.26    HX_hexdump
+1.26    5.0     1.26    HX_hexdump
 1.26    1.26    1.26    HX_time_compare
 1.25    1.25    1.25    HX_getl
 1.25    1.25    1.25    HXmc_free

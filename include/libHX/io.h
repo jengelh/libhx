@@ -45,7 +45,7 @@ extern ssize_t HXio_fullread(int, void *, size_t);
 extern ssize_t HXio_fullwrite(int, const void *, size_t);
 #ifndef HX_HEXDUMP_DECLARATION
 #define HX_HEXDUMP_DECLARATION 1
-extern void HX_hexdump(FILE *, const void *, unsigned int);
+extern void HX_hexdump(FILE *, const void *, size_t);
 #endif
 
 #ifdef __cplusplus
