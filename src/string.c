@@ -1210,7 +1210,7 @@ static unsigned long long HX_strtoull_period(const char *s,
 		unsigned long long mult = mtab[utab[i].pidx];
 		if (have_frac) {
 			double v = frac * mult;
-			if (v >= ULLONG_MAX) {
+			if (v >= static_cast(double, ULLONG_MAX)) {
 				/*
 				 * As ULLONG_MAX gets promoted to double, its
 				 * value may _increase_, therefore here we use
@@ -1295,7 +1295,7 @@ static unsigned long long HX_strtoull_iso8601p_2(const char *s,
 		unsigned long long mult = mtab[utab[i].pidx];
 		if (have_frac) {
 			double v = frac * mult;
-			if (v >= ULLONG_MAX) {
+			if (v >= static_cast(double, ULLONG_MAX)) {
 				/*
 				 * As ULLONG_MAX gets promoted to double, its
 				 * value may _increase_, therefore here we use
