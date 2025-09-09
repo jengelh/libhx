@@ -135,9 +135,9 @@ global:
 	HX_sendfile;
 	HX_unit_seconds;
 	HX_strtoull_sec;
-	HXformat3_aprintf;
-	HXformat3_fprintf;
-	HXformat3_sprintf;
+	HXformat_aprintf;
+	HXformat_fprintf;
+	HXformat_sprintf;
 	HX_ipaddr_is_local;
 	HX_sockaddr_is_local;
 	HX_addrport_split;

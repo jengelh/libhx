@@ -20,9 +20,6 @@
 #undef HXformat_aprintf
 #undef HXformat_fprintf
 #undef HXformat_sprintf
-extern int HXformat_aprintf(const struct HXformat_map *, hxmc_t **, const char *);
-extern int HXformat_sprintf(const struct HXformat_map *, char *, size_t, const char *);
-extern int HXformat_fprintf(const struct HXformat_map *, FILE *, const char *);
 
 /* To make it easier on the highlighter */
 #define C_OPEN  '('
@@ -630,14 +627,7 @@ EXPORT_SYMBOL struct HXformat_map *HXformat_init(void)
 	return NULL;
 }
 
-EXPORT_SYMBOL int HXformat_aprintf(const struct HXformat_map *blk,
-    hxmc_t **resultp, const char *fmt)
-{
-	ssize_t ret = HXformat3_aprintf(blk, resultp, fmt);
-	return ret > INT_MAX ? INT_MAX : ret;
-}
-
-EXPORT_SYMBOL ssize_t HXformat3_aprintf(const struct HXformat_map *blk,
+EXPORT_SYMBOL ssize_t HXformat_aprintf(const struct HXformat_map *blk,
     hxmc_t **resultp, const char *fmt)
 {
 	hxmc_t *ex, *ts, *out;
@@ -686,20 +676,13 @@ EXPORT_SYMBOL ssize_t HXformat3_aprintf(const struct HXformat_map *blk,
 	return ret;
 }
 
-EXPORT_SYMBOL int HXformat_fprintf(const struct HXformat_map *ftable,
-    FILE *filp, const char *fmt)
-{
-	ssize_t ret = HXformat3_fprintf(ftable, filp, fmt);
-	return ret > INT_MAX ? INT_MAX : ret;
-}
-
-EXPORT_SYMBOL ssize_t HXformat3_fprintf(const struct HXformat_map *ftable,
+EXPORT_SYMBOL ssize_t HXformat_fprintf(const struct HXformat_map *ftable,
     FILE *filp, const char *fmt)
 {
 	hxmc_t *str;
 	ssize_t ret;
 
-	if ((ret = HXformat3_aprintf(ftable, &str, fmt)) <= 0)
+	if ((ret = HXformat_aprintf(ftable, &str, fmt)) <= 0)
 		return ret;
 	errno = 0;
 	if (fputs(str, filp) < 0)
@@ -708,14 +691,7 @@ EXPORT_SYMBOL ssize_t HXformat3_fprintf(const struct HXformat_map *ftable,
 	return ret;
 }
 
-EXPORT_SYMBOL int HXformat_sprintf(const struct HXformat_map *ftable,
-    char *dest, size_t size, const char *fmt)
-{
-	ssize_t ret = HXformat3_sprintf(ftable, dest, size, fmt);
-	return ret > INT_MAX ? INT_MAX : ret;
-}
-
-EXPORT_SYMBOL ssize_t HXformat3_sprintf(const struct HXformat_map *ftable,
+EXPORT_SYMBOL ssize_t HXformat_sprintf(const struct HXformat_map *ftable,
     char *dest, size_t size, const char *fmt)
 {
 	hxmc_t *str = nullptr;
