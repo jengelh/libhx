@@ -96,9 +96,9 @@ RMV     MinVer  FirstA  Name
 3.12    3.12    3.12    HXOPT_ERR_SYS
 3.12    3.12    3.12    HXOPTCB_BY_LONG
 3.12    3.12    3.12    HXOPTCB_BY_SHORT
-3.12    3.0     1.10.0  HXformat_aprintf
-3.12    3.0     1.10.0  HXformat_fprintf
-3.12    3.0     1.10.0  HXformat_sprintf
+3.12    4.9     1.10.0  HXformat_aprintf / HXformat3_aprintf
+3.12    4.9     1.10.0  HXformat_fprintf / HXformat3_fprintf
+3.12    4.9     1.10.0  HXformat_sprintf / HXformat3_sprintf
 3.11    3.11    3.11    HXQUOTE_BASE64
 3.10    3.10    3.10    BUILD_BUG_ON_EXPR
 3.10    3.10    3.10    HX_readlink
