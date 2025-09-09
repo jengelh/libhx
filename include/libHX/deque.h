@@ -25,7 +25,7 @@ struct HXdeque {
 	struct HXdeque_node *first;
 	void *ptr;
 	struct HXdeque_node *last;
-	unsigned int items;
+	size_t items;
 };
 
 extern struct HXdeque *HXdeque_init(void);
@@ -39,7 +39,7 @@ extern void *HXdeque_get(struct HXdeque *, const void *);
 extern void *HXdeque_del(struct HXdeque_node *);
 extern void HXdeque_free(struct HXdeque *);
 extern void HXdeque_genocide2(struct HXdeque *, void (*)(void *));
-extern void **HXdeque_to_vec(const struct HXdeque *, unsigned int *);
+extern void **HXdeque_to_vec(const struct HXdeque *, size_t *);
 extern void **HXdeque_to_vecx(const struct HXdeque *, size_t *);
 
 static __inline__ void HXdeque_genocide(struct HXdeque *dq)

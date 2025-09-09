@@ -104,7 +104,7 @@ struct HXclist_head {
 			struct HXlist_head *next, *prev;
 		};
 	};
-	unsigned int items;
+	size_t items;
 };
 
 #define HXCLIST_HEAD_INIT(name) {{{&(name).list, &(name).list}}, 0}

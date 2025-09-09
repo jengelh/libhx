@@ -9,7 +9,7 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
-4.28    4.28    4.28    HXdeque_to_vecx
+5.0     5.0     4.28    HXdeque_to_vecx
 4.28    4.28    4.28    HX_getopt6
 4.28    4.28    4.28    HX_getopt6_clean
 4.28    inline  4.28    HXOPT_CONST_INPUT
@@ -348,7 +348,7 @@ RMV     MinVer  FirstA  Name
 1.10.0  1.10.0  1.10.0  HXdeque_pop
 1.10.0  1.10.0  1.10.0  HXdeque_push
 1.10.0  1.10.0  1.10.0  HXdeque_shift
-1.10.0  1.10.0  1.10.0  HXdeque_to_vec
+5.0     5.0     1.10.0  HXdeque_to_vec
 1.10.0  1.10.0  1.10.0  HXdeque_unshift
 1.10.0  1.10.0  1.10.0  SHCONF_ONE
 ======  ======  ======  ========================================

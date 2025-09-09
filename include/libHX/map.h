@@ -73,7 +73,8 @@ struct HXmap_trav;
  * @flags:	flags for this map
  */
 struct HXmap {
-	unsigned int items, flags;
+	size_t items;
+	unsigned int flags;
 };
 
 struct HXmap_ops {

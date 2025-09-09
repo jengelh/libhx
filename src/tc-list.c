@@ -81,7 +81,7 @@ static void l_dump(bool pop)
 #endif
 	}
 
-	printf("Remaining elements: %u\n", strings_ct.items);
+	printf("Remaining elements: %zu\n", strings_ct.items);
 }
 
 static void l_empty(void)

@@ -752,14 +752,14 @@ EXPORT_SYMBOL int HX_getopt6(const struct HXoption *table, int argc,
 	}
 
 	if (flags & HXOPT_ITER_OPTS) {
-		unsigned int nelem = 0;
+		size_t nelem = 0;
 		result->desc = reinterpret_cast(const struct HXoption **, HXdeque_to_vec(ps.desc, &nelem));
 		result->oarg = reinterpret_cast(char **, HXdeque_to_vec(ps.oarg, &nelem));
 		if (result->desc == nullptr || result->oarg == nullptr) {
 			ret = -errno;
 			goto out;
 		}
-		result->nopts = nelem;
+		result->nopts = nelem < INT_MAX ? nelem : INT_MAX;
 	}
 	if (flags & HXOPT_ITER_ARGS) {
 		size_t nelem = 0;
