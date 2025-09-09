@@ -1,4 +1,4 @@
-LIBHX_3.25 {
+LIBHX_5.0 {
 global:
 	HX_basename;
 	HX_basename_exact;
@@ -123,76 +123,36 @@ global:
 	HXproc_run_async;
 	HXproc_run_sync;
 	HXproc_wait;
-local:
-	*;
-};
-
-LIBHX_3.27 {
-global:
 	HX_socket_from_env;
 	HX_slurp_fd;
 	HX_slurp_file;
 	HXproc_switch_user;
 	HXproc_top_fd;
-} LIBHX_3.25;
-
-LIBHX_4.2 {
-global:
 	HX_strtod_unit;
 	HX_strtoull_unit;
 	HX_unit_size;
 	HX_unit_size_cu;
-} LIBHX_3.27;
-
-LIBHX_4.3 {
-global:
 	HX_sendfile;
 	HX_unit_seconds;
 	HX_strtoull_sec;
-} LIBHX_4.2;
-
-LIBHX_4.9 {
-global:
 	HXformat3_aprintf;
 	HXformat3_fprintf;
 	HXformat3_sprintf;
 	HX_ipaddr_is_local;
 	HX_sockaddr_is_local;
-} LIBHX_4.3;
-
-LIBHX_4.11 {
-global:
 	HX_addrport_split;
 	HX_inet_connect;
 	HX_inet_listen;
 	HX_local_listen;
-} LIBHX_4.9;
-
-LIBHX_4.15 {
-global:
 	HX_flpr;
 	HX_flprf;
-} LIBHX_4.11;
-
-LIBHX_4.16 {
-global:
 	HX_strtoull_nsec;
-} LIBHX_4.15;
-
-LIBHX_4.18 {
-global:
 	HX_getopt5;
-} LIBHX_4.16;
-
-LIBHX_4.24 {
-global:
 	HX_getcwd;
-} LIBHX_4.18;
-
-LIBHX_4.28 {
-global:
 	HX_strtoull8601p_sec;
 	HX_getopt6;
 	HX_getopt6_clean;
 	HXdeque_to_vecx;
-} LIBHX_4.24;
+local:
+	*;
+};
