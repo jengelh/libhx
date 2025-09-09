@@ -104,16 +104,6 @@ static __inline__ unsigned int HX_zveclen(const char *const *args)
 
 #ifdef __cplusplus
 } /* extern "C" */
-
-extern "C++" {
-
-template<typename type> static __inline__ type
-HX_dlsym(void *handle, const char *symbol)
-{
-	return reinterpret_cast<type>(HX_dlsym(handle, symbol));
-}
-
-} /* extern "C++" */
 #endif
 
 #endif /* _LIBHX_MISC_H */

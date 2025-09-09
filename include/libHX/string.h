@@ -123,16 +123,4 @@ static __inline__ void *HX_memdup(const void *buf, size_t len)
 } /* extern "C" */
 #endif
 
-#ifdef __cplusplus
-extern "C++" {
-
-template<typename type> static __inline__ type
-HX_memdup(const void *data, size_t n)
-{
-	return reinterpret_cast<type>(HX_memdup(data, n));
-}
-
-} /* extern "C++" */
-#endif
-
 #endif /* _LIBHX_STRING_H */

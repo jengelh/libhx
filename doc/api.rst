@@ -315,13 +315,11 @@ RMV     MinVer  FirstA  Name
 1.10.0  1.10.0  1.10.0  HX_dlerror
 1.10.0  1.10.0  1.10.0  HX_dlopen
 1.10.0  1.10.0  1.10.0  HX_dlsym
-1.10.0  1.10.0  1.10.0  HX_dlsym<>
 1.10.0  1.10.0  1.10.0  HX_getopt
 1.10.0  1.10.0  1.10.0  HX_getopt_help
 1.10.0  1.10.0  1.10.0  HX_getopt_usage
 1.10.0  1.10.0  1.10.0  HX_irand
 1.10.0  1.10.0  1.10.0  HX_memdup
-1.10.0  1.10.0  1.10.0  HX_memdup<>
 1.10.0  1.10.0  1.10.0  HX_rand
 1.10.0  1.10.0  1.10.0  HX_rrmdir
 1.10.0  1.10.0  1.10.0  HX_shconfig_free
@@ -351,7 +349,6 @@ RMV     MinVer  FirstA  Name
 1.10.0  1.10.0  1.10.0  HXdeque_push
 1.10.0  1.10.0  1.10.0  HXdeque_shift
 1.10.0  1.10.0  1.10.0  HXdeque_to_vec
-1.10.0  1.10.0  1.10.0  HXdeque_to_vec<>
 1.10.0  1.10.0  1.10.0  HXdeque_unshift
 1.10.0  1.10.0  1.10.0  SHCONF_ONE
 ======  ======  ======  ========================================

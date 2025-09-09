@@ -49,39 +49,6 @@ static __inline__ void HXdeque_genocide(struct HXdeque *dq)
 
 #ifdef __cplusplus
 } /* extern "C" */
-
-extern "C++" {
-
-template<typename type> static __inline__ type HXdeque_pop(struct HXdeque *dq)
-{
-	return reinterpret_cast<type>(HXdeque_pop(dq));
-}
-
-template<typename type> static __inline__ type
-HXdeque_shift(struct HXdeque *dq)
-{
-	return reinterpret_cast<type>(HXdeque_shift(dq));
-}
-
-template<typename type> static __inline__ type
-HXdeque_get(struct HXdeque *dq, const void *ptr)
-{
-	return reinterpret_cast<type>(HXdeque_get(dq, ptr));
-}
-
-template<typename type> static __inline__ type
-HXdeque_del(struct HXdeque_node *nd)
-{
-	return reinterpret_cast<type>(HXdeque_del(nd));
-}
-
-template<typename type> static __inline__ type *
-HXdeque_to_vec(struct HXdeque *dq, unsigned int *n)
-{
-	return reinterpret_cast<type *>(HXdeque_to_vec(dq, n));
-}
-
-} /* extern "C++" */
 #endif
 
 #endif /* _LIBHX_DEQUE_H */
