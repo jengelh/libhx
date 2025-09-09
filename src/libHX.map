@@ -15,7 +15,6 @@ global:
 	HX_ffs;
 	HX_fls;
 	HX_getl;
-	HX_getopt;
 	HX_getopt_help;
 	HX_getopt_help_cb;
 	HX_getopt_usage;
@@ -147,7 +146,6 @@ global:
 	HX_flpr;
 	HX_flprf;
 	HX_strtoull_nsec;
-	HX_getopt5;
 	HX_getcwd;
 	HX_strtoull8601p_sec;
 	HX_getopt6;

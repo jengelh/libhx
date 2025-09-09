@@ -807,48 +807,6 @@ EXPORT_SYMBOL int HX_getopt6(const struct HXoption *table, int argc,
 	return ret;
 }
 
-EXPORT_SYMBOL int HX_getopt5(const struct HXoption *table, char **orig_argv,
-    int *new_argc, char ***new_argv, unsigned int flags)
-{
-	struct HXopt6_result result;
-	if (new_argv != nullptr)
-		flags |= HXOPT_DUP_ARGS;
-	else
-		flags &= ~HXOPT_DUP_ARGS;
-	int ret = HX_getopt6(table, -1, orig_argv, &result,
-	          flags | HXOPT_CONST_INPUT);
-	if (ret != 0)
-		return ret;
-	if (new_argc != nullptr)
-		*new_argc = result.dup_argc;
-	if (new_argv != nullptr) {
-		*new_argv = result.dup_argv;
-		result.dup_argv = nullptr;
-	}
-	HX_getopt6_clean(&result);
-	return ret;
-}
-
-EXPORT_SYMBOL int HX_getopt(const struct HXoption *table, int *argc,
-    char ***argv, unsigned int flags)
-{
-	int new_argc = 0;
-	char **new_argv = nullptr;
-	int ret = HX_getopt5(table, *argv, &new_argc,
-	          flags & HXOPT_KEEP_ARGV ? nullptr : &new_argv, flags & ~(HXOPT_KEEP_ARGV | HXOPT_DESTROY_OLD));
-	if (ret != HXOPT_ERR_SUCCESS)
-		return ret;
-	if (flags & HXOPT_KEEP_ARGV)
-		// NO_CREATE_NEW / DESTROY_NEW
-		new_argv = *argv;
-	else if (flags & HXOPT_DESTROY_OLD)
-		HX_zvecfree(*argv);
-	if (argc != nullptr)
-		*argc = new_argc;
-	*argv = new_argv;
-	return ret;
-}
-
 EXPORT_SYMBOL void HX_getopt_help(const struct HXoptcb *cbi, FILE *nfp)
 {
 	FILE *fp = (nfp == NULL) ? stderr : nfp;

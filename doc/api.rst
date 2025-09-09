@@ -26,7 +26,6 @@ RMV     MinVer  FirstA  Name
 4.25    inline  4.25    le{16,32,64}p_to_cpu be{16,32,64}p_to_cpu
 4.25    4.25    4.25    HXSIZEOF_UNITSEC64
 4.24    4.24    4.24    HX_getcwd
-4.19    4.18    4.18    HX_getopt5
 4.16    4.16    4.16    HX_strtoull_nsec
 4.15    4.15    4.15    HX_flpr
 4.15    4.15    4.15    HX_flprf
@@ -315,7 +314,6 @@ RMV     MinVer  FirstA  Name
 1.10.0  1.10.0  1.10.0  HX_dlerror
 1.10.0  1.10.0  1.10.0  HX_dlopen
 1.10.0  1.10.0  1.10.0  HX_dlsym
-1.10.0  1.10.0  1.10.0  HX_getopt
 1.10.0  1.10.0  1.10.0  HX_getopt_help
 1.10.0  1.10.0  1.10.0  HX_getopt_usage
 1.10.0  1.10.0  1.10.0  HX_irand
