@@ -1,3 +1,19 @@
+v4.28 (2025-09-10)
+==================
+
+Enhancements:
+
+* string: make HX_strtoull_sec support some ISO 8601 periods
+* string: add function HX_strtoull8601p_sec
+* opt: new getopt API that facilitates iterating over options and non-options
+  and doing away with unnecessary memory allocations
+
+Changes:
+
+* opt: the implementation for the HXOPT_PTHRU flag was deleted (its use will
+  now be rejected by the parser)
+
+
 v4.27 (2025-03-17)
 ==================
 
