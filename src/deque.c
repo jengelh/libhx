@@ -188,7 +188,7 @@ HXdeque_to_veci(const struct HXdeque *dq, size_t *num, bool sentinel)
 EXPORT_SYMBOL void **
 HXdeque_to_vec(const struct HXdeque *dq, unsigned int *num)
 {
-	size_t nelem;
+	size_t nelem = 0;
 	void **ret = HXdeque_to_veci(dq, &nelem, true);
 	if (num != nullptr)
 		*num = nelem < UINT_MAX ? nelem : UINT_MAX;
