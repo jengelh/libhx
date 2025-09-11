@@ -12,17 +12,25 @@
 #include <libHX/proc.h>
 #if defined(HAVE_INITGROUPS)
 
-static char *user_name, *group_name;
 static const struct HXoption options_table[] = {
-	{.sh = 'u', .type = HXTYPE_STRING, .ptr = &user_name},
-	{.sh = 'g', .type = HXTYPE_STRING, .ptr=  &group_name},
+	{.sh = 'u', .type = HXTYPE_STRING},
+	{.sh = 'g', .type = HXTYPE_STRING},
 	HXOPT_TABLEEND,
 };
 
 static int runner(int argc, char **argv)
 {
-	if (HX_getopt(options_table, &argc, &argv, HXOPT_USAGEONERR) != HXOPT_ERR_SUCCESS)
+	char *user_name = nullptr, *group_name = nullptr;
+	struct HXopt6_result result;
+
+	if (HX_getopt6(options_table, argc, argv, &result,
+	    HXOPT_USAGEONERR | HXOPT_ITER_OPTS) != HXOPT_ERR_SUCCESS)
 		return EXIT_FAILURE;
+	for (int i = 0; i < result.nopts; ++i) {
+		if (result.desc[i]->sh == 'u') user_name = result.oarg[i];
+		if (result.desc[i]->sh == 'g') group_name = result.oarg[i];
+	}
+
 	const char *user = user_name != NULL ? user_name : "-";
 	const char *group = group_name != NULL ? group_name : "-";
 	switch (HXproc_switch_user(user_name, group_name)) {
@@ -63,7 +71,7 @@ static int runner(int argc, char **argv)
 		break;
 	}
 	}
-	HX_zvecfree(argv);
+	HX_getopt6_clean(&result);
 	return EXIT_SUCCESS;
 }
 
