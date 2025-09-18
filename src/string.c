@@ -237,13 +237,11 @@ EXPORT_SYMBOL char **HX_split(const char *str, const char *delim,
 	ret[*cp] = NULL;
 
 	{
-		char *seg, *wp = HX_strdup(str), *bg = wp;
+		char *wp = HX_strdup(str), *bg = wp;
 		size_t i = 0;
 
-		while (--max > 0) {
-			seg      = HX_strsep(&wp, delim);
-			ret[i++] = HX_strdup(seg);
-		}
+		while (--max > 0)
+			ret[i++] = HX_strdup(strtok_r(nullptr, delim, &wp));
 
 		ret[i++] = HX_strdup(wp);
 		free(bg);
@@ -493,35 +491,6 @@ EXPORT_SYMBOL size_t HX_strrtrim(char *expr)
 		++s;
 	expr[++i] = '\0';
 	return s;
-}
-
-EXPORT_SYMBOL char *HX_strsep(char **sp, const char *d)
-{
-	char *begin, *end;
-
-	if (*sp == NULL || **sp == '\0')
-		return NULL;
-	begin = *sp;
-
-	if (d[0] == '\0' || d[1] == '\0') {
-		if (*begin == *d)
-			end = begin;
-		else if (*begin == '\0')
-			end = NULL;
-		else
-			end = strchr(begin + 1, *d);
-	} else {
-		end = strpbrk(begin, d);
-	}
-
-	if (end == NULL) {
-		*sp = NULL;
-	} else {
-		*end++ = '\0';
-		*sp = end;
-	}
-
-	return begin;
 }
 
 EXPORT_SYMBOL char *HX_strsep2(char **wp, const char *str)

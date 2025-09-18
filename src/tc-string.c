@@ -110,11 +110,19 @@ static void t_strncat(void)
 
 static void t_strsep(void)
 {
-	char b[] = "jengelh:x:1500:100:Jan Engelhardt:/home/jengelh:/bin/bash";
+	char orig[] = "jengelh:x:1500:100:Jan Engelhardt:/home/jengelh:/bin/bash";
+	char b[sizeof(orig)];
 	char *wp = b, *ret;
 
 	printf("# strsep\n");
+	memcpy(b, orig, sizeof(orig));
 	while ((ret = HX_strsep2(&wp, ":")) != NULL)
+		printf("%s\n", ret);
+
+	printf("# strtok_r\n");
+	memcpy(b, orig, sizeof(orig));
+	wp = b;
+	while ((ret = strtok_r(nullptr, ":", &wp)) != nullptr)
 		printf("%s\n", ret);
 }
 

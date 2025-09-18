@@ -98,7 +98,6 @@ extern char *HX_strquote(const char *, unsigned int, char **);
 extern size_t HX_strrcspn(const char *, const char *);
 extern char *HX_strrev(char *);
 extern size_t HX_strrtrim(char *);
-extern char *HX_strsep(char **, const char *);
 extern char *HX_strsep2(char **, const char *);
 extern char *HX_strupper(char *);
 extern double HX_strtod_unit(const char *, char **, unsigned int exponent);

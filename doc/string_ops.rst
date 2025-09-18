@@ -246,7 +246,6 @@ Tokenizing
 	char **HX_split(const char *s, const char *delimiters, size_t *fields, int max);
 	char **HX_split_inplace(char *s, const char *delimiters, int *fields, int max);
 	int HX_split_fixed(char *s, const char *delimiters, int max, char **arr);
-	char *HX_strsep(char **sp, const char *delimiters);
 	char *HX_strsep2(char **sp, const char *dstr);
 
 ``HX_split``
@@ -277,20 +276,15 @@ Tokenizing
 .. [#fixfoot] An implementation may however decide to put ``NULL`` in the
               unassigned fields, but this is implementation-dependent.
 
-``HX_strsep``
-	Extract tokens from a string. This implementation of strsep has been
-	added since the function is non-standard (according to the manpage,
-	conforms to BSD4.4 only) and may not be available on every operating
-	system. This function extracts tokens, separated by one of the
-	characters in ``delimiters``. The string is modified in-place and thus
-	must be mutable. The delimiters in the string are then overwritten with
-	``'\0'``, ``*sp`` is advanced to the character after the delimiter, and
-	the original pointer is returned. After the final token, ``HX_strsep``
-	will return ``NULL``.
-
 ``HX_strsep2``
-	Like ``HX_strsep``, but ``dstr`` is not an array of delimiting
-	characters, but an entire substring that acts as one delimiter.
+	strsep is a string tokenization function from BSD4.4; the POSIX
+	replacement is
+
+		strsep(&string, delim) <=>
+		strtok_r(nullptr, delim, &string).
+
+	Whereas strsep/strtok would split on any character in ``delim``,
+	our strsep2 splits only on the entire ``delim`` string.
 
 
 Size-bounded string operations
@@ -557,21 +551,3 @@ full-fledged ``HX_split`` that allocates space for each substring.
 		callme(line);
 		HX_zvecfree(field);
 	}
-
-Using HX_strsep
----------------
-
-``HX_strsep`` provides for thread- and reentrant-safe tokenizing a string where
-strtok from the C standard would otherwise fail.
-
-.. code-block:: c
-
-	#include <stdio.h>
-	#include <libHX/string.h>
-
-	char line[] = "root:x:0:0:root:/root:/bin/bash";
-	char *wp, *p;
-
-	wp = line;
-	while ((p = HX_strsep(&wp, ":")) != NULL)
-		printf("%s\n", p)

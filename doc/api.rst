@@ -330,7 +330,6 @@ RMV     MinVer  FirstA  Name
 1.10.0  1.10.0  1.10.0  HX_strrcspn
 1.10.0  1.10.0  1.10.0  HX_strrev
 1.10.0  1.10.0  1.10.0  HX_strrtrim
-1.10.0  1.10.0  1.10.0  HX_strsep
 1.10.0  1.10.0  1.10.0  HX_strsep2
 1.10.0  1.10.0  1.10.0  HX_strupper
 1.10.0  1.10.0  1.10.0  HX_zvecfree

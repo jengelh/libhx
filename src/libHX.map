@@ -53,7 +53,6 @@ global:
 	HX_strrev;
 	HX_strrtrim;
 	HX_strsep2;
-	HX_strsep;
 	HX_strupper;
 	HX_time_compare;
 	HX_timespec_add;
