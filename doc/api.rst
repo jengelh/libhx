@@ -363,6 +363,7 @@ Struct reference
 ======  ======  ================================================
 MinVer  FirstA
 ======  ======  ================================================
+4.28    4.28    struct HXopt6_result
 2.0     2.0     struct HXdeque_node.sptr
 1.10.0  1.10.0  struct HXdeque_node
 1.10.0  1.10.0  struct HXdeque
