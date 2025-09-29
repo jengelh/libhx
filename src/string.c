@@ -508,8 +508,6 @@ static const struct HX_quote_rule HX_quote_rules[] = {
 	[HXQUOTE_LDAPFLT] = {HXQUOTE_REJECT, "\n*()\\"},
 	[HXQUOTE_LDAPRDN] = {HXQUOTE_REJECT, "\n \"#+,;<=>\\"},
 	[HXQUOTE_URIENC]  = {HXQUOTE_ACCEPT, "-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~"},
-	[HXQUOTE_SQLSQUOTE] = {HXQUOTE_REJECT, "'"},
-	[HXQUOTE_SQLBQUOTE] = {HXQUOTE_REJECT, "`"},
 };
 
 /**
@@ -573,30 +571,6 @@ static char *HX_quote_backslash(char *dest, const char *src, const char *qc)
 		}
 		*dest++ = '\\';
 		*dest++ = *src++;
-	}
-
-	*dest = '\0';
-	return ret;
-}
-
-static char *
-HX_quote_sqlbackslash(char *dest, const char *src, const char *trm)
-{
-	char *ret = dest;
-	size_t len;
-
-	while (*src != '\0') {
-		len = strcspn(src, trm);
-		if (len > 0) {
-			memcpy(dest, src, len);
-			dest += len;
-			src  += len;
-			if (*src == '\0')
-				break;
-		}
-		*dest++ = *trm;
-		*dest++ = *trm;
-		++src;
 	}
 
 	*dest = '\0';
@@ -756,8 +730,6 @@ static size_t HX_quoted_size(const char *s, unsigned int type)
 	switch (type) {
 	case HXQUOTE_SQUOTE:
 	case HXQUOTE_DQUOTE:
-	case HXQUOTE_SQLSQUOTE:
-	case HXQUOTE_SQLBQUOTE:
 		return HX_qsize_bsr(s, HX_quote_rules[type].chars, 1);
 	case HXQUOTE_HTML:
 		return HX_qsize_html(s);
@@ -836,9 +808,6 @@ EXPORT_SYMBOL char *HX_strquote(const char *src, unsigned int type,
 		return HX_quote_base64(*free_me, src, '+', ',');
 	case HXQUOTE_URIENC:
 		return HX_quote_urlenc(*free_me, src);
-	case HXQUOTE_SQLSQUOTE:
-	case HXQUOTE_SQLBQUOTE:
-		return HX_quote_sqlbackslash(*free_me, src, rule->chars);
 	}
 	return NULL;
 }

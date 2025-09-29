@@ -180,18 +180,6 @@ Possible values for type:
 ``HXQUOTE_URIENC``
 	Escapes the string so that it becomes a valid part for an URI.
 
-``HXQUOTE_SQLSQUOTE``
-	Escapes all single quotes in the string by double single-quotes, as
-	required for using it in a single-quoted SQL string. No surrounding
-	quotes will be generated to facilitate concatenating of HX_strquote
-	results.
-
-``HXQUOTE_SQLBQUOTE``
-	Escape all backticks in the string by double backticks, as required for
-	using it in a backtick-quoted SQL string (used for table names and
-	columns). No surrounding ticks will be generated to facilitate
-	concatenation.
-
 .. _RFC 4514: http://tools.ietf.org/html/rfc4514
 .. _RFC 4515: http://tools.ietf.org/html/rfc4515
 .. _RFC 4648: http://tools.ietf.org/html/rfc4648

@@ -10,7 +10,6 @@
 static const char input1[]   = "\"Good\" ol' \\'escaped\\' strings";
 static const char output1a[] = "\"Good\" ol\\' \\\\\\'escaped\\\\\\' strings";
 static const char output1b[] = "\\\"Good\\\" ol' \\\\'escaped\\\\' strings";
-static const char output1c[] = "\"Good\" ol'' \\''escaped\\'' strings";
 static const char input2[]   = "<p style=\"height: 1;\">Foo &amp; \"bar\"</p>";
 static const char output2[]  =
 	"&lt;p style=&quot;height: 1;&quot;&gt;Foo &amp;amp; &quot;bar&quot;&lt;/p&gt;";
@@ -21,7 +20,6 @@ static const char output3c[] = "ICNvPWZvbygqKSxiYVxyIA==";
 static const char input4[]   = "http://user:pass@host.de/~path/file(msvc);stuff.php?query[phpindex]=value&another=one;stuff";
 static const char output4[]  = "http%3A%2F%2Fuser%3Apass%40host.de%2F~path%2Ffile%28msvc%29%3Bstuff.php%3Fquery%5Bphpindex%5D%3Dvalue%26another%3Done%3Bstuff";
 static const char input5[]   = "echo hello `echo world`";
-static const char output5[]  = "echo hello ``echo world``";
 static const char input6[]   = "\xfb\xef\xff";
 static const char output6[]  = "++//";
 static const char input7[]   = "\xfb\xef\xff";
@@ -58,13 +56,11 @@ int main(void)
 		return EXIT_FAILURE;
 	tst(input1, HXQUOTE_SQUOTE, output1a);
 	tst(input1, HXQUOTE_DQUOTE, output1b);
-	tst(input1, HXQUOTE_SQLSQUOTE, output1c);
 	tst(input2, HXQUOTE_HTML, output2);
 	tst(input3, HXQUOTE_LDAPFLT, output3a);
 	tst(input3, HXQUOTE_LDAPRDN, output3b);
 	tst(input3, HXQUOTE_BASE64, output3c);
 	tst(input4, HXQUOTE_URIENC, output4);
-	tst(input5, HXQUOTE_SQLBQUOTE, output5);
 	tst(input6, HXQUOTE_BASE64, output6);
 	tst(input7, HXQUOTE_BASE64URL, output7);
 	return 0;
