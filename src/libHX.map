@@ -35,7 +35,6 @@ global:
 	HX_split;
 	HX_split_fixed;
 	HX_split_inplace;
-	HX_stpltrim;
 	HX_strbchr;
 	HX_strchr2;
 	HX_strclone;

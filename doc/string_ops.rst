@@ -102,7 +102,6 @@ In-place transformations
 
 	char *HX_chomp(char *s);
 	size_t HX_strltrim(char *s);
-	char *HX_stpltrim(const char *s);
 	char *HX_strlower(char *s);
 	char *HX_strrev(char *s);
 	size_t HX_strrtrim(char *s);
@@ -116,9 +115,6 @@ In-place transformations
 	Trims all whitespace (characters on which ``isspace``(3) returns true)
 	on the left edge of the string. Returns the number of characters that
 	were stripped.
-
-``HX_stpltrim``
-	Returns a pointer to the first non-whitespace character in ``s``.
 
 ``HX_strlower``
 	Transforms all characters in the string ``s`` into lowercase using

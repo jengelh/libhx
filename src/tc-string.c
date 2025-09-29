@@ -133,10 +133,6 @@ static void t_strtrim(void)
 	char c[] = "a&b", cexp[] = "a&b";
 	const char *r;
 
-	r = HX_stpltrim(a);
-	printf("HX_stpltrim(\"%s\") = \"%s\"\n", a, r);
-	assert(strcmp(r, aexp) == 0);
-
 	printf("HX_strltrim(\"%s\") = ", a);
 	printf("\"%s\"\n", (HX_strltrim(a), a));
 	assert(strcmp(a, aexp) == 0);
@@ -145,7 +141,6 @@ static void t_strtrim(void)
 	printf("\"%s\"\n", (HX_strrtrim(b), b));
 	assert(strcmp(b, bexp) == 0);
 
-	assert(strcmp(cexp, HX_stpltrim(c)) == 0);
 	assert(strcmp(cexp, (HX_strltrim(c), c)) == 0);
 	assert(strcmp(cexp, (HX_strrtrim(c), c)) == 0);
 }

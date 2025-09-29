@@ -59,7 +59,6 @@ RMV     MinVer  FirstA  Name
 3.22    3.22    3.22    HXQUOTE_SQLBQUOTE
 3.21    3.21    3.21    xml_getnsprop
 3.19    3.19    3.19    HXQUOTE_SQLSQUOTE
-3.18    3.18    3.18    HX_stpltrim
 3.17    3.17    3.17    HX_LONGLONG_FMT
 3.17    3.17    3.17    HX_SIZET_FMT
 3.16    3.16    3.16    container_of

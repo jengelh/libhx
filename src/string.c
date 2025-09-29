@@ -392,13 +392,6 @@ EXPORT_SYMBOL size_t HX_strltrim(char *expr)
 	return diff;
 }
 
-EXPORT_SYMBOL char *HX_stpltrim(const char *p)
-{
-	while (HX_isspace(*p))
-		++p;
-	return const_cast1(char *, p);
-}
-
 /**
  * Helper for substr() function for dealing with negative off/len values
  * @z:		total length of string
