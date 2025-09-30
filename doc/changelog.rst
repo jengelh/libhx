@@ -1,3 +1,22 @@
+v5.0 (2025-10-01)
+=================
+
+Enhancements:
+
+* getopt6: new function set ``HX_getopt6`` which allows for parsing options
+  with an iterative style.
+* getopt6: the result set no longer forces strdup-ed results on the user.
+
+Changes:
+
+* Deleted functions ``HX_getopt``, ``HX_getopt5`` (use ``HX_getopt6`` instead),
+  ``HX_strnlen`` (use ``strnlen`` instead), ``HX_strsep`` (use ``strtok_r``
+  instead), ``HX_stpltrim`` (no replacement).
+* The struct members ``HXclist::items``, ``HXdeque::items``, ``HXmap::items``
+  have changed from ``unsigned int`` to ``size_t``. The function
+  ``HXdeque_to_vec`` has accordingly changed the result parameter type.
+
+
 v4.28 (2025-09-10)
 ==================
 
