@@ -377,7 +377,7 @@ static hxmc_t *HXformat2_xcall(const char *name, const char **pptr,
 	hxmc_t *ret, *ret2, **argv;
 	struct HXdeque *dq;
 	const char *s, *delim;
-	int err = 0;
+	ssize_t err = 0;
 
 	dq = HXdeque_init();
 	if (dq == NULL)
@@ -560,7 +560,7 @@ HXformat2_xany(const char **pptr, const struct HXformat_map *blk)
 		/* Closing parenthesis - variable */
 		const struct fmt_entry *entry;
 		hxmc_t *new_name = NULL;
-		int eret;
+		ssize_t eret;
 
 		*pptr = ++s;
 		eret  = HXformat_aprintf(blk, &new_name, name);
