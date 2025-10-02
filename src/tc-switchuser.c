@@ -10,6 +10,7 @@
 #include <libHX/defs.h>
 #include <libHX/option.h>
 #include <libHX/proc.h>
+#include "internal.h"
 #if defined(HAVE_INITGROUPS)
 
 static const struct HXoption options_table[] = {
