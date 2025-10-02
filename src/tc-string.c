@@ -131,7 +131,6 @@ static void t_strtrim(void)
 	char a[] = "  a and b  ", aexp[] = "a and b  ";
 	char b[] = "  a and b  ", bexp[] = "  a and b";
 	char c[] = "a&b", cexp[] = "a&b";
-	const char *r;
 
 	printf("HX_strltrim(\"%s\") = ", a);
 	printf("\"%s\"\n", (HX_strltrim(a), a));

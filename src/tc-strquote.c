@@ -19,7 +19,6 @@ static const char output3b[] = "\\20\\23o\\3Dfoo(*)\\2Cba\\5Cr\\20";
 static const char output3c[] = "ICNvPWZvbygqKSxiYVxyIA==";
 static const char input4[]   = "http://user:pass@host.de/~path/file(msvc);stuff.php?query[phpindex]=value&another=one;stuff";
 static const char output4[]  = "http%3A%2F%2Fuser%3Apass%40host.de%2F~path%2Ffile%28msvc%29%3Bstuff.php%3Fquery%5Bphpindex%5D%3Dvalue%26another%3Done%3Bstuff";
-static const char input5[]   = "echo hello `echo world`";
 static const char input6[]   = "\xfb\xef\xff";
 static const char output6[]  = "++//";
 static const char input7[]   = "\xfb\xef\xff";
