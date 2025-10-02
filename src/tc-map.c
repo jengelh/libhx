@@ -107,7 +107,7 @@ static void tmap_flush(struct HXmap *map, bool verbose)
 	const struct HXmap_node *node;
 	struct HXmap_trav *iter;
 
-	tmap_printf("Flushing %u elements (with traversal)\n", map->items);
+	tmap_printf("Flushing %zu elements (with traversal)\n", map->items);
 	tmap_ipush();
 	while (map->items != 0) {
 		/* May need to reload traverser due to deletion */
@@ -141,7 +141,7 @@ static void tmap_add_speed(struct HXmap *map)
 		tmap_time(&stop);
 		HX_timespec_sub(&delta, &stop, &start);
 	} while (!(delta.tv_sec >= 1 || map->items >= 1000000));
-	tmap_printf("%u elements in " HX_TIMESPEC_FMT
+	tmap_printf("%zu elements in " HX_TIMESPEC_FMT
 		" (plus time measurement overhead)\n",
 		map->items, HX_TIMESPEC_EXP(&delta));
 	threshold = map->items;
@@ -151,7 +151,7 @@ static void tmap_add_speed(struct HXmap *map)
 	tmap_add_rand(map, threshold);
 	tmap_time(&stop);
 	HX_timespec_sub(&delta, &stop, &start);
-	tmap_printf("%u elements in " HX_TIMESPEC_FMT " (w/o overhead)\n",
+	tmap_printf("%zu elements in " HX_TIMESPEC_FMT " (w/o overhead)\n",
 		map->items, HX_TIMESPEC_EXP(&delta));
 	tmap_ipop();
 }
@@ -176,14 +176,14 @@ static void tmap_trav_speed(struct HXmap *map)
 	tmap_time(&stop);
 	HX_timespec_sub(&delta, &stop, &start);
 	HXmap_travfree(iter);
-	tmap_printf("Open traversal of %u nodes: " HX_TIMESPEC_FMT "s\n",
+	tmap_printf("Open traversal of %zu nodes: " HX_TIMESPEC_FMT "s\n",
 		map->items, HX_TIMESPEC_EXP(&delta));
 
 	tmap_time(&start);
 	HXmap_qfe(map, tmap_each_fn, NULL);
 	tmap_time(&stop);
 	HX_timespec_sub(&delta, &stop, &start);
-	tmap_printf("QFE traversal of %u nodes: " HX_TIMESPEC_FMT "s\n",
+	tmap_printf("QFE traversal of %zu nodes: " HX_TIMESPEC_FMT "s\n",
 		map->items, HX_TIMESPEC_EXP(&delta));
 	tmap_ipop();
 
@@ -200,7 +200,7 @@ static void tmap_trav_speed(struct HXmap *map)
 	start = delta;
 	stop  = delta2;
 	HX_timespec_sub(&delta, &stop, &start);
-	tmap_printf("Lookup of %u nodes: " HX_TIMESPEC_FMT "s\n",
+	tmap_printf("Lookup of %zu nodes: " HX_TIMESPEC_FMT "s\n",
 		map->items, HX_TIMESPEC_EXP(&delta));
 	tmap_ipop();
 }
@@ -210,7 +210,7 @@ static int tmap_flat(const struct HXmap *map)
 	struct HXmap_node *nodes;
 	unsigned int i;
 
-	tmap_printf("Retrieving flattened list of %u elements:\n", map->items);
+	tmap_printf("Retrieving flattened list of %zu elements:\n", map->items);
 	tmap_ipush();
 	nodes = HXmap_keysvalues(map);
 	if (nodes == NULL) {
@@ -430,7 +430,7 @@ static void tmap_hmap_test_1a(const char *map_type,
 		u.map = HXmap_init5(HXMAPT_HASH, HXMAP_SCKEY,
 		        &intstr_ops, 0, 0);
 		tmap_new_perfect_tree(u.map, power, 2);
-		tmap_printf("%s, intstr, %u items/%u buckets, "
+		tmap_printf("%s, intstr, %zu items/%u buckets, "
 			"agglomeration: %.2f%%\n", map_type,
 			u.map->items, HXhash_primes[u.hmap->power],
 			hmap_agg_index(u.hmap, false));
@@ -441,13 +441,13 @@ static void tmap_hmap_test_1a(const char *map_type,
 	while (u.map->items < 1 << max_power) {
 		/* Fill up just right up to the maximum load */
 		tmap_add_rand(u.map, u.hmap->max_load - u.map->items);
-		tmap_printf("%s, words, %u items/%u buckets, "
+		tmap_printf("%s, words, %zu items/%u buckets, "
 			"agglomeration: %.2f%%\n", map_type,
 			u.map->items, HXhash_primes[u.hmap->power],
 			hmap_agg_index(u.hmap, false));
 		/* trigger resize */
 		tmap_add_rand(u.map, 1);
-		tmap_printf("%s, words, %u items/%u buckets, "
+		tmap_printf("%s, words, %zu items/%u buckets, "
 			"agglomeration: %.2f%%\n", map_type,
 			u.map->items, HXhash_primes[u.hmap->power],
 			hmap_agg_index(u.hmap, false));
@@ -535,7 +535,7 @@ static void rbt_height_check(const struct HXrbtree *tree)
 	max = 2 * log(tree->super.items + 1) / log(2);
 	avg = log((pow(2, min) + pow(2, max)) / 2) / log(2);
 	tmap_ipush();
-	tmap_printf("%u items; height %u; min/avg/max %.2f/%.2f/%.2f\n",
+	tmap_printf("%zu items; height %u; min/avg/max %.2f/%.2f/%.2f\n",
 		tree->super.items, rbt_tree_height(tree->root),
 		min, avg, max);
 	tmap_ipop();
