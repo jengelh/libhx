@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2022 Jan Engelhardt
+// SPDX-FileCopyrightText: 2025 Jan Engelhardt
 /*
  *	option parser test program
  */
@@ -14,17 +14,22 @@
 #include "internal.h"
 
 static int opt_v = 0, opt_mask = 0;
-static char *opt_kstr = NULL;
+static char *opt_kstr, *opt_strp;
 static long opt_klong = 0;
 static double opt_kdbl = 0;
 static int opt_kflag = 0, opt_kint = 0;
 static int opt_dst = 0;
 static hxmc_t *opt_mcstr = NULL;
 
+static inline const char *znul(const char *s)
+{
+	return s != nullptr ? s : "(null)";
+}
+
 static void opt_cbf(const struct HXoptcb *cbi)
 {
 	printf("cbf was called... with \"%s\"/'%c'\n",
-	       cbi->current->ln, cbi->current->sh);
+	       znul(cbi->current->ln), cbi->current->sh);
 }
 
 static const char *opt_eitheror[] = {"neither", "either", "or"};
@@ -59,9 +64,10 @@ static struct HXoption table[] = {
 	 .cb = opt_cbf, .help = "XOR mask test", .htyp = "value"},
 	{.sh = 'G', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
 	{.sh = 'H', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
-	{.sh = 'I', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
+	{.sh = 'I', .type = HXTYPE_NONE, .ptr = &opt_strp, .help = "Just a flag", .cb = opt_cbf},
 	HXOPT_AUTOHELP,
 	{.sh = 'J', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
+	{.sh = 'Z', .type = HXTYPE_STRP, .ptr = &opt_strp, .help = "String pointer", .cb = opt_cbf},
 	HXOPT_TABLEEND,
 };
 
@@ -88,11 +94,12 @@ static int runner(int argc, char **argv)
 	int ret = HX_getopt6(table, argc, argv, nullptr, HXOPT_USAGEONERR);
 	printf("Return value of HX_getopt: %d\n", ret);
 	printf("Either-or is: %s\n", opt_eitheror[opt_dst]);
-	printf("values: D=%lf I=%d L=%ld S=%s\n",
-	       opt_kdbl, opt_kint, opt_klong, opt_kstr);
+	printf("values: D=%lf I=%d L=%ld S=%p/%s strp=%p/%s\n",
+	       opt_kdbl, opt_kint, opt_klong,
+	       opt_kstr, znul(opt_kstr), opt_strp, znul(opt_strp));
 	printf("Verbosity level: %d\n", opt_v);
 	printf("Mask: 0x%08X\n", opt_mask);
-	printf("mcstr: >%s<\n", opt_mcstr);
+	printf("mcstr: >%s<\n", znul(opt_mcstr));
 
 	ret = t_empty_argv();
 	if (ret != EXIT_SUCCESS)

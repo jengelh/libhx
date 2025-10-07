@@ -221,6 +221,10 @@ static void do_assign(struct HXoptcb *cbi, const char *arg0)
 		if (opt->ptr != NULL)
 			*static_cast(char **, opt->ptr) = HX_strdup(cbi->data);
 		break;
+	case HXTYPE_STRP:
+		if (opt->ptr != nullptr)
+			*static_cast(const char **, opt->ptr) = cbi->data;
+		break;
 	case HXTYPE_STRDQ:
 		HXdeque_push(opt->ptr, HX_strdup(cbi->data));
 		break;

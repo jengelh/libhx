@@ -57,7 +57,7 @@ extern ssize_t HXformat_sprintf(const struct HXformat_map *, char *, size_t, con
  * %HXTYPE_FLOAT:	[fo] (float *) Read a floating point number
  * %HXTYPE_DOUBLE:	[fo] (double *) Read a floating point number
  * %HXTYPE_STRING:	[fo] (char **) Any string.
- * %HXTYPE_STRP:	[f-] (const char *const *) A string.
+ * %HXTYPE_STRP:	[fo] (const char *const *) A string.
  * %HXTYPE_STRDQ:	[-o] (struct HXdeque *) A string.
  * %HXTYPE_UINT8:	[-o] (uint8_t *) An integer.
  * %HXTYPE_UINT16:	[-o] (uint8_t *) An integer.

@@ -115,6 +115,11 @@ Type map
 	allocation so that subsequently modifying the original argument string
 	in any way will not falsely propagate.
 
+``HXTYPE_STRP``
+	The argument string pointer is stored in ``*(char **)ptr``.
+	No allocation occurs, but you are responsible for ensuring lifetime
+	adherence.
+
 ``HXTYPE_STRDQ``
 	The argument string is duplicated to a new memory region and the
 	resulting pointer is added to the given HXdeque. Note that you often
