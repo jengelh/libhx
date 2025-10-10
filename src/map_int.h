@@ -14,7 +14,8 @@ extern "C" {
  */
 struct HXmap_private {
 	/* from struct HXmap */
-	unsigned int items, flags;
+	size_t items;
+	unsigned int flags;
 
 	/* private: */
 	enum HXmap_type type;

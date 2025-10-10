@@ -75,6 +75,7 @@ struct HXmap_trav;
 struct HXmap {
 	size_t items;
 	unsigned int flags;
+	/* extended by HXmap_private, check it too */
 };
 
 struct HXmap_ops {
