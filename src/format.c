@@ -566,7 +566,7 @@ HXformat2_xany(const char **pptr, const struct HXformat_map *blk)
 		eret  = HXformat_aprintf(blk, &new_name, name);
 		if (eret <= 0) {
 			ret = NULL;
-		} else if (*new_name == '\0') {
+		} else if (new_name == nullptr || *new_name == '\0') {
 			ret = &HXformat2_nexp;
 		} else {
 			entry = HXmap_get(blk->vars, new_name);
