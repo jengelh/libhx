@@ -1,3 +1,17 @@
+v5.1 (2025-10-11)
+=================
+
+Enhancements:
+
+* getopt6: ``HXTYPE_STRP`` can now be used for HXoption::type. This will
+  perform assignment without strdup.
+* io: handle undocumented return code from FreeBSD/OpenBSD mkdir("/")
+
+Fixes:
+
+* map: resolve corruption of HXmap::items field
+
+
 v5.0 (2025-10-01)
 =================
 
