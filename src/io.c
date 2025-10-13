@@ -104,7 +104,7 @@ EXPORT_SYMBOL struct HXdir *HXdir_open(const char *s)
 	 * and bug-concealing "char d_name[256]", while on Solaris, it is a
 	 * proper "char d_name[]".
 	 */
-	size_t size = sizeof(*d);
+	size_t size = offsetof(struct dirent, d_name);
 	ssize_t name_max;
 	DIR *tmp_dh = opendir(s);
 	if (tmp_dh == NULL)
@@ -116,7 +116,6 @@ EXPORT_SYMBOL struct HXdir *HXdir_open(const char *s)
 	 */
 	name_max = fpathconf(dirfd(tmp_dh), _PC_NAME_MAX);
 	if (name_max > 0) {
-		size -= sizeof(struct dirent) - offsetof(struct dirent, d_name);
 		size += name_max + 1;
 	} else {
 #ifdef NAME_MAX
