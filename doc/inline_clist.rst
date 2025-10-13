@@ -53,7 +53,7 @@ Synopsis
 	Removes the first node in the list and returns it.
 
 ``HXclist_del``
-	Deletes the node from the list.
+	Unlinks the node from the list.
 
 The list count in the clist head is updated whenever a modification is done on
 the clist through these functions.

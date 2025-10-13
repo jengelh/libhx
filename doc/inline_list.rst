@@ -80,7 +80,7 @@ Synopsis
 	Adds ``elem`` to the end of the list.
 
 ``HXlist_del``
-	Deletes the given element from the list.
+	Unlinks the given element from the list.
 
 ``HXlist_empty``
 	Tests whether the list is empty. (Note: For clists, you could also use
