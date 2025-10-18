@@ -55,6 +55,12 @@ static __inline__ void HXlist_del(struct HXlist_head *entry)
 	entry->next->prev = entry->prev;
 	entry->next = NULL;
 	entry->prev = NULL;
+	/*
+	 * The node is now not connected to any (true) list head, so setting
+	 * ``entry->next = entry;`` does not make much sense. You can call
+	 * HXlist_init if needed, and the compiler will optimize the extraneous
+	 * assignemtns from HXlist_del away.
+	 */
 }
 
 static __inline__ bool HXlist_empty(const struct HXlist_head *head)
