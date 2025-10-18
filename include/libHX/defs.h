@@ -18,10 +18,10 @@ template<typename Dst, typename Src> static inline auto containerof_cxx(Src *var
 	using K  = typename std::is_const<typename std::remove_pointer<Src>::type>;
 	using Ch = typename std::conditional<K::value, const char, char>::type;
 	using D2 = typename std::conditional<K::value, const Dst, Dst>::type;
-	return reinterpret_cast<D2 *>(reinterpret_cast<Ch *>(var) + ofs);
+	return reinterpret_cast<D2 *>(reinterpret_cast<Ch *>(var) - ofs);
 }
 }
-#		define containerof(var, D1, member) containerof_cxx<D1>(var, -offsetof(D1, member))
+#		define containerof(var, D1, member) containerof_cxx<D1>(var, offsetof(D1, member))
 #	endif
 #else
 #	define HXsizeof_member(type, member) sizeof(((type *)NULL)->member)
