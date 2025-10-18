@@ -10,7 +10,7 @@ Function reference
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
 5.0     5.0     4.28    HXdeque_to_vecx
-4.28    4.28    4.28    HX_getopt6
+5.2     4.28    4.28    HX_getopt6
 4.28    4.28    4.28    HX_getopt6_clean
 4.28    inline  4.28    HXOPT_CONST_INPUT
 4.28    inline  4.28    HXOPT_ITER_OPTS

@@ -553,11 +553,21 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 		return -errno;
 	value = strchr(key, '=');
 	if (value == nullptr) {
-		/* Cannot happen because state is always !S_TWOLONG */
+		/*
+		 * Cannot happen because state is always !S_TWOLONG, but make
+		 * static analyzers happy.
+		 */
 		free(key);
 		return -EINVAL;
 	}
-	*value++ = '\0';
+	*value = '\0';
+	value = strchr(cur, '=');
+	if (value == nullptr) {
+		/* Cannot happen either */
+		free(key);
+		return -EINVAL;
+	}
+	++value;
 	par->cbi.current = lookup_long_pfx(par->cbi.table, key + 2);
 	if (par->cbi.current == &HXopt_ambig_prefix) {
 		ret = HX_getopt_error(HXOPT_E_AMBIG_PREFIX, key, par->flags);
@@ -579,6 +589,7 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 		return ret;
 	}
 
+	free(key);
 	par->cbi.flags    = HXOPTCB_BY_LONG;
 	par->cbi.data     = value;
 	/*
@@ -587,7 +598,6 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 	 * function.
 	 */
 	ret = do_assign_front(par);
-	free(key);
 	if (ret < 0)
 		return ret;
 	return HXOPT_S_NORMAL | HXOPT_I_ADVARG;

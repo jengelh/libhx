@@ -67,7 +67,8 @@ static struct HXoption table[] = {
 	{.sh = 'I', .type = HXTYPE_NONE, .ptr = nullptr, .help = "Just a flag", .cb = opt_cbf},
 	HXOPT_AUTOHELP,
 	{.sh = 'J', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
-	{.sh = 'Z', .type = HXTYPE_STRP, .ptr = &opt_strp, .help = "String pointer", .cb = opt_cbf},
+	{.ln = "strp", .sh = 'Z', .type = HXTYPE_STRP, .ptr = &opt_strp,
+	 .help = "String pointer", .cb = opt_cbf},
 	HXOPT_TABLEEND,
 };
 
@@ -201,6 +202,23 @@ static int t_getopt6_aflags(int unused_argc, char **unused_argv)
 	return EXIT_SUCCESS;
 }
 
+static int t_getopt6_eq(void)
+{
+	printf("== getopt6_eq ==\n");
+	char *argv[] = {"./prog", "--strp", "bar", "--strp=bar"};
+	struct HXopt6_result result;
+	int ret = HX_getopt6(table, ARRAY_SIZE(argv), argv, &result,
+	          HXOPT_ITER_OPTS | HXOPT_USAGEONERR);
+	if (ret != HXOPT_ERR_SUCCESS || result.nopts != 2)
+		return EXIT_FAILURE;
+	if (strcmp(result.oarg[0], result.oarg[1]) != 0)
+		return EXIT_FAILURE;
+	HX_getopt6_clean(&result);
+	free(opt_kstr);
+	opt_kstr = nullptr;
+	return EXIT_SUCCESS;
+}
+
 int main(int argc, char **argv)
 {
 	if (HX_init() <= 0)
@@ -209,6 +227,9 @@ int main(int argc, char **argv)
 	if (ret != EXIT_SUCCESS)
 		printf("FAILED\n");
 	ret = t_getopt6_aflags(argc, argv);
+	if (ret != EXIT_SUCCESS)
+		printf("FAILED\n");
+	ret = t_getopt6_eq();
 	if (ret != EXIT_SUCCESS)
 		printf("FAILED\n");
 	HX_exit();
