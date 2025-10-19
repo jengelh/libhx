@@ -115,6 +115,24 @@ Type map
 	allocation so that subsequently modifying the original argument string
 	in any way will not falsely propagate.
 
+	HXTYPE_STRING is deprecated: When a user passes e.g. ``-S foo -S bar``
+	to HX_getopt, ptr would be assigned twice before control returns back
+	to the HX_getopt caller, thus leaking the memory for "foo" leaks. We
+	cannot retroactively make the assign routine call free(ptr) inbetween,
+	as some code might have assigned ptr a static buffer before the call to
+	HX_getopt, e.g.:
+
+	.. code-block:: c
+
+		char *p = "foo"; // default to foo
+		options_table[] = {
+			{0,'S',HXTYPE_STRING,&p,...},
+		};
+		HX_getopt(...);
+		// p is always valid, but may point to either static or allocated
+		// storage. [Also assumes a program that never frees these
+		// strings for brevity.]
+
 ``HXTYPE_STRP``
 	The argument string pointer is stored in ``*(char **)ptr``.
 	No allocation occurs, but you are responsible for ensuring lifetime
