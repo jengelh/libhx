@@ -1,3 +1,12 @@
+v5.2 (2025-10-19)
+=================
+
+Fixes:
+
+* Cure buffer overflows in HXdir_read, HX_getopt6 and a use-after-free
+  in conjunction with HX_getopt6's result struct.
+
+
 v5.1 (2025-10-11)
 =================
 
