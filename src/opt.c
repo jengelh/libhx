@@ -716,7 +716,8 @@ EXPORT_SYMBOL int HX_getopt6(const struct HXoption *table, int argc,
 
 	if (!(ps.flags & HXOPT_ANY_ORDER) && posix_me_harder())
 		ps.flags |= HXOPT_RQ_ORDER;
-	for (const char *op0 = opt[0]; argc > 0; ) {
+	const char *op0 = argc > 0 ? opt[0] : nullptr;
+	while (argc > 0) {
 		if (state == HXOPT_S_TWOLONG)
 			state = HX_getopt_twolong(op0, argc > 1 ? opt[1] : nullptr, &ps);
 		else if (state == HXOPT_S_LONG)
@@ -742,11 +743,14 @@ EXPORT_SYMBOL int HX_getopt6(const struct HXoption *table, int argc,
 				goto out;
 		}
 		if (state & HXOPT_I_ADVARG) {
-			op0 = *++opt;
 			--argc;
+			if (argc > 0)
+				op0 = *++opt;
 		} else if (state & HXOPT_I_ADVARG2) {
-			op0 = *(opt += 2);
+			opt += 2;
 			argc -= 2;
+			if (argc > 0)
+				op0 = *opt;
 		} else if (state & HXOPT_I_ADVCHAR) {
 			++op0;
 		}
