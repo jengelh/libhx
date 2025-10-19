@@ -64,7 +64,7 @@ static struct HXoption table[] = {
 	 .cb = opt_cbf, .help = "XOR mask test", .htyp = "value"},
 	{.sh = 'G', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
 	{.sh = 'H', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
-	{.sh = 'I', .type = HXTYPE_NONE, .ptr = &opt_strp, .help = "Just a flag", .cb = opt_cbf},
+	{.sh = 'I', .type = HXTYPE_NONE, .ptr = nullptr, .help = "Just a flag", .cb = opt_cbf},
 	HXOPT_AUTOHELP,
 	{.sh = 'J', .type = HXTYPE_NONE, .help = "Just a flag", .cb = opt_cbf},
 	{.sh = 'Z', .type = HXTYPE_STRP, .ptr = &opt_strp, .help = "String pointer", .cb = opt_cbf},
@@ -80,12 +80,11 @@ static int t_empty_argv(void)
 	if (HX_getopt6(table, 0, zero_argv, &result,
 	    HXOPT_USAGEONERR | HXOPT_ITER_OA | HXOPT_DUP_ARGS) != HXOPT_ERR_SUCCESS)
 		return EXIT_FAILURE;
-	if (result.nopts != 0 || result.nargs != 0 || result.dup_argc != 0) {
-		HX_getopt6_clean(&result);
-		return EXIT_FAILURE;
-	}
+	bool ok = result.nopts == 0 && result.nargs == 0 && result.dup_argc == 0;
 	HX_getopt6_clean(&result);
-	return EXIT_SUCCESS;
+	free(opt_kstr);
+	opt_kstr = nullptr;
+	return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 static int runner(int argc, char **argv)
@@ -100,6 +99,8 @@ static int runner(int argc, char **argv)
 	printf("Verbosity level: %d\n", opt_v);
 	printf("Mask: 0x%08X\n", opt_mask);
 	printf("mcstr: >%s<\n", znul(opt_mcstr));
+	free(opt_kstr);
+	opt_kstr = nullptr;
 
 	ret = t_empty_argv();
 	if (ret != EXIT_SUCCESS)
@@ -118,6 +119,8 @@ static int t_getopt6_aflags(int unused_argc, char **unused_argv)
 	    result.uarg != nullptr || result.dup_argv != nullptr)
 		return EXIT_FAILURE;
 	HX_getopt6_clean(&result);
+	free(opt_kstr);
+	opt_kstr = nullptr;
 
 	/* T: Asking for DUP should produce data */
 	/* T: Limit strings -- NIL must not be processed */
@@ -135,6 +138,8 @@ static int t_getopt6_aflags(int unused_argc, char **unused_argv)
 		printf(" %s", result.dup_argv[i]);
 	printf("\n");
 	HX_getopt6_clean(&result);
+	free(opt_kstr);
+	opt_kstr = nullptr;
 
 	/* T: POSIX order */
 	printf("== RQ_ORDER/DUP_ARGS ==\n");
@@ -153,6 +158,8 @@ static int t_getopt6_aflags(int unused_argc, char **unused_argv)
 		printf(" %s", result.dup_argv[i]);
 	printf("\n");
 	HX_getopt6_clean(&result);
+	free(opt_kstr);
+	opt_kstr = nullptr;
 
 	/* T: Asking for ITER should produce data */
 	printf("== ANY_ORDER/ITER_ARGS ==\n");
@@ -167,6 +174,8 @@ static int t_getopt6_aflags(int unused_argc, char **unused_argv)
 		printf(" %s", result.uarg[i]);
 	printf("\n");
 	HX_getopt6_clean(&result);
+	free(opt_kstr);
+	opt_kstr = nullptr;
 
 	/* T: Asking for ITER should produce data */
 	printf("== ANY_ORDER/ITER_OPTS ==\n");
@@ -187,6 +196,8 @@ static int t_getopt6_aflags(int unused_argc, char **unused_argv)
 	}
 	printf("\n");
 	HX_getopt6_clean(&result);
+	free(opt_kstr);
+	opt_kstr = nullptr;
 	return EXIT_SUCCESS;
 }
 
