@@ -5,5 +5,5 @@ nobase_include_HEADERS = libHX.h libHX/cast.h \
 	libHX/endian.h libHX/endian_float.h libHX/init.h \
 	libHX/intdiff.hpp libHX/io.h libHX/list.h \
 	libHX/map.h libHX/misc.h libHX/option.h libHX/proc.h \
-	libHX/scope.hpp libHX/socket.h libHX/string.h \
+	libHX/scope.hpp libHX/socket.h libHX/string.h libHX/tie.hpp \
 	libHX/libxml_helper.h libHX/wx_helper.hpp

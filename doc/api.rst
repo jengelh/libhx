@@ -9,6 +9,7 @@ Function reference
 ======  ======  ======  ========================================
 RMV     MinVer  FirstA  Name
 ======  ======  ======  ========================================
+5.3     5.3     5.3     HX::unique_tie
 5.0     5.0     4.28    HXdeque_to_vecx
 5.2     4.28    4.28    HX_getopt6
 4.28    4.28    4.28    HX_getopt6_clean
