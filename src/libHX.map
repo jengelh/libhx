@@ -46,7 +46,6 @@ global:
 	HX_strltrim;
 	HX_strmid;
 	HX_strndup;
-	HX_strnlen;
 	HX_strquote;
 	HX_strrcspn;
 	HX_strrev;
