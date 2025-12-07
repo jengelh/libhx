@@ -32,7 +32,7 @@ This is similar to C++23's ``std::out_ptr`` and ``std::in_out_ptr``.
 
 * Only usable to ``unique_ptr``, not ``shared_ptr`` or raw pointers.
 * No implict conversions / No user-defined conversion operators.
-* No ``void **` conversion.
+* No ``void **`` conversion.
 * Clearing is explicit, with ``~``.
 * Address-taking is explicit in text, i.e. you have to type a ``&`` in source
   code. This is a deliberate choice for helping trivial text grepping for
