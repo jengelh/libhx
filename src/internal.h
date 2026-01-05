@@ -40,7 +40,7 @@
 #define MAXLNLEN 1024 /* max length for usual line */
 
 #define HXMC_IDENT 0x200571AF
-#if !defined(__cplusplus)
+#if !defined(__cplusplus) && __STDC_VERSION__ < 202300L
 #	define nullptr NULL
 #endif
 
