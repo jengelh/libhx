@@ -1,3 +1,18 @@
+v5.3 (2026-01-29)
+=================
+
+Enhancements:
+
+* Added the ``<libHX/tie.hpp>`` include together with the
+  ``HX::unique_tie`` function
+
+Fixes:
+
+* Make ``HX_isascii`` work in C23 mode
+* Drop symbols from libHX.map that no longer exist,
+  these caused a build failure with llvm-ld (lld)
+
+
 v5.2 (2025-10-19)
 =================
 
