@@ -7,6 +7,9 @@
  *	General Public License as published by the Free Software Foundation;
  *	either version 2.1 or (at your option) any later version.
  */
+#ifdef HAVE_CONFIG_H
+#	include "config.h"
+#endif
 #include <errno.h>
 #include <limits.h>
 #include <stdbool.h>
@@ -15,6 +18,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_STRINGS_H
+#	include <strings.h>
+#endif
 #include <libHX/ctype_helper.h>
 #include <libHX/deque.h>
 #include <libHX/map.h>

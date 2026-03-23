@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 #define WIN32_LEAN_AND_MEAN 1
+#define _POSIX_C_SOURCE 999900L /* cygwin-need:freeaddrinfo */
 #ifdef __cplusplus
 #	include <cstdlib>
 #	include <cstdio>

@@ -1,6 +1,6 @@
 /*
  *	Socket-related functions
- *	Copyright Jan Engelhardt, 2021
+ *	Copyright Jan Engelhardt, 2026
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU Lesser
@@ -10,6 +10,7 @@
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
 #endif
+#define _POSIX_C_SOURCE 999900L /* cygwin-need:freeaddrinfo */
 #include <errno.h>
 #include <limits.h>
 #include <stdlib.h>

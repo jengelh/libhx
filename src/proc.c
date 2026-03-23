@@ -1,6 +1,6 @@
 /*
  *	Process management
- *	Copyright Jan Engelhardt, 2008-2009
+ *	Copyright Jan Engelhardt, 2026
  *
  *	This file is part of libHX. libHX is free software; you can
  *	redistribute it and/or modify it under the terms of the GNU Lesser
@@ -9,6 +9,9 @@
  */
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
+#endif
+#ifdef __CYGWIN__
+#	define _BSD_SOURCE /* initgroups */
 #endif
 #include "internal.h"
 #include <errno.h>
@@ -21,7 +24,6 @@
 #ifdef _WIN32
 #	include <winsock2.h>
 #endif
-
 #if defined(HAVE_INITGROUPS) && defined(HAVE_SETGID)
 #include <grp.h>
 #include <pwd.h>
