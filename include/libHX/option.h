@@ -8,6 +8,7 @@
 #	include <stddef.h>
 #	include <stdio.h>
 #endif
+#include <sys/types.h>
 #include <libHX/cast.h>
 
 #ifdef __cplusplus

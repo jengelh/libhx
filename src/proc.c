@@ -10,6 +10,7 @@
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
 #endif
+#define _DEFAULT_SOURCE
 #ifdef __CYGWIN__
 #	define _BSD_SOURCE /* initgroups */
 #endif
