@@ -263,11 +263,11 @@ int HX_local_listen(const char *path)
 	struct sockaddr_un u;
 	if (strlen(path) >= sizeof(u.sun_path))
 		return -EINVAL;
-	u.sun_family = AF_LOCAL;
+	u.sun_family = AF_UNIX;
 	strcpy(u.sun_path, path);
 	struct addrinfo r = {};
 	r.ai_flags = AI_PASSIVE;
-	r.ai_family = AF_LOCAL;
+	r.ai_family = AF_UNIX;
 	r.ai_socktype = SOCK_STREAM;
 	r.ai_addrlen = sizeof(u) - sizeof(u.sun_path) + strlen(u.sun_path) + 1;
 	r.ai_addr = reinterpret_cast(struct sockaddr *, &u);
@@ -290,7 +290,7 @@ int HX_local_listen(const char *path)
 	if (!S_ISSOCK(sb.st_mode))
 		return -ENOTSOCK;
 
-	int testfd = socket(AF_LOCAL, SOCK_STREAM | PLATFORM_SKFLAGS, 0);
+	int testfd = socket(AF_UNIX, SOCK_STREAM | PLATFORM_SKFLAGS, 0);
 	if (testfd < 0)
 		return -errno;
 	ret = connect(testfd, r.ai_addr, r.ai_addrlen);
