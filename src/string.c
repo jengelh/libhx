@@ -182,7 +182,6 @@ EXPORT_SYMBOL void *HX_memmem(const void *vspace, size_t spacesize,
 	const char *space = vspace, *point = vpoint;
 	const char *head, *end;
 	size_t tailsize;
-	char *tail;
 
 	if (pointsize == 0)
 		return const_cast1(void *, vspace);
@@ -191,9 +190,9 @@ EXPORT_SYMBOL void *HX_memmem(const void *vspace, size_t spacesize,
 
 	/* Do a BM-style trailer search and reduce calls to memcmp */
 	head = space + (pointsize - 1);
-	tail = memchr(head, point[pointsize-1], spacesize - (pointsize - 1));
+	const char *tail = memchr(head, point[pointsize-1], spacesize - (pointsize - 1));
 	if (tail == NULL || pointsize == 1)
-		return tail;
+		return const_cast1(char *, tail);
 	end = space + spacesize;
 	do {
 		head = tail - pointsize + 1;

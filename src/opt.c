@@ -567,13 +567,13 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 		return -EINVAL;
 	}
 	*value = '\0';
-	value = strchr(cur, '=');
-	if (value == nullptr) {
+	const char *cvalue = strchr(cur, '=');
+	if (cvalue == nullptr) {
 		/* Cannot happen either */
 		free(key);
 		return -EINVAL;
 	}
-	++value;
+	++cvalue;
 	par->cbi.current = lookup_long_pfx(par->cbi.table, key + 2);
 	if (par->cbi.current == &HXopt_ambig_prefix) {
 		ret = HX_getopt_error(HXOPT_E_AMBIG_PREFIX, key, par->flags);
@@ -597,7 +597,7 @@ static int HX_getopt_long(const char *cur, struct HX_getopt_vars *par)
 
 	free(key);
 	par->cbi.flags    = HXOPTCB_BY_LONG;
-	par->cbi.data     = value;
+	par->cbi.data     = const_cast(char *, cvalue);
 	/*
 	 * Not possible to use %HXOPT_I_ASSIGN due to transience of @key. Thus
 	 * manually call do_assign now rather than in the superordinate

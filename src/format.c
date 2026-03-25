@@ -153,9 +153,9 @@ EXPORT_SYMBOL int HXformat_add(struct HXformat_map *blk, const char *key,
 
 static __inline__ char *HX_strchr0(const char *s, char c)
 {
-	char *ret = strchr(s, c);
+	const char *ret = strchr(s, c);
 	if (ret != NULL)
-		return ret;
+		return const_cast1(char *, ret);
 	return const_cast1(char *, s) + strlen(s);
 }
 
