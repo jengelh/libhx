@@ -11,6 +11,9 @@
 #	include "config.h"
 #endif
 #define _POSIX_C_SOURCE 999900L /* cygwin-need:freeaddrinfo */
+#ifdef __OpenBSD__
+#	define _BSD_SOURCE
+#endif
 #include <errno.h>
 #include <limits.h>
 #include <stdlib.h>
