@@ -1,3 +1,10 @@
+v5.4 (2026-03-25)
+=================
+
+* Resolved some compile warnings/errors with newer
+  compilers, libcs, and -std modes.
+
+
 v5.3 (2026-01-29)
 =================
 
