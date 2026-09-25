@@ -35,6 +35,16 @@ static int t_parse(void)
 	if (HX_addrport_split(":", host, sizeof(host), &port) != 2 ||
 	    strcmp(host, "") != 0 || port != 0)
 		return 1;
+
+	char tiny_2[2], tiny_1[1];
+	if (HX_addrport_split("X:65535", tiny_2, sizeof(tiny_2), &port) != 2 ||
+	    strcmp(tiny_2, "X") != 0 || port != 65535)
+		return 1;
+	if (HX_addrport_split(":65535", tiny_1, sizeof(tiny_1), &port) != 2 ||
+	    strcmp(tiny_1, "") != 0 || port != 65535)
+		return 1;
+	if (HX_addrport_split(":65535", NULL, 0, &port) >= 0)
+		return 1;
 	return 0;
 }
 
