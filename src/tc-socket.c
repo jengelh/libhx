@@ -28,7 +28,11 @@ static int t_parse(void)
 	if (HX_addrport_split("", host, sizeof(host), nullptr) != 1 ||
 	    strcmp(host, "") != 0)
 		return 1;
-	if (HX_addrport_split("[]:", host, sizeof(host), &port) != 1 ||
+	/* We want 2 here, because we have two fields (even if they are empty). */
+	if (HX_addrport_split("[]:", host, sizeof(host), &port) != 2 ||
+	    strcmp(host, "") != 0 || port != 0)
+		return 1;
+	if (HX_addrport_split(":", host, sizeof(host), &port) != 2 ||
 	    strcmp(host, "") != 0 || port != 0)
 		return 1;
 	return 0;

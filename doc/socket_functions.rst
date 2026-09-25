@@ -16,13 +16,14 @@ Socket functions
 
 ``HX_addrport_split``
 	Splits a host specification like ``[fe80::1]:80`` or ``127.0.0.1:80``
-	into a host and port part. The ``host`` parameter should point to a
-	buffer of size ``hsize``. ``port`` may be NULL. If ``spec`` did not
-	contain a port part, ``*port`` will *not* be updated, so it is wise to
-	set a default port first like in the example below. Upon success, the
-	value 2 is returned if both a host and a port were parsed (irrespective
-	of ``port`` being NULL or not). The value 1 is returned if only a host
-	portion was parsed. Upon error, a negative errno value is returned.
+	into a host and port part. ``host`` is a buffer of size ``hsize`` that
+	will be filled with the host portion. The port output parameter is only
+	written to when not NULL. If both a host and a port parts are detected,
+	the return value will be 2. If only a host part is detected, the return
+	value will be 1 and the port output parameter will not be written to at
+	all. Therefore, it makes sense to initialize the port variable to
+	something prior to calling HX_addrport_split. Upon error, a negative
+	errno value is returned.
 
 ``HX_inet_connect``
 	The function first resolves the specified host or IPv6/IPv4 address
