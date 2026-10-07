@@ -25,11 +25,12 @@ and the classic-style 32-64 2-lib distributions::
 Requirements
 ------------
 
-* GNU C Compiler 3.3.5 or newer. Other compilers (non-GCC) have
-  not been tested in months — use at your own risk.
+* gcc >= 11 / clang >= 18
 
 * approximately 80–160 KB of disk space on Linux for the shared
   library (depends on platform) and header files.
+  (1–2 MB on sparc64, due to a very large ELF paddings, cf.
+  ELF_MAXPAGESIZE)
 
 A C++ compiler is only needed if you want to build the C++ test
 programs that come with libHX. By default, if there is no C++
@@ -43,8 +44,8 @@ compiler present, these will not be built.
 Portability notice
 ==================
 
-libHX runs on contemporary versions of Linux and Windows. It ought to work on
-Solaris and the BSD distributions, but this is not build-tested at this time.
+libHX runs on contemporary versions of Linux, *BSD and Solaris. It ought to work on
+Windows, but this is seldomly tested.
 
 C99 is mandatory. The integer type ``int`` should at best have 32 bits at
 least.
