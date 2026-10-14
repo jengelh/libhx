@@ -11,6 +11,7 @@
 #	include "config.h"
 #endif
 #define _DEFAULT_SOURCE
+#define _GNU_SOURCE 1 /* pipe2 on glibc; other environments have it uncond. */
 #ifdef __CYGWIN__
 #	define _BSD_SOURCE /* initgroups */
 #endif
@@ -31,6 +32,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
+#ifndef O_CLOEXEC
+#	define O_CLOEXEC 0
+#endif
 
 static int HXproc_switch_gid(const struct passwd *pw, gid_t gr_gid)
 {
@@ -148,11 +152,11 @@ HXproc_build_pipes(const struct HXproc *proc, int (*p)[2])
 		for (y = 0; y < 2; ++y)
 			p[x][y] = -1;
 
-	if ((proc->p_flags & HXPROC_STDIN) && pipe(p[0]) < 0)
+	if ((proc->p_flags & HXPROC_STDIN) && pipe2(p[0], O_CLOEXEC) < 0)
 		return -errno;
-	if ((proc->p_flags & HXPROC_STDOUT) && pipe(p[1]) < 0)
+	if ((proc->p_flags & HXPROC_STDOUT) && pipe2(p[1], O_CLOEXEC) < 0)
 		return -errno;
-	if ((proc->p_flags & HXPROC_STDERR) && pipe(p[2]) < 0)
+	if ((proc->p_flags & HXPROC_STDERR) && pipe2(p[2], O_CLOEXEC) < 0)
 		return -errno;
 
 	return 1;
@@ -208,7 +212,7 @@ HXproc_run_async(const char *const *argv, struct HXproc *proc)
 		return -EINVAL;
 	if (proc->p_flags & (HXPROC_NULL_STDIN | HXPROC_NULL_STDOUT |
 	    HXPROC_NULL_STDERR)) {
-		if ((nullfd = open(NULL_DEVICE, O_RDWR)) < 0)
+		if ((nullfd = open(NULL_DEVICE, O_RDWR | O_CLOEXEC)) < 0)
 			return -errno;
 	}
 	proc->p_stdin = proc->p_stdout = proc->p_stderr = -1;
