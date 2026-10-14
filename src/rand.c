@@ -28,6 +28,9 @@
 #include <libHX/init.h>
 #include <libHX/misc.h>
 #include "internal.h"
+#ifndef O_CLOEXEC
+#	define O_CLOEXEC 0
+#endif
 
 static unsigned int HXrand_obtain_seed(void)
 {
@@ -65,7 +68,7 @@ static void HXrand_init(void)
 	unsigned int seed;
 	int fd, ret = 0;
 
-	if ((fd = open("/dev/urandom", O_RDONLY | O_BINARY)) >= 0) {
+	if ((fd = open("/dev/urandom", O_RDONLY | O_BINARY | O_CLOEXEC)) >= 0) {
 		ret = read(fd, &seed, sizeof(seed));
 		close(fd);
 	}
