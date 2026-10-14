@@ -185,14 +185,14 @@ EXPORT_SYMBOL int HX_copy_file(const char *src, const char *dest,
 	buf = malloc(bufsize);
 	if (buf == nullptr)
 		return -errno;
-	srcfd = open(src, O_RDONLY | O_BINARY);
+	srcfd = open(src, O_RDONLY | O_BINARY | O_CLOEXEC);
 	if (srcfd < 0) {
 		free(buf);
 		return -errno;
 	}
 	if (opts & HXF_KEEP)
 		extra_flags = O_EXCL;
-	dstfd = open(dest, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC |
+	dstfd = open(dest, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC | O_CLOEXEC |
 	        extra_flags, S_IRUGO | S_IWUGO);
 	if (dstfd < 0) {
 		int saved_errno = errno;
