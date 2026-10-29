@@ -1,3 +1,9 @@
+v5.5 (2026-10-29)
+=================
+
+* io, proc, rand: set O_CLOEXEC on all newly generated file descriptors
+
+
 v5.4 (2026-03-25)
 =================
 
