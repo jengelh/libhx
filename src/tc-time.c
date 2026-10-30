@@ -20,7 +20,7 @@ typedef struct timespec *(*mulf_func_t)(struct timespec *,
 
 static const int NANOSECOND = 1000000000;
 static const long long NANOSECOND_LL = 1000000000;
-static const unsigned int clock_id = CLOCK_THREAD_CPUTIME_ID;
+static clockid_t clock_id = CLOCK_THREAD_CPUTIME_ID;
 static const unsigned int step = 1000;
 static const long step_mul = 10000000;
 
