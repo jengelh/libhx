@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
-#define _POSIX_C_SOURCE 999900L /* cygwin:fdopen */
+#ifdef __CYGWIN__
+#	define _GNU_SOURCE 1 /* cygwin:fdopen */
+#endif
 #ifdef __cplusplus
 #	include <cerrno>
 #	include <cstdio>

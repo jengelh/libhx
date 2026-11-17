@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
-#define _POSIX_C_SOURCE 999900L
+#ifdef __CYGWIN__
+#	define _GNU_SOURCE 1
+#endif
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
