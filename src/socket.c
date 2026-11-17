@@ -315,7 +315,7 @@ int HX_local_listen(const char *path)
 
 static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 {
-	int value = 0;
+	int domain = 0, value = 0;
 	socklen_t optlen = sizeof(value);
 	int ret = getsockopt(fd, SOL_SOCKET, SO_ACCEPTCONN, STUPIDWIN(&value), &optlen);
 	/* OpenBSD before 7.6 does not implement responding to getsockopt(SO_ACCEPTCONN). */
@@ -334,8 +334,8 @@ static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 #else
 	optlen = sizeof(value);
 #ifdef SO_DOMAIN
-	ret = getsockopt(fd, SOL_SOCKET, SO_DOMAIN, &value, &optlen);
-	if (ret < 0 || value != ai->ai_family)
+	ret = getsockopt(fd, SOL_SOCKET, SO_DOMAIN, &domain, &optlen);
+	if (ret < 0 || domain != ai->ai_family)
 		return -1;
 #endif
 	optlen = sizeof(value);
@@ -345,7 +345,14 @@ static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 	optlen = sizeof(value);
 #ifdef SO_PROTOCOL
 	ret = getsockopt(fd, SOL_SOCKET, SO_PROTOCOL, &value, &optlen);
-	if (ret < 0 || value != ai->ai_protocol)
+	if (ret < 0)
+		return -1;
+	/*
+	 * In the AF_UNIX domain, operating systems are inconsistent as to what
+	 * they use as protocol. Linux, FreeBSD normalizes the protocol number
+	 * stored with the socket to 0, whereas OpenBSD normalizes to PF_UNIX.
+	 */
+	if (domain != AF_UNIX && value != ai->ai_protocol)
 		return -1;
 #endif
 #endif
