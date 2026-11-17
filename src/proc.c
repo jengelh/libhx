@@ -117,8 +117,8 @@ EXPORT_SYMBOL enum HXproc_su_status HXproc_switch_user(const char *user, const c
 
 #endif /* HAVE_lots */
 
-#if defined(HAVE_FORK) && defined(HAVE_PIPE) && defined(HAVE_EXECV) && \
-    defined(HAVE_EXECVP)
+#if defined(HAVE_FORK) && (defined(HAVE_PIPE) || defined(HAVE_PIPE2)) && \
+    defined(HAVE_EXECV) && defined(HAVE_EXECVP)
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <stdbool.h>
@@ -152,13 +152,21 @@ HXproc_build_pipes(const struct HXproc *proc, int (*p)[2])
 		for (y = 0; y < 2; ++y)
 			p[x][y] = -1;
 
+#ifdef HAVE_PIPE2
 	if ((proc->p_flags & HXPROC_STDIN) && pipe2(p[0], O_CLOEXEC) < 0)
 		return -errno;
 	if ((proc->p_flags & HXPROC_STDOUT) && pipe2(p[1], O_CLOEXEC) < 0)
 		return -errno;
 	if ((proc->p_flags & HXPROC_STDERR) && pipe2(p[2], O_CLOEXEC) < 0)
 		return -errno;
-
+#else
+	if ((proc->p_flags & HXPROC_STDIN) && pipe(p[0]) < 0)
+		return -errno;
+	if ((proc->p_flags & HXPROC_STDOUT) && pipe(p[1]) < 0)
+		return -errno;
+	if ((proc->p_flags & HXPROC_STDERR) && pipe(p[2]) < 0)
+		return -errno;
+#endif
 	return 1;
 }
 
