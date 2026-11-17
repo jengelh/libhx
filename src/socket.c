@@ -313,6 +313,22 @@ int HX_local_listen(const char *path)
 #endif
 }
 
+static bool compare_socknames(int domain, const struct sockaddr_un *a,
+    socklen_t asize, const struct sockaddr_un *b, socklen_t bsize)
+{
+	if (domain != AF_UNIX || a->sun_path[0] == '\0' ||
+	    b->sun_path[0] == '\0')
+		/* INET sockets or Unix Abstract Addresses */
+		return bsize == asize && memcmp(b, a, bsize) == 0;
+	/*
+	 * Linux: shrinks sun_path and optlen to the bare minimum.
+	 * FreeBSD, Solaris: reproduces original sockaddr_un.
+	 * OpenBSD: expands optlen to full sockaddr_un.
+	 */
+	return strncmp(a->sun_path, b->sun_path, bsize -
+	       offsetof(struct sockaddr_un, sun_path)) == 0;
+}
+
 static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 {
 	int domain = 0, value = 0;
@@ -364,7 +380,8 @@ static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 		return -1;
 	if (sizeof(addr) < optlen)
 		optlen = sizeof(addr);
-	if (optlen != ai->ai_addrlen || memcmp(&addr, ai->ai_addr, optlen) != 0)
+	if (!compare_socknames(domain, reinterpret_cast(const struct sockaddr_un *, ai->ai_addr),
+	    ai->ai_addrlen, reinterpret_cast(const struct sockaddr_un *, &addr), optlen))
 		return -1;
 	if (intf == nullptr)
 		return fd;
