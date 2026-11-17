@@ -319,11 +319,8 @@ static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 	int value = 0;
 	socklen_t optlen = sizeof(value);
 	int ret = getsockopt(fd, SOL_SOCKET, SO_ACCEPTCONN, STUPIDWIN(&value), &optlen);
+	/* OpenBSD before 7.6 does not implement responding to getsockopt(SO_ACCEPTCONN). */
 	if (ret < 0 && errno != ENOPROTOOPT)
-		/*
-		 * E.g. OpenBSD's getsockopt does not recognize this - even
-		 * though the flag with the same name exists and is known.
-		 */
 		return -1;
 	if (ret == 0 && value == 0)
 		return -1;
