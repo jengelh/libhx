@@ -313,7 +313,7 @@ int HX_local_listen(const char *path)
 #endif
 }
 
-static bool compare_socknames(int domain, const struct sockaddr_un *a,
+static bool sock_name_comp_eq(int domain, const struct sockaddr_un *a,
     socklen_t asize, const struct sockaddr_un *b, socklen_t bsize)
 {
 	if (domain != AF_UNIX || a->sun_path[0] == '\0' ||
@@ -327,6 +327,21 @@ static bool compare_socknames(int domain, const struct sockaddr_un *a,
 	 */
 	return strncmp(a->sun_path, b->sun_path, bsize -
 	       offsetof(struct sockaddr_un, sun_path)) == 0;
+}
+
+static bool sock_name_matches(int fd, int domain, const struct addrinfo *ai)
+{
+	struct sockaddr_storage addr;
+	socklen_t optlen = sizeof(addr);
+
+	memset(&addr, 0, sizeof(addr));
+	int ret = getsockname(fd, reinterpret_cast(struct sockaddr *, &addr), &optlen);
+	if (ret < 0)
+		return false;
+	if (optlen > sizeof(addr))
+		optlen = sizeof(addr);
+	return sock_name_comp_eq(domain, reinterpret_cast(const struct sockaddr_un *, ai->ai_addr),
+	       ai->ai_addrlen, reinterpret_cast(const struct sockaddr_un *, &addr), optlen);
 }
 
 static bool sock_intf_matches(int fd, const char *intf)
@@ -392,18 +407,8 @@ static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 		return -1;
 #endif
 #endif
-	struct sockaddr_storage addr;
-	memset(&addr, 0, sizeof(addr));
-	optlen = sizeof(addr);
-	ret = getsockname(fd, (struct sockaddr *)&addr, &optlen);
-	if (ret < 0)
-		return -1;
-	if (sizeof(addr) < optlen)
-		optlen = sizeof(addr);
-	if (!compare_socknames(domain, reinterpret_cast(const struct sockaddr_un *, ai->ai_addr),
-	    ai->ai_addrlen, reinterpret_cast(const struct sockaddr_un *, &addr), optlen))
-		return -1;
-	if (!sock_intf_matches(fd, intf))
+	if (!sock_name_matches(fd, domain, ai) ||
+	    !sock_intf_matches(fd, intf))
 		return -1;
 	return fd;
 }
