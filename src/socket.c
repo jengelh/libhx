@@ -384,7 +384,8 @@ static bool sock_triplet_matches(int domain, int type, int proto,
 	return proto == ai->ai_protocol || domain == AF_UNIX;
 }
 
-static bool sock_name_comp_eq(int domain, const struct sockaddr_un *a,
+#ifdef HAVE_SYS_UN_H
+static bool sock_un_matches(int domain, const struct sockaddr_un *a,
     socklen_t asize, const struct sockaddr_un *b, socklen_t bsize)
 {
 	if (domain != AF_UNIX || a->sun_path[0] == '\0' ||
@@ -399,6 +400,7 @@ static bool sock_name_comp_eq(int domain, const struct sockaddr_un *a,
 	return strncmp(a->sun_path, b->sun_path, bsize -
 	       offsetof(struct sockaddr_un, sun_path)) == 0;
 }
+#endif
 
 static bool sock_name_matches(int fd, int domain, const struct addrinfo *ai)
 {
@@ -411,8 +413,13 @@ static bool sock_name_matches(int fd, int domain, const struct addrinfo *ai)
 		return false;
 	if (optlen > sizeof(addr))
 		optlen = sizeof(addr);
-	return sock_name_comp_eq(domain, reinterpret_cast(const struct sockaddr_un *, ai->ai_addr),
-	       ai->ai_addrlen, reinterpret_cast(const struct sockaddr_un *, &addr), optlen);
+#ifdef HAVE_SYS_UN_H
+	if (domain == AF_UNIX)
+		return sock_un_matches(domain, reinterpret_cast(const struct sockaddr_un *, ai->ai_addr),
+		       ai->ai_addrlen, reinterpret_cast(const struct sockaddr_un *, &addr), optlen);
+#endif
+	return optlen == ai->ai_addrlen &&
+	       memcmp(&addr, ai->ai_addr, optlen) == 0;
 }
 
 static bool sock_intf_matches(int fd, const char *intf)
