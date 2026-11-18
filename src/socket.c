@@ -313,6 +313,23 @@ int HX_local_listen(const char *path)
 #endif
 }
 
+static bool sock_listening(int fd)
+{
+	int value = 0;
+	socklen_t optlen = sizeof(value);
+	int ret = getsockopt(fd, SOL_SOCKET, SO_ACCEPTCONN, STUPIDWIN(&value), &optlen);
+	if (ret == 0)
+		return value != 0;
+	if (errno == ENOPROTOOPT)
+		/*
+		 * OpenBSD <7.6 for example fails getsockopt(SO_ACCEPTCONN).
+		 * Assume socket matches (try_sk_from_env evaluates guards
+		 * like LISTEN_TOP_FD).
+		 */
+		return true;
+	return false;
+}
+
 static bool sock_name_comp_eq(int domain, const struct sockaddr_un *a,
     socklen_t asize, const struct sockaddr_un *b, socklen_t bsize)
 {
@@ -367,17 +384,13 @@ static bool sock_intf_matches(int fd, const char *intf)
 static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 {
 	int domain = 0, value = 0;
-	socklen_t optlen = sizeof(value);
-	int ret = getsockopt(fd, SOL_SOCKET, SO_ACCEPTCONN, STUPIDWIN(&value), &optlen);
-	/* OpenBSD before 7.6 does not implement responding to getsockopt(SO_ACCEPTCONN). */
-	if (ret < 0 && errno != ENOPROTOOPT)
-		return -1;
-	if (ret == 0 && value == 0)
+	socklen_t optlen;
+	if (!sock_listening(fd))
 		return -1;
 #ifdef _WIN32
 	WSAPROTOCOL_INFO protinfo;
 	optlen = sizeof(protinfo);
-	ret = getsockopt(fd, SOL_SOCKET, SO_PROTOCOL_INFO, STUPIDWIN(&protinfo), &optlen);
+	auto ret = getsockopt(fd, SOL_SOCKET, SO_PROTOCOL_INFO, STUPIDWIN(&protinfo), &optlen);
 	if (ret < 0 || protinfo.iAddressFamily != ai->ai_family ||
 	    protinfo.iSocketType != ai->ai_socktype ||
 	    protinfo.iProtocol != ai->ai_protocol)
@@ -385,7 +398,7 @@ static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 #else
 	optlen = sizeof(value);
 #ifdef SO_DOMAIN
-	ret = getsockopt(fd, SOL_SOCKET, SO_DOMAIN, &domain, &optlen);
+	auto ret = getsockopt(fd, SOL_SOCKET, SO_DOMAIN, &domain, &optlen);
 	if (ret < 0 || domain != ai->ai_family)
 		return -1;
 #endif
