@@ -329,6 +329,26 @@ static bool compare_socknames(int domain, const struct sockaddr_un *a,
 	       offsetof(struct sockaddr_un, sun_path)) == 0;
 }
 
+static bool sock_intf_matches(int fd, const char *intf)
+{
+	if (intf == nullptr)
+		return true;
+#ifdef SO_BINDTODEVICE
+	char ifname[32];
+	socklen_t optlen = sizeof(ifname);
+	int ret = getsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, ifname, &optlen);
+	if (ret < 0)
+		return false;
+	else if (optlen < sizeof(ifname))
+		ifname[optlen] = '\0';
+	else
+		ifname[sizeof(ifname)-1] = '\0';
+	return strcmp(intf, ifname) == 0;
+#else
+	return true;
+#endif
+}
+
 static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 {
 	int domain = 0, value = 0;
@@ -383,21 +403,8 @@ static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 	if (!compare_socknames(domain, reinterpret_cast(const struct sockaddr_un *, ai->ai_addr),
 	    ai->ai_addrlen, reinterpret_cast(const struct sockaddr_un *, &addr), optlen))
 		return -1;
-	if (intf == nullptr)
-		return fd;
-#ifdef SO_BINDTODEVICE
-	char ifname[32];
-	optlen = sizeof(ifname);
-	ret = getsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, ifname, &optlen);
-	if (ret < 0)
+	if (!sock_intf_matches(fd, intf))
 		return -1;
-	else if (optlen < sizeof(ifname))
-		ifname[optlen] = '\0';
-	else
-		ifname[sizeof(ifname)-1] = '\0';
-	if (strcmp(intf, ifname) != 0)
-		return -1;
-#endif
 	return fd;
 }
 
