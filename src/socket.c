@@ -330,6 +330,60 @@ static bool sock_listening(int fd)
 	return false;
 }
 
+static bool sock_get_triplet(int fd, int *domain, int *type, int *proto)
+{
+	socklen_t optlen;
+	int ret;
+#ifdef _WIN32
+	WSAPROTOCOL_INFO pi;
+	optlen = sizeof(pi);
+	ret = getsockopt(fd, SOL_SOCKET, SO_PROTOCOL_INFO, STUPIDWIN(&pi), &optlen);
+	if (ret < 0)
+		return -1;
+	*domain = pi.iAddressFamily;
+	*type   = pi.iSocketType;
+	*proto  = pi.iProtocol;
+	return true;
+#else
+
+	*domain = 0;
+	*proto  = 0;
+#ifdef SO_DOMAIN
+	optlen = sizeof(*domain);
+	ret = getsockopt(fd, SOL_SOCKET, SO_DOMAIN, domain, &optlen);
+	if (ret < 0)
+		return false;
+#endif
+	optlen = sizeof(*type);
+	ret = getsockopt(fd, SOL_SOCKET, SO_TYPE, type, &optlen);
+	if (ret < 0)
+		return false;
+#ifdef SO_PROTOCOL
+	optlen = sizeof(proto);
+	ret = getsockopt(fd, SOL_SOCKET, SO_PROTOCOL, proto, &optlen);
+	if (ret < 0)
+		return false;
+#endif
+	return true;
+#endif /* _WIN32 */
+}
+
+static bool sock_triplet_matches(int domain, int type, int proto,
+    const struct addrinfo *ai)
+{
+	if (domain > 0 && domain != ai->ai_family)
+		return false;
+	if (type != ai->ai_socktype)
+		return false;
+	/*
+	 * In the AF_UNIX domain, operating systems are inconsistent as to what
+	 * they use as protocol number. Linux and FreeBSD kernels normalize the
+	 * number stored with the socket to 0, whereas OpenBSD normalizes to
+	 * PF_UNIX.
+	 */
+	return proto == ai->ai_protocol || domain == AF_UNIX;
+}
+
 static bool sock_name_comp_eq(int domain, const struct sockaddr_un *a,
     socklen_t asize, const struct sockaddr_un *b, socklen_t bsize)
 {
@@ -383,44 +437,11 @@ static bool sock_intf_matches(int fd, const char *intf)
 
 static int try_sk_from_env(int fd, const struct addrinfo *ai, const char *intf)
 {
-	int domain = 0, value = 0;
-	socklen_t optlen;
-	if (!sock_listening(fd))
-		return -1;
-#ifdef _WIN32
-	WSAPROTOCOL_INFO protinfo;
-	optlen = sizeof(protinfo);
-	auto ret = getsockopt(fd, SOL_SOCKET, SO_PROTOCOL_INFO, STUPIDWIN(&protinfo), &optlen);
-	if (ret < 0 || protinfo.iAddressFamily != ai->ai_family ||
-	    protinfo.iSocketType != ai->ai_socktype ||
-	    protinfo.iProtocol != ai->ai_protocol)
-		return -1;
-#else
-	optlen = sizeof(value);
-#ifdef SO_DOMAIN
-	auto ret = getsockopt(fd, SOL_SOCKET, SO_DOMAIN, &domain, &optlen);
-	if (ret < 0 || domain != ai->ai_family)
-		return -1;
-#endif
-	optlen = sizeof(value);
-	ret = getsockopt(fd, SOL_SOCKET, SO_TYPE, &value, &optlen);
-	if (ret < 0 || value != ai->ai_socktype)
-		return -1;
-	optlen = sizeof(value);
-#ifdef SO_PROTOCOL
-	ret = getsockopt(fd, SOL_SOCKET, SO_PROTOCOL, &value, &optlen);
-	if (ret < 0)
-		return -1;
-	/*
-	 * In the AF_UNIX domain, operating systems are inconsistent as to what
-	 * they use as protocol. Linux, FreeBSD normalizes the protocol number
-	 * stored with the socket to 0, whereas OpenBSD normalizes to PF_UNIX.
-	 */
-	if (domain != AF_UNIX && value != ai->ai_protocol)
-		return -1;
-#endif
-#endif
-	if (!sock_name_matches(fd, domain, ai) ||
+	int domain = 0, type = 0, proto = 0;
+	if (!sock_listening(fd) ||
+	    !sock_get_triplet(fd, &domain, &type, &proto) ||
+	    !sock_triplet_matches(domain, type, proto, ai) ||
+	    !sock_name_matches(fd, domain, ai) ||
 	    !sock_intf_matches(fd, intf))
 		return -1;
 	return fd;
