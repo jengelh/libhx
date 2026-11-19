@@ -1,3 +1,14 @@
+v5.6 (2026-11-19)
+=================
+
+* socket: reinstate SO_DOMAIN/SO_PROTOCOL checks for Linux
+  when exercising socket takeover from environment.
+  (These got lost in version 5.4.)
+* socket: takeover of AF_UNIX sockets on OpenBSD works now.
+* build: basic support for building on POSIX systems without
+  a pipe2 syscall.
+
+
 v5.5 (2026-10-29)
 =================
 
